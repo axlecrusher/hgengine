@@ -16,8 +16,8 @@ Win32Window::Win32Window(const string& title, int width, int height, int bits, b
 	:m_hwnd(NULL), m_hdc(NULL), m_hglrc(NULL), m_hInstance(NULL), m_className(NULL), m_windowAtom(NULL), m_winTitle(NULL),
 	MercuryWindow(title, width, height, bits, fullscreen)
 {
-	m_className = StringToLPCTSTR("Mercury Render Window");
-	m_winTitle = StringToLPCTSTR(title);
+	m_className = (WCHAR*)StringToLPCTSTR("Mercury Render Window");
+	m_winTitle = (WCHAR*)StringToLPCTSTR(title);
 
 	GenWinClass();
 	GenWindow();
@@ -45,9 +45,6 @@ Win32Window::~Win32Window()
 	{
 		m_hInstance = NULL;
 	}
-
-	SAFE_DELETE_ARRAY(m_className);
-	SAFE_DELETE_ARRAY(m_winTitle);
 }
 
 void Win32Window::GenWinClass()

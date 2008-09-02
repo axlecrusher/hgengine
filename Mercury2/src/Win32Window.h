@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <string>
 #include "MercuryWindow.h"
+#include <MScopedArray.h>
 
 ///Win32 Window Driver
 class Win32Window : public MercuryWindow
@@ -29,10 +30,10 @@ private:
 	WNDCLASSEX m_wndclass;
 	HINSTANCE m_hInstance;
 
-	LPCWSTR m_className;
 	ATOM m_windowAtom;
 
-	LPCTSTR m_winTitle;
+	MScopedArray< WCHAR > m_className;
+	MScopedArray< WCHAR > m_winTitle;
 };
 
 #endif
