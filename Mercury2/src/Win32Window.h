@@ -10,7 +10,7 @@
 class Win32Window : public MercuryWindow
 {
 public:
-	Win32Window(const string& title, int width, int height, int bits, bool fullscreen);
+	Win32Window(const string& title, int width, int height, int bits, int depthBits, bool fullscreen);
 	virtual ~Win32Window();
 	virtual bool SwapBuffers();
 	virtual bool PumpMessages();

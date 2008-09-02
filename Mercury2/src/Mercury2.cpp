@@ -7,7 +7,7 @@ int main()
 	
 	try
 	{
-		w = new Win32Window("Mercury2 Tests", 640, 480, 24, false);
+		w = new Win32Window("Mercury2 Tests", 640, 480, 24, 16, false);
 	}
 	catch(int)
 	{

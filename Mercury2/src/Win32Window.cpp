@@ -12,9 +12,9 @@ LPCTSTR StringToLPCTSTR(const string& s)
 	return str;
 }
 
-Win32Window::Win32Window(const string& title, int width, int height, int bits, bool fullscreen)
+Win32Window::Win32Window(const string& title, int width, int height, int bits, int depthBits, bool fullscreen)
 	:m_hwnd(NULL), m_hdc(NULL), m_hglrc(NULL), m_hInstance(NULL), m_className(NULL), m_windowAtom(NULL), m_winTitle(NULL),
-	MercuryWindow(title, width, height, bits, fullscreen)
+	MercuryWindow(title, width, height, bits, depthBits, fullscreen)
 {
 	m_className = (WCHAR*)StringToLPCTSTR("Mercury Render Window");
 	m_winTitle = (WCHAR*)StringToLPCTSTR(title);
@@ -162,8 +162,8 @@ void Win32Window::GenPixelType()
 	m_pfd.nVersion = 1;
 	m_pfd.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
 	m_pfd.iPixelType = PFD_TYPE_RGBA;
-	m_pfd.cColorBits = 24;
-	m_pfd.cDepthBits = 16;
+	m_pfd.cColorBits = m_bits;
+	m_pfd.cDepthBits = m_depthBits;
 	m_pfd.iLayerType = PFD_MAIN_PLANE;
 }
 

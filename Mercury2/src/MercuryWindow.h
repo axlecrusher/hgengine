@@ -9,14 +9,14 @@ using namespace std;
 class MercuryWindow
 {
 public:
-	MercuryWindow(const string& title, int width, int height, int bits, bool fullscreen);
+	MercuryWindow(const string& title, int width, int height, int bits, int depthBits, bool fullscreen);
 	virtual ~MercuryWindow();
 	virtual bool SwapBuffers() = 0;
 	virtual bool PumpMessages() = 0;
 
 protected:
 	string m_title;
-	int m_width, m_height, m_bits;
+	int m_width, m_height, m_bits, m_depthBits;
 	bool m_fullscreen;
 };
 
