@@ -3,7 +3,7 @@
 
 #include <windows.h>
 #include <string>
-#include "MercuryWindow.h"
+#include <MercuryWindow.h>
 #include <MScopedArray.h>
 
 ///Win32 Window Driver
@@ -14,6 +14,8 @@ public:
 	virtual ~Win32Window();
 	virtual bool SwapBuffers();
 	virtual bool PumpMessages();
+
+	static MercuryWindow* GenWin32Window();
 
 private:
 	void GenWindow();

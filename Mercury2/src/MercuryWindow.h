@@ -3,6 +3,8 @@
 
 #include <string>
 #include <MercuryUtil.h>
+#include <list>
+#include <Callback.h>
 
 using namespace std;
 
@@ -11,10 +13,15 @@ class MercuryWindow
 public:
 	MercuryWindow(const string& title, int width, int height, int bits, int depthBits, bool fullscreen);
 	virtual ~MercuryWindow();
+
+	inline static MercuryWindow* MakeWindow() { return genWindowClbk(); }
+
 	virtual bool SwapBuffers() = 0;
 	virtual bool PumpMessages() = 0;
 
 protected:
+	static Callback0R< MercuryWindow* > genWindowClbk;
+
 	string m_title;
 	int m_width, m_height, m_bits, m_depthBits;
 	bool m_fullscreen;

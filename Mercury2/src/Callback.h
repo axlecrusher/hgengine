@@ -18,6 +18,23 @@ private:
 	void (*functor)(void);
 };
 
+template <typename R>
+class Callback0R
+{
+public:
+	Callback0R(R(*f)(void))
+		:functor(f)
+	{}
+
+	R operator()(void) const
+	{
+		return functor();
+	}
+
+private:
+	R (*functor)(void);
+};
+
 
 template <typename P1>
 class Callback1

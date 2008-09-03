@@ -1,7 +1,12 @@
-#include <windows.h>
-#include "Win32Window.h"
+#include <Win32Window.h>
 
 LRESULT CALLBACK WindowCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam); //Window callback
+Callback0R< MercuryWindow* > MercuryWindow::genWindowClbk(Win32Window::GenWin32Window); //Setup generation callback
+
+MercuryWindow* Win32Window::GenWin32Window()
+{
+	return new Win32Window("Mercury2 Tests", 640, 480, 24, 16, false);
+}
 
 LPCTSTR StringToLPCTSTR(const string& s)
 {

@@ -1,19 +1,9 @@
-#include <Win32Window.h>
-#include <gl\gl.h>
+#include <MercuryWindow.h>
 
 int main()
 {
-	MercuryWindow* w = NULL;
-	
-	try
-	{
-		w = new Win32Window("Mercury2 Tests", 640, 480, 24, 16, false);
-	}
-	catch(int)
-	{
-		printf("Woah!!!\n");
-	}
-
+	MercuryWindow* w = MercuryWindow::MakeWindow();
+/*
 	glViewport(0, 0, 640, 480);
 	glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
 	glLoadIdentity();							// Reset The Projection Matrix
@@ -28,11 +18,19 @@ int main()
 	glClearDepth(1.0f);							// Depth Buffer Setup
 	glEnable(GL_DEPTH_TEST);						// Enables Depth Testing
 	glDepthFunc(GL_LEQUAL);							// The Type Of Depth Test To Do
-
+*/
 	do
 	{
+		/*
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
+		glColor3f(1,1,1);
+		glBegin(GL_TRIANGLES);
+		glVertex3f(0,0,0);
+		glVertex3f(0,-1,0);
+		glVertex3f(1,-1,0);
+		glEnd();
+		*/
 		w->SwapBuffers();
 	}
 	while ( w->PumpMessages() );
