@@ -117,6 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="src/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -135,6 +136,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="opengl32.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -181,6 +183,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryMath.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryMatrix.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryThreads.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryWindow.cpp"
 				>
 			</File>
@@ -195,11 +209,35 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\src\Callback.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MAutoPtr.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryMath.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryMatrix.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryThreads.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryUtil.h"
 				>
 			</File>
 			<File
 				RelativePath=".\src\MercuryWindow.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MScopedArray.h"
 				>
 			</File>
 			<File
