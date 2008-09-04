@@ -1,7 +1,7 @@
 #include <Win32Window.h>
 
 LRESULT CALLBACK WindowCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam); //Window callback
-Callback0R< MercuryWindow* > MercuryWindow::genWindowClbk(Win32Window::GenWin32Window); //Setup generation callback
+Callback0R< MercuryWindow* > MercuryWindow::genWindowClbk(Win32Window::GenWin32Window); //Register window generation callback
 
 MercuryWindow* Win32Window::GenWin32Window()
 {
