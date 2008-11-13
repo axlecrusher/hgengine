@@ -8,11 +8,6 @@
 	Each node exists as a single entity in the scene graph.
 **/
 
-class MercuryNode;
-
-typedef Callback2< MercuryNode*, MercuryNode* > OnAddChild;
-typedef Callback2< MercuryNode*, MercuryNode* > OnRemoveChild;
-
 class MercuryNode
 {
 	public:
