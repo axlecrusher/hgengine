@@ -1,42 +1,7 @@
-#ifndef RENDERABLENODE_H
-#define RENDERABLENODE_H
-
-#include <MercuryNode.h>
-#include <MAutoPtr.h>
 #include <MercuryAsset.h>
 
-#define MCHECKASSETS
 
-class RenderableNode : public MercuryNode
-{
-	public:
-		~RenderableNode();
-		
-		void Render();
-		virtual void Update(float dTime) {};
-				
-		///Returnes true if N is of type RenderableNode
-		static bool IsRenderable( MercuryNode* n );
-		
-		inline void AddAsset(MAutoPtr< MercuryAsset > asset) { m_assets.push_back(asset); }
-		
-		void AddPreRender(MercuryAsset* asset);
-		void AddRender(MercuryAsset* asset);
-		void AddPostRender(MercuryAsset* asset);
-	private:
-		bool IsInAssetList(MercuryAsset* asset) const;
-		
-		std::list< MAutoPtr< MercuryAsset > > m_assets;	///serves as a holder for memory
-		
-		//we will just use normal pointers here because we don't want to waste too much time
-		//dereferencing the autopointer. As a precaution when assets are added to these lists,
-		//they must exist in m_assets.
-		std::list< MercuryAsset* > m_prerender;
-		std::list< MercuryAsset* > m_render;
-		std::list< MercuryAsset* > m_postrender;
-};
 
-#endif
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
  *      *

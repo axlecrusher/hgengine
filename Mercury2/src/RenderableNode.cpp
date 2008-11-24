@@ -1,13 +1,57 @@
 #include <RenderableNode.h>
 #include <typeinfo>
+#include <assert.h>
 
 using namespace std;
 
+RenderableNode::~RenderableNode()
+{
+	m_prerender.clear();
+	m_render.clear();
+	m_postrender.clear();
+}
+
 void RenderableNode::Render()
 {
-	list< Callback1< MercuryNode* > >::iterator i;
-	for (i = OnRender.begin(); i != OnRender.end(); ++i )
-		(*i)(this);
+	list< MercuryAsset* >::iterator i;
+		
+	for (i = m_prerender.begin(); i != m_prerender.end(); ++i )
+		(*i)->PreRender(this);
+
+	for (i = m_render.begin(); i != m_render.end(); ++i )
+		(*i)->Render(this);
+	
+	for (i = m_postrender.begin(); i != m_postrender.end(); ++i )
+		(*i)->PostRender(this);
+}
+
+void RenderableNode::AddPreRender(MercuryAsset* asset)
+{
+#ifdef MCHECKASSETS
+	if ( !IsInAssetList(asset) ) //yell and scream
+		assert(!"Asset does not exist in list!");
+#endif
+		
+	m_prerender.push_back(asset);
+}
+
+void RenderableNode::AddRender(MercuryAsset* asset)
+{
+#ifdef MCHECKASSETS
+	if ( !IsInAssetList(asset) ) //yell and scream
+		assert(!"Asset does not exist in list!");
+#endif
+	
+	m_render.push_back(asset);
+}
+void RenderableNode::AddPostRender(MercuryAsset* asset)
+{
+#ifdef MCHECKASSETS
+	if ( !IsInAssetList(asset) ) //yell and scream
+		assert(!"Asset does not exist in list!");
+#endif
+	
+	m_postrender.push_back(asset);
 }
 
 bool RenderableNode::IsRenderable( MercuryNode* n )
@@ -15,6 +59,13 @@ bool RenderableNode::IsRenderable( MercuryNode* n )
 	return ( typeid(RenderableNode) == typeid(*n) );
 }
 
+bool RenderableNode::IsInAssetList( MercuryAsset* asset ) const
+{
+	std::list< MAutoPtr< MercuryAsset > >::const_iterator i;
+	for (i = m_assets.begin(); i != m_assets.end(); ++i )
+		if ( (*i) == asset ) return true;
+	return false;
+}
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
