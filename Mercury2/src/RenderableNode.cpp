@@ -1,5 +1,4 @@
 #include <RenderableNode.h>
-#include <typeinfo>
 #include <assert.h>
 
 using namespace std;
@@ -53,12 +52,12 @@ void RenderableNode::AddPostRender(MercuryAsset* asset)
 	
 	m_postrender.push_back(asset);
 }
-
-bool RenderableNode::IsRenderable( MercuryNode* n )
+/*
+bool RenderableNode::IsMyType( MercuryNode* n )
 {
 	return ( typeid(RenderableNode) == typeid(*n) );
 }
-
+*/
 bool RenderableNode::IsInAssetList( MercuryAsset* asset ) const
 {
 	std::list< MAutoPtr< MercuryAsset > >::const_iterator i;

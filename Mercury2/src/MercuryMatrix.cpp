@@ -1,5 +1,10 @@
 #include "MercuryMatrix.h"
 
+namespace MercuryMath
+{
+	MercuryMatrix IdentityMatrix;
+}
+
 MercuryMatrix::MercuryMatrix()
 {
 	Identity();

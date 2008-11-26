@@ -48,6 +48,12 @@ M_ALIGN(64);
 M_ALIGN(16);
 #endif
 
+namespace MercuryMath
+{
+	extern MercuryMatrix IdentityMatrix;
+}
+
+
 #endif
 
 /* 

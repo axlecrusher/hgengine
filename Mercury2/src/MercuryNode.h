@@ -3,10 +3,14 @@
 
 #include <list>
 #include <Callback.h>
+#include <typeinfo>
 
 /** This is the basic node of the scene graph.  It is not intended to be instanced.
 	Each node exists as a single entity in the scene graph.
 **/
+
+#define GENRTTI(x) static bool IsMyType(const MercuryNode* n) \
+{ return ( typeid(x) == typeid(*n) ); }
 
 class MercuryNode
 {
@@ -17,11 +21,11 @@ class MercuryNode
 		void AddChild(MercuryNode* n);
 		void RemoveChild(MercuryNode* n);
 		
-		MercuryNode* Parent();
-		MercuryNode* NextSibling();
-		MercuryNode* PrevSibling();
-		MercuryNode* NextChild(MercuryNode* n); ///Finds the next child in regards to n
-		MercuryNode* PrevChild(MercuryNode* n); ///Finds the previous child in regards to n
+		MercuryNode* Parent() const;
+		MercuryNode* NextSibling() const;
+		MercuryNode* PrevSibling() const;
+		MercuryNode* NextChild(const MercuryNode* n) const; ///Finds the next child in regards to n
+		MercuryNode* PrevChild(const MercuryNode* n) const; ///Finds the previous child in regards to n
 		
 		virtual void Update(float dTime) = 0;
 		void RecursiveUpdate(float dTime);
@@ -32,9 +36,10 @@ class MercuryNode
 		///Provides callback ability when a child node is removed (parent, child) arguement order
 		std::list< Callback2< MercuryNode*, MercuryNode* > > OnRemoveChild;
 	
-	private:
-		MercuryNode* m_parent;
+		GENRTTI(MercuryNode);
+	protected:
 		std::list< MercuryNode* > m_children;
+		MercuryNode* m_parent;
 };
 
 #endif

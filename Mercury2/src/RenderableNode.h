@@ -16,13 +16,15 @@ class RenderableNode : public MercuryNode
 		virtual void Update(float dTime) {};
 				
 		///Returnes true if N is of type RenderableNode
-		static bool IsRenderable( MercuryNode* n );
+//		static bool IsMyType( MercuryNode* n );
 		
 		inline void AddAsset(MAutoPtr< MercuryAsset > asset) { m_assets.push_back(asset); }
 		
 		void AddPreRender(MercuryAsset* asset);
 		void AddRender(MercuryAsset* asset);
 		void AddPostRender(MercuryAsset* asset);
+		
+		GENRTTI(RenderableNode);
 	private:
 		bool IsInAssetList(MercuryAsset* asset) const;
 		

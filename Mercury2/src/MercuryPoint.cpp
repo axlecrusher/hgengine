@@ -1,87 +1,97 @@
-#include <MercuryNode.h>
+#include <MercuryPoint.h>
+#include <MercuryMath.h>
 
-using namespace std;
-
-MercuryNode::MercuryNode()
-	:m_parent(NULL)
+const float MercuryPoint::operator[] ( const int rhs ) const
 {
-}
-
-MercuryNode::~MercuryNode()
-{
-	m_parent = NULL;
-	m_children.clear();
-}
-
-void MercuryNode::AddChild(MercuryNode* n)
-{
-	m_children.push_back(n);
-	n->m_parent = this;
-	
-	list< Callback2< MercuryNode*, MercuryNode* > >::iterator i;
-	for (i = OnAddChild.begin(); i != OnAddChild.end(); ++i )
-		(*i)(this, n);
-}
-
-void MercuryNode::RemoveChild(MercuryNode* n)
-{
-	list< MercuryNode* >::iterator i;
-	for (i = m_children.begin(); i != m_children.end(); ++i )
+	switch (rhs)
 	{
-		if (*i == n)
-		{
-			list< Callback2< MercuryNode*, MercuryNode* > >::iterator ic;
-			for (ic = OnRemoveChild.begin(); ic != OnRemoveChild.end(); ++ic )
-				(*ic)(this, n);
-			
-			m_children.erase(i);
-			return;
-		}
+		case 0: return x;
+		case 1: return y;
+		case 2: return z;
 	}
+	return x;	//haha we won't even get here.
 }
 
-MercuryNode* MercuryNode::Parent() const
+float & MercuryPoint::operator [] ( const int rhs )
 {
-	return m_parent;
+	switch (rhs)
+	{
+		case 0: return x;
+		case 1: return y;
+		case 2: return z;
+	}
+	return x;	//haha we won't even get here.
 }
 
-MercuryNode* MercuryNode::NextSibling() const
+MercuryPoint MercuryPoint::operator*(const MercuryPoint& p) const
 {
-	if (m_parent) return m_parent->NextChild(this);
-	return NULL;
+	MercuryPoint tmp;
+	tmp.x = x * p.x;
+	tmp.y = y * p.y; 
+	tmp.z = z * p.z;
+	return tmp;
 }
 
-MercuryNode* MercuryNode::PrevSibling() const
+MercuryPoint MercuryPoint::operator/(const MercuryPoint& p) const
 {
-	if (m_parent) return m_parent->PrevChild(this);
-	return NULL;
+	MercuryPoint tmp;
+	tmp.x = x / p.x;
+	tmp.y = y / p.y; 
+	tmp.z = z / p.z;
+	return tmp;
 }
 
-MercuryNode* MercuryNode::NextChild(const MercuryNode* n) const
+bool MercuryPoint::operator==(const MercuryPoint& p) const
 {
-	list< MercuryNode* >::const_iterator i;
-	for (i = m_children.begin(); i != m_children.end(); ++i )
-		if (*i == n) return *i;
-	return NULL;
+	if ((x == p.x) && (y == p.y) && (z == p.z))
+		return true;
+
+	return false;
 }
 
-MercuryNode* MercuryNode::PrevChild(const MercuryNode* n) const
+bool MercuryPoint::operator==(const float f) const
 {
-	list< MercuryNode* >::const_iterator i;
-	for (i = m_children.end(); i != m_children.begin(); --i )
-		if (*i == n) return *i;
-	return NULL;
+	if ((x == f) && (y == f) && (z == f))
+		return true;
+
+	return false;
 }
 
-void MercuryNode::RecursiveUpdate(float dTime)
+MercuryPoint MercuryPoint::CrossProduct(const MercuryPoint& p) const
 {
-	list< MercuryNode* >::iterator i;
-	for (i = m_children.begin(); i != m_children.end(); ++i )
-		(*i)->Update(dTime);
+	MercuryPoint ret;
+
+	ret[0] = y*p.z - z*p.y;
+	ret[1] = z*p.x - x*p.z;
+	ret[2] = x*p.y - y*p.x;
+
+	return ret;
+}
+
+void MercuryPoint::NormalizeSelf()
+{
+	float imag = 1.0f/Magnitude();
+	x *= imag; y *= imag; z *= imag;
+}
+
+const MercuryPoint MercuryPoint::Normalize() const
+{
+	MercuryPoint t(*this);
+	t.NormalizeSelf();
+	return t;
+}
+
+float MercuryPoint::Magnitude() const
+{
+	float length = 0;
+	length += x*x;
+	length += y*y;
+	length += z*z;
+	return SQRT(length);
 }
 
 /***************************************************************************
- *   Copyright (C) 2008 by Joshua Allen   *
+ *   Copyright (C) 2008 by Joshua Allen, Charles Lohr   *
  *      *
  *                                                                         *
  *   All rights reserved.                                                  *

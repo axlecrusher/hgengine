@@ -1,83 +1,74 @@
-#include <MercuryNode.h>
+#include <TransformNode.h>
 
-using namespace std;
-
-MercuryNode::MercuryNode()
-	:m_parent(NULL)
+void TransformNode::Update(float dTime)
 {
+	if (m_tainted) ComputeMatrix();
 }
 
-MercuryNode::~MercuryNode()
+void TransformNode::SetScale( const MercuryPoint& scale )
 {
-	m_parent = NULL;
-	m_children.clear();
+	m_scale = scale;
+	SetTaint( true );
 }
 
-void MercuryNode::AddChild(MercuryNode* n)
+void TransformNode::SetPosition( const MercuryPoint& position )
 {
-	m_children.push_back(n);
-	n->m_parent = this;
+	m_position = position;
+	SetTaint( true );
+}
+
+void TransformNode::SetRotation( const MercuryPoint& rotation )
+{
+	m_rotation = rotation;
+	SetTaint( true );
+}
+
+void TransformNode::SetTaint(bool taint)
+{
+	m_tainted = taint;
+	RippleTaintDown();
+}
+
+void TransformNode::ComputeMatrix()
+{
+	m_tainted = false;
 	
-	list< Callback2< MercuryNode*, MercuryNode* > >::iterator i;
-	for (i = OnAddChild.begin(); i != OnAddChild.end(); ++i )
-		(*i)(this, n);
+	m_localMatrix.Identity();
+
+	m_localMatrix.Transotale( m_position.x, m_position.y, m_position.z,
+							  m_rotation.x, m_rotation.y, m_rotation.z,
+							  m_scale.x, m_scale.y, m_scale.z );
+	
+	m_globalMatrix = GetParentMatrix() * m_localMatrix;
 }
 
-void MercuryNode::RemoveChild(MercuryNode* n)
+const MercuryMatrix& TransformNode::GetParentMatrix() const
 {
-	list< MercuryNode* >::iterator i;
-	for (i = m_children.begin(); i != m_children.end(); ++i )
+	const MercuryNode* n = m_parent;
+	
+	while (n)
 	{
-		if (*i == n)
+		if ( TransformNode::IsMyType( n ) ) return ((TransformNode*)n)->GetGlobalMatrix();
+		n = n->Parent();
+	}
+	
+	return MercuryMath::IdentityMatrix;
+}
+
+void TransformNode::RippleTaintDown()
+{
+	if (m_tainted == true)
+	{
+		std::list< MercuryNode* >::iterator i;
+		for (i = m_children.begin(); i != m_children.end(); ++i )
 		{
-			list< Callback2< MercuryNode*, MercuryNode* > >::iterator ic;
-			for (ic = OnRemoveChild.begin(); ic != OnRemoveChild.end(); ++ic )
-				(*ic)(this, n);
-			
-			m_children.erase(i);
-			return;
+			if ( TransformNode::IsMyType(*i) )
+			{
+				TransformNode* n = (TransformNode*)*i;
+				n->SetTaint( true );
+			}
 		}
 	}
-}
-
-MercuryNode* MercuryNode::Parent() const
-{
-	return m_parent;
-}
-
-MercuryNode* MercuryNode::NextSibling() const
-{
-	if (m_parent) return m_parent->NextChild(this);
-	return NULL;
-}
-
-MercuryNode* MercuryNode::PrevSibling() const
-{
-	if (m_parent) return m_parent->PrevChild(this);
-	return NULL;
-}
-
-MercuryNode* MercuryNode::NextChild(const MercuryNode* n) const
-{
-	list< MercuryNode* >::const_iterator i;
-	for (i = m_children.begin(); i != m_children.end(); ++i )
-		if (*i == n) return *i;
-	return NULL;
-}
-
-MercuryNode* MercuryNode::PrevChild(const MercuryNode* n) const
-{
-	list< MercuryNode* >::const_iterator i;
-	for (i = m_children.end(); i != m_children.begin(); --i )
-		if (*i == n) return *i;
-	return NULL;
-}
-
-void MercuryNode::RecursiveUpdate(float dTime)
-{
-	list< MercuryNode* >::iterator i;
-	for (i = m_children.begin(); i != m_children.end(); ++i )
-		(*i)->Update(dTime);
 }
 
 /***************************************************************************

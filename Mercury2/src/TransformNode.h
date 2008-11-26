@@ -1,84 +1,44 @@
 #include <MercuryNode.h>
+#include <MercuryPoint.h>
+#include <MercuryMatrix.h>
 
-using namespace std;
-
-MercuryNode::MercuryNode()
-	:m_parent(NULL)
+//I am not sure if I like the idea of rippling a taint flag down the tree
+//if a transform hs changed.  There is probably a better way of doing this.
+class TransformNode : public MercuryNode
 {
-}
+	public:
+		
+		void Update(float dTime);
 
-MercuryNode::~MercuryNode()
-{
-	m_parent = NULL;
-	m_children.clear();
-}
+		void SetScale( const MercuryPoint& scale );
+		void SetPosition( const MercuryPoint& position );
+		void SetRotation( const MercuryPoint& rotation );
+		
+		inline const MercuryPoint& GetScale() const { return m_scale; }
+		inline const MercuryPoint& GetPosition() const { return m_position; }
+		inline const MercuryPoint& GetRotation() const { return m_rotation; }
+		
+		inline const MercuryMatrix& GetGlobalMatrix() const { return m_globalMatrix; }
+		const MercuryMatrix& GetParentMatrix() const;
+		
+		void SetTaint(bool taint);
 
-void MercuryNode::AddChild(MercuryNode* n)
-{
-	m_children.push_back(n);
-	n->m_parent = this;
-	
-	list< Callback2< MercuryNode*, MercuryNode* > >::iterator i;
-	for (i = OnAddChild.begin(); i != OnAddChild.end(); ++i )
-		(*i)(this, n);
-}
-
-void MercuryNode::RemoveChild(MercuryNode* n)
-{
-	list< MercuryNode* >::iterator i;
-	for (i = m_children.begin(); i != m_children.end(); ++i )
-	{
-		if (*i == n)
-		{
-			list< Callback2< MercuryNode*, MercuryNode* > >::iterator ic;
-			for (ic = OnRemoveChild.begin(); ic != OnRemoveChild.end(); ++ic )
-				(*ic)(this, n);
-			
-			m_children.erase(i);
-			return;
-		}
-	}
-}
-
-MercuryNode* MercuryNode::Parent() const
-{
-	return m_parent;
-}
-
-MercuryNode* MercuryNode::NextSibling() const
-{
-	if (m_parent) return m_parent->NextChild(this);
-	return NULL;
-}
-
-MercuryNode* MercuryNode::PrevSibling() const
-{
-	if (m_parent) return m_parent->PrevChild(this);
-	return NULL;
-}
-
-MercuryNode* MercuryNode::NextChild(const MercuryNode* n) const
-{
-	list< MercuryNode* >::const_iterator i;
-	for (i = m_children.begin(); i != m_children.end(); ++i )
-		if (*i == n) return *i;
-	return NULL;
-}
-
-MercuryNode* MercuryNode::PrevChild(const MercuryNode* n) const
-{
-	list< MercuryNode* >::const_iterator i;
-	for (i = m_children.end(); i != m_children.begin(); --i )
-		if (*i == n) return *i;
-	return NULL;
-}
-
-void MercuryNode::RecursiveUpdate(float dTime)
-{
-	list< MercuryNode* >::iterator i;
-	for (i = m_children.begin(); i != m_children.end(); ++i )
-		(*i)->Update(dTime);
-}
+		void ComputeMatrix();
+		
+		GENRTTI(TransformNode);
+		
+	private:
+		void RippleTaintDown();
+		
+		MercuryPoint m_scale;
+		MercuryPoint m_position;
+		MercuryPoint m_rotation;
+		
+		MercuryMatrix m_localMatrix;
+		MercuryMatrix m_globalMatrix;
+		
+		bool m_tainted;
+};
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
