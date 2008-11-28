@@ -41,6 +41,8 @@ public:
 
 	void Zero();
 	void Identity();
+	
+	void Print();
 }
 #if !defined( WIN32 ) || defined( _MSC_VER )
 M_ALIGN(64);

@@ -1,4 +1,5 @@
 #include "MercuryMatrix.h"
+#include <stdio.h>
 
 namespace MercuryMath
 {
@@ -211,6 +212,15 @@ MercuryMatrix& MercuryMatrix::operator*=(const MercuryMatrix& m)
 	MercuryMatrix r(*this);
 	R_ConcatTransforms4 ( (float*)&r.m_matrix, (float*)&m.m_matrix, (float*)&m_matrix);
 	return *this;
+}
+
+void MercuryMatrix::Print()
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		printf( "%f %f %f %f\n", m_matrix[i][0], m_matrix[i][1], m_matrix[i][2], m_matrix[i][3] );
+	}
+	printf("\n");
 }
 
 void TransposeMatrix( const MercuryMatrix &in, MercuryMatrix &out )

@@ -1,8 +1,12 @@
 #include <TransformNode.h>
 
+TransformNode::TransformNode()
+	:m_scale( MercuryPoint(1,1,1) )
+{
+}
+
 void TransformNode::Update(float dTime)
 {
-	printf("g\n");
 	if (m_tainted) ComputeMatrix();
 }
 

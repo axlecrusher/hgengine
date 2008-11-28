@@ -23,13 +23,7 @@ void RenderableNode::Render()
 		if (tn = TransformNode::Cast(n))
 		{
 			MercuryMatrix m = tn->GetGlobalMatrix();
-//			m.Transpose();
-//			glMultMatrixf(m.Ptr() );
-			for (int i = 0; i < 16; i+=4)
-			{
-//				printf( "%f %f %f %f\n", m.Ptr()[i], m.Ptr()[i+1], m.Ptr()[i+2], m.Ptr()[i+3] );
-			}
-//			printf("\n");
+			m.Transpose();
 			glLoadMatrixf( m.Ptr() );
 			break;
 		}

@@ -7,6 +7,7 @@
 class TransformNode : public MercuryNode
 {
 	public:
+		TransformNode();
 		
 		void Update(float dTime);
 

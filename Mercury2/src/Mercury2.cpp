@@ -16,7 +16,7 @@ int main()
 	TransformNode* t = new TransformNode();
 	MAutoPtr< MercuryAsset > q( new Quad() );
 	
-	t->SetPosition( MercuryPoint(0,0,-1) );
+	t->SetPosition( MercuryPoint(0,0,-3) );
 	
 	vp->Perspective(45,640.0f/480.0f,0.01,100);
 	root->AddChild(vp);
