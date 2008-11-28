@@ -28,8 +28,8 @@ int main()
 	m_time = time(NULL);
 	do
 	{
-		root->RecursiveUpdate(0.01f); //1500FPS
-		RenderableNode::RecursiveRender(root); //870FPS
+		root->RecursiveUpdate(0.01f);
+		RenderableNode::RecursiveRender(root);
 		w->SwapBuffers();
 		++m_count;
 		
