@@ -75,9 +75,11 @@ MercuryNode* MercuryNode::PrevChild(const MercuryNode* n) const
 
 void MercuryNode::RecursiveUpdate(float dTime)
 {
+	Update(dTime);
+	
 	list< MercuryNode* >::iterator i;
 	for (i = m_children.begin(); i != m_children.end(); ++i )
-		(*i)->Update(dTime);
+		(*i)->RecursiveUpdate(dTime);
 }
 
 /***************************************************************************
