@@ -1,12 +1,44 @@
 #include <MercuryWindow.h>
+#include <Quad.h>
+#include <RenderableNode.h>
+#include <Viewport.h>
+#include <TransformNode.h>
 
 int main()
 {
-	MercuryWindow* w = MercuryWindow::MakeWindow();
+	unsigned long m_count = 0;
+	unsigned long m_time;
 	
+	MercuryWindow* w = MercuryWindow::MakeWindow();
+	MercuryNode* root = new MercuryNode();
+	Viewport* vp = new Viewport();
+	RenderableNode* r = new RenderableNode();
+	TransformNode* t = new TransformNode();
+	MAutoPtr< MercuryAsset > q( new Quad() );
+	
+	t->SetPosition( MercuryPoint(0,0,-1) );
+	
+	vp->Perspective(45,640.0f/480.0f,0.01,100);
+	root->AddChild(vp);
+	vp->AddChild(t);
+	t->AddChild(r);
+	r->AddAsset( q );
+	r->AddRender( q );
+	
+	m_time = time(NULL);
 	do
 	{
+		root->RecursiveUpdate(0.01f); //1500FPS
+		RenderableNode::RecursiveRender(root); //870FPS
 		w->SwapBuffers();
+		++m_count;
+		
+		if (time(NULL) > m_time)
+		{
+			m_time = time(NULL);
+			printf("FPS: %d\n", m_count);
+			m_count = 0;
+		}
 	}
 	while ( w->PumpMessages() );
 

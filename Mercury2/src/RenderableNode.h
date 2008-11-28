@@ -12,7 +12,7 @@ class RenderableNode : public MercuryNode
 	public:
 		~RenderableNode();
 		
-		void Render();
+		virtual void Render();
 		virtual void Update(float dTime) {};
 				
 		///Returnes true if N is of type RenderableNode
@@ -23,6 +23,8 @@ class RenderableNode : public MercuryNode
 		void AddPreRender(MercuryAsset* asset);
 		void AddRender(MercuryAsset* asset);
 		void AddPostRender(MercuryAsset* asset);
+		
+		static void RecursiveRender( const MercuryNode* n );
 		
 		GENRTTI(RenderableNode);
 	private:

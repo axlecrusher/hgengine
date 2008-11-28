@@ -7,7 +7,7 @@
 class MercuryAsset : public RefBase
 {
 	public:
-		virtual ~MercuryAsset();
+		virtual ~MercuryAsset() {};
 		
 		virtual void PreRender(MercuryNode* node) {};
 		virtual void Render(MercuryNode* node) = 0;

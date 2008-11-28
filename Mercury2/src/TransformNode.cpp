@@ -2,6 +2,7 @@
 
 void TransformNode::Update(float dTime)
 {
+	printf("g\n");
 	if (m_tainted) ComputeMatrix();
 }
 
@@ -45,10 +46,10 @@ void TransformNode::ComputeMatrix()
 const MercuryMatrix& TransformNode::GetParentMatrix() const
 {
 	const MercuryNode* n = m_parent;
-	
+	const TransformNode* tn;
 	while (n)
 	{
-		if ( TransformNode::IsMyType( n ) ) return ((TransformNode*)n)->GetGlobalMatrix();
+		if ( tn = TransformNode::Cast( n ) ) return tn->GetGlobalMatrix();
 		n = n->Parent();
 	}
 	
@@ -59,14 +60,13 @@ void TransformNode::RippleTaintDown()
 {
 	if (m_tainted == true)
 	{
+		TransformNode* tn;
 		std::list< MercuryNode* >::iterator i;
+		
 		for (i = m_children.begin(); i != m_children.end(); ++i )
 		{
-			if ( TransformNode::IsMyType(*i) )
-			{
-				TransformNode* n = (TransformNode*)*i;
-				n->SetTaint( true );
-			}
+			if ( tn = TransformNode::Cast(*i) )
+				tn->SetTaint( true );
 		}
 	}
 }

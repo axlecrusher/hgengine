@@ -1,5 +1,7 @@
 #include <RenderableNode.h>
 #include <assert.h>
+#include <GL/gl.h>
+#include <TransformNode.h>
 
 using namespace std;
 
@@ -13,7 +15,26 @@ RenderableNode::~RenderableNode()
 void RenderableNode::Render()
 {
 	list< MercuryAsset* >::iterator i;
-		
+
+	MercuryNode* n = Parent();
+	TransformNode* tn;
+	for (; n; n = n->Parent())
+	{
+		if (tn = TransformNode::Cast(n))
+		{
+			MercuryMatrix m = tn->GetGlobalMatrix();
+//			m.Transpose();
+//			glMultMatrixf(m.Ptr() );
+			for (int i = 0; i < 16; i+=4)
+			{
+//				printf( "%f %f %f %f\n", m.Ptr()[i], m.Ptr()[i+1], m.Ptr()[i+2], m.Ptr()[i+3] );
+			}
+//			printf("\n");
+			glLoadMatrixf( m.Ptr() );
+			break;
+		}
+	}
+	
 	for (i = m_prerender.begin(); i != m_prerender.end(); ++i )
 		(*i)->PreRender(this);
 
@@ -64,6 +85,15 @@ bool RenderableNode::IsInAssetList( MercuryAsset* asset ) const
 	for (i = m_assets.begin(); i != m_assets.end(); ++i )
 		if ( (*i) == asset ) return true;
 	return false;
+}
+
+void RenderableNode::RecursiveRender( const MercuryNode* n )
+{
+	if ( Cast(n) ) ((RenderableNode*)n)->Render();
+	
+	list< MercuryNode* >::const_iterator i;
+	for (i = n->m_children.begin(); i != n->m_children.end(); ++i )
+		RenderableNode::RecursiveRender( *i );
 }
 
 /***************************************************************************

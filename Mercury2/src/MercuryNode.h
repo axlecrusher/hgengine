@@ -9,9 +9,17 @@
 	Each node exists as a single entity in the scene graph.
 **/
 
-#define GENRTTI(x) static bool IsMyType(const MercuryNode* n) \
-{ return ( typeid(x) == typeid(*n) ); }
+#define GENRTTI(x) static const x* Cast(const MercuryNode* n) \
+{ return dynamic_cast<const x*>(n); } \
+static x* Cast(MercuryNode* n) \
+{ return dynamic_cast<x*>(n); }
 
+/*
+#define GENRTTI(x) static bool IsMyType(const MercuryNode* n) \
+{ const MercuryNode* tn = n; \
+while(tn) { if (typeid(x) == typeid(*tn)) return true; tn = *n; } \
+return false;}
+*/
 class MercuryNode
 {
 	public:
@@ -27,7 +35,7 @@ class MercuryNode
 		MercuryNode* NextChild(const MercuryNode* n) const; ///Finds the next child in regards to n
 		MercuryNode* PrevChild(const MercuryNode* n) const; ///Finds the previous child in regards to n
 		
-		virtual void Update(float dTime) = 0;
+		virtual void Update(float dTime) {};
 		void RecursiveUpdate(float dTime);
 		
 		///Provides callback ability when a child node is added (parent, child) arguement order
@@ -37,8 +45,9 @@ class MercuryNode
 		std::list< Callback2< MercuryNode*, MercuryNode* > > OnRemoveChild;
 	
 		GENRTTI(MercuryNode);
-	protected:
+		
 		std::list< MercuryNode* > m_children;
+	protected:
 		MercuryNode* m_parent;
 };
 
