@@ -7,7 +7,8 @@ SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp \
 	src/MercuryNode.cpp src/MercuryPoint.cpp \
 	src/MercuryThreads.cpp  src/MercuryMath.cpp \
 	src/MercuryWindow.cpp src/RenderableNode.cpp \
-	src/TransformNode.cpp"
+	src/TransformNode.cpp src/MercuryMatrix.cpp \
+	src/Viewport.cpp src/Quad.cpp"
 
 #ifdef USE_X11
 SOURCES="$SOURCES src/X11Window.cpp"

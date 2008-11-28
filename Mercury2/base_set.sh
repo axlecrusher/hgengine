@@ -10,6 +10,7 @@ if test $OSTYPE = "darwin8.0"; then
 
 OPTIONS="X11"
 OPT_X11=1
+OPT_OGL=1
 
 DEFINES="WAS_CONFIGURED USE_MSTRING"
 CC_BASE="-O2 -g"
@@ -41,13 +42,18 @@ done
 NEED_H="stdio.h stdlib.h"
 WANT_H="time.h"
 
-NEED_L="m c z pthread png";
+NEED_L="m c z pthread png pthread";
 
 if test $OPT_X11 = 1; then
 	NEED_L="$NEED_L X11"	
 	NEED_H="$NEED_H X11/Xlib.h"
 	NEED_H="$NEED_H GL/glx.h"
 	DEFINES="$DEFINES USE_X11"
+fi
+
+if test $OPT_OGL = 1; then
+	NEED_H="GL/gl.h"
+	NEED_L="$NEED_L GL"
 fi
 
 if test $OPT_sse = 1; then
