@@ -1,0 +1,186 @@
+#!/bin/sh
+echo "Mercury mini-configurator (C) 2007-2008 Charles Lohr under the MIT/x11 License"
+
+if source ./base_set.sh $*; then
+	echo "Source Base Set Ok."
+else
+	exit -1
+fi
+
+CheckForInclude( )
+{
+echo -n "Checking for <$1>... "
+echo -e "#include <$1>\n" > tmp.c
+
+if gcc $CC_BASE -E tmp.c 1> foo 2> foo; then
+#	rm ./tmp.c
+	rm ./foo
+	echo "yes"
+	return 0
+else
+#	rm ./tmp.c
+	rm ./foo
+	echo "no"
+	return -1
+fi
+}
+
+CheckForLib()
+{
+echo -n "Checking for -l$1... "
+echo -e "int main() { return 0; }" > tmp.c
+if gcc $CC_BASE $LD_BASE -o bar tmp.c -l$1 1> foo 2> foo; then
+	rm ./tmp.c
+	rm ./foo
+	rm ./bar
+	echo "yes"
+	return 0
+else
+	rm ./tmp.c
+	rm ./foo
+	echo "no"
+	return -1
+fi 
+}
+
+#display to user what options are on and off
+for i in $OPTIONS; do
+	echo "Feature: $i $(eval echo \$$(eval 'echo OPT_$i'))"
+done
+
+#Make the configuration.h
+echo "#ifndef _CONFIGURATION_H" > configuration.h
+echo "#define _CONFIGURATION_H" >> configuration.h
+echo "" >> configuration.h
+
+for i in $DEFINES; do
+	echo "#define $i" >> configuration.h
+done
+
+for i in $NEED_H; do
+	if CheckForInclude "$i"; then echo "#define _HAVE_$i" | sed "s/\./_/;s/\//_/g" >> configuration.h; else echo "Configure failed."; exit -1; fi
+done
+
+for i in $WANT_H; do
+	if CheckForInclude "$i"; then echo "#define _HAVE_$i" | sed "s/\./_/g;s/\//_/g" >> configuration.h; fi
+done
+
+for i in $NEED_L; do
+	if CheckForLib "$i"; then echo "#define _HAVE_LIB_$i" >> configuration.h; else echo "Configure Failed"; exit -1; fi
+done
+
+for i in $WANT_L; do
+	if CheckForLib "$i"; then echo "#define _HAVE_LIB_$i" >> configuration.h; fi
+done
+
+
+echo -n "Compiling the environment setting program... "
+
+echo -e "#include <stdio.h>
+	int main() 
+	{
+		int i = 0x04010203;
+		unsigned char * g = (unsigned char*)&i;
+		if( g[0] == 3 ) 
+			printf( \"#define M_LITTLE_ENDIAN\\\\n\" );  
+		else if( g[0] == 4 ) 
+			printf( \"#define M_BIG_ENDIAN\\\\n\" ); 
+		else { 
+			fprintf( stderr, \"ENDIAN COULD NOT BE FOUND\\\n\" );
+			return -1;
+		}
+
+		if( sizeof( void * ) == 4 )
+			printf( \"#define WORDSIZE 32\\\\n\" );
+		else if (sizeof( void * ) == 8 )
+			printf( \"#define WORDSIZE 64\\\\n\" );
+
+		return 0;
+	}\n" > tmp.c
+
+if gcc -o tmp.o tmp.c; then
+	echo -n "Compile OK. "
+	rm ./tmp.c
+else
+	echo "Compile FAIL."
+	exit -1
+fi
+
+if ./tmp.o >> configuration.h; then
+	echo -n "Run OK."
+	rm ./tmp.o -f
+else
+	echo "Run FAIL."
+	exit -1
+fi
+
+echo "" >> configuration.h
+echo "#endif" >> configuration.h
+
+echo ""
+echo -n "Preprocessing adv_set.c... "
+
+if cc adv_set.c -E > make_adv.sh; then
+	echo "OK"
+else
+	echo "Failed to create makefile."
+	exit -1
+fi
+
+echo -n "Sourcing make_base.sh... "
+if source make_adv.sh; then
+	echo "Ok."
+	rm -f make_adv.sh
+else
+	echo "Fail."
+	exit -1;
+fi
+
+#Make the Makefile
+
+echo "" > Makefile
+
+echo -n "SOURCES=" >> Makefile
+for i in $SOURCES; do
+	echo -n "$i " >> Makefile
+done
+echo "" >> Makefile
+echo "OBJ=$SOURCES" | sed "s/\.S/\.o/g;s/\.cpp/\.o/g;s/\.c/\.o/g" >> Makefile
+echo "">>Makefile
+
+for i in $NEED_L; do
+	LDFLAGS="$LDFLAGS -l$i"
+done
+
+LDFLAGS="$LDFLAGS $LD_BASE"
+
+echo "PROJ=$PROJ" >> Makefile
+echo "CFLAGS=$CC_BASE $CFLAGS" >> Makefile
+echo "LDFLAGS=$LDFLAGS" >> Makefile
+echo "">>Makefile
+echo -e "all : \$(PROJ) Library"
+echo -e "\$(PROJ) : \$(OBJ)" >> Makefile
+echo -e "\tg++ \$(LDFLAGS) -o \$@ \$^" >> Makefile
+echo -e "help : " >> Makefile
+echo -e "	echo \"Available: <\$(PROJ)> <clean> <library> <help>\"" >> Makefile
+echo -e "library : \$(OBJ)" >> Makefile
+echo -e "\tg++ \$(LDFLAGS) -shared -o \$(PROJ).so \$^" >> Makefile
+echo "" >> Makefile
+for i in $SOURCES; do
+	echo "Processing: $i"
+	cc $CC_BASE $CFLAGS -MM "$i" -MT $( echo "$i" | sed "s/\.S/\.o/g;s/\.cpp/\.o/g;s/\.c/\.o/g" ) >> Makefile
+#FIX THIS!!!! It should be don at make time, not here.
+	echo -e "\t\$(CC) \$(CC_BASE) \$(CFLAGS) -c -o \$@ \$<" >> Makefile
+	echo "" >> Makefile
+#	echo -e "\t@echo -ne \"  \" \$(CC) \"  \$< ... \\r\\033[30a\"" >> Makefile
+#	echo -e "\t@if \$(CC) \$(CFLAGS) -c -o \$@ \$<; then echo -e \"[\$\\\\\\\\033[32mOK\\\\\\\\033[0m]\"; else echo -e \"[\\\\\\\\033[31mFAIL\\\\\\\\033[0m]\"; fi" >> Makefile
+done
+
+echo "clean:" >> Makefile
+echo -ne "\trm -f " >> Makefile
+for i in $FOLDERS; do
+	echo -ne "$i/*.o $i/*~ $i/core.* " >>Makefile
+done
+echo "\$(PROJ) \$(PROJ).so" >> Makefile
+
+
