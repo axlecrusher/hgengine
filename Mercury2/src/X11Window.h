@@ -18,6 +18,7 @@ class X11Window : public MercuryWindow
 		Display* m_display;
 		GLXContext m_renderCtx;
 		Window m_window;
+		Atom m_wmDeleteMessage;
 };
 
 /***************************************************************************

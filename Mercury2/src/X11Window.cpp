@@ -34,13 +34,17 @@ X11Window::X11Window(const string& title, int width, int height, int bits, int d
 	attr.background_pixel = 0;
 	attr.border_pixel = 0;
 	attr.colormap = XCreateColormap( m_display, root_window, visinfo->visual, AllocNone);
-	attr.event_mask = StructureNotifyMask | ExposureMask | KeyPressMask;
+	attr.event_mask = StructureNotifyMask | SubstructureNotifyMask | ExposureMask | ButtonPressMask | ButtonReleaseMask | ButtonPressMask | PointerMotionMask | ButtonMotionMask | EnterWindowMask | LeaveWindowMask |KeyPressMask |KeyReleaseMask | SubstructureNotifyMask;
+	
 	unsigned long mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask;
 
 	Window win = XCreateWindow( m_display, root_window, 0, 0, width, height,
 						 0, visinfo->depth, InputOutput,
 	   visinfo->visual, mask, &attr );
-
+	
+	m_wmDeleteMessage = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
+	XSetWMProtocols(m_display, win, &m_wmDeleteMessage, 1);
+	
 	/* set hints and properties */
 	{
 		XSizeHints sizehints;
@@ -66,7 +70,7 @@ X11Window::X11Window(const string& title, int width, int height, int bits, int d
 	XFree(visinfo);
 
 	m_window = win;
-	m_renderCtx = ctx;
+	m_renderCtx = ctx;	
 }
 
 X11Window::~X11Window()
@@ -94,8 +98,15 @@ bool X11Window::PumpMessages()
 		XNextEvent(m_display, &event);
 		switch (event.type)
 		{
+			case ClientMessage:
+			{
+				if ( event.xclient.data.l[0] == m_wmDeleteMessage )
+					XDestroyWindow(m_display,m_window);
+				break;
+			}
 			case DestroyNotify:
 			{
+				printf("destroy notify\n");
 				XDestroyWindowEvent* e = (XDestroyWindowEvent*)&event;
 				if (e->window == m_window) return false;
 				break;
@@ -125,6 +136,9 @@ bool X11Window::PumpMessages()
 				XMotionEvent* e = (XMotionEvent*)&event;
 				break;
 			}
+
+			default:
+				break;
 		}
 	}
 	return true;
