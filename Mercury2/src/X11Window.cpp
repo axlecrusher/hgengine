@@ -106,7 +106,6 @@ bool X11Window::PumpMessages()
 			}
 			case DestroyNotify:
 			{
-				printf("destroy notify\n");
 				XDestroyWindowEvent* e = (XDestroyWindowEvent*)&event;
 				if (e->window == m_window) return false;
 				break;

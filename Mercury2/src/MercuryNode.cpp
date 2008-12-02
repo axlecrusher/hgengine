@@ -10,7 +10,6 @@ MercuryNode::MercuryNode()
 
 MercuryNode::~MercuryNode()
 {
-	printf("destroying node\n");
 	m_parent = NULL;
 	
 	list< MercuryNode* >::iterator i;
@@ -18,7 +17,6 @@ MercuryNode::~MercuryNode()
 		SAFE_DELETE(*i);
 	
 	m_children.clear();
-	printf("destroyed node\n");
 }
 
 void MercuryNode::AddChild(MercuryNode* n)
