@@ -42,6 +42,9 @@ int main()
 	}
 	while ( w->PumpMessages() );
 
+	printf("end\n");
+	SAFE_DELETE(root);
+	
 	delete w;
 	return 0;
 }

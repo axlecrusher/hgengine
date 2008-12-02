@@ -20,7 +20,7 @@ void RenderableNode::Render()
 	TransformNode* tn;
 	for (; n; n = n->Parent())
 	{
-		if (tn = TransformNode::Cast(n))
+		if ( (tn = TransformNode::Cast(n)) )
 		{
 			MercuryMatrix m = tn->GetGlobalMatrix();
 			m.Transpose();
@@ -85,8 +85,10 @@ void RenderableNode::RecursiveRender( const MercuryNode* n )
 {
 	if ( Cast(n) ) ((RenderableNode*)n)->Render();
 	
+	const list< MercuryNode* >& children = n->Children();
 	list< MercuryNode* >::const_iterator i;
-	for (i = n->m_children.begin(); i != n->m_children.end(); ++i )
+	
+	for (i = children.begin(); i != children.end(); ++i )
 		RenderableNode::RecursiveRender( *i );
 }
 

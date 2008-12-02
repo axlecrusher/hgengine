@@ -34,6 +34,7 @@ class MercuryNode
 		MercuryNode* PrevSibling() const;
 		MercuryNode* NextChild(const MercuryNode* n) const; ///Finds the next child in regards to n
 		MercuryNode* PrevChild(const MercuryNode* n) const; ///Finds the previous child in regards to n
+		const std::list< MercuryNode* >& Children() const { return m_children; }
 		
 		virtual void Update(float dTime) {};
 		void RecursiveUpdate(float dTime);
@@ -46,8 +47,8 @@ class MercuryNode
 	
 		GENRTTI(MercuryNode);
 		
-		std::list< MercuryNode* > m_children;
 	protected:
+		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
 		MercuryNode* m_parent;
 };
 

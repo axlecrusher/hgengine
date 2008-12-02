@@ -1,4 +1,5 @@
 #include <MercuryNode.h>
+#include <MercuryUtil.h>
 
 using namespace std;
 
@@ -9,8 +10,15 @@ MercuryNode::MercuryNode()
 
 MercuryNode::~MercuryNode()
 {
+	printf("destroying node\n");
 	m_parent = NULL;
+	
+	list< MercuryNode* >::iterator i;
+	for (i = m_children.begin(); i != m_children.end(); ++i )
+		SAFE_DELETE(*i);
+	
 	m_children.clear();
+	printf("destroyed node\n");
 }
 
 void MercuryNode::AddChild(MercuryNode* n)
