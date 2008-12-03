@@ -5,6 +5,8 @@
 
 using namespace std;
 
+REGISTER_NODE_TYPE(RenderableNode);
+
 RenderableNode::~RenderableNode()
 {
 	m_prerender.clear();

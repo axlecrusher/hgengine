@@ -1,5 +1,7 @@
 #include <TransformNode.h>
 
+REGISTER_NODE_TYPE(TransformNode);
+
 TransformNode::TransformNode()
 	:m_scale( MercuryPoint(1,1,1) )
 {
