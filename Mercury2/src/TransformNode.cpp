@@ -53,7 +53,7 @@ const MercuryMatrix& TransformNode::GetParentMatrix() const
 	const TransformNode* tn;
 	while (n)
 	{
-		if ( tn = TransformNode::Cast( n ) ) return tn->GetGlobalMatrix();
+		if ( (tn = TransformNode::Cast( n )) ) return tn->GetGlobalMatrix();
 		n = n->Parent();
 	}
 	
@@ -69,7 +69,7 @@ void TransformNode::RippleTaintDown()
 		
 		for (i = m_children.begin(); i != m_children.end(); ++i )
 		{
-			if ( tn = TransformNode::Cast(*i) )
+			if ( (tn = TransformNode::Cast(*i)) )
 				tn->SetTaint( true );
 		}
 	}
