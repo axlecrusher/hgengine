@@ -16,6 +16,7 @@
     <absoluteprojectpath>false</absoluteprojectpath>
     <description></description>
     <defaultencoding></defaultencoding>
+    <versioncontrol></versioncontrol>
   </general>
   <kdevautoproject>
     <general>
@@ -23,8 +24,16 @@
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
-      <mainprogram>src/mercury2</mainprogram>
-      <terminal>true</terminal>
+      <mainprogram>/home/josh/Mercury2/debug</mainprogram>
+      <terminal>false</terminal>
+      <programargs></programargs>
+      <globaldebugarguments></globaldebugarguments>
+      <globalcwd>/home/josh/Mercury2/debug</globalcwd>
+      <useglobalprogram>false</useglobalprogram>
+      <autocompile>false</autocompile>
+      <autoinstall>false</autoinstall>
+      <autokdesu>false</autokdesu>
+      <envvars/>
     </run>
     <configurations>
       <optimized>
@@ -43,8 +52,9 @@
         <cxxflags>-O0 -g3 -Wall</cxxflags>
         <envvars/>
         <topsourcedir></topsourcedir>
-        <cppflags></cppflags>
-        <ldflags>-lpthread -lX11 -lGL -lglut</ldflags>
+        <cppflags>-Isrc/ -I/usr/include/libxml2/
+</cppflags>
+        <ldflags>-lpthread -lX11 -lGL -lxml2</ldflags>
         <ccompilerbinary></ccompilerbinary>
         <cxxcompilerbinary></cxxcompilerbinary>
         <f77compilerbinary></f77compilerbinary>
@@ -57,6 +67,12 @@
         <envvar value="1" name="WANT_AUTOCONF_2_5" />
         <envvar value="1" name="WANT_AUTOMAKE_1_6" />
       </envvars>
+      <abortonerror>true</abortonerror>
+      <runmultiplejobs>true</runmultiplejobs>
+      <numberofjobs>3</numberofjobs>
+      <dontact>false</dontact>
+      <makebin></makebin>
+      <prio>0</prio>
     </make>
   </kdevautoproject>
   <kdevdoctreeview>
@@ -127,6 +143,7 @@
     <projectdoc>
       <docsystem>Doxygen Documentation Collection</docsystem>
       <docurl>mercury2.tag</docurl>
+      <usermanualurl></usermanualurl>
     </projectdoc>
   </kdevdocumentation>
   <substmap>
