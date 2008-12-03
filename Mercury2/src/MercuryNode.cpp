@@ -3,6 +3,8 @@
 
 using namespace std;
 
+REGISTER_NODE_TYPE(MercuryNode);
+
 MercuryNode::MercuryNode()
 	:m_parent(NULL)
 {
@@ -86,6 +88,47 @@ void MercuryNode::RecursiveUpdate(float dTime)
 	list< MercuryNode* >::iterator i;
 	for (i = m_children.begin(); i != m_children.end(); ++i )
 		(*i)->RecursiveUpdate(dTime);
+}
+
+void MercuryNode::LoadFromXML(const XMLNode& node)
+{
+	//Not much to do here except run through all the children nodes
+	for (XMLNode child = node.Child(); child.IsValid(); child = child.NextNode())
+	{
+		if ( child.Name() == "node" )
+		{
+			MercuryNode* node = NodeFactory::GetInstance().Generate( child.Attribute("type") );
+			if (!node) node = new MercuryNode();
+			node->LoadFromXML( child );
+			this->AddChild( node );
+		}
+	}
+}
+
+NodeFactory& NodeFactory::GetInstance()
+{
+	static NodeFactory* instance = NULL;
+	if (!instance)
+		instance = new NodeFactory;
+	return *instance;
+
+}
+
+bool NodeFactory::RegisterFactoryCallback(const std::string& type, Callback0R<MercuryNode*> functor)
+{
+	string t = ToUpper( type );
+	std::pair<std::string, Callback0R<MercuryNode*> > pp(t, functor);
+	m_factoryCallbacks.push_back( pp );
+	return true;
+}
+
+MercuryNode* NodeFactory::Generate(const std::string& type)
+{
+	string t = ToUpper( type );
+	std::list< std::pair< std::string, Callback0R<MercuryNode*> > >::iterator i;
+	for (i = m_factoryCallbacks.begin(); i != m_factoryCallbacks.end(); ++i)
+		if (i->first == t) return i->second();
+	return NULL;
 }
 
 /***************************************************************************

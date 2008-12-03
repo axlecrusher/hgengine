@@ -4,6 +4,7 @@
 #include <list>
 #include <Callback.h>
 #include <typeinfo>
+#include <XMLParser.h>
 
 /** This is the basic node of the scene graph.  It is not intended to be instanced.
 	Each node exists as a single entity in the scene graph.
@@ -44,13 +45,34 @@ class MercuryNode
 		
 		///Provides callback ability when a child node is removed (parent, child) arguement order
 		std::list< Callback2< MercuryNode*, MercuryNode* > > OnRemoveChild;
+		
+		///Loads a node from an XMLNode representing itself
+		virtual void LoadFromXML(const XMLNode& node);
 	
 		GENRTTI(MercuryNode);
-		
+	
 	protected:
 		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
 		MercuryNode* m_parent;
 };
+
+class NodeFactory
+{
+	public:
+		static NodeFactory& GetInstance();
+		bool RegisterFactoryCallback(const std::string& type, Callback0R<MercuryNode*>);
+		MercuryNode* Generate(const std::string& type);
+	
+	private:
+		std::list< std::pair< std::string, Callback0R<MercuryNode*> > > m_factoryCallbacks;
+};
+
+static InstanceCounter<NodeFactory> NFcounter("NodeFactory");
+
+#define REGISTER_NODE_TYPE(class)\
+	MercuryNode* FactoryFunct##class() { return new class(); } \
+	Callback0R<MercuryNode*> factoryclbk( FactoryFunct##class ); \
+	bool GlobalRegisterSuccess##class = NodeFactory::GetInstance().RegisterFactoryCallback("#class", factoryclbk);
 
 #endif
 
