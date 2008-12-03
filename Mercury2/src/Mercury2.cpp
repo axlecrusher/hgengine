@@ -20,7 +20,8 @@ int main()
 	
 	vp->Perspective(45,640.0f/480.0f,0.01,100);
 	root->AddChild(vp);
-	vp->AddChild(t);
+	root->AddChild(t);
+//	vp->AddChild(t);
 	t->AddChild(r);
 	r->AddAsset( q );
 	r->AddRender( q );
