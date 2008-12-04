@@ -23,9 +23,9 @@ class XMLNode
 		XMLNode PreviousNode() const;
 		XMLNode Child() const;
 		
-		std::string Name();
-		std::string Content();
-		std::string Attribute(const std::string& tag);
+		std::string Name() const;
+		std::string Content() const;
+		std::string Attribute(const std::string& tag) const;
 		
 		inline bool IsValid() const { return m_node!=NULL; }
 		

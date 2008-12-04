@@ -35,17 +35,16 @@ XMLNode XMLNode::PreviousNode() const
 XMLNode XMLNode::Child() const
 {
 	for (xmlNode* node = m_node->children; node; node=node->next)
-		if (node->type == XML_ELEMENT_NODE)
-			return XMLNode(node,m_doc);
+		if (node->type == XML_ELEMENT_NODE) return XMLNode(node,m_doc);
 	return XMLNode();
 }
 
-std::string XMLNode::Name()
+std::string XMLNode::Name() const
 {
 	return std::string((const char*)m_node->name); //XXX fix utf8
 }
 
-std::string XMLNode::Content()
+std::string XMLNode::Content() const
 {
 	string data;
 //	xmlChar* d = xmlNodeListGetString(m_doc, m_node->xmlChildrenNode, 1);
@@ -60,7 +59,7 @@ std::string XMLNode::Content()
 	return data;
 }
 
-std::string XMLNode::Attribute(const std::string& tag)
+std::string XMLNode::Attribute(const std::string& tag) const
 {
 	string data;
 	xmlChar* d = xmlGetProp(m_node, (const xmlChar*)tag.c_str());
