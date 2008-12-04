@@ -1,0 +1,8 @@
+<SceneGraph>
+		<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100"/>
+		<node type="transformnode" movz="-3">
+			<node type="renderablenode">
+				<asset type="quad"/>
+			</node>
+		</node>
+</SceneGraph>
