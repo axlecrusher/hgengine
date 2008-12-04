@@ -8,7 +8,15 @@ void Viewport::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf( m_frustum.Ptr() );
+		
+	MercuryMatrix m = FindGlobalMatrix();
+	m.Transpose();
+
+	glLoadMatrixf( (m * m_frustum).Ptr() );
+	//The following 2 are equivelent to above
+//	glLoadMatrixf( m_frustum.Ptr() );
+//	glMultMatrixf( m.Ptr() );
+		
 	glMatrixMode(GL_MODELVIEW);
 }
 
