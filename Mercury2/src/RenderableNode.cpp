@@ -3,8 +3,6 @@
 #include <GL/gl.h>
 #include <TransformNode.h>
 
-#include <Quad.h>
-
 using namespace std;
 
 REGISTER_NODE_TYPE(RenderableNode);
