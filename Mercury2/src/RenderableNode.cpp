@@ -18,18 +18,9 @@ void RenderableNode::Render()
 {
 	list< MercuryAsset* >::iterator i;
 	
-	MercuryNode* n = Parent();
-	TransformNode* tn;
-	for (; n; n = n->Parent())
-	{
-		if ( (tn = TransformNode::Cast(n)) )
-		{
-			MercuryMatrix m = tn->GetGlobalMatrix();
-			m.Transpose();
-			glLoadMatrixf( m.Ptr() );
-			break;
-		}
-	}
+	MercuryMatrix m = FindGlobalMatrix();
+	m.Transpose();
+	glLoadMatrixf( m.Ptr() );
 	
 	for (i = m_prerender.begin(); i != m_prerender.end(); ++i )
 		(*i)->PreRender(this);
@@ -39,6 +30,17 @@ void RenderableNode::Render()
 	
 	for (i = m_postrender.begin(); i != m_postrender.end(); ++i )
 		(*i)->PostRender(this);
+}
+
+const MercuryMatrix& RenderableNode::FindGlobalMatrix() const
+{
+	MercuryNode* n = NULL;
+	TransformNode* tn;
+	for (n = Parent(); n; n = n->Parent())
+		if ( (tn = TransformNode::Cast(n)) )
+			return tn->GetGlobalMatrix();
+
+	return MercuryMath::IdentityMatrix;
 }
 
 void RenderableNode::AddPreRender(MercuryAsset* asset)

@@ -4,6 +4,7 @@
 #include <MercuryNode.h>
 #include <MAutoPtr.h>
 #include <MercuryAsset.h>
+#include <MercuryMatrix.h>
 
 #define MCHECKASSETS
 
@@ -26,6 +27,8 @@ class RenderableNode : public MercuryNode
 		
 		static void RecursiveRender( const MercuryNode* n );
 		virtual void LoadFromXML(const XMLNode& node);
+		
+		const MercuryMatrix& FindGlobalMatrix() const;
 
 		GENRTTI(RenderableNode);
 	private:
