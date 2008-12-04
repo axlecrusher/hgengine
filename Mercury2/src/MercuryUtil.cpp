@@ -10,6 +10,13 @@ std::string ToUpper(const std::string& s)
 	return t;
 }
 
+float StrToFloat(const  std::string& s)
+{
+	float x;
+	sscanf(s.c_str(), "%f", &x);
+	return x;
+}
+
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
  *      *

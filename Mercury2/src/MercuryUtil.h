@@ -18,6 +18,8 @@
 
 std::string ToUpper(const std::string& s);
 
+float StrToFloat(const  std::string& s);
+
 //This counter is used with singletons to
 //ensure proper destruction order of the
 //singleton
