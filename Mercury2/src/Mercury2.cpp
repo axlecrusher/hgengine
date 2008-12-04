@@ -4,6 +4,8 @@
 #include <Viewport.h>
 #include <TransformNode.h>
 
+#include <XMLParser.h>
+
 int main()
 {
 	unsigned long m_count = 0;
@@ -11,20 +13,13 @@ int main()
 	
 	MercuryWindow* w = MercuryWindow::MakeWindow();
 	MercuryNode* root = new MercuryNode();
-	Viewport* vp = new Viewport();
-	RenderableNode* r = new RenderableNode();
-	TransformNode* t = new TransformNode();
-	MAutoPtr< MercuryAsset > q( new Quad() );
 	
-	t->SetPosition( MercuryPoint(0,0,-3) );
+	XMLDocument* doc = XMLDocument::Load("scenegraph.xml");
 	
-	vp->Perspective(45,640.0f/480.0f,0.01,100);
-	root->AddChild(vp);
-	root->AddChild(t);
-//	vp->AddChild(t);
-	t->AddChild(r);
-	r->AddAsset( q );
-	r->AddRender( q );
+	XMLNode r = doc->GetRootNode();
+	root->LoadFromXML( r );
+	
+	SAFE_DELETE(doc);
 	
 	m_time = time(NULL);
 	do
@@ -44,8 +39,8 @@ int main()
 	while ( w->PumpMessages() );
 
 	SAFE_DELETE(root);
+	SAFE_DELETE(w);
 	
-	delete w;
 	return 0;
 }
 
