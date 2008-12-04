@@ -2,6 +2,8 @@
 #include <GL/gl.h>
 //#include <GL/glut.h>
 
+REGISTER_NODE_TYPE(Viewport);
+
 void Viewport::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -13,7 +15,7 @@ void Viewport::Render()
 void Viewport::Perspective( float fov, float aspect, float znear, float zfar )
 {
 	float xmin, xmax, ymin, ymax;
-
+	
 	ymax = znear * TAN(fov * Q_PI / 360.0);
 	ymin = -ymax;
 	xmin = ymin * aspect;
@@ -46,6 +48,16 @@ void Viewport::ComputeFrustum(float left, float right, float bottom, float top, 
 	m_frustum[3][2] = -1;
 	
 	m_frustum.Transpose();  //XXX fix it to remove this
+}
+
+void Viewport::LoadFromXML(const XMLNode& node)
+{
+	Perspective( StrToFloat(node.Attribute("fov")),
+				 StrToFloat(node.Attribute("aspect")),
+				 StrToFloat(node.Attribute("near")),
+				 StrToFloat(node.Attribute("far")));
+	
+	RenderableNode::LoadFromXML(node);
 }
 
 /***************************************************************************

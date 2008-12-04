@@ -6,6 +6,7 @@ class Viewport : public RenderableNode
 		virtual void Render();
 		
 		void Perspective( float fov, float aspect, float znear, float zfar );
+		virtual void LoadFromXML(const XMLNode& node);
 		
 		GENRTTI(Viewport);
 	private:
