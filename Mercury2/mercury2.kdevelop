@@ -24,12 +24,12 @@
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
-      <mainprogram>/home/josh/Mercury2/debug</mainprogram>
+      <mainprogram>/home/josh/Mercury2/debug/src/mercury2</mainprogram>
       <terminal>false</terminal>
       <programargs></programargs>
       <globaldebugarguments></globaldebugarguments>
-      <globalcwd>/home/josh/Mercury2/debug</globalcwd>
-      <useglobalprogram>false</useglobalprogram>
+      <globalcwd>/home/josh/Mercury2</globalcwd>
+      <useglobalprogram>true</useglobalprogram>
       <autocompile>false</autocompile>
       <autoinstall>false</autoinstall>
       <autokdesu>false</autokdesu>
