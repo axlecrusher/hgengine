@@ -72,7 +72,7 @@ static InstanceCounter<NodeFactory> NFcounter("NodeFactory");
 #define REGISTER_NODE_TYPE(class)\
 	MercuryNode* FactoryFunct##class() { return new class(); } \
 	Callback0R<MercuryNode*> factoryclbk##class( FactoryFunct##class ); \
-	bool GlobalRegisterSuccess##class = NodeFactory::GetInstance().RegisterFactoryCallback("#class", factoryclbk##class);
+	bool GlobalRegisterSuccess##class = NodeFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class);
 
 #endif
 
