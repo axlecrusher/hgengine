@@ -77,6 +77,45 @@ void TransformNode::RippleTaintDown()
 	}
 }
 
+void TransformNode::LoadFromXML(const XMLNode& node)
+{
+	MercuryPoint rot(m_rotation), pos(m_position), scale(m_scale);
+	
+	//only change the values that exist in the XML
+	if ( !node.Attribute("rotx").empty() )
+		rot.SetX( StrToFloat( node.Attribute("rotx") ) );
+
+	if ( !node.Attribute("roty").empty() )
+		rot.SetY( StrToFloat( node.Attribute("roty") ) );
+
+	if ( !node.Attribute("rotz").empty() )
+		rot.SetZ( StrToFloat( node.Attribute("rotz") ) );
+
+	if ( !node.Attribute("scalex").empty() )
+		scale.SetX( StrToFloat( node.Attribute("scalex") ) );
+
+	if ( !node.Attribute("scaley").empty() )
+		scale.SetY( StrToFloat( node.Attribute("scaley") ) );
+
+	if ( !node.Attribute("scalez").empty() )
+		scale.SetZ( StrToFloat( node.Attribute("scalez") ) );
+	
+	if ( !node.Attribute("movx").empty() )
+		pos.SetX( StrToFloat( node.Attribute("movx") ) );
+
+	if ( !node.Attribute("movy").empty() )
+		pos.SetY( StrToFloat( node.Attribute("movy") ) );
+
+	if ( !node.Attribute("movz").empty() )
+		pos.SetZ( StrToFloat( node.Attribute("movz") ) );
+	
+	SetRotation(rot);
+	SetPosition(pos);
+	SetScale(scale);
+	
+	MercuryNode::LoadFromXML( node );
+}
+
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
  *      *

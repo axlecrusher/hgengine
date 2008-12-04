@@ -26,6 +26,8 @@ class TransformNode : public MercuryNode
 
 		void ComputeMatrix();
 		
+		virtual void LoadFromXML(const XMLNode& node);
+
 		GENRTTI(TransformNode);
 		
 	private:
