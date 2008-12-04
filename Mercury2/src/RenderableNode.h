@@ -25,7 +25,8 @@ class RenderableNode : public MercuryNode
 		void AddPostRender(MercuryAsset* asset);
 		
 		static void RecursiveRender( const MercuryNode* n );
-		
+		virtual void LoadFromXML(const XMLNode& node);
+
 		GENRTTI(RenderableNode);
 	private:
 		bool IsInAssetList(MercuryAsset* asset) const;

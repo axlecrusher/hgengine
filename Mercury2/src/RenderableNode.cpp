@@ -3,6 +3,8 @@
 #include <GL/gl.h>
 #include <TransformNode.h>
 
+#include <Quad.h>
+
 using namespace std;
 
 REGISTER_NODE_TYPE(RenderableNode);
@@ -17,7 +19,7 @@ RenderableNode::~RenderableNode()
 void RenderableNode::Render()
 {
 	list< MercuryAsset* >::iterator i;
-
+	
 	MercuryNode* n = Parent();
 	TransformNode* tn;
 	for (; n; n = n->Parent())
@@ -92,6 +94,25 @@ void RenderableNode::RecursiveRender( const MercuryNode* n )
 	
 	for (i = children.begin(); i != children.end(); ++i )
 		RenderableNode::RecursiveRender( *i );
+}
+
+void RenderableNode::LoadFromXML(const XMLNode& node)
+{
+	for (XMLNode child = node.Child(); child.IsValid(); child = child.NextNode())
+	{
+		if ( child.Name() == "asset" )
+		{
+			MAutoPtr< MercuryAsset > asset( AssetFactory::GetInstance().Generate(child.Attribute("type") ) );
+			if ( asset.IsValid() )
+			{
+				asset->LoadFromXML( child );
+				this->AddAsset( asset );
+				this->AddRender( asset );
+			}
+		}
+	}
+	
+	MercuryNode::LoadFromXML( node );
 }
 
 /***************************************************************************
