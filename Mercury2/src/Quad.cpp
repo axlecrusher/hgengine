@@ -1,6 +1,8 @@
 #include <Quad.h>
 #include <GL/gl.h>
 
+REGISTER_ASSET_TYPE(Quad);
+
 void Quad::Render(MercuryNode* node)
 {
 	glBegin(GL_QUADS);

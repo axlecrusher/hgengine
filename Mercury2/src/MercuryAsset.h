@@ -12,7 +12,29 @@ class MercuryAsset : public RefBase
 		virtual void PreRender(MercuryNode* node) {};
 		virtual void Render(MercuryNode* node) = 0;
 		virtual void PostRender(MercuryNode* node) {};
+		
+		///Loads a node from an XMLNode representing itself
+		virtual void LoadFromXML(const XMLNode& node) {};
 };
+
+class AssetFactory
+{
+	public:
+		static AssetFactory& GetInstance();
+		bool RegisterFactoryCallback(const std::string& type, Callback0R< MAutoPtr<MercuryAsset> >);
+		MAutoPtr<MercuryAsset> Generate(const std::string& type);
+	
+	private:
+		std::list< std::pair< std::string, Callback0R< MAutoPtr<MercuryAsset> > > > m_factoryCallbacks;
+};
+
+static InstanceCounter<AssetFactory> AFcounter("AssetFactory");
+
+#define REGISTER_ASSET_TYPE(class)\
+	MAutoPtr<MercuryAsset> FactoryFunct##class() { return MAutoPtr<MercuryAsset>(new class()); } \
+	Callback0R< MAutoPtr<MercuryAsset> > factoryclbk##class( FactoryFunct##class ); \
+	bool GlobalRegisterSuccess##class = AssetFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class);
+
 
 #endif
 

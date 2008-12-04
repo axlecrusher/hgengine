@@ -1,6 +1,30 @@
 #include <MercuryAsset.h>
 
+AssetFactory& AssetFactory::GetInstance()
+{
+	static AssetFactory* instance = NULL;
+	if (!instance)
+		instance = new AssetFactory;
+	return *instance;
 
+}
+
+bool AssetFactory::RegisterFactoryCallback(const std::string& type, Callback0R< MAutoPtr<MercuryAsset> > functor)
+{
+	string t = ToUpper( type );
+	std::pair<std::string, Callback0R< MAutoPtr<MercuryAsset> > > pp(t, functor);
+	m_factoryCallbacks.push_back( pp );
+	return true;
+}
+
+MAutoPtr<MercuryAsset> AssetFactory::Generate(const std::string& type)
+{
+	string t = ToUpper( type );
+	std::list< std::pair< std::string, Callback0R< MAutoPtr<MercuryAsset> > > >::iterator i;
+	for (i = m_factoryCallbacks.begin(); i != m_factoryCallbacks.end(); ++i)
+		if (i->first == t) return i->second();
+	return NULL;
+}
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
