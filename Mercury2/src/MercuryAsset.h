@@ -9,6 +9,8 @@ class MercuryAsset : public RefBase
 	public:
 		virtual ~MercuryAsset() {};
 		
+		virtual void Init(MercuryNode* node);
+		
 		virtual void PreRender(MercuryNode* node) {};
 		virtual void Render(MercuryNode* node) = 0;
 		virtual void PostRender(MercuryNode* node) {};

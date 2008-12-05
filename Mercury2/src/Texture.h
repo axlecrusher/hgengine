@@ -17,10 +17,11 @@ class Texture : public MercuryAsset
 	public:
 		Texture();
 		virtual ~Texture();
+		
+		virtual void Init(MercuryNode* node);
 			
-		virtual void PreRender(MercuryNode* node) {};
 		virtual void Render(MercuryNode* node);
-		virtual void PostRender(MercuryNode* node) {};
+		virtual void PostRender(MercuryNode* node);
 			
 		virtual void LoadFromXML(const XMLNode& node);
 		

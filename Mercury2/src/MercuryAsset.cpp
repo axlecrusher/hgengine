@@ -1,4 +1,12 @@
 #include <MercuryAsset.h>
+#include <RenderableNode.h>
+
+void MercuryAsset::Init(MercuryNode* node)
+{
+	RenderableNode* rn;
+	if ( (rn=RenderableNode::Cast( node )) )
+		rn->AddRender(this);
+}
 
 AssetFactory& AssetFactory::GetInstance()
 {
@@ -6,7 +14,6 @@ AssetFactory& AssetFactory::GetInstance()
 	if (!instance)
 		instance = new AssetFactory;
 	return *instance;
-
 }
 
 bool AssetFactory::RegisterFactoryCallback(const std::string& type, Callback0R< MAutoPtr<MercuryAsset> > functor)

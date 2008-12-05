@@ -1,5 +1,6 @@
 #include <Texture.h>
 #include <GL/gl.h>
+#include <RenderableNode.h>
 
 using namespace std;
 
@@ -178,6 +179,15 @@ Texture::~Texture()
 	SAFE_DELETE(m_raw);
 }
 
+void Texture::Init(MercuryNode* node)
+{
+	MercuryAsset::Init( node );
+	
+	RenderableNode* rn;
+	if ( (rn=RenderableNode::Cast( node )) )
+		rn->AddPostRender( this );
+}
+
 void Texture::LoadFromRaw(const RawImageData* raw)
 {
 	if ( !m_textureID ) glGenTextures(1, &m_textureID);
@@ -202,12 +212,18 @@ void Texture::LoadFromRaw(const RawImageData* raw)
 	
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	
 };
 
 void Texture::Render(MercuryNode* node)
 {
 	glEnable( GL_TEXTURE_2D );
 	glBindTexture(GL_TEXTURE_2D, m_textureID);
+}
+
+void Texture::PostRender(MercuryNode* node)
+{
+	glDisable( GL_TEXTURE_2D );
 }
 
 void Texture::LoadFromXML(const XMLNode& node)

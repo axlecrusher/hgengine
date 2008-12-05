@@ -112,7 +112,7 @@ void RenderableNode::LoadFromXML(const XMLNode& node)
 			{
 				asset->LoadFromXML( child );
 				this->AddAsset( asset );
-				this->AddRender( asset );
+				asset->Init( this );
 			}
 		}
 	}
