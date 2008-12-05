@@ -11,6 +11,7 @@
 class RenderableNode : public MercuryNode
 {
 	public:
+		RenderableNode();
 		~RenderableNode();
 		
 		virtual void Render();
@@ -29,8 +30,12 @@ class RenderableNode : public MercuryNode
 		virtual void LoadFromXML(const XMLNode& node);
 		
 		const MercuryMatrix& FindGlobalMatrix() const;
+		
+		virtual bool IsCulled() { return false; }
 
 		GENRTTI(RenderableNode);
+	protected:
+		bool m_hidden;
 	private:
 		bool IsInAssetList(MercuryAsset* asset) const;
 		

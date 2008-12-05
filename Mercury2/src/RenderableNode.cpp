@@ -7,6 +7,11 @@ using namespace std;
 
 REGISTER_NODE_TYPE(RenderableNode);
 
+RenderableNode::RenderableNode()
+	:m_hidden(false)
+{
+}
+
 RenderableNode::~RenderableNode()
 {
 	m_prerender.clear();
@@ -17,6 +22,8 @@ RenderableNode::~RenderableNode()
 void RenderableNode::Render()
 {
 	list< MercuryAsset* >::iterator i;
+	
+	if (m_hidden || IsCulled()) return;
 	
 	MercuryMatrix m = FindGlobalMatrix();
 	m.Transpose();
@@ -71,12 +78,7 @@ void RenderableNode::AddPostRender(MercuryAsset* asset)
 	
 	m_postrender.push_back(asset);
 }
-/*
-bool RenderableNode::IsMyType( MercuryNode* n )
-{
-	return ( typeid(RenderableNode) == typeid(*n) );
-}
-*/
+
 bool RenderableNode::IsInAssetList( MercuryAsset* asset ) const
 {
 	std::list< MAutoPtr< MercuryAsset > >::const_iterator i;
@@ -97,7 +99,10 @@ void RenderableNode::RecursiveRender( const MercuryNode* n )
 }
 
 void RenderableNode::LoadFromXML(const XMLNode& node)
-{
+{	
+	if ( !node.Attribute("hidden").empty() )
+		m_hidden = node.Attribute("hidden")=="true"?true:false;
+	
 	for (XMLNode child = node.Child(); child.IsValid(); child = child.NextNode())
 	{
 		if ( child.Name() == "asset" )
