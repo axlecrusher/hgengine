@@ -1,6 +1,5 @@
 #include <Viewport.h>
 #include <GL/gl.h>
-//#include <GL/glut.h>
 
 REGISTER_NODE_TYPE(Viewport);
 

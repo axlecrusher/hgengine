@@ -1,42 +1,34 @@
-#ifndef MERCURYASSET_H
-#define MERCURYASSET_H
+#include <MercuryAsset.h>
 
-#include <MAutoPtr.h>
-#include <MercuryNode.h>
-
-class MercuryAsset : public RefBase
+class RawImageData
 {
 	public:
-		virtual ~MercuryAsset() {};
+		RawImageData();
+		~RawImageData();
 		
+		unsigned int m_width;
+		unsigned int m_height;
+		unsigned short m_bits;
+		unsigned char* m_data;
+};
+
+class Texture : public MercuryAsset
+{
+	public:
+		Texture();
+		virtual ~Texture();
+			
 		virtual void PreRender(MercuryNode* node) {};
-		virtual void Render(MercuryNode* node) = 0;
+		virtual void Render(MercuryNode* node);
 		virtual void PostRender(MercuryNode* node) {};
+			
+		virtual void LoadFromXML(const XMLNode& node);
 		
-		///Loads an asset from an XMLAsset representing itself
-		virtual void LoadFromXML(const XMLNode& node) {};
-};
-
-class AssetFactory
-{
-	public:
-		static AssetFactory& GetInstance();
-		bool RegisterFactoryCallback(const std::string& type, Callback0R< MAutoPtr<MercuryAsset> >);
-		MAutoPtr<MercuryAsset> Generate(const std::string& type);
-	
+		void LoadFromRaw(const RawImageData* raw);
 	private:
-		std::list< std::pair< std::string, Callback0R< MAutoPtr<MercuryAsset> > > > m_factoryCallbacks;
+		const RawImageData* m_raw;
+		unsigned int m_textureID;
 };
-
-static InstanceCounter<AssetFactory> AFcounter("AssetFactory");
-
-#define REGISTER_ASSET_TYPE(class)\
-	MAutoPtr<MercuryAsset> FactoryFunct##class() { return MAutoPtr<MercuryAsset>(new class()); } \
-	Callback0R< MAutoPtr<MercuryAsset> > factoryclbk##class( FactoryFunct##class ); \
-	bool GlobalRegisterSuccess##class = AssetFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class);
-
-
-#endif
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *

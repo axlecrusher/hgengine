@@ -10,6 +10,8 @@
 #define SAFE_DELETE( x ) { if (x) { delete x; } x = NULL; }
 #define SAFE_DELETE_ARRAY( x ) { if (x) { delete[] x; } x = NULL; }
 
+#define TO_ENDIAN( x )
+
 #if defined(__GNUC__)
 #define M_ALIGN(n) __attribute__((aligned(n)))
 #else

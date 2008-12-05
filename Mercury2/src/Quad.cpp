@@ -6,10 +6,18 @@ REGISTER_ASSET_TYPE(Quad);
 void Quad::Render(MercuryNode* node)
 {
 	glBegin(GL_QUADS);
+	glTexCoord2f(0,0);
 	glVertex3f(-0.5f, -0.5f,  0.0f);
+	
+	glTexCoord2f(1,0);
 	glVertex3f( 0.5f, -0.5f,  0.0f);
+	
+	glTexCoord2f(1,1);
 	glVertex3f( 0.5f,  0.5f,  0.0f);
+	
+	glTexCoord2f(0,1);
 	glVertex3f(-0.5f,  0.5f,  0.0f);
+
 	glEnd();
 }
 
