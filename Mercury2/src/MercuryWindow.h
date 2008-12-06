@@ -14,14 +14,25 @@ public:
 	MercuryWindow(const string& title, int width, int height, int bits, int depthBits, bool fullscreen);
 	virtual ~MercuryWindow();
 
-	inline static MercuryWindow* MakeWindow() { return genWindowClbk(); }
+	inline static MercuryWindow* MakeWindow() {
+		MercuryWindow::m_windowInstance = genWindowClbk();
+		return GetCurrentWindow();
+	}
 
 	virtual bool SwapBuffers() = 0;
 	virtual bool PumpMessages() = 0;
+	
+	inline static MercuryWindow* GetCurrentWindow()
+	{
+		return MercuryWindow::m_windowInstance;
+	}
+	
+	virtual void* GetProcAddress(const string& x) = 0;
 
 protected:
 	static Callback0R< MercuryWindow* > genWindowClbk;
-
+	static MercuryWindow* m_windowInstance;
+	
 	string m_title;
 	int m_width, m_height, m_bits, m_depthBits;
 	bool m_fullscreen;

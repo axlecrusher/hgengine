@@ -14,6 +14,8 @@ class X11Window : public MercuryWindow
 		virtual bool SwapBuffers();
 		virtual bool PumpMessages();
 
+		virtual void* GetProcAddress(const string& x);
+
 	private:
 		Display* m_display;
 		GLXContext m_renderCtx;
