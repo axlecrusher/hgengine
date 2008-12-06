@@ -26,9 +26,19 @@ class Texture : public MercuryAsset
 		virtual void LoadFromXML(const XMLNode& node);
 		
 		void LoadFromRaw(const RawImageData* raw);
+		
+		inline static unsigned short NumberActiveTextures() { return m_activeTextures; }
+		
 	private:
+		void BindTexture();
+		void UnbindTexture();
+		
 		const RawImageData* m_raw;
 		unsigned int m_textureID;
+		unsigned int m_textureResource;
+		
+		static bool m_initTextureSuccess;
+		static unsigned short m_activeTextures;
 };
 
 /***************************************************************************

@@ -1,6 +1,10 @@
 #include <Texture.h>
-#include <GL/gl.h>
 #include <RenderableNode.h>
+
+#define GL_GLEXT_PROTOTYPES
+
+#include <GL/gl.h>
+#include <GL/glext.h>
 
 using namespace std;
 
@@ -168,7 +172,11 @@ RawImageData::~RawImageData()
 Texture::Texture()
 	:m_raw(NULL),m_textureID(0)
 {
-	glEnable( GL_TEXTURE_2D );
+	if (!m_initTextureSuccess)
+	{
+		m_initTextureSuccess = true;
+		m_activeTextures = 0;
+	}
 }
 
 Texture::~Texture()
@@ -208,7 +216,7 @@ void Texture::LoadFromRaw(const RawImageData* raw)
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
-	glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+//	glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
 	
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -217,13 +225,12 @@ void Texture::LoadFromRaw(const RawImageData* raw)
 
 void Texture::Render(MercuryNode* node)
 {
-	glEnable( GL_TEXTURE_2D );
-	glBindTexture(GL_TEXTURE_2D, m_textureID);
+	BindTexture();
 }
 
 void Texture::PostRender(MercuryNode* node)
 {
-	glDisable( GL_TEXTURE_2D );
+	UnbindTexture();
 }
 
 void Texture::LoadFromXML(const XMLNode& node)
@@ -234,6 +241,26 @@ void Texture::LoadFromXML(const XMLNode& node)
 		if (d) LoadFromRaw( d );
 	}
 }
+
+void Texture::BindTexture()
+{
+		m_textureResource = GL_TEXTURE0+m_activeTextures;
+		glActiveTexture( m_textureResource );
+		glEnable( GL_TEXTURE_2D );
+		glBindTexture(GL_TEXTURE_2D, m_textureID);
+		glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+		++m_activeTextures;
+}
+
+void Texture::UnbindTexture()
+{
+	glActiveTexture( m_textureResource );
+	glDisable( GL_TEXTURE_2D );
+	--m_activeTextures;
+}
+
+bool Texture::m_initTextureSuccess;
+unsigned short Texture::m_activeTextures;
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
