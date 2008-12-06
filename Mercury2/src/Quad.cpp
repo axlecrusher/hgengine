@@ -1,21 +1,36 @@
 #include <Quad.h>
+
+#define GL_GLEXT_PROTOTYPES
+
 #include <GL/gl.h>
+#include <GL/glext.h>
+
+#include <Texture.h>
 
 REGISTER_ASSET_TYPE(Quad);
 
 void Quad::Render(MercuryNode* node)
 {
+	unsigned short numTextures = Texture::NumberActiveTextures();
+	unsigned int i;
+	
 	glBegin(GL_QUADS);
-	glTexCoord2f(0,0);
+	
+	for (i=0; i < numTextures; ++i)
+		glMultiTexCoord2f(GL_TEXTURE0+i, 0, 0);
 	glVertex3f(-0.5f, -0.5f,  0.0f);
 	
-	glTexCoord2f(1,0);
+	for (i=0; i < numTextures; ++i)
+		glMultiTexCoord2f(GL_TEXTURE0+i, 1, 0);
 	glVertex3f( 0.5f, -0.5f,  0.0f);
 	
-	glTexCoord2f(1,1);
+	for (i=0; i < numTextures; ++i)
+		glMultiTexCoord2f(GL_TEXTURE0+i, 1, 1);
 	glVertex3f( 0.5f,  0.5f,  0.0f);
 	
-	glTexCoord2f(0,1);
+//	glTexCoord2f(0,1);
+	for (i=0; i < numTextures; ++i)
+		glMultiTexCoord2f(GL_TEXTURE0+i, 0, 1);
 	glVertex3f(-0.5f,  0.5f,  0.0f);
 
 	glEnd();
