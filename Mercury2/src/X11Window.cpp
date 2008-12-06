@@ -143,6 +143,11 @@ bool X11Window::PumpMessages()
 	return true;
 }
 
+void* X11Window::GetProcAddress(const string& x)
+{
+	
+}
+
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
  *      *

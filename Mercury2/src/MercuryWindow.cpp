@@ -10,6 +10,8 @@ MercuryWindow::~MercuryWindow()
 {
 }
 
+MercuryWindow* MercuryWindow::m_windowInstance;
+
 /* 
  * Copyright (c) 2008, Joshua Allen
  * All rights reserved.
