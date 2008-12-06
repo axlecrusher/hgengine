@@ -8,9 +8,10 @@ if test $OSTYPE = "darwin8.0"; then
 	ISMAC=1; fi
 
 
-OPTIONS="X11"
+OPTIONS="X11 libxml OGL"
 OPT_X11=1
 OPT_OGL=1
+OPT_libxml=1
 
 DEFINES="WAS_CONFIGURED USE_MSTRING"
 CC_BASE="-O2 -g"
@@ -43,6 +44,14 @@ NEED_H="stdio.h stdlib.h"
 WANT_H="time.h"
 
 NEED_L="m c z pthread png pthread";
+
+if test $OPT_libxml = 1; then
+	CC_BASE="$CC_BASE -I/usr/include/libxml2"
+	NEED_H="$NEED_H libxml/parser.h"
+	NEED_L="$NEED_L xml2"
+	DEFINES="$DEFINES USE_LIBXML"
+fi
+
 
 if test $OPT_X11 = 1; then
 	NEED_L="$NEED_L X11"	

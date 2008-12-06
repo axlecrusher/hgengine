@@ -1,5 +1,5 @@
-#!/bin/sh
-echo "Mercury mini-configurator (C) 2007-2008 Charles Lohr under the MIT/x11 License"
+#!/bin/bash
+echo "Mercury mini-configurator (C) 2007 Charles Lohr under the MIT/x11 License"
 
 if source ./base_set.sh $*; then
 	echo "Source Base Set Ok."
@@ -11,7 +11,7 @@ CheckForInclude( )
 {
 echo -n "Checking for <$1>... "
 echo -e "#include <$1>\n" > tmp.c
-
+#echo gcc $CC_BASE -E tmp.c
 if gcc $CC_BASE -E tmp.c 1> foo 2> foo; then
 #	rm ./tmp.c
 	rm ./foo
@@ -29,6 +29,7 @@ CheckForLib()
 {
 echo -n "Checking for -l$1... "
 echo -e "int main() { return 0; }" > tmp.c
+#echo gcc $CC_BASE $LD_BASE -o bar tmp.c -l$1
 if gcc $CC_BASE $LD_BASE -o bar tmp.c -l$1 1> foo 2> foo; then
 	rm ./tmp.c
 	rm ./foo
@@ -56,6 +57,35 @@ echo "" >> configuration.h
 for i in $DEFINES; do
 	echo "#define $i" >> configuration.h
 done
+
+echo "Compile line used: cc $CC_BASE"
+
+echo -n "Checking to make sure standard cflags and compile are acceptable... "
+echo -e "\n" > tmp.c
+if cc $CC_BASE -E tmp.c 1> foo 2> foo; then
+        rm ./foo
+        echo "yes"
+else
+        rm ./foo
+        echo "no"
+	exit -1
+fi
+
+echo "Link line used: g++ $CC_BASE $LD_BASE"
+echo -n "Checking to make sure ldflags and linker are acceptable... "
+echo -e "int main() { return 0; }" > tmp.c
+if gcc $CC_BASE $LD_BASE -o bar tmp.c  1> foo 2> foo; then
+        rm ./tmp.c
+        rm ./foo
+        rm ./bar
+        echo "yes"
+else
+        rm ./tmp.c
+        rm ./foo
+        echo "no"
+	exit -1;
+fi
+
 
 for i in $NEED_H; do
 	if CheckForInclude "$i"; then echo "#define _HAVE_$i" | sed "s/\./_/;s/\//_/g" >> configuration.h; else echo "Configure failed."; exit -1; fi
@@ -154,17 +184,25 @@ done
 
 LDFLAGS="$LDFLAGS $LD_BASE"
 
+echo "Final compile line: cc \$(CC_BASE) \$(CFLAGS) -c -o \$@ \$<"
+echo "Final link line: g++ -o \$@ \$^ \$(LDFLAGS)"
+
 echo "PROJ=$PROJ" >> Makefile
 echo "CFLAGS=$CC_BASE $CFLAGS" >> Makefile
 echo "LDFLAGS=$LDFLAGS" >> Makefile
 echo "">>Makefile
-echo -e "all : \$(PROJ) Library"
+echo -e "all : \$(PROJ) library" >> Makefile
 echo -e "\$(PROJ) : \$(OBJ)" >> Makefile
-echo -e "\tg++ \$(LDFLAGS) -o \$@ \$^" >> Makefile
+echo -e "\tg++ -o \$@ \$^ \$(LDFLAGS)" >> Makefile
 echo -e "help : " >> Makefile
 echo -e "	echo \"Available: <\$(PROJ)> <clean> <library> <help>\"" >> Makefile
-echo -e "library : \$(OBJ)" >> Makefile
-echo -e "\tg++ \$(LDFLAGS) -shared -o \$(PROJ).so \$^" >> Makefile
+if test `uname -s` == "Darwin" ; then
+	echo -e "library : \$(OBJ)" >> Makefile
+	echo -e "\tg++ -dynamiclib -o \$(PROJ).dylib \$^ \$(LDFLAGS)" >> Makefile
+else
+	echo -e "library : \$(OBJ)" >> Makefile
+	echo -e "\tg++ -shared -o \$(PROJ).so \$^ \$(LDFLAGS)" >> Makefile
+fi
 echo "" >> Makefile
 for i in $SOURCES; do
 	echo "Processing: $i"

@@ -8,18 +8,23 @@ SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp \
 	src/MercuryThreads.cpp  src/MercuryMath.cpp \
 	src/MercuryWindow.cpp src/RenderableNode.cpp \
 	src/TransformNode.cpp src/MercuryMatrix.cpp \
-	src/Viewport.cpp src/Quad.cpp"
+	src/Viewport.cpp src/Quad.cpp src/MercuryUtil.cpp \
+	src/Texture.cpp"
+
+#ifdef USE_LIBXML
+SOURCES="$SOURCES src/XMLParser.cpp"
+#endif
 
 #ifdef USE_X11
 SOURCES="$SOURCES src/X11Window.cpp"
 #endif
 
 PROJ="mercury"
-CFLAGS="-DHAVE_CONFIG -fno-exceptions -fPIC -Isrc"
-LDFLAGS="-rdynamic -g -fPIC"
+CFLAGS="$CFLAGS -DHAVE_CONFIG -fno-exceptions -fPIC -Isrc"
+LDFLAGS="$LDFLAGS -rdynamic -g -fPIC"
 
 /*
- * (c) 2007 Charles Lohr
+ * (c) 2007-2008 Charles Lohr
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
