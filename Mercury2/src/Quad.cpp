@@ -17,20 +17,20 @@ void Quad::Render(MercuryNode* node)
 	glBegin(GL_QUADS);
 	
 	for (i=0; i < numTextures; ++i)
-		glMultiTexCoord2f(GL_TEXTURE0+i, 0, 0);
+		glMultiTexCoord2f(GL_TEXTURE0+i, 0, 1);
 	glVertex3f(-0.5f, -0.5f,  0.0f);
 	
 	for (i=0; i < numTextures; ++i)
-		glMultiTexCoord2f(GL_TEXTURE0+i, 1, 0);
+		glMultiTexCoord2f(GL_TEXTURE0+i, 1, 1);
 	glVertex3f( 0.5f, -0.5f,  0.0f);
 	
 	for (i=0; i < numTextures; ++i)
-		glMultiTexCoord2f(GL_TEXTURE0+i, 1, 1);
+		glMultiTexCoord2f(GL_TEXTURE0+i, 1, 0);
 	glVertex3f( 0.5f,  0.5f,  0.0f);
 	
 //	glTexCoord2f(0,1);
 	for (i=0; i < numTextures; ++i)
-		glMultiTexCoord2f(GL_TEXTURE0+i, 0, 1);
+		glMultiTexCoord2f(GL_TEXTURE0+i, 0, 0);
 	glVertex3f(-0.5f,  0.5f,  0.0f);
 
 	glEnd();
