@@ -137,6 +137,7 @@ RawImageData* LoadBMP( FILE* file )
 //	for (unsigned int x = 0; !file->Eof(); x += 3)
 	for (unsigned int x = 0; !feof(file); x += 3)
 	{
+		//XXX FIX THIS, BMP ARE STORED UPSIDE DOWN
 		memset(b, 0, sizeof(unsigned char) * 3);
 //		file->Read((char*)&b, sizeof(unsigned char) * 3);
 		fread(&b, sizeof(unsigned char) * 3, 1, file);
@@ -145,14 +146,16 @@ RawImageData* LoadBMP( FILE* file )
 		image->m_data[x+1] = b[1];
 		image->m_data[x+2] = b[0];
 	}
-//	image->attrs.m_ColorByteType = RGB;
+	image->m_ColorByteType = RGB;
 	SAFE_DELETE_ARRAY(tmp);
 	printf( "BMP Load End\n" );
 //	RID = image;
 	return image;
 }
 
+//I think the fingerprint is actually just BM
 REGISTER_IMAGE_TYPE(BM6, LoadBMP);
+//REGISTER_IMAGE_TYPE(BM8, LoadBMP);
 
 /****************************************************************************
  *   Copyright (C) 2008 by Joshua Allen  									*

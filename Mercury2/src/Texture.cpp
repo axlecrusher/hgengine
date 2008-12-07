@@ -43,15 +43,25 @@ void Texture::LoadFromRaw(const RawImageData* raw)
 	if ( !m_textureID ) glGenTextures(1, &m_textureID);
 	
 	m_raw = raw;
+	int ByteType;
+	
+	switch (m_raw->m_ColorByteType)
+	{
+		case RGB:
+			ByteType = GL_RGB;
+			break;
+		case RGBA:
+			ByteType = GL_RGBA;
+	}
 
 	glBindTexture(GL_TEXTURE_2D, m_textureID);
 	glTexImage2D(GL_TEXTURE_2D,
 				0,
-				3,
+				ByteType,
 				m_raw->m_width,
 				m_raw->m_height,
 				0,
-				GL_RGB,
+				ByteType,
 				GL_UNSIGNED_BYTE,
 				m_raw->m_data);
 	

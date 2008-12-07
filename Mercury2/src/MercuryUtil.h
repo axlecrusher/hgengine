@@ -9,6 +9,7 @@
 
 #define SAFE_DELETE( x ) { if (x) { delete x; } x = NULL; }
 #define SAFE_DELETE_ARRAY( x ) { if (x) { delete[] x; } x = NULL; }
+#define SAFE_FREE(p)       { if(p) { free(p);     (p)=0; } }
 
 #define TO_ENDIAN( x )
 

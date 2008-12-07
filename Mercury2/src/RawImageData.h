@@ -1,6 +1,12 @@
 #ifndef RAWIMAGEDATA_H
 #define RAWIMAGEDATA_H
 
+enum ColorByteType
+{
+	RGB,
+ 	RGBA
+};
+
 class RawImageData
 {
 	public:
@@ -11,6 +17,7 @@ class RawImageData
 		unsigned int m_height;
 		unsigned short m_bits;
 		unsigned char* m_data;
+		ColorByteType m_ColorByteType;
 };
 
 #endif
