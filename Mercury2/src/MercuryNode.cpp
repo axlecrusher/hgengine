@@ -26,9 +26,8 @@ void MercuryNode::AddChild(MercuryNode* n)
 	m_children.push_back(n);
 	n->m_parent = this;
 	
-	list< Callback2< MercuryNode*, MercuryNode* > >::iterator i;
-	for (i = OnAddChild.begin(); i != OnAddChild.end(); ++i )
-		(*i)(this, n);
+	OnAddChild();
+	n->OnAdded();
 }
 
 void MercuryNode::RemoveChild(MercuryNode* n)
@@ -38,10 +37,9 @@ void MercuryNode::RemoveChild(MercuryNode* n)
 	{
 		if (*i == n)
 		{
-			list< Callback2< MercuryNode*, MercuryNode* > >::iterator ic;
-			for (ic = OnRemoveChild.begin(); ic != OnRemoveChild.end(); ++ic )
-				(*ic)(this, n);
-			
+			n->OnRemoved();
+			OnRemoveChild();
+			n->m_parent = NULL;
 			m_children.erase(i);
 			return;
 		}

@@ -40,15 +40,21 @@ class MercuryNode
 		virtual void Update(float dTime) {};
 		void RecursiveUpdate(float dTime);
 		
-		///Provides callback ability when a child node is added (parent, child) arguement order
-		std::list< Callback2< MercuryNode*, MercuryNode* > > OnAddChild;
+		///Run on parent when a child is added
+		virtual void OnAddChild() {};
 		
-		///Provides callback ability when a child node is removed (parent, child) arguement order
-		std::list< Callback2< MercuryNode*, MercuryNode* > > OnRemoveChild;
+		///Run on parent when a child is added
+		virtual void OnRemoveChild() {};
 		
 		///Loads a node from an XMLNode representing itself
 		virtual void LoadFromXML(const XMLNode& node);
+		
+		///Run on a child when added to a parent
+		virtual void OnAdded() {};
 	
+		///Run on a child when removed from a parent
+		virtual void OnRemoved() {};
+
 		GENRTTI(MercuryNode);
 	
 	protected:
