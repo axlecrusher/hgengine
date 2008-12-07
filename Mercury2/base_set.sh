@@ -14,7 +14,7 @@ OPT_OGL=1
 OPT_libxml=1
 
 DEFINES="WAS_CONFIGURED USE_MSTRING"
-CC_BASE="-O2 -g"
+CC_BASE="-O0 -g -Wall"
 
 for i in $*; do
 	if test $i = "--help"; then 
