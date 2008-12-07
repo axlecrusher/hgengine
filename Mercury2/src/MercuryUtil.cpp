@@ -3,7 +3,7 @@
 std::string ToUpper(const std::string& s)
 {
 	std::string t = s;
-	for (int i = 0; i < s.length(); ++i)
+	for (unsigned long i = 0; i < s.length(); ++i)
 	{
 		t[i] = toupper(t[i]);
 	}

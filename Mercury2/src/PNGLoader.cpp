@@ -106,7 +106,7 @@ RawImageData* LoadPNG( FILE * fp )
 		case RGBA:
 			for ( y=0; y < (unsigned)image->m_height; ++y) {
 				png_byte* row = row_pointers[y];
-				for (int x = 0; x < image->m_width; ++x) {
+				for (unsigned long x = 0; x < image->m_width; ++x) {
 					png_byte* ptr = &(row[x*4]);
 					image->m_data[(x + y * image->m_width) * 4] = ptr[0];
 					image->m_data[(x + y * image->m_width) * 4 + 1] = ptr[1];
@@ -118,7 +118,7 @@ RawImageData* LoadPNG( FILE * fp )
 		case RGB:
 			for ( y=0; y < (unsigned)image->m_height; y++) {
 				png_byte* row = row_pointers[y];
-				for (int x=0; x<image->m_width; x++) {
+				for (unsigned long x=0; x<image->m_width; x++) {
 					png_byte* ptr = &(row[x * 3]);
 					image->m_data[(x + y * image->m_width) * 3] = ptr[0];
 					image->m_data[(x + y * image->m_width) * 3 + 1] = ptr[1];

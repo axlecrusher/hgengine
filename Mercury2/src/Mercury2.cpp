@@ -9,7 +9,7 @@
 int main()
 {
 	unsigned long m_count = 0;
-	unsigned long m_time;
+	long m_time;
 	
 	MercuryWindow* w = MercuryWindow::MakeWindow();
 	MercuryNode* root = new MercuryNode();
@@ -32,7 +32,7 @@ int main()
 		if (time(NULL) > m_time)
 		{
 			m_time = time(NULL);
-			printf("FPS: %d\n", m_count);
+			printf("FPS: %lu\n", m_count);
 			m_count = 0;
 		}
 	}

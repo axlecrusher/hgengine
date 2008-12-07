@@ -100,7 +100,7 @@ bool X11Window::PumpMessages()
 		{
 			case ClientMessage:
 			{
-				if ( event.xclient.data.l[0] == m_wmDeleteMessage )
+				if ( unsigned(event.xclient.data.l[0]) == m_wmDeleteMessage )
 					XDestroyWindow(m_display,m_window);
 				break;
 			}
@@ -145,7 +145,7 @@ bool X11Window::PumpMessages()
 
 void* X11Window::GetProcAddress(const string& x)
 {
-	
+return NULL;	
 }
 
 /***************************************************************************
