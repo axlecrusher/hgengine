@@ -45,7 +45,7 @@ template <typename P1, typename R1>
 
 		R1 operator()(P1 p1) const
 		{
-			functor(p1);
+			return functor(p1);
 		}
 
 	private:
