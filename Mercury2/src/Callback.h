@@ -35,6 +35,23 @@ private:
 	R (*functor)(void);
 };
 
+template <typename P1, typename R1>
+		class Callback1R
+{
+	public:
+		Callback1R(R1(*f)(P1))
+	:functor(f)
+		{}
+
+		R1 operator()(P1 p1) const
+		{
+			functor(p1);
+		}
+
+	private:
+		R1 (*functor)(P1);
+};
+
 
 template <typename P1>
 class Callback1

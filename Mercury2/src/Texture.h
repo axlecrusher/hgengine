@@ -1,16 +1,5 @@
 #include <MercuryAsset.h>
-
-class RawImageData
-{
-	public:
-		RawImageData();
-		~RawImageData();
-		
-		unsigned int m_width;
-		unsigned int m_height;
-		unsigned short m_bits;
-		unsigned char* m_data;
-};
+#include <RawImageData.h>
 
 class Texture : public MercuryAsset
 {
