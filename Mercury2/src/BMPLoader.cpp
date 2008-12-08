@@ -134,19 +134,26 @@ RawImageData* LoadBMP( FILE* file )
 	//Get raw data and convert BGR->RGB
 //	file->Seek(offset);
 	fseek(file, offset, SEEK_SET);
-//	for (unsigned int x = 0; !file->Eof(); x += 3)
-	for (unsigned int x = 0; !feof(file); x += 3)
+	
+	image->m_ColorByteType = RGB;
+	
+	unsigned long row, pixel;
+	unsigned char* rowPtr;
+	
+	for (unsigned int x = 0; !feof(file) && (x+3 < rawlength); x += 3)
 	{
-		//XXX FIX THIS, BMP ARE STORED UPSIDE DOWN
 		memset(b, 0, sizeof(unsigned char) * 3);
 //		file->Read((char*)&b, sizeof(unsigned char) * 3);
 		fread(&b, sizeof(unsigned char) * 3, 1, file);
-
-		image->m_data[x] = b[2];
-		image->m_data[x+1] = b[1];
-		image->m_data[x+2] = b[0];
+				
+		row = image->m_height - (x/3)/image->m_width - 1; //current row
+		pixel = (x/3)%image->m_width; //which pixel in the row
+		rowPtr = image->m_data + (image->m_width * row * 3);
+		rowPtr[pixel*3] = b[2];
+		rowPtr[(pixel*3) + 1] = b[1];
+		rowPtr[(pixel*3) + 2] = b[0];
 	}
-	image->m_ColorByteType = RGB;
+	
 	SAFE_DELETE_ARRAY(tmp);
 	printf( "BMP Load End\n" );
 //	RID = image;
