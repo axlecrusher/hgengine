@@ -1,5 +1,6 @@
 #include <MercuryNode.h>
 #include <MercuryUtil.h>
+#include <UpdateThreader.h>
 
 using namespace std;
 
@@ -86,6 +87,16 @@ void MercuryNode::RecursiveUpdate(float dTime)
 	list< MercuryNode* >::iterator i;
 	for (i = m_children.begin(); i != m_children.end(); ++i )
 		(*i)->RecursiveUpdate(dTime);
+}
+
+void MercuryNode::ThreadedUpdate(float dTime)
+{
+	//XXX EXPERIMENTAL
+	Update(dTime);
+	
+	list< MercuryNode* >::iterator i;
+	for (i = m_children.begin(); i != m_children.end(); ++i )
+		UpdateThreader::GetInstance().AddNode( *i );
 }
 
 void MercuryNode::LoadFromXML(const XMLNode& node)

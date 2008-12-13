@@ -39,6 +39,7 @@ class MercuryNode
 		
 		virtual void Update(float dTime) {};
 		void RecursiveUpdate(float dTime);
+		void ThreadedUpdate(float dTime);
 		
 		///Run on parent when a child is added
 		virtual void OnAddChild() {};
