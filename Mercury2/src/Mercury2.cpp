@@ -6,6 +6,15 @@
 
 #include <XMLParser.h>
 
+void* UpdateThread(void* node)
+{
+	while(true)
+	{
+		MercuryNode* n = (MercuryNode*)node;
+		n->RecursiveUpdate(0.01f);
+	}
+}
+
 int main()
 {
 	unsigned long m_count = 0;
@@ -21,10 +30,14 @@ int main()
 	
 	SAFE_DELETE(doc);
 	
+	MercuryThread updateThread;
+	
 	m_time = time(NULL);
+	updateThread.Create( UpdateThread, root, false);
 	do
 	{
-		root->RecursiveUpdate(0.01f);
+//		root->RecursiveUpdate(0.01f);
+//		updateThread.Create( UpdateThread, root, false);
 		RenderableNode::RecursiveRender(root);
 		w->SwapBuffers();
 		++m_count;
@@ -35,8 +48,12 @@ int main()
 			printf("FPS: %lu\n", m_count);
 			m_count = 0;
 		}
+//		updateThread.Wait();
 	}
 	while ( w->PumpMessages() );
+	
+	updateThread.HaltOnDestroy(true);
+	updateThread.Halt();
 
 	SAFE_DELETE(root);
 	SAFE_DELETE(w);
