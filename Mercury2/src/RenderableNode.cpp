@@ -19,6 +19,12 @@ RenderableNode::~RenderableNode()
 	m_postrender.clear();
 }
 
+void RenderableNode::Update(float dTime)
+{
+	MSemaphoreIncOnDestroy s( &m_semaphore );
+	while (m_semaphore.ReadValue() != 0);
+}
+
 void RenderableNode::Render()
 {
 	list< MercuryAsset* >::iterator i;
@@ -87,9 +93,15 @@ bool RenderableNode::IsInAssetList( MercuryAsset* asset ) const
 	return false;
 }
 
-void RenderableNode::RecursiveRender( const MercuryNode* n )
+void RenderableNode::RecursiveRender( MercuryNode* n )
 {
-	if ( Cast(n) ) ((RenderableNode*)n)->Render();
+	RenderableNode* rn;
+	if ( rn = Cast(n) )
+	{
+		MSemaphoreDecOnDestroy s( &(rn->m_semaphore) );
+		while (rn->m_semaphore.ReadValue() != 1);
+		rn->Render();
+	}
 	
 	const list< MercuryNode* >& children = n->Children();
 	list< MercuryNode* >::const_iterator i;

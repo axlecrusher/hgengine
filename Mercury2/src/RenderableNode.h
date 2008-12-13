@@ -5,6 +5,7 @@
 #include <MAutoPtr.h>
 #include <MercuryAsset.h>
 #include <MercuryMatrix.h>
+#include <MSemaphore.h>
 
 #define MCHECKASSETS
 
@@ -15,7 +16,7 @@ class RenderableNode : public MercuryNode
 		~RenderableNode();
 		
 		virtual void Render();
-		virtual void Update(float dTime) {};
+		virtual void Update(float dTime);
 				
 		///Returnes true if N is of type RenderableNode
 //		static bool IsMyType( MercuryNode* n );
@@ -26,7 +27,7 @@ class RenderableNode : public MercuryNode
 		void AddRender(MercuryAsset* asset);
 		void AddPostRender(MercuryAsset* asset);
 		
-		static void RecursiveRender( const MercuryNode* n );
+		static void RecursiveRender( MercuryNode* n );
 		virtual void LoadFromXML(const XMLNode& node);
 		
 		const MercuryMatrix& FindGlobalMatrix() const;
@@ -47,6 +48,8 @@ class RenderableNode : public MercuryNode
 		std::list< MercuryAsset* > m_prerender;
 		std::list< MercuryAsset* > m_render;
 		std::list< MercuryAsset* > m_postrender;
+		
+		MSemaphore m_semaphore;
 };
 
 #endif
