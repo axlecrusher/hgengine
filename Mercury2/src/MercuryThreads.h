@@ -24,7 +24,7 @@ public:
 	~MercuryThread();
 
 	///Create a thread of function fn and pass it data *data.
-	int Create( void * (*fn)(void *), void *data );
+	int Create( void * (*fn)(void *), void *data, bool detach = true );
 
 	///Wait for the thread to complete.
 	int Wait( long lMilliseconds = 10000000 );

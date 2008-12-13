@@ -44,7 +44,7 @@ static DWORD WINAPI StartThread( LPVOID pData )
 }
 #endif
 
-int MercuryThread::Create( void * (*fn)(void *), void *data )
+int MercuryThread::Create( void * (*fn)(void *), void *data, bool detach )
 {
 #if defined( WIN32 )
 	mkThreadData = new StartThreadData;
@@ -59,7 +59,8 @@ int MercuryThread::Create( void * (*fn)(void *), void *data )
 		return false;
 	else
 	{
-		pthread_detach( m_thread ); //reclaim memory on thread destruction
+		if (detach)
+			pthread_detach( m_thread ); //reclaim memory on thread destruction
 		return true;
 	}
 #endif
