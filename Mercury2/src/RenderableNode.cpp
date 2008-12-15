@@ -22,7 +22,7 @@ RenderableNode::~RenderableNode()
 void RenderableNode::Update(float dTime)
 {
 	MSemaphoreIncOnDestroy s( &m_semaphore );
-	while (m_semaphore.ReadValue() != 0);
+	Spinlock(0);
 }
 
 void RenderableNode::Render()
@@ -99,7 +99,7 @@ void RenderableNode::RecursiveRender( MercuryNode* n )
 	if ( rn = Cast(n) )
 	{
 		MSemaphoreDecOnDestroy s( &(rn->m_semaphore) );
-		while (rn->m_semaphore.ReadValue() != 1);
+		rn->Spinlock(1);
 		rn->Render();
 	}
 	

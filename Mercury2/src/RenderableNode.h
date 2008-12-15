@@ -39,6 +39,7 @@ class RenderableNode : public MercuryNode
 		bool m_hidden;
 	private:
 		bool IsInAssetList(MercuryAsset* asset) const;
+		inline void Spinlock( unsigned long value ) { while (m_semaphore.ReadValue() != value); }
 		
 		std::list< MAutoPtr< MercuryAsset > > m_assets;	///serves as a holder for memory
 		
