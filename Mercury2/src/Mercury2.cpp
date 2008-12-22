@@ -6,9 +6,12 @@
 
 #include <XMLParser.h>
 
+#include <RenderableNode.h>
+
+MSemaphore UpdateLoopGo;
 void* UpdateThread(void* node)
 {
-	while(true)
+	while( UpdateLoopGo.ReadValue() < 1 )
 	{
 		MercuryNode* n = (MercuryNode*)node;
 		n->RecursiveUpdate(0.01f);
@@ -30,13 +33,13 @@ int main()
 	
 	SAFE_DELETE(doc);
 	
-	MercuryThread updateThread;
+//	MercuryThread updateThread;
 	
 	m_time = time(NULL);
-	updateThread.Create( UpdateThread, root, false);
+//	updateThread.Create( UpdateThread, root, false);
 	do
 	{
-//		root->RecursiveUpdate(0.01f);
+		root->RecursiveUpdate(0.01f);
 //		updateThread.Create( UpdateThread, root, false);
 		RenderableNode::RecursiveRender(root);
 		w->SwapBuffers();
@@ -48,15 +51,18 @@ int main()
 			printf("FPS: %lu\n", m_count);
 			m_count = 0;
 		}
-//		updateThread.Wait();
 	}
 	while ( w->PumpMessages() );
 	
-	updateThread.HaltOnDestroy(true);
-	updateThread.Halt();
+//	UpdateLoopGo.Increment();
+//	updateThread.Wait();
 
 	SAFE_DELETE(root);
 	SAFE_DELETE(w);
+	
+	uint64_t totalWaited = UpdateWaited + RenderWaited;
+	printf("Update wait %%%f\n", (UpdateWaited/double(totalWaited))*100.0f);
+	printf("Render wait %%%f\n", (RenderWaited/double(totalWaited))*100.0f);
 	
 	return 0;
 }
