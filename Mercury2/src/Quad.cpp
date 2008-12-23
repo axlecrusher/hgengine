@@ -9,7 +9,7 @@ REGISTER_ASSET_TYPE(Quad);
 
 Quad::Quad()
 {
-	AllocateIndexSpace(4);
+	AllocateIndexSpace(6);
 	AllocateVertexSpace(4, sizeof(float)*5);
 	
 	float* buffer = (float*)Buffer();
@@ -31,7 +31,10 @@ Quad::Quad()
 	indice[0] = 0;
 	indice[1] = 1;
 	indice[2] = 2;
-	indice[3] = 3;
+
+	indice[3] = 2;
+	indice[4] = 3;
+	indice[5] = 0;
 }
 
 Quad::~Quad()

@@ -46,7 +46,7 @@ void MercuryVBO::Render(MercuryNode* node)
 	//XXX This seems to apply texture coordinates to all active texture units
 	glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*3));
 
-	glDrawRangeElements(GL_QUADS, 0, m_bufferLength[1], m_bufferLength[1], GL_UNSIGNED_SHORT, NULL);
+	glDrawRangeElements(GL_TRIANGLES, 0, m_bufferLength[1], m_bufferLength[1], GL_UNSIGNED_SHORT, NULL);
 	
 	m_lastVBOrendered = this;
 }

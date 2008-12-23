@@ -70,7 +70,9 @@ X11Window::X11Window(const string& title, int width, int height, int bits, int d
 	XFree(visinfo);
 
 	m_window = win;
-	m_renderCtx = ctx;	
+	m_renderCtx = ctx;
+	
+	glEnable(GL_CULL_FACE);
 }
 
 X11Window::~X11Window()
