@@ -18,6 +18,7 @@ class Texture : public MercuryAsset
 		
 		inline static unsigned short NumberActiveTextures() { return m_activeTextures; }
 		
+		static Texture* Generate() { return new Texture(); }
 	private:
 		void BindTexture();
 		void UnbindTexture();
