@@ -1,9 +1,17 @@
 #include <MercuryAsset.h>
 
-class Quad : public MercuryAsset
+#include <MercuryVBO.h>
+
+class Quad : public MercuryVBO
 {
 	public:
-		void Render(MercuryNode* node);
+		Quad();
+		~Quad();
+		
+		static Quad* Generate();
+	
+	private:
+		static Quad* m_myInstance;
 };
 
 /***************************************************************************

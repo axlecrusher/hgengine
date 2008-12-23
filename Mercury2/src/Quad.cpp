@@ -5,36 +5,48 @@
 #include <GL/gl.h>
 #include <GL/glext.h>
 
-#include <Texture.h>
-
 REGISTER_ASSET_TYPE(Quad);
 
-void Quad::Render(MercuryNode* node)
+Quad::Quad()
 {
-	unsigned short numTextures = Texture::NumberActiveTextures();
-	unsigned int i;
+	AllocateIndexSpace(4);
+	AllocateVertexSpace(4, sizeof(float)*5);
 	
-	glBegin(GL_QUADS);
+	float* buffer = (float*)Buffer();
+	int i = 0;
 	
-	for (i=0; i < numTextures; ++i)
-		glMultiTexCoord2f(GL_TEXTURE0+i, 0, 1);
-	glVertex3f(-0.5f, -0.5f,  0.0f);
+	buffer[i++] = -0.5; buffer[i++] = -0.5; buffer[i++] = 0.0;
+	buffer[i++] = 0; buffer[i++] = 1;
 	
-	for (i=0; i < numTextures; ++i)
-		glMultiTexCoord2f(GL_TEXTURE0+i, 1, 1);
-	glVertex3f( 0.5f, -0.5f,  0.0f);
+	buffer[i++] = 0.5; buffer[i++] = -0.5; buffer[i++] = 0.0;
+	buffer[i++] = 1; buffer[i++] = 1;
 	
-	for (i=0; i < numTextures; ++i)
-		glMultiTexCoord2f(GL_TEXTURE0+i, 1, 0);
-	glVertex3f( 0.5f,  0.5f,  0.0f);
+	buffer[i++] = 0.5; buffer[i++] = 0.5; buffer[i++] = 0.0;
+	buffer[i++] = 1; buffer[i++] = 0;
 	
-//	glTexCoord2f(0,1);
-	for (i=0; i < numTextures; ++i)
-		glMultiTexCoord2f(GL_TEXTURE0+i, 0, 0);
-	glVertex3f(-0.5f,  0.5f,  0.0f);
-
-	glEnd();
+	buffer[i++] = -0.5; buffer[i++] = 0.5; buffer[i++] = 0.0;
+	buffer[i++] = 0; buffer[i++] = 0;
+	
+	uint16_t* indice = IndexBuffer();
+	indice[0] = 0;
+	indice[1] = 1;
+	indice[2] = 2;
+	indice[3] = 3;
 }
+
+Quad::~Quad()
+{
+	m_myInstance = NULL;
+}
+
+Quad* Quad::Generate()
+{
+	if ( !m_myInstance )
+		m_myInstance = new Quad();
+	return m_myInstance;
+}
+
+Quad* Quad::m_myInstance = NULL;
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
