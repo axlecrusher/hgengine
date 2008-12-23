@@ -9,12 +9,17 @@
 
 #define SAFE_DELETE( x ) { if (x) { delete x; } x = NULL; }
 #define SAFE_DELETE_ARRAY( x ) { if (x) { delete[] x; } x = NULL; }
-#define SAFE_FREE(p)       { if(p) { free(p);     (p)=0; } }
+#define SAFE_FREE(p)       { if(p) { free(p); p=0; } }
 
 #define TO_ENDIAN( x )
 
+//returns an aligned pointer, mem is the actual (unaligned) pointer for freeing
+void* mmemalign(size_t align, size_t size, void*& mem);
+
 #if defined(__GNUC__)
 #define M_ALIGN(n) __attribute__((aligned(n)))
+//#define MMALLOC(n) memalign(32, n)
+//#define MMALLOC(n) malloc(n)
 #else
 #define M_ALIGN(n)
 #endif

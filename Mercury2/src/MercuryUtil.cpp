@@ -17,6 +17,14 @@ float StrToFloat(const  std::string& s)
 	return x;
 }
 
+void* mmemalign(size_t align, size_t size, void*& mem)
+{
+	uintptr_t mask = ~(uintptr_t)(align - 1);
+	mem = malloc(size+align-1);
+	void *ptr = (void *)(((uintptr_t)mem+align-1) & mask);
+	return ptr;
+}
+
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
  *      *
