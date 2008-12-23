@@ -99,6 +99,8 @@ void Texture::BindTexture()
 {
 		m_textureResource = GL_TEXTURE0+m_activeTextures;
 		glActiveTexture( m_textureResource );
+		glClientActiveTextureARB(m_textureResource);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glEnable( GL_TEXTURE_2D );
 		glBindTexture(GL_TEXTURE_2D, m_textureID);
 		glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
@@ -108,12 +110,14 @@ void Texture::BindTexture()
 void Texture::UnbindTexture()
 {
 	glActiveTexture( m_textureResource );
+	glClientActiveTextureARB(m_textureResource);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisable( GL_TEXTURE_2D );
 	--m_activeTextures;
 }
 
-bool Texture::m_initTextureSuccess;
-unsigned short Texture::m_activeTextures;
+bool Texture::m_initTextureSuccess = false;
+unsigned short Texture::m_activeTextures = 0;
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
