@@ -33,7 +33,7 @@ class AssetFactory
 static InstanceCounter<AssetFactory> AFcounter("AssetFactory");
 
 #define REGISTER_ASSET_TYPE(class)\
-	MAutoPtr<MercuryAsset> FactoryFunct##class() { return MAutoPtr<MercuryAsset>(new class()); } \
+	MAutoPtr<MercuryAsset> FactoryFunct##class() { return MAutoPtr<MercuryAsset>(class::Generate()); } \
 	Callback0R< MAutoPtr<MercuryAsset> > factoryclbk##class( FactoryFunct##class ); \
 	bool GlobalRegisterSuccess##class = AssetFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class);
 
