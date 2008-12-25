@@ -10,16 +10,13 @@
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 
 MercuryVBO::MercuryVBO()
-	:MercuryAsset(), m_vertexData(NULL), m_vMem(NULL), m_vertexIndexList(NULL), m_iMem(NULL), m_initiated(false)
+	:MercuryAsset(), m_initiated(false)
 {
 	m_bufferIDs[0] = m_bufferIDs[1] = 0;
 }
 
 MercuryVBO::~MercuryVBO()
 {
-	SAFE_FREE(m_vMem);
-	SAFE_FREE(m_iMem);
-	
 	if (m_bufferIDs[0]) glDeleteBuffersARB(2, m_bufferIDs);
 	m_bufferIDs[0] = m_bufferIDs[1] = 0;
 }
@@ -46,7 +43,7 @@ void MercuryVBO::Render(MercuryNode* node)
 	//XXX This seems to apply texture coordinates to all active texture units
 	glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*3));
 
-	glDrawRangeElements(GL_TRIANGLES, 0, m_bufferLength[1], m_bufferLength[1], GL_UNSIGNED_SHORT, NULL);
+	glDrawRangeElements(GL_TRIANGLES, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL);
 	
 	m_lastVBOrendered = this;
 }
@@ -57,36 +54,25 @@ void MercuryVBO::InitVBO()
 	
 	//vertex VBO
 	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_bufferLength[0], m_vertexData, GL_STATIC_DRAW_ARB);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_vertexData.LengthInBytes(), m_vertexData.Buffer(), GL_STATIC_DRAW_ARB);
 
 	//indices VBO
 	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]);
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, sizeof(uint16_t)*m_bufferLength[1], m_vertexIndexList, GL_STATIC_DRAW_ARB);
-	
-	SAFE_FREE(m_vMem);
-	SAFE_FREE(m_iMem);
-	
+	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_indexData.LengthInBytes(), m_indexData.Buffer(), GL_STATIC_DRAW_ARB);
+		
 	glEnableClientState(GL_VERTEX_ARRAY);
 
 	m_initiated = true;
 }
 
-void MercuryVBO::AllocateVertexSpace(unsigned int count, unsigned int elementSize)
+void MercuryVBO::AllocateVertexSpace(unsigned int count)
 {
-	SAFE_FREE(m_vMem);
-	void* mem = NULL;
-	m_vertexData = (char*)mmemalign(32, elementSize*count, mem);
-	m_vMem = (char*)mem;
-	m_bufferLength[0] = elementSize*count;
+	m_vertexData.Allocate(count*5);
 }
 
 void MercuryVBO::AllocateIndexSpace(unsigned int count)
 {
-	SAFE_FREE(m_iMem);
-	void* mem = NULL;
-	m_vertexIndexList = (uint16_t*)mmemalign(32, sizeof(uint16_t)*count, mem);
-	m_iMem = (uint16_t*)mem;
-	m_bufferLength[1] = count;
+	m_indexData.Allocate(count);
 }
 
 void* MercuryVBO::m_lastVBOrendered = NULL;

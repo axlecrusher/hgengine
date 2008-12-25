@@ -1,4 +1,5 @@
 #include <MercuryAsset.h>
+#include <AlignedBuffer.h>
 
 class MercuryVBO : public MercuryAsset
 {
@@ -8,23 +9,19 @@ class MercuryVBO : public MercuryAsset
 		
 		virtual void Render(MercuryNode* node);
 
-		void AllocateVertexSpace(unsigned int count, unsigned int elementSize);
+		void AllocateVertexSpace(unsigned int count);
 		void AllocateIndexSpace(unsigned int count);
-		
-		inline char* Buffer() { return m_vertexData; }
-		inline uint16_t* IndexBuffer() { return m_vertexIndexList; }
+	
 	private:
 		virtual void InitVBO();
-		
+	
 		unsigned int m_bufferIDs[2];
-		unsigned int m_bufferLength[2];
-		
-		char *m_vertexData, *m_vMem;
-		uint16_t *m_vertexIndexList, *m_iMem;
-		
-		bool m_initiated;
-		
+		bool m_initiated;		
 		static void* m_lastVBOrendered;
+
+	protected:
+		AlignedBuffer<float> m_vertexData;
+		AlignedBuffer<uint16_t> m_indexData;
 };
 
 /****************************************************************************

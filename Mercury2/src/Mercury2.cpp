@@ -16,6 +16,7 @@ void* UpdateThread(void* node)
 		MercuryNode* n = (MercuryNode*)node;
 		n->RecursiveUpdate(0.01f);
 	}
+	return NULL;
 }
 
 int main()

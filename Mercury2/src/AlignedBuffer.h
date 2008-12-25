@@ -31,10 +31,7 @@ class AlignedBuffer
 		
 		inline T* Buffer() { return m_data; }
 		
-		T& operator[](unsigned long x)
-		{
-			return m_data[x];
-		}
+		inline T& operator[](unsigned long x) { return m_data[x]; }
 		
 	private:
 		unsigned long m_length;

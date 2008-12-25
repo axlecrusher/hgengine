@@ -10,36 +10,33 @@ REGISTER_ASSET_TYPE(Quad);
 Quad::Quad()
 {
 	AllocateIndexSpace(6);
-	AllocateVertexSpace(4, sizeof(float)*5);
+	AllocateVertexSpace(4);
 	
-	float* buffer = (float*)Buffer();
+//	float* buffer = m_vertexData.m_vertexData();
 	int i = 0;
 	
-	buffer[i++] = -0.5; buffer[i++] = -0.5; buffer[i++] = 0.0;
-	buffer[i++] = 0; buffer[i++] = 1;
+	m_vertexData[i++] = -0.5; m_vertexData[i++] = -0.5; m_vertexData[i++] = 0.0;
+	m_vertexData[i++] = 0; m_vertexData[i++] = 1;
 	
-	buffer[i++] = 0.5; buffer[i++] = -0.5; buffer[i++] = 0.0;
-	buffer[i++] = 1; buffer[i++] = 1;
+	m_vertexData[i++] = 0.5; m_vertexData[i++] = -0.5; m_vertexData[i++] = 0.0;
+	m_vertexData[i++] = 1; m_vertexData[i++] = 1;
 	
-	buffer[i++] = 0.5; buffer[i++] = 0.5; buffer[i++] = 0.0;
-	buffer[i++] = 1; buffer[i++] = 0;
+	m_vertexData[i++] = 0.5; m_vertexData[i++] = 0.5; m_vertexData[i++] = 0.0;
+	m_vertexData[i++] = 1; m_vertexData[i++] = 0;
 	
-	buffer[i++] = -0.5; buffer[i++] = 0.5; buffer[i++] = 0.0;
-	buffer[i++] = 0; buffer[i++] = 0;
+	m_vertexData[i++] = -0.5; m_vertexData[i++] = 0.5; m_vertexData[i++] = 0.0;
+	m_vertexData[i++] = 0; m_vertexData[i++] = 0;
 	
-	uint16_t* indice = IndexBuffer();
-	indice[0] = 0;
-	indice[1] = 1;
-	indice[2] = 2;
-
-	indice[3] = 2;
-	indice[4] = 3;
-	indice[5] = 0;
+	m_indexData[5] = m_indexData[0] = 0;
+	m_indexData[1] = 1;
+	m_indexData[3] = m_indexData[2] = 2;
+	m_indexData[4] = 3;
 }
 
 Quad::~Quad()
 {
-	m_myInstance = NULL;
+	if (m_myInstance == this)
+		m_myInstance = NULL;
 }
 
 Quad* Quad::Generate()
