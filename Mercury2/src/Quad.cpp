@@ -15,17 +15,21 @@ Quad::Quad()
 //	float* buffer = m_vertexData.m_vertexData();
 	int i = 0;
 	
-	m_vertexData[i++] = -0.5; m_vertexData[i++] = -0.5; m_vertexData[i++] = 0.0;
 	m_vertexData[i++] = 0; m_vertexData[i++] = 1;
+	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
+	m_vertexData[i++] = -0.5; m_vertexData[i++] = -0.5; m_vertexData[i++] = 0.0;
 	
-	m_vertexData[i++] = 0.5; m_vertexData[i++] = -0.5; m_vertexData[i++] = 0.0;
 	m_vertexData[i++] = 1; m_vertexData[i++] = 1;
+	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
+	m_vertexData[i++] = 0.5; m_vertexData[i++] = -0.5; m_vertexData[i++] = 0.0;
 	
-	m_vertexData[i++] = 0.5; m_vertexData[i++] = 0.5; m_vertexData[i++] = 0.0;
 	m_vertexData[i++] = 1; m_vertexData[i++] = 0;
+	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
+	m_vertexData[i++] = 0.5; m_vertexData[i++] = 0.5; m_vertexData[i++] = 0.0;
 	
-	m_vertexData[i++] = -0.5; m_vertexData[i++] = 0.5; m_vertexData[i++] = 0.0;
 	m_vertexData[i++] = 0; m_vertexData[i++] = 0;
+	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
+	m_vertexData[i++] = -0.5; m_vertexData[i++] = 0.5; m_vertexData[i++] = 0.0;
 	
 	m_indexData[5] = m_indexData[0] = 0;
 	m_indexData[1] = 1;
