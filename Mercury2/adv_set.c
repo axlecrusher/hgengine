@@ -13,7 +13,7 @@ SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp \
 	src/PNGLoader.cpp src/ImageLoader.cpp \
 	src/MercuryVBO.cpp src/MSemaphore.cpp \
 	src/UpdateThreader.cpp src/HGMDLMesh.cpp \
-	src/HGMDLModel.cpp"
+	src/HGMDLModel.cpp src/MercuryString.cpp"
 
 #ifdef USE_LIBXML
 SOURCES="$SOURCES src/XMLParser.cpp"
@@ -24,7 +24,7 @@ SOURCES="$SOURCES src/X11Window.cpp"
 #endif
 
 PROJ="mercury"
-CFLAGS="$CFLAGS -DHAVE_CONFIG -fno-exceptions -fPIC -Isrc"
+CFLAGS="$CFLAGS -DHAVE_CONFIG -DHGENGINE -fno-exceptions -fPIC -Isrc"
 LDFLAGS="$LDFLAGS -rdynamic -g -fPIC"
 
 /*
