@@ -20,7 +20,7 @@
 				<asset type="quad"/>
 			</node>
 		</node>
-		<node type="rotatornode" movz="-3" scalex="0.05" scaley="0.05" scalez="0.05" >
+		<node type="rotatornode" movz="-2" scalex="0.05" scaley="0.05" scalez="0.05" >
 			<node type="renderablenode">
 				<asset type="texture" imagefile="test.bmp"/>
 				<asset type="hgmdlmodel" file="beerhall.hgmdl"/>
