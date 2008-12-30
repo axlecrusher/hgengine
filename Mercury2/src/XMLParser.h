@@ -1,10 +1,12 @@
 #ifndef XMLPARSER_H
 #define XMLPARSER_H
 
-#include <libxml/parser.h>
-#include <libxml/tree.h>
-#include <string>
 #include <MAutoPtr.h>
+
+struct _xmlNode;
+typedef struct _xmlNode xmlNode;
+struct _xmlDoc;
+typedef struct _xmlDoc xmlDoc;
 
 class XMLElement
 {
@@ -23,9 +25,9 @@ class XMLNode
 		XMLNode PreviousNode() const;
 		XMLNode Child() const;
 		
-		std::string Name() const;
-		std::string Content() const;
-		std::string Attribute(const std::string& tag) const;
+		MString Name() const;
+		MString Content() const;
+		MString Attribute(const MString & tag) const;
 		
 		inline bool IsValid() const { return m_node!=NULL; }
 		
@@ -40,8 +42,8 @@ class XMLDocument : public RefBase
 		XMLDocument();
 		virtual ~XMLDocument();
 		
-		static XMLDocument* Load(const std::string& file);
-		void LoadFromString(const std::string& xml);
+		static XMLDocument* Load(const MString& file);
+		void LoadFromString(const MString& xml);
 
 		
 		XMLNode GetRootNode();

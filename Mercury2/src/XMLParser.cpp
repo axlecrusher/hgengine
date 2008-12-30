@@ -1,4 +1,7 @@
 #include <XMLParser.h>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
 //#include <SMOException.h>
 
 XMLNode::XMLNode(xmlNode* node, xmlDoc* doc)
@@ -39,34 +42,34 @@ XMLNode XMLNode::Child() const
 	return XMLNode();
 }
 
-std::string XMLNode::Name() const
+MString XMLNode::Name() const
 {
-	return std::string((const char*)m_node->name); //XXX fix utf8
+	return MString((const char*)m_node->name); //XXX fix utf8
 }
 
-std::string XMLNode::Content() const
+MString XMLNode::Content() const
 {
-	string data;
+	MString data;
 //	xmlChar* d = xmlNodeListGetString(m_doc, m_node->xmlChildrenNode, 1);
 	xmlChar* d = xmlNodeGetContent(m_node);
 	
 	if (d)
 	{
-		data = string((const char*)d);
+		data = MString((const char*)d);
 		xmlFree(d);
 	}
 	
 	return data;
 }
 
-std::string XMLNode::Attribute(const std::string& tag) const
+MString XMLNode::Attribute(const MString& tag) const
 {
-	string data;
+	MString data;
 	xmlChar* d = xmlGetProp(m_node, (const xmlChar*)tag.c_str());
 
 	if (d)
 	{
-		data = string((const char*)d);
+		data = MString((const char*)d);
 		xmlFree(d);
 	}
 	return data;
@@ -88,7 +91,7 @@ void XMLDocument::FreeDocument()
 	if (m_doc) xmlFreeDoc(m_doc);
 }
 
-XMLDocument* XMLDocument::Load(const std::string& file)
+XMLDocument* XMLDocument::Load(const MString& file)
 {
 	XMLDocument* xmldoc = new XMLDocument();
 	
@@ -98,7 +101,7 @@ XMLDocument* XMLDocument::Load(const std::string& file)
 	return xmldoc;
 }
 
-void XMLDocument::LoadFromString(const std::string& xml)
+void XMLDocument::LoadFromString(const MString& xml)
 {
 	xmlInitParser();  //XXX WTF am I supposed to do with this
 	m_doc = xmlReadMemory(xml.c_str(), xml.length(), "noname.xml", NULL, 0);
