@@ -1,17 +1,14 @@
 #ifndef MERCURYWINDOW_H
 #define MERCURYWINDOW_H
 
-#include <string>
 #include <MercuryUtil.h>
 #include <list>
 #include <Callback.h>
 
-using namespace std;
-
 class MercuryWindow
 {
 public:
-	MercuryWindow(const string& title, int width, int height, int bits, int depthBits, bool fullscreen);
+	MercuryWindow(const MString& title, int width, int height, int bits, int depthBits, bool fullscreen);
 	virtual ~MercuryWindow();
 
 	inline static MercuryWindow* MakeWindow() {
@@ -27,13 +24,13 @@ public:
 		return MercuryWindow::m_windowInstance;
 	}
 	
-	virtual void* GetProcAddress(const string& x) = 0;
+	virtual void* GetProcAddress(const MString& x) = 0;
 
 protected:
 	static Callback0R< MercuryWindow* > genWindowClbk;
 	static MercuryWindow* m_windowInstance;
 	
-	string m_title;
+	MString m_title;
 	int m_width, m_height, m_bits, m_depthBits;
 	bool m_fullscreen;
 };

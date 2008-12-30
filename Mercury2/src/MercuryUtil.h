@@ -2,7 +2,8 @@
 #define MERCURYUTIL_H
 
 #include <stdlib.h>
-#include <string>
+#include <MercuryString.h>
+
 /*#ifndef NULL
 #define NULL 0
 #endif*/
@@ -24,9 +25,9 @@ void* mmemalign(size_t align, size_t size, void*& mem);
 #define M_ALIGN(n)
 #endif
 
-std::string ToUpper(const std::string& s);
+MString ToUpper(const MString & s);
 
-float StrToFloat(const  std::string& s);
+float StrToFloat(const MString & s);
 
 //This counter is used with singletons to
 //ensure proper destruction order of the
@@ -36,7 +37,7 @@ template<typename T>
 class InstanceCounter
 {
 	public:
-		InstanceCounter(const std::string& name)
+		InstanceCounter(const MString & name)
 	:m_name(name)
 		{
 			if (m_count == 0)
@@ -57,7 +58,7 @@ class InstanceCounter
 		}
 	private:
 		static unsigned long m_count;
-		std::string m_name;
+		MString m_name;
 		T* m_instance;
 };
 

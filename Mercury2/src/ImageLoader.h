@@ -1,7 +1,6 @@
 #ifndef IMAGELOADER_H
 #define IMAGELOADER_H
 
-#include <string>
 #include <RawImageData.h>
 #include <Callback.h>
 #include <list>
@@ -11,11 +10,11 @@ class ImageLoader
 {
 	public:
 		static ImageLoader& GetInstance();
-		bool RegisterFactoryCallback(const std::string& type, Callback1R< FILE*, RawImageData* >);
-		RawImageData* LoadImage(const std::string& filename);
+		bool RegisterFactoryCallback(const MString& type, Callback1R< FILE*, RawImageData* >);
+		RawImageData* LoadImage(const MString& filename);
 	
 	private:
-		std::list< std::pair< std::string, Callback1R< FILE*, RawImageData* > > > m_factoryCallbacks;
+		std::list< std::pair< MString, Callback1R< FILE*, RawImageData* > > > m_factoryCallbacks;
 };
 
 static InstanceCounter<ImageLoader> ILcounter("ImageLoader");

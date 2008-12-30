@@ -1,9 +1,13 @@
 #ifndef _MERCURY_THREADS_H
 #define _MERCURY_THREADS_H
 
+#ifdef HGENGINE
+#include <MercuryString.h>
+#else
 #include <string>
+typedef std::string MString;
+#endif
 
-using namespace std;
 
 #if !defined(WIN32)
 #if !defined(_EE)
@@ -20,7 +24,7 @@ class MercuryThread
 {
 public:
 	MercuryThread();
-	MercuryThread( const string &name );
+	MercuryThread( const MString &name );
 	~MercuryThread();
 
 	///Create a thread of function fn and pass it data *data.
@@ -41,7 +45,7 @@ public:
 //	inline void Exit() { pthread_exit(NULL); }
 	inline void HaltOnDestroy(bool t) { m_haltOnDestroy = t; }
 private:
-	string m_name;
+	MString m_name;
 
 	bool m_haltOnDestroy;
 #if defined(WIN32)
@@ -62,7 +66,7 @@ class MercuryMutex
 {
 public:
 	MercuryMutex( );
-	MercuryMutex( const string &name );
+	MercuryMutex( const MString &name );
 	~MercuryMutex();
 	
 	///Wait for a mutex to unlock (0xFFFFFF is infinate on windows)
@@ -77,7 +81,7 @@ public:
 	///Clean up a mutex.  This is done automatically on destruction of mutex.
 	int Close( );
 private:
-	string m_name;
+	MString m_name;
 	int iLockCount;
 
 #if defined( WIN32 )

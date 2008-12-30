@@ -1,16 +1,19 @@
 #include <MercuryUtil.h>
+#include <stdint.h>
 
-std::string ToUpper(const std::string& s)
+MString ToUpper(const MString& s)
 {
-	std::string t = s;
+	MString t = s;
+	char * ti = (char*)t.c_str();
 	for (unsigned long i = 0; i < s.length(); ++i)
 	{
-		t[i] = toupper(t[i]);
+		if( ti[i] >= 'a' && ti[i] <= 'z' )
+			ti[i] -= ( 'a' - 'A' );
 	}
 	return t;
 }
 
-float StrToFloat(const  std::string& s)
+float StrToFloat(const  MString & s)
 {
 	float x;
 	sscanf(s.c_str(), "%f", &x);

@@ -9,7 +9,7 @@
 class X11Window : public MercuryWindow
 {
 	public:
-		X11Window(const string& title, int width, int height, int bits, int depthBits, bool fullscreen);
+		X11Window(const MString& title, int width, int height, int bits, int depthBits, bool fullscreen);
 		virtual ~X11Window();
 		
 		static MercuryWindow* GenX11Window();
@@ -17,7 +17,7 @@ class X11Window : public MercuryWindow
 		virtual bool SwapBuffers();
 		virtual bool PumpMessages();
 
-		virtual void* GetProcAddress(const string& x);
+		virtual void* GetProcAddress(const MString& x);
 
 	private:
 		Display* m_display;

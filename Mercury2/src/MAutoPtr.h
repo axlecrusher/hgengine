@@ -1,9 +1,6 @@
 #ifndef MAUTOPTR_H
 #define MAUTOPTR_H
 
-//#include <util.h>
-//#include <stdlib.h>
-//#include <stdio.h>
 #include <MercuryThreads.h>
 
 class RefBase

@@ -16,18 +16,18 @@ AssetFactory& AssetFactory::GetInstance()
 	return *instance;
 }
 
-bool AssetFactory::RegisterFactoryCallback(const std::string& type, Callback0R< MAutoPtr<MercuryAsset> > functor)
+bool AssetFactory::RegisterFactoryCallback(const MString & type, Callback0R< MAutoPtr<MercuryAsset> > functor)
 {
-	string t = ToUpper( type );
-	std::pair<std::string, Callback0R< MAutoPtr<MercuryAsset> > > pp(t, functor);
+	MString t = ToUpper( type );
+	std::pair<MString , Callback0R< MAutoPtr<MercuryAsset> > > pp(t, functor);
 	m_factoryCallbacks.push_back( pp );
 	return true;
 }
 
-MAutoPtr<MercuryAsset> AssetFactory::Generate(const std::string& type)
+MAutoPtr<MercuryAsset> AssetFactory::Generate(const MString& type)
 {
-	string t = ToUpper( type );
-	std::list< std::pair< std::string, Callback0R< MAutoPtr<MercuryAsset> > > >::iterator i;
+	MString t = ToUpper( type );
+	std::list< std::pair< MString, Callback0R< MAutoPtr<MercuryAsset> > > >::iterator i;
 	for (i = m_factoryCallbacks.begin(); i != m_factoryCallbacks.end(); ++i)
 		if (i->first == t) return i->second();
 	printf("WARNING: Asset type %s not found.\n", type.c_str());

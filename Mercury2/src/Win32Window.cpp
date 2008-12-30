@@ -8,7 +8,7 @@ MercuryWindow* Win32Window::GenWin32Window()
 	return new Win32Window("Mercury2 Tests", 640, 480, 24, 16, false);
 }
 
-LPCTSTR StringToLPCTSTR(const string& s)
+LPCTSTR StringToLPCTSTR(const MString & s)
 {
 	size_t length = s.length();
 	LPCTSTR str = new WCHAR[length+1];
@@ -17,7 +17,7 @@ LPCTSTR StringToLPCTSTR(const string& s)
 	return str;
 }
 
-Win32Window::Win32Window(const string& title, int width, int height, int bits, int depthBits, bool fullscreen)
+Win32Window::Win32Window(const MString& title, int width, int height, int bits, int depthBits, bool fullscreen)
 	:m_hwnd(NULL), m_hdc(NULL), m_hglrc(NULL), m_hInstance(NULL), m_className(NULL), m_windowAtom(NULL), m_winTitle(NULL),
 	MercuryWindow(title, width, height, bits, depthBits, fullscreen)
 {

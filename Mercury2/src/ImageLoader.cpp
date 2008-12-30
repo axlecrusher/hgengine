@@ -1,5 +1,4 @@
 #include <ImageLoader.h>
-#include <string>
 #include <MercuryUtil.h>
 
 using namespace std;
@@ -12,15 +11,15 @@ ImageLoader& ImageLoader::GetInstance()
 	return *instance;
 }
 
-bool ImageLoader::RegisterFactoryCallback(const std::string& type, Callback1R< FILE*, RawImageData* > functor)
+bool ImageLoader::RegisterFactoryCallback(const MString& type, Callback1R< FILE*, RawImageData* > functor)
 {
-	string t = ToUpper( type );
-	std::pair<std::string, Callback1R< FILE*, RawImageData* > > pp(t, functor);
+	MString t = ToUpper( type );
+	std::pair<MString, Callback1R< FILE*, RawImageData* > > pp(t, functor);
 	m_factoryCallbacks.push_back( pp );
 	return true;
 }
 
-RawImageData* ImageLoader::LoadImage(const std::string& filename)
+RawImageData* ImageLoader::LoadImage(const MString& filename)
 {
 	FILE* f = fopen(filename.c_str(), "rb");
 	char fingerprint[4];
@@ -29,8 +28,8 @@ RawImageData* ImageLoader::LoadImage(const std::string& filename)
 	fread(fingerprint, sizeof(char)*3, 1, f);
 	fseek(f, 0, SEEK_SET);
 	
-	string t(fingerprint);// = ToUpper( type );
-	std::list< std::pair< std::string, Callback1R< FILE*, RawImageData* > > >::iterator i;
+	MString t(fingerprint);// = ToUpper( type );
+	std::list< std::pair< MString, Callback1R< FILE*, RawImageData* > > >::iterator i;
 	for (i = m_factoryCallbacks.begin(); i != m_factoryCallbacks.end(); ++i)
 	{
 		if (i->first == t)

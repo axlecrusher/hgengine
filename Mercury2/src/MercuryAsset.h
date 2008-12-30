@@ -23,11 +23,11 @@ class AssetFactory
 {
 	public:
 		static AssetFactory& GetInstance();
-		bool RegisterFactoryCallback(const std::string& type, Callback0R< MAutoPtr<MercuryAsset> >);
-		MAutoPtr<MercuryAsset> Generate(const std::string& type);
+		bool RegisterFactoryCallback(const MString& type, Callback0R< MAutoPtr<MercuryAsset> >);
+		MAutoPtr<MercuryAsset> Generate(const MString& type);
 	
 	private:
-		std::list< std::pair< std::string, Callback0R< MAutoPtr<MercuryAsset> > > > m_factoryCallbacks;
+		std::list< std::pair< MString, Callback0R< MAutoPtr<MercuryAsset> > > > m_factoryCallbacks;
 };
 
 static InstanceCounter<AssetFactory> AFcounter("AssetFactory");

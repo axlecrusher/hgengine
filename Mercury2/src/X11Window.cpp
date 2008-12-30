@@ -2,7 +2,7 @@
 
 Callback0R< MercuryWindow* > MercuryWindow::genWindowClbk(X11Window::GenX11Window); //Register window generation callback
 
-X11Window::X11Window(const string& title, int width, int height, int bits, int depthBits, bool fullscreen)
+X11Window::X11Window(const MString& title, int width, int height, int bits, int depthBits, bool fullscreen)
 	:MercuryWindow(title, width, height, bits, depthBits, fullscreen), m_display(NULL)
 {
 	m_display = XOpenDisplay(NULL);
@@ -148,7 +148,7 @@ bool X11Window::PumpMessages()
 	return true;
 }
 
-void* X11Window::GetProcAddress(const string& x)
+void* X11Window::GetProcAddress(const MString& x)
 {
 return NULL;	
 }

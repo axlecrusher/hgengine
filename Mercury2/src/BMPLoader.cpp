@@ -28,7 +28,7 @@ RawImageData* LoadBMP( FILE* file )
 	memset(tmp, 0, 4);
 //	file->Read(tmp, sizeof(char) * 2);
 	fread(tmp, sizeof(char) * 2, 1, file);
-	string type(tmp);
+	MString type(tmp);
 
 	if (type != "BM")
 	{

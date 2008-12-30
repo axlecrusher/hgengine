@@ -2,7 +2,6 @@
 #define WIN32WINDOW_H
 
 #include <windows.h>
-#include <string>
 #include <MercuryWindow.h>
 #include <MScopedArray.h>
 
@@ -10,7 +9,7 @@
 class Win32Window : public MercuryWindow
 {
 public:
-	Win32Window(const string& title, int width, int height, int bits, int depthBits, bool fullscreen);
+	Win32Window(const MString& title, int width, int height, int bits, int depthBits, bool fullscreen);
 	virtual ~Win32Window();
 	virtual bool SwapBuffers();
 	virtual bool PumpMessages();

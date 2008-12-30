@@ -5,6 +5,7 @@
 #include <Callback.h>
 #include <typeinfo>
 #include <XMLParser.h>
+#include <MercuryUtil.h>
 
 /** This is the basic node of the scene graph.  It is not intended to be instanced.
 	Each node exists as a single entity in the scene graph.
@@ -67,11 +68,11 @@ class NodeFactory
 {
 	public:
 		static NodeFactory& GetInstance();
-		bool RegisterFactoryCallback(const std::string& type, Callback0R<MercuryNode*>);
-		MercuryNode* Generate(const std::string& type);
+		bool RegisterFactoryCallback(const MString& type, Callback0R<MercuryNode*>);
+		MercuryNode* Generate(const MString& type);
 	
 	private:
-		std::list< std::pair< std::string, Callback0R<MercuryNode*> > > m_factoryCallbacks;
+		std::list< std::pair< MString, Callback0R<MercuryNode*> > > m_factoryCallbacks;
 };
 
 static InstanceCounter<NodeFactory> NFcounter("NodeFactory");

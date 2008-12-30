@@ -123,18 +123,18 @@ NodeFactory& NodeFactory::GetInstance()
 
 }
 
-bool NodeFactory::RegisterFactoryCallback(const std::string& type, Callback0R<MercuryNode*> functor)
+bool NodeFactory::RegisterFactoryCallback(const MString& type, Callback0R<MercuryNode*> functor)
 {
-	string t = ToUpper( type );
-	std::pair<std::string, Callback0R<MercuryNode*> > pp(t, functor);
+	MString t = ToUpper( type );
+	std::pair<MString, Callback0R<MercuryNode*> > pp(t, functor);
 	m_factoryCallbacks.push_back( pp );
 	return true;
 }
 
-MercuryNode* NodeFactory::Generate(const std::string& type)
+MercuryNode* NodeFactory::Generate(const MString& type)
 {
-	string t = ToUpper( type );
-	std::list< std::pair< std::string, Callback0R<MercuryNode*> > >::iterator i;
+	MString t = ToUpper( type );
+	std::list< std::pair< MString, Callback0R<MercuryNode*> > >::iterator i;
 	for (i = m_factoryCallbacks.begin(); i != m_factoryCallbacks.end(); ++i)
 		if (i->first == t) return i->second();
 	return NULL;

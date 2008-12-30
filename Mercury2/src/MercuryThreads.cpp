@@ -14,7 +14,7 @@ MercuryThread::MercuryThread()
 #endif
 }
 
-MercuryThread::MercuryThread( const string &name )
+MercuryThread::MercuryThread( const MString &name )
 	:m_name(name), m_haltOnDestroy(true), m_thread(0)
 {
 #if defined( WIN32 )
@@ -128,7 +128,7 @@ MercuryMutex::MercuryMutex( )
 	UnLock();
 }
 
-MercuryMutex::MercuryMutex( const string &name )
+MercuryMutex::MercuryMutex( const MString &name )
 :m_name(name)
 {
 	iLockCount = 0;

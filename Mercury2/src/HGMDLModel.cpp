@@ -18,7 +18,8 @@ void HGMDLModel::LoadModel(FILE* hgmdl)
 	fingerPrint[4] = 0;
 	fread(fingerPrint, 4, 1, hgmdl);
 
-	if (string(fingerPrint) != "MBMF")
+	MString p(fingerPrint);
+	if (p != "MBMF")
 	{
 		printf("Not a HGMDL file.\n");
 		return;
