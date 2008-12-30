@@ -8,6 +8,9 @@
 
 #include <RenderableNode.h>
 
+#include <MercuryCrash.h>
+#include <MercuryBacktrace.h>
+
 MSemaphore UpdateLoopGo;
 void* UpdateThread(void* node)
 {
@@ -19,11 +22,23 @@ void* UpdateThread(void* node)
 	return NULL;
 }
 
+int SignalHandler( int signal )
+{
+	char buffer[2048];
+	printf( "Fatal error encountered in Mercury 2:  %s\n", cn_get_crash_description( signal ) );
+	cnget_backtrace( 1, buffer, 2047 );
+	printf( "%s\n", buffer );
+
+	return 0;	//Continue regular crash.
+}
+
 int main()
 {
 	unsigned long m_count = 0;
 	long m_time;
-	
+
+	cnset_execute_on_crash( SignalHandler );
+
 	MercuryWindow* w = MercuryWindow::MakeWindow();
 	MercuryNode* root = new MercuryNode();
 	

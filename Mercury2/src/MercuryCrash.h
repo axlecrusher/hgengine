@@ -1,29 +1,25 @@
-#include "configuration.h"
+#ifndef _HGCRASH_H
+#define _HGCRASH_H
 
-FOLDERS="src"
-
-
-SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp src/MercuryNode.cpp src/MercuryPoint.cpp \
-	src/MercuryThreads.cpp  src/MercuryMath.cpp src/MercuryWindow.cpp src/RenderableNode.cpp \
-	src/TransformNode.cpp src/MercuryMatrix.cpp src/Viewport.cpp src/Quad.cpp src/MercuryUtil.cpp \
-	src/Texture.cpp src/RawImageData.cpp src/BMPLoader.cpp src/PNGLoader.cpp src/ImageLoader.cpp \
-	src/MercuryVBO.cpp src/MSemaphore.cpp src/UpdateThreader.cpp src/HGMDLMesh.cpp \
-	src/HGMDLModel.cpp src/MercuryString.cpp src/MercuryCrash.c src/MercuryBacktrace.c"
-
-#ifdef USE_LIBXML
-SOURCES="$SOURCES src/XMLParser.cpp"
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#ifdef USE_X11
-SOURCES="$SOURCES src/X11Window.cpp"
+//If you return 0x12121212, it will attempt not to crash.  Otherwise, it will just do whatever it feels it should.
+typedef int (*FNType)( int signal );
+
+int cnset_execute_on_crash( FNType fn );
+const char * cn_get_crash_description( int code );
+
+#ifdef __cplusplus
+};
 #endif
 
-PROJ="mercury"
-CFLAGS="$CFLAGS -DHAVE_CONFIG -DHGENGINE -fno-exceptions -fPIC -Isrc -g "
-LDFLAGS="$LDFLAGS -rdynamic -g -fPIC "
+#endif
+
 
 /*
- * (c) 2007-2008 Charles Lohr
+ * (c) 2003-2008 Glenn Maynard, Steve Checkoway, Avery Lee, Charles Lohr
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -46,4 +42,3 @@ LDFLAGS="$LDFLAGS -rdynamic -g -fPIC "
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-
