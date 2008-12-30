@@ -4,6 +4,8 @@
 #include <MercuryAsset.h>
 #include <HGMDLMesh.h>
 
+#include <vector>
+
 class HGMDLModel : public MercuryAsset
 {
 	public:
@@ -16,7 +18,7 @@ class HGMDLModel : public MercuryAsset
 		virtual void Render(MercuryNode* node);
 
 	private:
-		std::list< MAutoPtr< HGMDLMesh > > m_meshes;
+		std::vector< MAutoPtr< HGMDLMesh > > m_meshes;
 };
 
 #endif

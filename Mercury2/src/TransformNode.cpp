@@ -1,6 +1,7 @@
 #include <TransformNode.h>
 
 REGISTER_NODE_TYPE(TransformNode);
+REGISTER_NODE_TYPE(RotatorNode);
 
 TransformNode::TransformNode()
 	:m_scale( MercuryPoint(1,1,1) )
@@ -141,6 +142,17 @@ void TransformNode::OnAdded()
 		}
 		n = n->Parent();
 	}	
+}
+
+void RotatorNode::Update(float dTime)
+{
+	MercuryPoint r = GetRotation();
+	r.x += (dTime)*2.5;
+	r.y += (dTime)*5;
+	
+	SetRotation( r );
+	
+	TransformNode::Update(dTime);
 }
 
 /****************************************************************************

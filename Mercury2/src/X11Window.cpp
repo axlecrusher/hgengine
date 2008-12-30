@@ -125,11 +125,13 @@ bool X11Window::PumpMessages()
 			case KeyPress:
 			{
 				XKeyEvent* e = (XKeyEvent*)&event;
+				e->keycode;
 				break;
 			}
 			case KeyRelease:
 			{
 				XKeyEvent* e = (XKeyEvent*)&event;
+				e->keycode;
 				break;
 			}
 			case MotionNotify:

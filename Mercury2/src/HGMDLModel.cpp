@@ -46,9 +46,8 @@ void HGMDLModel::LoadModel(FILE* hgmdl)
 
 void HGMDLModel::Render(MercuryNode* node)
 {
-	list< MAutoPtr< HGMDLMesh > >::iterator i = m_meshes.begin();
-	for(;i != m_meshes.end(); ++i)
-		(*i)->Render(node);
+	for(uint16_t i = 0; i < m_meshes.size(); ++i)
+		m_meshes[i]->Render(node);
 }
 
 HGMDLModel* HGMDLModel::Generate()

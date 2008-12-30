@@ -12,7 +12,7 @@ class TransformNode : public MercuryNode
 	public:
 		TransformNode();
 		
-		void Update(float dTime);
+		virtual void Update(float dTime);
 
 		void SetScale( const MercuryPoint& scale );
 		void SetPosition( const MercuryPoint& position );
@@ -41,11 +41,18 @@ class TransformNode : public MercuryNode
 		MercuryPoint m_scale;
 		MercuryPoint m_position;
 		MercuryPoint m_rotation;
-		
+
 //		MercuryMatrix m_localMatrix;
 		MercuryMatrix m_globalMatrix;
 		
 		bool m_tainted;
+};
+
+class RotatorNode : public TransformNode
+{
+	public:
+		virtual void Update(float dTime);
+		GENRTTI(TransformNode);
 };
 
 #endif
