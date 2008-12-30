@@ -12,7 +12,8 @@ SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp \
 	src/Texture.cpp src/RawImageData.cpp src/BMPLoader.cpp \
 	src/PNGLoader.cpp src/ImageLoader.cpp \
 	src/MercuryVBO.cpp src/MSemaphore.cpp \
-	src/UpdateThreader.cpp"
+	src/UpdateThreader.cpp src/HGMDLMesh.cpp \
+	src/HGMDLModel.cpp"
 
 #ifdef USE_LIBXML
 SOURCES="$SOURCES src/XMLParser.cpp"
