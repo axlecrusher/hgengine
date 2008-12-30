@@ -8,7 +8,15 @@ SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp src/MercuryNode.cpp src/MercuryPo
 	src/TransformNode.cpp src/MercuryMatrix.cpp src/Viewport.cpp src/Quad.cpp src/MercuryUtil.cpp \
 	src/Texture.cpp src/RawImageData.cpp src/BMPLoader.cpp src/PNGLoader.cpp src/ImageLoader.cpp \
 	src/MercuryVBO.cpp src/MSemaphore.cpp src/UpdateThreader.cpp src/HGMDLMesh.cpp \
-	src/HGMDLModel.cpp src/MercuryString.cpp src/MercuryCrash.c src/MercuryBacktrace.c"
+	src/HGMDLModel.cpp src/MercuryString.cpp src/MercuryCrash.c src/MercuryBacktrace.c \
+	src/MercuryFile.cpp"
+
+
+SOURCES="$SOURCES src/MercuryFileDriverDirect.cpp src/MercuryFileDriverMem.cpp \
+	src/MercuryFileDriverPacked.cpp src/MercuryFileDriverZipped.cpp"
+
+//Not implemented yet, since we don't have ezsocekts
+//src/MercuryFileDriverNet.cpp 
 
 #ifdef USE_LIBXML
 SOURCES="$SOURCES src/XMLParser.cpp"
