@@ -1,3 +1,6 @@
+#ifndef MERCURYVBO_H
+#define MERCURYVBO_H
+
 #include <MercuryAsset.h>
 #include <AlignedBuffer.h>
 
@@ -23,6 +26,8 @@ class MercuryVBO : public MercuryAsset
 		AlignedBuffer<float> m_vertexData;
 		AlignedBuffer<uint16_t> m_indexData;
 };
+
+#endif
 
 /****************************************************************************
  *   Copyright (C) 2008 by Joshua Allen                                     *

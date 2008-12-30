@@ -1,3 +1,6 @@
+#ifndef HGMDLMODEL_H
+#define HGMDLMODEL_H
+
 #include <MercuryAsset.h>
 #include <HGMDLMesh.h>
 
@@ -15,6 +18,8 @@ class HGMDLModel : public MercuryAsset
 	private:
 		std::list< HGMDLMesh* > m_meshes;
 };
+
+#endif
 
 /****************************************************************************
  *   Copyright (C) 2008 by Joshua Allen                                     *

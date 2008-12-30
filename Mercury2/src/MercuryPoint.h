@@ -1,3 +1,6 @@
+#ifndef MERCURYPOINT_H
+#define MERCURYPOINT_H
+
 ///A point in space/vector
 class MercuryPoint
 {
@@ -76,6 +79,8 @@ class MercuryPoint
 		float y;
 		float z;
 };
+
+#endif
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen, Charles Lohr *

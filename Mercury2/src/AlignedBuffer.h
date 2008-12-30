@@ -1,3 +1,5 @@
+#ifndef ALIGNEDBUFFER_H
+#define ALIGNEDBUFFER_H
 
 template <typename T>
 class AlignedBuffer
@@ -37,6 +39,8 @@ class AlignedBuffer
 		unsigned long m_length;
 		T* m_data, *m_mem;
 };
+
+#endif
 
 /****************************************************************************
  *   Copyright (C) 2008 by Joshua Allen                                     *

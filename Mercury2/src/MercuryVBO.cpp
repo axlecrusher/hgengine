@@ -23,8 +23,8 @@ MercuryVBO::~MercuryVBO()
 
 void MercuryVBO::Render(MercuryNode* node)
 {
-	unsigned short numTextures = Texture::NumberActiveTextures();
-	unsigned short stride = sizeof(float)*8;
+	uint8_t numTextures = Texture::NumberActiveTextures();
+	uint16_t stride = sizeof(float)*8;
 	
 	if ( m_initiated )
 	{

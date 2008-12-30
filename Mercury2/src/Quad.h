@@ -1,5 +1,7 @@
-#include <MercuryAsset.h>
+#ifndef MERCURYQUAD_H
+#define MERCURYQUAD_H
 
+#include <MercuryAsset.h>
 #include <MercuryVBO.h>
 
 class Quad : public MercuryVBO
@@ -13,6 +15,8 @@ class Quad : public MercuryVBO
 	private:
 		static Quad* m_myInstance;
 };
+
+#endif
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *

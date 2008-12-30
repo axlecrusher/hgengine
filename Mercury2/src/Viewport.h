@@ -1,3 +1,6 @@
+#ifndef VIEWPORT_H
+#define VIEWPORT_H
+
 #include <RenderableNode.h>
 #include <MercuryMatrix.h>
 class Viewport : public RenderableNode
@@ -13,6 +16,8 @@ class Viewport : public RenderableNode
 		void ComputeFrustum(float left, float right, float bottom, float top, float zNear, float zFar);
 		MercuryMatrix m_frustum;
 };
+
+#endif
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *

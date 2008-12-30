@@ -1,3 +1,6 @@
+#ifndef HGMDLMESH_H
+#define HGMDLMESH_H
+
 #include <MercuryVBO.h>
 
 class HGMDLMesh : public MercuryVBO
@@ -8,6 +11,8 @@ class HGMDLMesh : public MercuryVBO
 		string m_name;
 		bool m_cachable;
 };
+
+#endif
 
 /****************************************************************************
  *   Copyright (C) 2008 by Joshua Allen                                     *

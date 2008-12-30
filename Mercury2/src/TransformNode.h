@@ -1,3 +1,6 @@
+#ifndef TRANSFORMNODE_H
+#define TRANSFORMNODE_H
+
 #include <MercuryNode.h>
 #include <MercuryPoint.h>
 #include <MercuryMatrix.h>
@@ -44,6 +47,8 @@ class TransformNode : public MercuryNode
 		
 		bool m_tainted;
 };
+
+#endif
 
 /****************************************************************************
  *   Copyright (C) 2008 by Joshua Allen                                     *

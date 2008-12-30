@@ -1,3 +1,6 @@
+#ifndef X11WINDOW_H
+#define X11WINDOW_H
+
 #include <MercuryWindow.h>
 #include <X11/Xlib.h>
 #include <GL/glx.h>
@@ -22,6 +25,8 @@ class X11Window : public MercuryWindow
 		Window m_window;
 		Atom m_wmDeleteMessage;
 };
+
+#endif
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *

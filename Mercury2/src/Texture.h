@@ -1,3 +1,6 @@
+#ifndef TEXTURE_H
+#define TEXTURE_H
+
 #include <MercuryAsset.h>
 #include <RawImageData.h>
 
@@ -30,6 +33,8 @@ class Texture : public MercuryAsset
 		static bool m_initTextureSuccess;
 		static unsigned short m_activeTextures;
 };
+
+#endif
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
