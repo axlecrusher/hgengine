@@ -72,6 +72,7 @@ X11Window::X11Window(const string& title, int width, int height, int bits, int d
 	m_window = win;
 	m_renderCtx = ctx;
 	
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 }
 
