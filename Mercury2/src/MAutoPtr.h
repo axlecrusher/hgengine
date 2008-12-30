@@ -4,7 +4,6 @@
 //#include <util.h>
 //#include <stdlib.h>
 //#include <stdio.h>
-#include <MercuryUtil.h>
 #include <MercuryThreads.h>
 
 class RefBase
@@ -130,7 +129,7 @@ class MAutoPtr
 			{
 				if ( !m_ptr->m_count ) return;
 				if (m_ptr->m_count > 0) --(m_ptr->m_count);
-				if (m_ptr->m_count == 0) SAFE_DELETE(m_ptr);
+				if (m_ptr->m_count == 0) { if (m_ptr) { delete m_ptr; } m_ptr = NULL; }
 			}
 		}
 		
