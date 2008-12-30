@@ -197,10 +197,12 @@ echo -e "\tg++ -o \$@ \$^ \$(LDFLAGS)" >> Makefile
 echo -e "help : " >> Makefile
 echo -e "	echo \"Available: <\$(PROJ)> <clean> <library> <help>\"" >> Makefile
 if test `uname -s` == "Darwin" ; then
-	echo -e "library : \$(OBJ)" >> Makefile
+	echo -e "library : \$(PROJ).dylib" >> Makefile
+	echo -e "\$(PROJ).dylib : \$(OBJ)" >> Makefile
 	echo -e "\tg++ -dynamiclib -o \$(PROJ).dylib \$^ \$(LDFLAGS)" >> Makefile
 else
-	echo -e "library : \$(OBJ)" >> Makefile
+	echo -e "library : \$(PROJ).so" >> Makefile
+	echo -e "\$(PROJ).so : \$(OBJ)" >> Makefile
 	echo -e "\tg++ -shared -o \$(PROJ).so \$^ \$(LDFLAGS)" >> Makefile
 fi
 echo "" >> Makefile
