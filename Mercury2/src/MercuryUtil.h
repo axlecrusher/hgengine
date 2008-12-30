@@ -67,6 +67,10 @@ class InstanceCounter
 template<typename T>
 		unsigned long InstanceCounter<T>::m_count = 0;
 
+///Open up filename: sFileName and dump it into a new buffer; you must delete the return value when done.
+///The return value is -1 if there was an issue, otherwise it is valid.
+long FileToString( const MString & sFileName, char * & data );
+
 #endif
 
 /* Copyright (c) 2008, Joshua Allen

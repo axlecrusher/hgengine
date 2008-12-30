@@ -1,4 +1,5 @@
 #include <MercuryUtil.h>
+#include <MercuryFile.h>
 #include <stdint.h>
 
 #ifndef WIN32
@@ -42,6 +43,36 @@ int64_t GetTimeInMicroSeconds()
 	return (int64_t(tv.tv_sec) * 1000000) + tv.tv_usec;
 
 }
+
+long FileToString( const MString & sFileName, char * & data )
+{
+	data = 0;
+
+	MercuryFile * f = FILEMAN.Open( sFileName );
+	if( !f ) return -1;
+
+	int length = f->Length();
+
+	data = (char*)malloc( length + 1 );
+
+	if( !data )
+	{
+		data = 0;
+		return -1;
+	}
+
+	int r = f->Read( data, length );
+
+	if( r != length )
+	{
+		free( data );
+		data = 0;
+		return -1;
+	}
+
+	return length;
+}
+
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
