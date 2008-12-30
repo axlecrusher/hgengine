@@ -15,7 +15,7 @@ void HGMDLModel::LoadFromXML(const XMLNode& node)
 void HGMDLModel::LoadModel(FILE* hgmdl)
 {
 	char fingerPrint[5];
-	fingerPrint[5] = 0;
+	fingerPrint[4] = 0;
 	fread(fingerPrint, 4, 1, hgmdl);
 
 	string p(fingerPrint);
