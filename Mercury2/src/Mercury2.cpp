@@ -8,6 +8,8 @@
 
 #include <RenderableNode.h>
 
+#include <sys/time.h>
+
 #include <MercuryCrash.h>
 #include <MercuryBacktrace.h>
 
@@ -35,7 +37,7 @@ int SignalHandler( int signal )
 int main()
 {
 	unsigned long m_count = 0;
-	long m_time;
+//	long m_time;
 
 	cnset_execute_on_crash( SignalHandler );
 
@@ -51,22 +53,29 @@ int main()
 	
 //	MercuryThread updateThread;
 	
-	m_time = time(NULL);
+//	m_time = time(NULL);
+	uint64_t oTime = GetTimeInMicroSeconds();
+	uint64_t m_time = oTime;
+		
 //	updateThread.Create( UpdateThread, root, false);
 	do
 	{
-		root->RecursiveUpdate(0.01f);
+		uint64_t curTime = GetTimeInMicroSeconds();
+		root->RecursiveUpdate((curTime-oTime)/1000000.0f);
 //		updateThread.Create( UpdateThread, root, false);
 		RenderableNode::RecursiveRender(root);
 		w->SwapBuffers();
 		++m_count;
 		
-		if (time(NULL) > m_time)
+		float seconds = (curTime-m_time)/1000000.0f;
+		if (seconds > 1)
 		{
-			m_time = time(NULL);
-			printf("FPS: %lu\n", m_count);
+			m_time = curTime;
+			printf("FPS: %f\n", m_count/seconds);
 			m_count = 0;
 		}
+		
+		oTime = curTime;
 	}
 	while ( w->PumpMessages() );
 	
@@ -109,3 +118,4 @@ int main()
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+

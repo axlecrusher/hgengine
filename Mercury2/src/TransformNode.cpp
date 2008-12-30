@@ -147,8 +147,8 @@ void TransformNode::OnAdded()
 void RotatorNode::Update(float dTime)
 {
 	MercuryPoint r = GetRotation();
-	r.x += (dTime)*2.5;
-	r.y += (dTime)*5;
+	r.x += (dTime)*25;
+	r.y += (dTime)*75;
 	
 	SetRotation( r );
 	
