@@ -16,7 +16,7 @@ class HGMDLModel : public MercuryAsset
 		virtual void Render(MercuryNode* node);
 
 	private:
-		std::list< HGMDLMesh* > m_meshes;
+		std::list< MAutoPtr< HGMDLMesh > > m_meshes;
 };
 
 #endif
