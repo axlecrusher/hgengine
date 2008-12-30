@@ -30,6 +30,7 @@ MAutoPtr<MercuryAsset> AssetFactory::Generate(const std::string& type)
 	std::list< std::pair< std::string, Callback0R< MAutoPtr<MercuryAsset> > > >::iterator i;
 	for (i = m_factoryCallbacks.begin(); i != m_factoryCallbacks.end(); ++i)
 		if (i->first == t) return i->second();
+	printf("WARNING: Asset type %s not found.\n", type.c_str());
 	return NULL;
 }
 
