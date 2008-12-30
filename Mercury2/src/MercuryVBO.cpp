@@ -23,7 +23,7 @@ MercuryVBO::~MercuryVBO()
 
 void MercuryVBO::Render(MercuryNode* node)
 {
-//	unsigned short numTextures = Texture::NumberActiveTextures();
+	unsigned short numTextures = Texture::NumberActiveTextures();
 	unsigned short stride = sizeof(float)*8;
 	
 	if ( m_initiated )
@@ -40,8 +40,13 @@ void MercuryVBO::Render(MercuryNode* node)
 	if ( this != m_lastVBOrendered)
 		glVertexPointer(3, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*5));
 	
-	//XXX This seems to apply texture coordinates to all active texture units
-	glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*0));
+	//apply all the active textures
+	for (uint8_t i = 0; i < numTextures; ++i)
+	{
+		glActiveTexture( GL_TEXTURE0+i );
+		glClientActiveTextureARB(GL_TEXTURE0+i);
+		glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*0));
+	}
 
 	glDrawRangeElements(GL_TRIANGLES, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL);
 	
