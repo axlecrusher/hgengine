@@ -140,7 +140,7 @@ RawImageData* LoadBMP( FILE* file )
 	unsigned long row, pixel;
 	unsigned char* rowPtr;
 	
-	for (unsigned int x = 0; !feof(file) && (x+3 < rawlength); x += 3)
+	for (unsigned int x = 0; !feof(file) && (x+3 < (unsigned)rawlength); x += 3)
 	{
 		memset(b, 0, sizeof(unsigned char) * 3);
 //		file->Read((char*)&b, sizeof(unsigned char) * 3);

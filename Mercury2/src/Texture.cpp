@@ -52,6 +52,11 @@ void Texture::LoadFromRaw(const RawImageData* raw)
 			break;
 		case RGBA:
 			ByteType = GL_RGBA;
+			break;
+		default:
+			printf( "Unsupported byte type (%d) in Texture::LoadFromRaw\n", m_raw->m_ColorByteType );
+			ByteType = GL_RGB;
+			break;
 	}
 
 	glBindTexture(GL_TEXTURE_2D, m_textureID);

@@ -111,7 +111,7 @@ void RenderableNode::RecursiveRender( MercuryNode* n )
 {
 	static unsigned long waitTime = 0;
 	RenderableNode* rn;
-	if ( rn = Cast(n) )
+	if ( ( rn = Cast(n) ) )
 	{
 		MSemaphoreDecOnDestroy s( &(rn->m_semaphore) );
 		
