@@ -10,7 +10,9 @@ SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp \
 	src/TransformNode.cpp src/MercuryMatrix.cpp \
 	src/Viewport.cpp src/Quad.cpp src/MercuryUtil.cpp \
 	src/Texture.cpp src/RawImageData.cpp src/BMPLoader.cpp \
-	src/PNGLoader.cpp src/ImageLoader.cpp"
+	src/PNGLoader.cpp src/ImageLoader.cpp \
+	src/MercuryVBO.cpp src/MSemaphore.cpp \
+	src/UpdateThreader.cpp"
 
 #ifdef USE_LIBXML
 SOURCES="$SOURCES src/XMLParser.cpp"
