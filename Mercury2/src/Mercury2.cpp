@@ -37,7 +37,6 @@ int SignalHandler( int signal )
 int main()
 {
 	unsigned long m_count = 0;
-//	long m_time;
 
 	cnset_execute_on_crash( SignalHandler );
 
@@ -50,19 +49,18 @@ int main()
 	root->LoadFromXML( r );
 	
 	SAFE_DELETE(doc);
-	
-//	MercuryThread updateThread;
-	
-//	m_time = time(NULL);
+		
 	uint64_t oTime = GetTimeInMicroSeconds();
 	uint64_t m_time = oTime;
 		
+	//uncomment the next 2 lines to use threads
+//	MercuryThread updateThread;
 //	updateThread.Create( UpdateThread, root, false);
+
 	do
 	{
 		uint64_t curTime = GetTimeInMicroSeconds();
-		root->RecursiveUpdate((curTime-oTime)/1000000.0f);
-//		updateThread.Create( UpdateThread, root, false);
+		root->RecursiveUpdate((curTime-oTime)/1000000.0f); //comment to use threads
 		RenderableNode::RecursiveRender(root);
 		w->SwapBuffers();
 		++m_count;
@@ -79,6 +77,7 @@ int main()
 	}
 	while ( w->PumpMessages() );
 	
+	//uncomment the next 2 lines to use threads
 //	UpdateLoopGo.Increment();
 //	updateThread.Wait();
 
