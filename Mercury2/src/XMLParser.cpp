@@ -1,4 +1,6 @@
 #include <XMLParser.h>
+#include <MercuryFile.h>
+
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
@@ -96,8 +98,24 @@ XMLDocument* XMLDocument::Load(const MString& file)
 	XMLDocument* xmldoc = new XMLDocument();
 	
 	xmlInitParser();  //XXX WTF am I supposed to do with this
-	xmldoc->m_doc = xmlReadFile(file.c_str(), NULL, 0);
-	
+
+	char * doc;
+
+	int ret = FileToString( file, doc );
+
+	if( ret == -1 )  //File error
+	{
+		printf( "Warning: Could not open XML File: \"%s\".\n", file.c_str() );
+		return xmldoc;
+	}
+ 
+	if( (xmldoc->m_doc = xmlReadMemory( doc, ret, NULL, NULL, 0) ) == 0 )
+	{
+		printf( "Warning: Could not parse XML File: \"%s\".\n", file.c_str() );
+	}
+
+	free( doc );
+
 	return xmldoc;
 }
 
