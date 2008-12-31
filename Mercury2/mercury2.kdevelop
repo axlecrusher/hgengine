@@ -21,13 +21,13 @@
   <kdevautoproject>
     <general>
       <activetarget>src/mercury2</activetarget>
-      <useconfiguration>optimized</useconfiguration>
+      <useconfiguration>debug</useconfiguration>
     </general>
     <run>
       <mainprogram>/home/josh/Mercury2/debug/src/mercury2</mainprogram>
       <terminal>false</terminal>
-      <programargs/>
-      <globaldebugarguments/>
+      <programargs></programargs>
+      <globaldebugarguments></globaldebugarguments>
       <globalcwd>/home/josh/Mercury2</globalcwd>
       <useglobalprogram>true</useglobalprogram>
       <autocompile>false</autocompile>
@@ -45,7 +45,7 @@
         <envvars/>
         <configargs></configargs>
         <topsourcedir></topsourcedir>
-        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE</cppflags>
+        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE -DRUN_FROM_START_FOLDER</cppflags>
         <ldflags>-lpthread -lX11 -lGL -lxml2 -lpng</ldflags>
         <ccompilerbinary></ccompilerbinary>
         <cxxcompilerbinary></cxxcompilerbinary>
@@ -62,7 +62,7 @@
         <cxxflags>-O0 -g3 -Wall</cxxflags>
         <envvars/>
         <topsourcedir></topsourcedir>
-        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE</cppflags>
+        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE -DRUN_FROM_START_FOLDER</cppflags>
         <ldflags>-lpthread -lX11 -lGL -lxml2 -lpng</ldflags>
         <ccompilerbinary></ccompilerbinary>
         <cxxcompilerbinary></cxxcompilerbinary>
@@ -70,6 +70,9 @@
         <cflags></cflags>
         <f77flags></f77flags>
       </debug>
+      <default>
+        <envvars/>
+      </default>
     </configurations>
     <make>
       <envvars>
@@ -80,7 +83,7 @@
       <runmultiplejobs>true</runmultiplejobs>
       <numberofjobs>3</numberofjobs>
       <dontact>false</dontact>
-      <makebin/>
+      <makebin></makebin>
       <prio>0</prio>
     </make>
   </kdevautoproject>
