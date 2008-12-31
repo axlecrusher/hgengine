@@ -4,7 +4,7 @@
 		</node>
 		<node type="transformnode" movz="-3">
 			<node type="renderablenode">
-				<asset type="texture" imagefile="test2.png"/>
+				<asset type="texture" imagefile="test.bmp"/>
 				<asset type="quad"/>
 			</node>
 		</node>
@@ -16,7 +16,7 @@
 		<node type="transformnode" movz="-3" movx="1" movy="-1">
 			<node type="renderablenode">
 				<asset type="texture" imagefile="test2.png"/>
-				<asset type="texture" imagefile="test2.png"/>
+				<asset type="texture" imagefile="test.bmp"/>
 				<asset type="quad"/>
 			</node>
 		</node>
