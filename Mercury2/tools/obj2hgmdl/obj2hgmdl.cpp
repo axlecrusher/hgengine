@@ -46,6 +46,7 @@ Mesh currentMesh;
 */
 void LineParser(const string &line)
 {
+	if (line.empty()) return;
 	string token = line.substr(0,2);
 	if (token == "v ")
 	{
@@ -57,6 +58,7 @@ void LineParser(const string &line)
 	{
 		MercuryPoint tv;
 		sscanf(line.c_str(), "vt %f %f", &tv.x, &tv.y);
+		tv.y = 1 - tv.y; //XXX reverse
 		vt.push_back(tv);
 	}
 	else if (token == "vn")
@@ -68,7 +70,17 @@ void LineParser(const string &line)
 	else if (token == "f ")
 	{
 		uint32_t iv[3], ivt[3], ivn[3];
-		sscanf(line.c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d", &iv[0], &ivt[0], &ivn[0], &iv[1], &ivt[1], &ivn[1], &iv[2], &ivt[2], &ivn[2]);
+		int r;
+		
+		r = sscanf(line.c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d", &iv[0], &ivt[0], &ivn[0], &iv[1], &ivt[1], &ivn[1], &iv[2], &ivt[2], &ivn[2]);
+
+		if (r != 9)
+		{
+			r = sscanf(line.c_str(), "f %d/%d %d/%d %d/%d", &iv[0], &ivt[0], &iv[1], &ivt[1], &iv[2], &ivt[2]);
+			ivn[0] = ivn[1] = ivn[2] = 1;
+			MercuryPoint tv;
+			vn.push_back(tv);
+		}
 		
 		Vertex tv[3];
 		
