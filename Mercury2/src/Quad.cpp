@@ -39,13 +39,13 @@ Quad::Quad()
 
 Quad::~Quad()
 {
-	AssetFactory::GetInstance().RemoveAssetInstance( "QUAD" );
+	REMOVE_ASSET_INSTANCE(Quad,"");
 }
 
 Quad* Quad::Generate()
 {
 	Quad *asset = new Quad();
-	AssetFactory::GetInstance().AddAssetInstance( "QUAD", asset );
+	ADD_ASSET_INSTANCE(Quad,"",asset);
 	printf("new quad\n");
 	return asset;
 }

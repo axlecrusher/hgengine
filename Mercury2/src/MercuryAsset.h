@@ -47,6 +47,11 @@ static InstanceCounter<AssetFactory> AFcounter("AssetFactory");
 	Callback0R< MAutoPtr<MercuryAsset> > factoryclbk##class( FactoryFunct##class ); \
 	bool GlobalRegisterSuccess##class = AssetFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class);
 
+#define ADD_ASSET_INSTANCE(class, key, ptr)\
+		AssetFactory::GetInstance().AddAssetInstance( ToUpper(#class)+key, ptr );
+
+#define REMOVE_ASSET_INSTANCE(class, key)\
+		AssetFactory::GetInstance().RemoveAssetInstance( ToUpper(#class)+key );
 
 #endif
 

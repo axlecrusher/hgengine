@@ -23,7 +23,7 @@ Texture::Texture()
 
 Texture::~Texture()
 {
-	AssetFactory::GetInstance().RemoveAssetInstance( "TEXTURE"+m_filename );
+	REMOVE_ASSET_INSTANCE(TEXTURE, m_filename);
 	
 	if (m_textureID) glDeleteTextures(1, &m_textureID);
 	m_textureID = 0;
@@ -125,7 +125,7 @@ void Texture::LoadImage(const MString& path)
 	{
 		m_isLoaded = true;
 		m_filename = path;
-		AssetFactory::GetInstance().AddAssetInstance("TEXTURE" + m_filename, this);
+		ADD_ASSET_INSTANCE(Texture, m_filename, this);
 		RawImageData* d = ImageLoader::GetInstance().LoadImage( m_filename );
 		if (d) LoadFromRaw( d );
 	}
