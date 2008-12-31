@@ -30,10 +30,10 @@ class AssetFactory
 		
 		void AddAssetInstance(const MString& key, MercuryAsset* asset);
 		void RemoveAssetInstance(const MString& key);
-	
+
+	private:
 		MercuryAsset* LocateAsset( const MString& key );
 
-	private:		
 		std::list< std::pair< MString, Callback0R< MAutoPtr<MercuryAsset> > > > m_factoryCallbacks;
 		
 		static std::map<MString, MercuryAsset*> m_assetInstances;

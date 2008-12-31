@@ -22,7 +22,7 @@ class Texture : public MercuryAsset
 		inline static unsigned short NumberActiveTextures() { return m_activeTextures; }
 		
 		static Texture* Generate();
-		static Texture* LoadFromFile(const MString& path);
+		static MAutoPtr< Texture > LoadFromFile(const MString& path);
 	private:
 		void LoadImage(const MString& path);
 		

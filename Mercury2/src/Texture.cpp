@@ -136,11 +136,12 @@ Texture* Texture::Generate()
 	return new Texture();
 }
 
-Texture* Texture::LoadFromFile(const MString& path)
+MAutoPtr< Texture > Texture::LoadFromFile(const MString& path)
 {
-	Texture *t = (Texture*)AssetFactory::GetInstance().LocateAsset("TEXTURE" + path);
-	if (!t) t = Generate();
-	t->LoadImage( path );
+	MAutoPtr< MercuryAsset > t( AssetFactory::GetInstance().Generate("Texture", path) );
+	Texture *a = (Texture*)&(*t);
+	a->LoadImage( path );
+	return a;
 }
 
 bool Texture::m_initTextureSuccess = false;
