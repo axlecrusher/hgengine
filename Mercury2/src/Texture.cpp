@@ -12,7 +12,7 @@ using namespace std;
 REGISTER_ASSET_TYPE(Texture);
 
 Texture::Texture()
-	:m_raw(NULL),m_textureID(0),m_isLoaded(false)
+	:MercuryAsset(), m_raw(NULL),m_textureID(0)
 {
 	if (!m_initTextureSuccess)
 	{
@@ -94,7 +94,6 @@ void Texture::PostRender(MercuryNode* node)
 
 void Texture::LoadFromXML(const XMLNode& node)
 {
-	if (m_isLoaded) return;
 	LoadImage( node.Attribute("file") );	
 }
 
@@ -121,11 +120,11 @@ void Texture::UnbindTexture()
 
 void Texture::LoadImage(const MString& path)
 {
+	if (m_isInstanced) return;
 	if ( !path.empty() )
 	{
-		m_isLoaded = true;
+		ADD_ASSET_INSTANCE(Texture, path, this);
 		m_filename = path;
-		ADD_ASSET_INSTANCE(Texture, m_filename, this);
 		RawImageData* d = ImageLoader::GetInstance().LoadImage( m_filename );
 		if (d) LoadFromRaw( d );
 	}

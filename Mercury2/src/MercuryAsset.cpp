@@ -1,6 +1,12 @@
 #include <MercuryAsset.h>
 #include <RenderableNode.h>
 
+MercuryAsset::MercuryAsset()
+	:m_isInstanced(false)
+{
+}
+
+
 void MercuryAsset::Init(MercuryNode* node)
 {
 	RenderableNode* rn;
@@ -47,6 +53,7 @@ MercuryAsset* AssetFactory::LocateAsset( const MString& key )
 
 void AssetFactory::AddAssetInstance(const MString& key, MercuryAsset* asset)
 {
+	asset->IsInstanced(true);
 	m_assetInstances[key] = asset;
 }
 
@@ -54,7 +61,10 @@ void AssetFactory::RemoveAssetInstance(const MString& key)
 {
 	std::map<MString, MercuryAsset*>::iterator asset = m_assetInstances.find(key);
 	if ( asset != m_assetInstances.end() )
+	{
 		m_assetInstances.erase( asset );
+		printf("removed asset %s\n", key.c_str());
+	}
 }
 
 std::map<MString, MercuryAsset*> AssetFactory::m_assetInstances;

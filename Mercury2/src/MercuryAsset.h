@@ -9,6 +9,7 @@
 class MercuryAsset : public RefBase
 {
 	public:
+		MercuryAsset();
 		virtual ~MercuryAsset() {};
 		
 		virtual void Init(MercuryNode* node);
@@ -19,6 +20,10 @@ class MercuryAsset : public RefBase
 		
 		///Loads an asset from an XMLAsset representing itself
 		virtual void LoadFromXML(const XMLNode& node) {};
+		
+		inline void IsInstanced(bool b) { m_isInstanced = b; }
+	protected:
+		bool m_isInstanced;
 };
 
 class AssetFactory

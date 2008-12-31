@@ -10,6 +10,8 @@
 class HGMDLModel : public MercuryAsset
 {
 	public:
+		HGMDLModel();
+		~HGMDLModel();
 		
 		virtual void LoadFromXML(const XMLNode& node);
 
@@ -19,6 +21,9 @@ class HGMDLModel : public MercuryAsset
 		virtual void Render(MercuryNode* node);
 
 	private:
+		void LoadHGMDL( const MString& path );
+		
+		MString m_path;
 		std::vector< MAutoPtr< HGMDLMesh > > m_meshes;
 };
 

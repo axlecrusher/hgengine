@@ -37,7 +37,6 @@ class Texture : public MercuryAsset
 		static unsigned short m_activeTextures;
 		
 		MString m_filename;
-		bool m_isLoaded;
 };
 
 #endif

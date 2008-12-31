@@ -2,20 +2,20 @@
 
 REGISTER_ASSET_TYPE(HGMDLModel);
 
+HGMDLModel::HGMDLModel()
+	:MercuryAsset()
+{
+}
+
+HGMDLModel::~HGMDLModel()
+{
+	REMOVE_ASSET_INSTANCE(HGMDLModel, m_path);
+}
+
 void HGMDLModel::LoadFromXML(const XMLNode& node)
 {
-	if ( !node.Attribute("file").empty() )
-	{
-		//FILE* f = fopen( node.Attribute("file").c_str(), "rb" );
-		MercuryFile * f = FILEMAN.Open( node.Attribute("file") );
-		if( !f )
-		{
-			printf( "Could not open file: \"%s\" for model\n", node.Attribute("file").c_str() );
-			return;
-		}
-		LoadModel( f );
-		delete f;
-	}
+	MString path = node.Attribute("file");
+	LoadHGMDL( path );
 }
 
 void HGMDLModel::LoadModel(MercuryFile* hgmdl)
@@ -59,8 +59,27 @@ void HGMDLModel::Render(MercuryNode* node)
 		m_meshes[i]->Render(node);
 }
 
+void HGMDLModel::LoadHGMDL( const MString& path )
+{
+	if ( m_isInstanced ) return;
+	if ( !path.empty() )
+	{
+		ADD_ASSET_INSTANCE(HGMDLModel, path, this);
+		m_path = path;
+		MercuryFile * f = FILEMAN.Open( path );
+		if( !f )
+		{
+			printf( "Could not open file: \"%s\" for model\n", path.c_str() );
+			return;
+		}
+		LoadModel( f );
+		delete f;
+	}
+}
+
 HGMDLModel* HGMDLModel::Generate()
 {
+	printf("new HGMDL\n");
 	return new HGMDLModel();
 }
 

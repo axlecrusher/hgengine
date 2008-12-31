@@ -26,4 +26,10 @@
 				<asset type="hgmdlmodel" file="beerhall.hgmdl"/>
 			</node>
 		</node>
+		<node type="rotatornode" movz="-2" movx="2" scalex="0.05" scaley="0.05" scalez="0.05" >
+			<node type="renderablenode">
+				<asset type="texture" file="test.bmp"/>
+				<asset type="hgmdlmodel" file="beerhall.hgmdl"/>
+			</node>
+		</node>
 </SceneGraph>
