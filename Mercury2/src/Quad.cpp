@@ -8,6 +8,7 @@
 REGISTER_ASSET_TYPE(Quad);
 
 Quad::Quad()
+	:MercuryVBO()
 {
 	AllocateIndexSpace(6);
 	AllocateVertexSpace(4);
