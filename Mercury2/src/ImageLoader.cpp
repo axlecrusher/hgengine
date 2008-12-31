@@ -11,35 +11,41 @@ ImageLoader& ImageLoader::GetInstance()
 	return *instance;
 }
 
-bool ImageLoader::RegisterFactoryCallback(const MString& type, Callback1R< FILE*, RawImageData* > functor)
+bool ImageLoader::RegisterFactoryCallback(const MString& type, Callback1R< MercuryFile*, RawImageData* > functor)
 {
 	MString t = ToUpper( type );
-	std::pair<MString, Callback1R< FILE*, RawImageData* > > pp(t, functor);
+	std::pair<MString, Callback1R< MercuryFile*, RawImageData* > > pp(t, functor);
 	m_factoryCallbacks.push_back( pp );
 	return true;
 }
 
 RawImageData* ImageLoader::LoadImage(const MString& filename)
 {
-	FILE* f = fopen(filename.c_str(), "rb");
+	MercuryFile* f = FILEMAN.Open( filename );
 	char fingerprint[4];
 	fingerprint[3] = 0;
-	
-	fread(fingerprint, sizeof(char)*3, 1, f);
-	fseek(f, 0, SEEK_SET);
+
+	if( !f )
+	{
+		printf( "Error opening image: %s\n", filename.c_str() );
+		return 0;
+	}
+
+	f->Read( fingerprint, 3 );
+	f->Seek( 0 );
 	
 	MString t(fingerprint);// = ToUpper( type );
-	std::list< std::pair< MString, Callback1R< FILE*, RawImageData* > > >::iterator i;
+	std::list< std::pair< MString, Callback1R< MercuryFile*, RawImageData* > > >::iterator i;
 	for (i = m_factoryCallbacks.begin(); i != m_factoryCallbacks.end(); ++i)
 	{
 		if (i->first == t)
 		{
 			RawImageData* d = i->second(f);
-			fclose(f);
+			delete f;
 			return d;
 		}
 	}
-	fclose(f);
+	delete f;
 	return NULL;
 }
 

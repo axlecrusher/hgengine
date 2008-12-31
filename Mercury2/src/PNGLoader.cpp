@@ -6,10 +6,10 @@
 
 void PNGRead( png_struct *png, png_byte *p, png_size_t size )
 {
-	FILE* f = (FILE*)png->io_ptr;
+	MercuryFile * f = (MercuryFile*)png->io_ptr;
 
-//	int got = f->Read( p, size );
-	int got = fread(p, size, 1, f );
+	int got = f->Read( p, size );
+//	int got = fread(p, size, 1, f );
 
 	if( got == -1 )
 		png_error( png, "Error reading from file");
@@ -17,7 +17,7 @@ void PNGRead( png_struct *png, png_byte *p, png_size_t size )
 //		png_error( png, "Unexpected EOF" );
 }
 
-RawImageData* LoadPNG( FILE * fp )
+RawImageData* LoadPNG( MercuryFile * fp )
 {
 	png_structp png_ptr;
 	png_infop info_ptr;
@@ -31,8 +31,8 @@ RawImageData* LoadPNG( FILE * fp )
 	//open file and test for it being a png 
 	if (!fp)
 		assert("[read_png_file] File %s could not be opened for reading");
-//	fp->Read(header, 8 );
-	fread(header, 8, 1, fp);
+	fp->Read(header, 8 );
+//	fread(header, 8, 1, fp);
 	if (png_sig_cmp(header, 0, 8))
 		assert("[read_png_file] File %s is not recognized as a PNG file");
 

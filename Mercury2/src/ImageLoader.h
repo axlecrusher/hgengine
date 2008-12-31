@@ -2,6 +2,7 @@
 #define IMAGELOADER_H
 
 #include <RawImageData.h>
+#include <MercuryFile.h>
 #include <Callback.h>
 #include <list>
 #include <MercuryUtil.h>
@@ -10,17 +11,17 @@ class ImageLoader
 {
 	public:
 		static ImageLoader& GetInstance();
-		bool RegisterFactoryCallback(const MString& type, Callback1R< FILE*, RawImageData* >);
+		bool RegisterFactoryCallback(const MString& type, Callback1R< MercuryFile *, RawImageData* >);
 		RawImageData* LoadImage(const MString& filename);
 	
 	private:
-		std::list< std::pair< MString, Callback1R< FILE*, RawImageData* > > > m_factoryCallbacks;
+		std::list< std::pair< MString, Callback1R< MercuryFile*, RawImageData* > > > m_factoryCallbacks;
 };
 
 static InstanceCounter<ImageLoader> ILcounter("ImageLoader");
 
 #define REGISTER_IMAGE_TYPE(fingerprint,functor)\
-	Callback1R< FILE*, RawImageData* > factoryclbk##functor( functor ); \
+	Callback1R< MercuryFile*, RawImageData* > factoryclbk##functor( functor ); \
 	bool GlobalImageRegisterSuccess##functor = ImageLoader::GetInstance().RegisterFactoryCallback(#fingerprint, factoryclbk##functor);
 
 

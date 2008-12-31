@@ -58,10 +58,13 @@ long FileToString( const MString & sFileName, char * & data )
 	if( !data )
 	{
 		data = 0;
+		delete f;
 		return -1;
 	}
 
 	int r = f->Read( data, length );
+
+	delete f;
 
 	if( r != length )
 	{

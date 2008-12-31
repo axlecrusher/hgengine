@@ -4,7 +4,7 @@
 
 using namespace std;
 
-RawImageData* LoadBMP( FILE* file )
+RawImageData* LoadBMP( MercuryFile * file )
 {
 	int offset;
 	char* tmp = new char[sizeof(int)];
@@ -15,7 +15,6 @@ RawImageData* LoadBMP( FILE* file )
 	unsigned char b[3];
 	unsigned int res_x, res_y;
 	
-//	FILE* file = fopen(filename.c_str(), "rb");
 	printf( "BMP Load Start\n" );
 	if (file==NULL)
 	{
@@ -26,8 +25,8 @@ RawImageData* LoadBMP( FILE* file )
 
 	//Get the type of file and test
 	memset(tmp, 0, 4);
-//	file->Read(tmp, sizeof(char) * 2);
-	fread(tmp, sizeof(char) * 2, 1, file);
+	file->Read(tmp, sizeof(char) * 2);
+//	fread(tmp, sizeof(char) * 2, 1, file);
 	MString type(tmp);
 
 	if (type != "BM")
@@ -37,33 +36,33 @@ RawImageData* LoadBMP( FILE* file )
 		return NULL;
 	}
 	//Offset of bitmap data.
-	fseek(file, 10, SEEK_SET);
-//	file->Seek(10);
-	fread(tmp, 4, 1, file);
-//	file->Read(tmp, 4);
+//	fseek(file, 10, SEEK_SET);
+	file->Seek(10);
+//	fread(tmp, 4, 1, file);
+	file->Read(tmp, 4);
 	memcpy(&offset, tmp, 4);
 	TO_ENDIAN( offset );
 
 	RawImageData* image = new RawImageData;
 
 	//width & width
-	fseek(file, 18, SEEK_SET);
-//	file->Seek(18);
-	fread(tmp, sizeof(int), 1, file);
-//	file->Read(tmp, sizeof(int));
+//	fseek(file, 18, SEEK_SET);
+	file->Seek(18);
+//	fread(tmp, sizeof(int), 1, file);
+	file->Read(tmp, sizeof(int));
 	memcpy(&image->m_width, tmp, sizeof(int));
 	TO_ENDIAN( image->m_width );
-	fread(tmp, sizeof(int), 1, file);
-//	file->Read(tmp, sizeof(int));
+//	fread(tmp, sizeof(int), 1, file);
+	file->Read(tmp, sizeof(int));
 	memcpy(&image->m_height, tmp, sizeof(int));
 	TO_ENDIAN( image->m_height );
 
 	//bits per pixel
 	memset(tmp, 0, sizeof(int));
-	fseek(file, 28, SEEK_SET);
-//	file->Seek(28);
-//	file->Read(tmp, sizeof(int));
-	fread(tmp, sizeof(int), 1, file);
+//	fseek(file, 28, SEEK_SET);
+	file->Seek(28);
+//	fread(tmp, sizeof(int), 1, file);
+	file->Read(tmp, sizeof(int));
 	memcpy(&bitsapix, tmp, sizeof(int));
 	TO_ENDIAN( bitsapix );
 
@@ -76,10 +75,10 @@ RawImageData* LoadBMP( FILE* file )
 	}
 
 	//compression
-//	file->Seek(30);
-	fseek(file, 30, SEEK_SET);
-//	file->Read(tmp, sizeof(int));
-	fread(tmp, sizeof(int), 1, file);
+	file->Seek(30);
+//	fseek(file, 30, SEEK_SET);
+	file->Read(tmp, sizeof(int));
+//	fread(tmp, sizeof(int), 1, file);
 	memcpy(&compression, tmp, sizeof(int));
 	TO_ENDIAN(compression);
 
@@ -93,19 +92,19 @@ RawImageData* LoadBMP( FILE* file )
 
 	//pix/m X
 	memset(tmp, 0, sizeof(int));
-//	file->Seek(38);
-	fseek(file, 38, SEEK_SET);
-//	file->Read(tmp, sizeof(int));
-	fread(tmp, sizeof(int), 1, file);
+//	fseek(file, 38, SEEK_SET);
+	file->Seek(38);
+//	fread(tmp, sizeof(int), 1, file);
+	file->Read(tmp, sizeof(int));
 	memcpy(&res_x, tmp, sizeof(int));
 	TO_ENDIAN(res_x);
 
 	//pix/m Y
 	memset(tmp, 0, sizeof(int));
-	fseek(file, 42, SEEK_SET);
-//	file->Seek(42);
-//	file->Read(tmp, sizeof(int));
-	fread(tmp, sizeof(int), 1, file);
+//	fseek(file, 42, SEEK_SET);
+	file->Seek(42);
+//	fread(tmp, sizeof(int), 1, file);
+	file->Read(tmp, sizeof(int));
 	memcpy(&res_y, tmp, sizeof(int));
 	TO_ENDIAN(res_y);
 
@@ -120,9 +119,9 @@ RawImageData* LoadBMP( FILE* file )
 	}
 
 	//Get the file length
-//	length = file->Length();
-	fseek(file,0,SEEK_END);
-	length = ftell(file);
+	length = file->Length();
+//	fseek(file,0,SEEK_END);
+//	length = ftell(file);
 	rawlength = (length) - (offset-1); //Remember to subtract 1 from the offset.
 
 	//Allocate space
@@ -132,19 +131,19 @@ RawImageData* LoadBMP( FILE* file )
 	memset(image->m_data, 0, rawlength);
 
 	//Get raw data and convert BGR->RGB
-//	file->Seek(offset);
-	fseek(file, offset, SEEK_SET);
+	file->Seek(offset);
+//	fseek(file, offset, SEEK_SET);
 	
 	image->m_ColorByteType = RGB;
 	
 	unsigned long row, pixel;
 	unsigned char* rowPtr;
 	
-	for (unsigned int x = 0; !feof(file) && (x+3 < (unsigned)rawlength); x += 3)
+	for (unsigned int x = 0; !file->Eof() && (x+3 < (unsigned)rawlength); x += 3)
 	{
 		memset(b, 0, sizeof(unsigned char) * 3);
-//		file->Read((char*)&b, sizeof(unsigned char) * 3);
-		fread(&b, sizeof(unsigned char) * 3, 1, file);
+		file->Read((char*)&b, sizeof(unsigned char) * 3);
+//		fread(&b, sizeof(unsigned char) * 3, 1, file);
 				
 		row = image->m_height - (x/3)/image->m_width - 1; //current row
 		pixel = (x/3)%image->m_width; //which pixel in the row
