@@ -4,6 +4,8 @@
 #include <MAutoPtr.h>
 #include <MercuryNode.h>
 
+#include <map>
+
 class MercuryAsset : public RefBase
 {
 	public:
@@ -24,10 +26,18 @@ class AssetFactory
 	public:
 		static AssetFactory& GetInstance();
 		bool RegisterFactoryCallback(const MString& type, Callback0R< MAutoPtr<MercuryAsset> >);
-		MAutoPtr<MercuryAsset> Generate(const MString& type);
+		MAutoPtr<MercuryAsset> Generate(const MString& type, const MString& key);
+		
+		void AddAssetInstance(const MString& key, MercuryAsset* asset);
+		void RemoveAssetInstance(const MString& key);
 	
-	private:
+		MercuryAsset* LocateAsset( const MString& key );
+
+	private:		
 		std::list< std::pair< MString, Callback0R< MAutoPtr<MercuryAsset> > > > m_factoryCallbacks;
+		
+		static std::map<MString, MercuryAsset*> m_assetInstances;
+
 };
 
 static InstanceCounter<AssetFactory> AFcounter("AssetFactory");

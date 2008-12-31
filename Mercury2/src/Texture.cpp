@@ -12,7 +12,7 @@ using namespace std;
 REGISTER_ASSET_TYPE(Texture);
 
 Texture::Texture()
-	:m_raw(NULL),m_textureID(0)
+	:m_raw(NULL),m_textureID(0),m_isLoaded(false)
 {
 	if (!m_initTextureSuccess)
 	{
@@ -23,6 +23,8 @@ Texture::Texture()
 
 Texture::~Texture()
 {
+	AssetFactory::GetInstance().RemoveAssetInstance( "TEXTURE"+m_filename );
+	
 	if (m_textureID) glDeleteTextures(1, &m_textureID);
 	m_textureID = 0;
 	
@@ -92,12 +94,8 @@ void Texture::PostRender(MercuryNode* node)
 
 void Texture::LoadFromXML(const XMLNode& node)
 {
-	if ( !node.Attribute("imagefile").empty() )
-	{
-//		RawImageData* d = LoadBMP( node.Attribute("imagefile") );
-		RawImageData* d = ImageLoader::GetInstance().LoadImage( node.Attribute("imagefile") );
-		if (d) LoadFromRaw( d );
-	}
+	if (m_isLoaded) return;
+	LoadImage( node.Attribute("file") );	
 }
 
 void Texture::BindTexture()
@@ -121,8 +119,33 @@ void Texture::UnbindTexture()
 	--m_activeTextures;
 }
 
+void Texture::LoadImage(const MString& path)
+{
+	if ( !path.empty() )
+	{
+		m_isLoaded = true;
+		m_filename = path;
+		AssetFactory::GetInstance().AddAssetInstance("TEXTURE" + m_filename, this);
+		RawImageData* d = ImageLoader::GetInstance().LoadImage( m_filename );
+		if (d) LoadFromRaw( d );
+	}
+}
+
+Texture* Texture::Generate()
+{
+	return new Texture();
+}
+
+Texture* Texture::LoadFromFile(const MString& path)
+{
+	Texture *t = (Texture*)AssetFactory::GetInstance().LocateAsset("TEXTURE" + path);
+	if (!t) t = Generate();
+	t->LoadImage( path );
+}
+
 bool Texture::m_initTextureSuccess = false;
 unsigned short Texture::m_activeTextures = 0;
+
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *

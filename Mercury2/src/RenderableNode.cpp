@@ -143,7 +143,8 @@ void RenderableNode::LoadFromXML(const XMLNode& node)
 	{
 		if ( child.Name() == "asset" )
 		{
-			MAutoPtr< MercuryAsset > asset( AssetFactory::GetInstance().Generate(child.Attribute("type") ) );
+			MString key = child.Attribute("file");
+			MAutoPtr< MercuryAsset > asset( AssetFactory::GetInstance().Generate( child.Attribute("type"), key ) );
 			if ( asset.IsValid() )
 			{
 				asset->LoadFromXML( child );

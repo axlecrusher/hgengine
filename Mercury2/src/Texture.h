@@ -21,8 +21,11 @@ class Texture : public MercuryAsset
 		
 		inline static unsigned short NumberActiveTextures() { return m_activeTextures; }
 		
-		static Texture* Generate() { return new Texture(); }
+		static Texture* Generate();
+		static Texture* LoadFromFile(const MString& path);
 	private:
+		void LoadImage(const MString& path);
+		
 		void BindTexture();
 		void UnbindTexture();
 		
@@ -32,6 +35,9 @@ class Texture : public MercuryAsset
 		
 		static bool m_initTextureSuccess;
 		static unsigned short m_activeTextures;
+		
+		MString m_filename;
+		bool m_isLoaded;
 };
 
 #endif

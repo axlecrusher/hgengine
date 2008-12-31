@@ -39,18 +39,16 @@ Quad::Quad()
 
 Quad::~Quad()
 {
-	if (m_myInstance == this)
-		m_myInstance = NULL;
+	AssetFactory::GetInstance().RemoveAssetInstance( "QUAD" );
 }
 
 Quad* Quad::Generate()
 {
-	if ( !m_myInstance )
-		m_myInstance = new Quad();
-	return m_myInstance;
+	Quad *asset = new Quad();
+	AssetFactory::GetInstance().AddAssetInstance( "QUAD", asset );
+	printf("new quad\n");
+	return asset;
 }
-
-Quad* Quad::m_myInstance = NULL;
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *

@@ -13,7 +13,6 @@ class Quad : public MercuryVBO
 		static Quad* Generate();
 	
 	private:
-		static Quad* m_myInstance;
 };
 
 #endif
