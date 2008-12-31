@@ -2,11 +2,12 @@
 #define HGMDLMESH_H
 
 #include <MercuryVBO.h>
+#include <MercuryFile.h>
 
 class HGMDLMesh : public MercuryVBO
 {
 	public:
-		void LoadFromFile(FILE* hgmdl);
+		void LoadFromFile(MercuryFile* hgmdl);
 	private:
 		MString m_name;
 		bool m_cachable;

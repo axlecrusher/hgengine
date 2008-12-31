@@ -1,34 +1,41 @@
 #include <HGMDLMesh.h>
 
-void HGMDLMesh::LoadFromFile(FILE* hgmdl)
+void HGMDLMesh::LoadFromFile(MercuryFile* hgmdl)
 {
 	uint32_t nameLength;
-	fread(&nameLength, sizeof(uint32_t), 1, hgmdl);
+	//fread(&nameLength, sizeof(uint32_t), 1, hgmdl);
+	hgmdl->Read( &nameLength, sizeof( uint32_t ) );
 	
 	if (nameLength > 0)
 	{
 		char* name = new char[nameLength+1];
 		name[nameLength] = 0;
-		fread(name, nameLength, 1, hgmdl);
+		hgmdl->Read( name, nameLength );
+		//fread(name, nameLength, 1, hgmdl);
 		m_name = name;
 	}
 	
-	fread(&m_cachable, sizeof(bool), 1, hgmdl);
+	hgmdl->Read( &m_cachable, sizeof( char ) );
+	//fread(&m_cachable, sizeof(bool), 1, hgmdl);
 	
 	uint32_t dataLength;
-	fread(&dataLength, sizeof(uint32_t), 1, hgmdl);
+	//fread(&dataLength, sizeof(uint32_t), 1, hgmdl);
+	hgmdl->Read( &dataLength, sizeof( uint32_t ) );
 	if (dataLength > 0)
 	{
 		m_vertexData.Allocate( dataLength/sizeof(float) ); //they are all floats
-		fread(m_vertexData.Buffer(), dataLength, 1, hgmdl);
+		//fread(m_vertexData.Buffer(), dataLength, 1, hgmdl);
+		hgmdl->Read( m_vertexData.Buffer(), dataLength );
 	}
 	
 	uint16_t numIndices;
-	fread(&numIndices, sizeof(uint16_t), 1, hgmdl);
+	//fread(&numIndices, sizeof(uint16_t), 1, hgmdl);
+	hgmdl->Read( &numIndices, sizeof( uint16_t ) );
 	if (numIndices > 0)
 	{
 		m_indexData.Allocate( numIndices );
-		fread(m_indexData.Buffer(), numIndices*sizeof(uint16_t), 1, hgmdl);
+		//fread(m_indexData.Buffer(), numIndices*sizeof(uint16_t), 1, hgmdl);
+		hgmdl->Read( m_indexData.Buffer(), numIndices*sizeof(uint16_t) );
 	}
 }
 

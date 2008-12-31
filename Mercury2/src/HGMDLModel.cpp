@@ -6,17 +6,24 @@ void HGMDLModel::LoadFromXML(const XMLNode& node)
 {
 	if ( !node.Attribute("file").empty() )
 	{
-		FILE* f = fopen( node.Attribute("file").c_str(), "rb" );
+		//FILE* f = fopen( node.Attribute("file").c_str(), "rb" );
+		MercuryFile * f = FILEMAN.Open( node.Attribute("file") );
+		if( !f )
+		{
+			printf( "Could not open file: \"%s\" for model\n", node.Attribute("file").c_str() );
+			return;
+		}
 		LoadModel( f );
-		fclose( f );
+		delete f;
 	}
 }
 
-void HGMDLModel::LoadModel(FILE* hgmdl)
+void HGMDLModel::LoadModel(MercuryFile* hgmdl)
 {
 	char fingerPrint[5];
 	fingerPrint[4] = 0;
-	fread(fingerPrint, 4, 1, hgmdl);
+
+	hgmdl->Read( fingerPrint, 4 );
 
 	MString p(fingerPrint);
 	if (p != "MBMF")
@@ -26,7 +33,8 @@ void HGMDLModel::LoadModel(FILE* hgmdl)
 	}
 	
 	uint32_t version;
-	fread(&version, 4, 1, hgmdl);
+	//fread(&version, 4, 1, hgmdl);
+	hgmdl->Read( &version, 4 );
 	
 	if (version != 200)
 	{
@@ -35,7 +43,8 @@ void HGMDLModel::LoadModel(FILE* hgmdl)
 	}
 	
 	uint16_t numMeshes;
-	fread(&numMeshes, sizeof(uint16_t), 1, hgmdl);
+
+	hgmdl->Read( &numMeshes, sizeof( uint16_t ) );
 	for (uint16_t i = 0; i < numMeshes; ++i)
 	{
 		MAutoPtr< HGMDLMesh > mesh( new HGMDLMesh() );

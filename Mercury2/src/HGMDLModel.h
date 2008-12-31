@@ -3,6 +3,7 @@
 
 #include <MercuryAsset.h>
 #include <HGMDLMesh.h>
+#include <MercuryFile.h>
 
 #include <vector>
 
@@ -12,7 +13,7 @@ class HGMDLModel : public MercuryAsset
 		
 		virtual void LoadFromXML(const XMLNode& node);
 
-		void LoadModel(FILE* hgmdl);
+		void LoadModel(MercuryFile* hgmdl);
 		
 		static HGMDLModel* Generate();
 		virtual void Render(MercuryNode* node);
