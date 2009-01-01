@@ -13,6 +13,9 @@
 #include <MercuryCrash.h>
 #include <MercuryBacktrace.h>
 #include <MercuryMessageManager.h>
+
+#include <MercuryTimer.h>
+
 MSemaphore UpdateLoopGo;
 void* UpdateThread(void* node)
 {
@@ -37,8 +40,6 @@ int SignalHandler( int signal )
 int main()
 {
 	unsigned long m_count = 0;
-	uint64_t startTime = GetTimeInMicroSeconds();
-	uint64_t timeSinceStart = 0;
 	
 	cnset_execute_on_crash( SignalHandler );
 
@@ -51,31 +52,29 @@ int main()
 	root->LoadFromXML( r );
 	
 	SAFE_DELETE(doc);
-		
-	uint64_t oTime = timeSinceStart;
-	uint64_t m_time = oTime;
+	
+	MercuryTimer timer;
+	MercuryTimer fpsTimer;
 		
 	//uncomment the next 2 lines to use threads
 //	MercuryThread updateThread;
 //	updateThread.Create( UpdateThread, root, false);
 	do
 	{
-		timeSinceStart = GetTimeInMicroSeconds() - startTime;
-		MESSAGEMAN::GetInstance().PumpMessages( timeSinceStart );
-		root->RecursiveUpdate((timeSinceStart-oTime)/1000000.0f); //comment to use threads
+		timer.Touch();
+//		MESSAGEMAN::GetInstance().PumpMessages( timer.MicrosecondsSinceInit() );
+		root->RecursiveUpdate( timer.Age() ); //comment to use threads
 		RenderableNode::RecursiveRender(root);
 		w->SwapBuffers();
 		++m_count;
 		
-		float seconds = (timeSinceStart-m_time)/1000000.0f;
-		if (seconds > 1)
+		fpsTimer.Touch(timer);
+		if (fpsTimer.Age() > 1)
 		{
-			m_time = timeSinceStart;
-			printf("FPS: %f\n", m_count/seconds);
+			printf("FPS: %f\n", m_count/fpsTimer.Age());
 			m_count = 0;
+			fpsTimer = timer;
 		}
-		
-		oTime = timeSinceStart;
 	}
 	while ( w->PumpMessages() );
 	

@@ -2,12 +2,6 @@
 #include <MercuryFile.h>
 #include <stdint.h>
 
-#ifndef WIN32
-#include <sys/time.h>
-#else
-#include <windows.h>
-#endif
-
 MString ToUpper(const MString& s)
 {
 	MString t = s;
@@ -33,15 +27,6 @@ void* mmemalign(size_t align, size_t size, void*& mem)
 	mem = malloc(size+align-1);
 	void *ptr = (void *)(((uintptr_t)mem+align-1) & mask);
 	return ptr;
-}
-
-int64_t GetTimeInMicroSeconds()
-{
-	struct timeval tv;
-	gettimeofday( &tv, 0 );
-	
-	return (int64_t(tv.tv_sec) * 1000000) + tv.tv_usec;
-
 }
 
 long FileToString( const MString & sFileName, char * & data )

@@ -17,8 +17,6 @@
 //returns an aligned pointer, mem is the actual (unaligned) pointer for freeing
 void* mmemalign(size_t align, size_t size, void*& mem);
 
-int64_t GetTimeInMicroSeconds();
-
 #if defined(__GNUC__)
 #define M_ALIGN(n) __attribute__((aligned(n)))
 //#define MMALLOC(n) memalign(32, n)
