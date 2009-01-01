@@ -6,6 +6,7 @@
 #include <typeinfo>
 #include <XMLParser.h>
 #include <MercuryUtil.h>
+#include <MessageHandler.h>
 
 /** This is the basic node of the scene graph.  It is not intended to be instanced.
 	Each node exists as a single entity in the scene graph.
@@ -22,7 +23,7 @@ static x* Cast(MercuryNode* n) \
 while(tn) { if (typeid(x) == typeid(*tn)) return true; tn = *n; } \
 return false;}
 */
-class MercuryNode
+class MercuryNode : public MessageHandler
 {
 	public:
 		MercuryNode();

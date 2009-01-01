@@ -3,10 +3,10 @@
 
 #include <MAutoPtr.h>
 #include <MercuryNode.h>
-
+#include <MessageHandler.h>
 #include <map>
 
-class MercuryAsset : public RefBase
+class MercuryAsset : public RefBase, MessageHandler
 {
 	public:
 		MercuryAsset();
