@@ -15,7 +15,7 @@ int64_t GetTimeInMicroSeconds()
 }
 
 MercuryTimer::MercuryTimer()
-	:m_lastTouch(0), m_thisTouch(0)
+	:m_lastTouch(0), m_thisTouch(0), m_paused(false)
 {
 	if (m_initTime == 0)
 		m_initTime = GetTimeInMicroSeconds();
@@ -33,6 +33,8 @@ float MercuryTimer::Touch()
 {
 	m_lastTouch = m_thisTouch;
 	m_thisTouch = GetTimeInMicroSeconds() - m_initTime;
+	
+	if (m_paused) m_lastTouch = m_thisTouch;
 	return Age();
 }
 
@@ -40,6 +42,11 @@ float MercuryTimer::Touch(const MercuryTimer& t)
 {
 	m_thisTouch = t.m_thisTouch;
 	return Age();
+}
+
+void MercuryTimer::Pause()
+{
+	m_paused = !m_paused;
 }
 
 const MercuryTimer& MercuryTimer::operator=(const MercuryTimer& t)

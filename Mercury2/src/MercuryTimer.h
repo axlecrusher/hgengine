@@ -21,12 +21,15 @@ class MercuryTimer
 		///time between last last touch and this touch
 		inline float Age() { return (m_thisTouch - m_lastTouch)/1000000.0f; }
 		
+		void Pause();
+		
 		const MercuryTimer& operator=(const MercuryTimer& t);
 	private:
 		static uint64_t m_initTime;
 		
 		uint64_t m_lastTouch;
 		uint64_t m_thisTouch;
+		bool m_paused;
 };
 
 #endif
