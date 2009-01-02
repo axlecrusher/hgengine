@@ -62,7 +62,7 @@ int main()
 	do
 	{
 		timer.Touch();
-//		MESSAGEMAN::GetInstance().PumpMessages( timer.MicrosecondsSinceInit() );
+		MESSAGEMAN::GetInstance().PumpMessages( timer.MicrosecondsSinceInit() );
 		root->RecursiveUpdate( timer.Age() ); //comment to use threads
 		RenderableNode::RecursiveRender(root);
 		w->SwapBuffers();
