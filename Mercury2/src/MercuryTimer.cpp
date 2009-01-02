@@ -42,11 +42,6 @@ float MercuryTimer::Touch(const MercuryTimer& t)
 	return Age();
 }
 
-float MercuryTimer::Age()
-{
-	return (m_thisTouch - m_lastTouch)/1000000.0f;
-}
-
 const MercuryTimer& MercuryTimer::operator=(const MercuryTimer& t)
 {
 	m_lastTouch = t.m_lastTouch;

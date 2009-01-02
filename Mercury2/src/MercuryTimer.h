@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+int64_t GetTimeInMicroSeconds();
+
 class MercuryTimer
 {
 	public:
@@ -17,7 +19,7 @@ class MercuryTimer
 		float Touch(const MercuryTimer& t);
 		
 		///time between last last touch and this touch
-		float Age();
+		inline float Age() { return (m_thisTouch - m_lastTouch)/1000000.0f; }
 		
 		const MercuryTimer& operator=(const MercuryTimer& t);
 	private:
