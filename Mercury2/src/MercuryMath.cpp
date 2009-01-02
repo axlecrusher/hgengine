@@ -1,6 +1,6 @@
 #include "MercuryMath.h"
 
-#if !defined( USE_SSE )
+#ifndef USE_SSE
 
 //Generic Math functions. Compile these if you can not use optimized functions.
 
