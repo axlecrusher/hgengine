@@ -78,7 +78,9 @@ X11Window::X11Window(const MString& title, int width, int height, int bits, int 
 
 X11Window::~X11Window()
 {
+	if (m_renderCtx) glXDestroyContext(m_display, m_renderCtx);
 	if (m_display) XCloseDisplay(m_display);
+	m_renderCtx = NULL;
 	m_display = NULL;
 }
 

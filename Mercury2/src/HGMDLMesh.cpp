@@ -13,6 +13,7 @@ void HGMDLMesh::LoadFromFile(MercuryFile* hgmdl)
 		hgmdl->Read( name, nameLength );
 		//fread(name, nameLength, 1, hgmdl);
 		m_name = name;
+		SAFE_DELETE_ARRAY(name);
 	}
 	
 	hgmdl->Read( &m_cachable, sizeof( char ) );
