@@ -29,6 +29,11 @@ void* mmemalign(size_t align, size_t size, void*& mem)
 	return ptr;
 }
 
+bool isAligned(size_t align, const void* mem)
+{
+	return (uintptr_t(mem) % align) == 0;
+}
+
 long FileToString( const MString & sFileName, char * & data )
 {
 	data = 0;

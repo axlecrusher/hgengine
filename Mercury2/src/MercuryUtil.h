@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <MercuryString.h>
+#include <assert.h>
 
 /*#ifndef NULL
 #define NULL 0
@@ -16,11 +17,12 @@
 
 //returns an aligned pointer, mem is the actual (unaligned) pointer for freeing
 void* mmemalign(size_t align, size_t size, void*& mem);
+bool isAligned(size_t align, const void* mem);
+
+#define ASSERT(x) assert(!x)
 
 #if defined(__GNUC__)
 #define M_ALIGN(n) __attribute__((aligned(n)))
-//#define MMALLOC(n) memalign(32, n)
-//#define MMALLOC(n) malloc(n)
 #else
 #define M_ALIGN(n)
 #endif
