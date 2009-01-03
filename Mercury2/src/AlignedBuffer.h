@@ -14,11 +14,11 @@ class AlignedBuffer
 			Free();
 		}
 		
-		void Allocate(unsigned long count)
+		void Allocate(unsigned long count, uint8_t alignment = 32)
 		{
 			SAFE_FREE(m_mem);
 			void * m_memret;
-			m_data = (T*)mmemalign(32, sizeof(T)*count, m_memret);
+			m_data = (T*)mmemalign(alignment, sizeof(T)*count, m_memret);
 			m_mem = (T*)m_memret;
 			m_length = count;
 		}
