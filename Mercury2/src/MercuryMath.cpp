@@ -85,7 +85,7 @@ void Copy16f( void * dest, const void * source )
     ((float*)dest)[15] = ((float*)source)[15];
 }
 
-void R_ConcatTransforms4 ( const FloatRow* in1a, const FloatRow* in2a, FloatRow* outa)
+void MatrixMultiply4f ( const FloatRow* in1a, const FloatRow* in2a, FloatRow* outa)
 {
 	float *in1, *in2, *out;
 	
@@ -149,54 +149,24 @@ __m128 Hadd4(__m128 x)
 	return _mm_add_ps( x, _mm_shuffle_ps(x, x, _MM_SHUFFLE(1,1,1,1)) );
 }
 
-void Mul4f(const float* first, const float* second, float* out)
+void Mul4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
 {
-	__m128 xmm[2];
-
-	xmm[0] = _mm_load_ps(first);
-	xmm[1] = _mm_load_ps(second);
-
-	xmm[0] = _mm_mul_ps( xmm[0], xmm[1] );
-
-	_mm_store_ps(out, xmm[0]);
+	*out = _mm_mul_ps( *first, *second );
 }
 
-void Div4f(const float* first, const float* second, float* out)
+void Div4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
 {
-	__m128 xmm[2];
-
-	xmm[0] = _mm_load_ps(first);
-	xmm[1] = _mm_load_ps(second);
-
-	xmm[0] = _mm_div_ps( xmm[0], xmm[1] );
-
-	_mm_store_ps(out, xmm[0]);
+	*out = _mm_div_ps( *first, *second );
 }
 
-void Add4f(const float* first, const float* second, float* out)
+void Add4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
 {
-	__m128 xmm[2];
-
-	xmm[0] = _mm_load_ps(first);
-	xmm[1] = _mm_load_ps(second);
-
-	xmm[0] = _mm_add_ps( xmm[0], xmm[1] );
-
-	_mm_store_ps(out, xmm[0]);
-
+	*out = _mm_add_ps( *first, *second );
 }
 
-void Sub4f(const float* first, const float* second, float* out)
+void Sub4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
 {
-	__m128 xmm[2];
-
-	xmm[0] = _mm_load_ps(first);
-	xmm[1] = _mm_load_ps(second);
-
-	xmm[0] = _mm_sub_ps( xmm[0], xmm[1] );
-
-	_mm_store_ps(out, xmm[0]);
-
+	*out = _mm_sub_ps( *first, *second );
 }
 
 void Copy4f( void * dest, const void * source )
@@ -235,7 +205,7 @@ void Copy16f( void * dest, const void * source )
 	_mm_store_ps((float*)&(((float*)dest)[12]), xmm[3]);
 }
 
-void R_ConcatTransforms4 ( const FloatRow* in1, const FloatRow* in2, FloatRow* out)
+void MatrixMultiply4f( const FloatRow* in1, const FloatRow* in2, FloatRow* out)
 {
 	unsigned int y;
 	__m128 xmm[4];

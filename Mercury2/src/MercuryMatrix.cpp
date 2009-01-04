@@ -194,16 +194,14 @@ void MercuryMatrix::Scale(float x, float y, float z)
 MercuryMatrix MercuryMatrix::operator*(const MercuryMatrix& m) const
 {
 	MercuryMatrix r(*this);
-//	R_ConcatTransforms4 ( (float*)&m_matrix, (float*)&m.m_matrix, (float*)&r.m_matrix);
-	R_ConcatTransforms4 ( m_matrix, m.m_matrix, r.m_matrix);
+	MatrixMultiply4f ( m_matrix, m.m_matrix, r.m_matrix);
 	return r;
 }
 
 MercuryMatrix& MercuryMatrix::operator*=(const MercuryMatrix& m) 
 {
 	MercuryMatrix r(*this);
-//	R_ConcatTransforms4 ( (float*)&r.m_matrix, (float*)&m.m_matrix, (float*)&m_matrix);
-	R_ConcatTransforms4 ( r.m_matrix, m.m_matrix, m_matrix);
+	MatrixMultiply4f ( r.m_matrix, m.m_matrix, m_matrix);
 	return *this;
 }
 
