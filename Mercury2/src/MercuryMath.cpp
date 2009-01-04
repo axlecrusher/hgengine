@@ -1,5 +1,34 @@
 #include "MercuryMath.h"
 
+//the SSE version of this was really slow, this is quicker
+void TransposeMatrix( FloatRow* m )
+{
+	float tmp;
+	float *_m = (float*)m;
+	
+	tmp = _m[1];
+	_m[1] = _m[4];
+	_m[4] = tmp;
+
+	tmp = _m[2];
+	_m[2] = _m[8];
+	_m[8] = tmp;
+	tmp = _m[3];
+	_m[3] = _m[12];
+	_m[12] = tmp;
+
+	tmp = _m[6];
+	_m[6] = _m[9];
+	_m[9] = tmp;
+	tmp = _m[7];
+	_m[7] = _m[13];
+	_m[13] = tmp;
+
+	tmp = _m[11];
+	_m[11] = _m[14];
+	_m[14] = tmp;
+}
+
 #ifndef USE_SSE
 
 //Generic Math functions. Compile these if you can not use optimized functions.

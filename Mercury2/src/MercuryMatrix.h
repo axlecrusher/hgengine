@@ -7,9 +7,6 @@
 
 class MercuryMatrix;
 
-//Matrix in1 will be copied, n2 will not. n2 better never be the same as out
-void TransposeMatrix( const MercuryMatrix& in, MercuryMatrix &out );
-
 ///General Purpose 4x4 row-major matrix
 class MercuryMatrix
 {
@@ -38,7 +35,7 @@ public:
 	void RotateAngAxis( float fAngle, float x, float y, float z );
 	void Scale(float x, float y, float z);
 	void Transotale( float tX, float tY, float tZ, float rX, float rY, float rZ, float sX, float sY, float sZ );
-	inline void Transpose() { TransposeMatrix(*this, *this); }
+	inline void Transpose() { TransposeMatrix( m_matrix ); }
 
 	void Zero();
 	void Identity();

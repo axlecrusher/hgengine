@@ -214,40 +214,6 @@ void MercuryMatrix::Print()
 	printf("\n");
 }
 
-void TransposeMatrix( const MercuryMatrix &in, MercuryMatrix &out )
-{
-	float tmp;
-	const float* _in = (const float*)in.Ptr();
-	float* _out = out.Ptr();
-
-	//unchanging
-	_out[0] = _in[0];
-	_out[5] = _in[5];
-	_out[10] = _in[10];
-	_out[15] = _in[15];
-
-	tmp = _in[1];
-	_out[1] = _in[4];
-	_out[4] = tmp;
-	tmp = _in[2];
-	_out[2] = _in[8];
-	_out[8] = tmp;
-	tmp = _in[3];
-	_out[3] = _in[12];
-	_out[12] = tmp;
-
-	tmp = _in[6];
-	_out[6] = _in[9];
-	_out[9] = tmp;
-	tmp = _in[7];
-	_out[7] = _in[13];
-	_out[13] = tmp;
-
-	tmp = _in[11];
-	_out[11] = _in[14];
-	_out[14] = tmp;
-}
-
 /* 
  * Copyright (c) 2006 Joshua Allen
  * All rights reserved.
