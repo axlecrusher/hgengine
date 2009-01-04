@@ -9,7 +9,7 @@ SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp src/MercuryNode.cpp src/MercuryPo
 	src/Texture.cpp src/RawImageData.cpp src/BMPLoader.cpp src/PNGLoader.cpp src/ImageLoader.cpp \
 	src/MercuryVBO.cpp src/MSemaphore.cpp src/UpdateThreader.cpp src/HGMDLMesh.cpp \
 	src/HGMDLModel.cpp src/MercuryString.cpp src/MercuryCrash.c src/MercuryBacktrace.c \
-	src/MercuryFile.cpp"
+	src/MercuryFile.cpp src/MercuryTimer.cpp src/MercuryMessageManager.cpp"
 
 
 SOURCES="$SOURCES src/MercuryFileDriverDirect.cpp src/MercuryFileDriverMem.cpp \

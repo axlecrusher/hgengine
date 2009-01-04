@@ -2,7 +2,7 @@
 <kdevelop>
   <general>
     <author>Joshua Allen</author>
-    <email/>
+    <email></email>
     <version>2.0</version>
     <projectmanagement>KDevAutoProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
@@ -14,8 +14,8 @@
     <projectname>Mercury2</projectname>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description/>
-    <defaultencoding/>
+    <description></description>
+    <defaultencoding></defaultencoding>
     <versioncontrol/>
   </general>
   <kdevautoproject>
@@ -26,8 +26,8 @@
     <run>
       <mainprogram>/home/josh/Mercury2/debug/src/mercury2</mainprogram>
       <terminal>false</terminal>
-      <programargs/>
-      <globaldebugarguments/>
+      <programargs></programargs>
+      <globaldebugarguments></globaldebugarguments>
       <globalcwd>/home/josh/Mercury2</globalcwd>
       <useglobalprogram>true</useglobalprogram>
       <autocompile>false</autocompile>
@@ -41,17 +41,17 @@
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevg77options</f77compiler>
-        <cxxflags>-O2 -g0 -Wall</cxxflags>
+        <cxxflags>-O2 -g -Wall</cxxflags>
         <envvars/>
-        <configargs/>
-        <topsourcedir/>
-        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE -DRUN_FROM_START_FOLDER</cppflags>
+        <configargs></configargs>
+        <topsourcedir></topsourcedir>
+        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE -DRUN_FROM_START_FOLDER -DUSE_SSE</cppflags>
         <ldflags>-lpthread -lX11 -lGL -lxml2 -lpng</ldflags>
-        <ccompilerbinary/>
-        <cxxcompilerbinary/>
-        <f77compilerbinary/>
-        <cflags/>
-        <f77flags/>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
+        <cflags>-O2 -g -Wall</cflags>
+        <f77flags></f77flags>
       </optimized>
       <debug>
         <configargs>--enable-debug=full</configargs>
@@ -59,19 +59,33 @@
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevg77options</f77compiler>
-        <cxxflags>-O0 -g3 -Wall</cxxflags>
+        <cxxflags>-O2 -g -Wall</cxxflags>
         <envvars/>
-        <topsourcedir/>
-        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE -DRUN_FROM_START_FOLDER</cppflags>
+        <topsourcedir></topsourcedir>
+        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE -DRUN_FROM_START_FOLDER -DUSE_SSE</cppflags>
         <ldflags>-lpthread -lX11 -lGL -lxml2 -lpng</ldflags>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
+        <cflags>-O2 -g -Wall</cflags>
+        <f77flags></f77flags>
+      </debug>
+      <default>
+        <envvars/>
+        <configargs/>
+        <builddir/>
+        <topsourcedir/>
+        <cppflags/>
+        <ldflags/>
+        <ccompiler>kdevgccoptions</ccompiler>
+        <cxxcompiler>kdevgppoptions</cxxcompiler>
+        <f77compiler>kdevg77options</f77compiler>
         <ccompilerbinary/>
         <cxxcompilerbinary/>
         <f77compilerbinary/>
         <cflags/>
+        <cxxflags/>
         <f77flags/>
-      </debug>
-      <default>
-        <envvars/>
       </default>
     </configurations>
     <make>
@@ -208,7 +222,7 @@
       <includePaths>.;</includePaths>
     </codecompletion>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
@@ -229,11 +243,11 @@
   </cppsupportpart>
   <kdevdebugger>
     <general>
-      <gdbpath/>
+      <gdbpath></gdbpath>
       <dbgshell>libtool</dbgshell>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
