@@ -9,36 +9,36 @@ void ZeroFloatRow(FloatRow& r)
 	Copy4f(&r, (FloatRow){ 0.0f, 0.0f, 0.0f, 0.0f });
 }
 
-void Mul4f(const float* first, const float* second, float* out)
+void Mul4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
 {
-    out[0] = first[0] * second[0];
-    out[1] = first[1] * second[1];
-    out[2] = first[2] * second[2];
-    out[3] = first[3] * second[3];
+    ((float*)out)[0] = ((float*)first)[0] * ((float*)second)[0];
+    ((float*)out)[1] = ((float*)first)[1] * ((float*)second)[1];
+    ((float*)out)[2] = ((float*)first)[2] * ((float*)second)[2];
+    ((float*)out)[3] = ((float*)first)[3] * ((float*)second)[3];
 }
 
-void Div4f(const float* first, const float* second, float* out)
+void Div4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
 {
-    out[0] = first[0] / second[0];
-    out[1] = first[1] / second[1];
-    out[2] = first[2] / second[2];
-    out[3] = first[3] / second[3];
+    ((float*)out)[0] = ((float*)first)[0] / ((float*)second)[0];
+    ((float*)out)[1] = ((float*)first)[1] / ((float*)second)[1];
+    ((float*)out)[2] = ((float*)first)[2] / ((float*)second)[2];
+    ((float*)out)[3] = ((float*)first)[3] / ((float*)second)[3];
 }
 
-void Add4f(const float* first, const float* second, float* out)
+void Add4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
 {
-    out[0] = first[0] + second[0];
-    out[1] = first[1] + second[1];
-    out[2] = first[2] + second[2];
-    out[3] = first[3] + second[3];
+    ((float*)out)[0] = ((float*)first)[0] + ((float*)second)[0];
+    ((float*)out)[1] = ((float*)first)[1] + ((float*)second)[1];
+    ((float*)out)[2] = ((float*)first)[2] + ((float*)second)[2];
+    ((float*)out)[3] = ((float*)first)[3] + ((float*)second)[3];
 }
 
-void Sub4f(const float* first, const float* second, float* out)
+void Sub4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
 {
-    out[0] = first[0] - second[0];
-    out[1] = first[1] - second[1];
-    out[2] = first[2] - second[2];
-    out[3] = first[3] - second[3];
+    ((float*)out)[0] = ((float*)first)[0] - ((float*)second)[0];
+    ((float*)out)[1] = ((float*)first)[1] - ((float*)second)[1];
+    ((float*)out)[2] = ((float*)first)[2] - ((float*)second)[2];
+    ((float*)out)[3] = ((float*)first)[3] - ((float*)second)[3];
 }
 
 void Copy4f( void * dest, const void * source )
@@ -215,7 +215,7 @@ void MatrixMultiply4f( const FloatRow* in1, const FloatRow* in2, FloatRow* out)
 	
 	for (y = 0; y < 4; ++y)
 	{
-		//load columns
+		//load rows as columns
 		xmm[3] = _mm_shuffle_ps (in1[y], in1[y], 0xff);
 		xmm[2] = _mm_shuffle_ps (in1[y], in1[y], 0xaa);
 		xmm[1] = _mm_shuffle_ps (in1[y], in1[y], 0x55);
