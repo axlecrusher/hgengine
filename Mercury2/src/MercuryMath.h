@@ -3,6 +3,15 @@
 
 #include <math.h>
 
+#ifdef USE_SSE
+#include <xmmintrin.h>
+typedef __m128 FloatRow __attribute__((aligned(16)));
+#else
+typedef float FloatRow[4];
+#endif
+
+void ZeroFloatRow(FloatRow& r);
+
 #define DEGRAD	0.01745329251994329576f		//degree to radian
 #define RADDEG	57.2957795130823208767f		//radian to degree
 #define	Q_PI	3.14159265358979323846f
@@ -42,7 +51,8 @@ void Sub4f(const float* first, const float* second, float* out);
 void Copy4f( void * dest, const void * source );
 void Copy8f( void * dest, const void * source );
 void Copy16f( void * dest, const void * source );
-void R_ConcatTransforms4 ( const float* in1, const float* in2, float* out );
+//void R_ConcatTransforms4 ( const float* in1, const float* in2, float* out );
+void R_ConcatTransforms4 ( const FloatRow* in1, const FloatRow* in2, FloatRow* out );
 void VectorMultiply4f(const float *m, float *p, float *out );
 
 #endif

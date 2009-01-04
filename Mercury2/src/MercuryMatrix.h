@@ -15,13 +15,14 @@ class MercuryMatrix
 {
 private:
 	///[row][column] (The internal matrix)
-	float m_matrix[4][4];
+//	float m_matrix[4][4];
+	FloatRow m_matrix[4];
 public:
 	MercuryMatrix();
 	inline MercuryMatrix(const MercuryMatrix& m) { *this = m; }
-	inline float* operator[](unsigned int i) { return m_matrix[i]; }
+	inline float* operator[](unsigned int i) { return (float*)&m_matrix[i]; }
 	///Allow typecasting to float * for use in APIs
-	inline const float* operator[](unsigned int i) const { return m_matrix[i]; }
+	inline const float* operator[](unsigned int i) const { return (float*)&m_matrix[i]; }
 	const MercuryMatrix& operator=(const MercuryMatrix& m);
 	const MercuryMatrix& operator=(const float* m);
 	inline float* Ptr() { return (float*)&m_matrix; }

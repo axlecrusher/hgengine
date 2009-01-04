@@ -25,56 +25,47 @@ const MercuryMatrix& MercuryMatrix::operator=(const float* m)
 
 void MercuryMatrix::Zero()
 {
-	m_matrix[0][0] = 0;
-	m_matrix[0][1] = 0;
-	m_matrix[0][2] = 0;
-	m_matrix[0][3] = 0;
-	
-	m_matrix[1][0] = 0;
-	m_matrix[1][1] = 0;
-	m_matrix[1][2] = 0;
-	m_matrix[1][3] = 0;
-	
-	m_matrix[2][0] = 0;
-	m_matrix[2][1] = 0;
-	m_matrix[2][2] = 0;
-	m_matrix[2][3] = 0;
-	
-	m_matrix[3][0] = 0;
-	m_matrix[3][1] = 0;
-	m_matrix[3][2] = 0;
-	m_matrix[3][3] = 0;
+	ZeroFloatRow( m_matrix[0] );
+	ZeroFloatRow( m_matrix[1] );
+	ZeroFloatRow( m_matrix[2] );
+	ZeroFloatRow( m_matrix[3] );
 }
 
 void MercuryMatrix::Identity()
 {
-	m_matrix[0][0] = 1;
-	m_matrix[0][1] = 0;
-	m_matrix[0][2] = 0;
-	m_matrix[0][3] = 0;
+	Copy4f(&m_matrix[0], (void*)&((FloatRow){ 1.0f, 0.0f, 0.0f, 0.0f }));
+	Copy4f(&m_matrix[1], (void*)&((FloatRow){ 0.0f, 1.0f, 0.0f, 0.0f }));
+	Copy4f(&m_matrix[2], (void*)&((FloatRow){ 0.0f, 0.0f, 1.0f, 0.0f }));
+	Copy4f(&m_matrix[3], (void*)&((FloatRow){ 0.0f, 0.0f, 0.0f, 1.0f }));
+/*
+	(*this)[0][0] = 1;
+	(*this)[0][1] = 0;
+	(*this)[0][2] = 0;
+	(*this)[0][3] = 0;
 	
-	m_matrix[1][0] = 0;
-	m_matrix[1][1] = 1;
-	m_matrix[1][2] = 0;
-	m_matrix[1][3] = 0;
+	(*this)[1][0] = 0;
+	(*this)[1][1] = 1;
+	(*this)[1][2] = 0;
+	(*this)[1][3] = 0;
 	
-	m_matrix[2][0] = 0;
-	m_matrix[2][1] = 0;
-	m_matrix[2][2] = 1;
-	m_matrix[2][3] = 0;
+	(*this)[2][0] = 0;
+	(*this)[2][1] = 0;
+	(*this)[2][2] = 1;
+	(*this)[2][3] = 0;
 	
-	m_matrix[3][0] = 0;
-	m_matrix[3][1] = 0;
-	m_matrix[3][2] = 0;
-	m_matrix[3][3] = 1;
+	(*this)[3][0] = 0;
+	(*this)[3][1] = 0;
+	(*this)[3][2] = 0;
+	(*this)[3][3] = 1;
+	*/
 }
 
 void MercuryMatrix::Translate(float x, float y, float z)
 {
 	MercuryMatrix m;
-	m.m_matrix[0][3] = x;
-	m.m_matrix[1][3] = y;
-	m.m_matrix[2][3] = z;
+	m[0][3] = x;
+	m[1][3] = y;
+	m[2][3] = z;
 	*this *= m;
 }
 
@@ -95,25 +86,25 @@ void MercuryMatrix::RotateXYZ(float x, float y, float z)
 
 	//Row major
 	//manually transposed
-	matrix.m_matrix[0][0] = cy*cz;
-	matrix.m_matrix[1][0] = (sx*sy*cz)-(cx*sz);
-	matrix.m_matrix[2][0] = (cx*sy*cz)+(sx*sz);
-	matrix.m_matrix[3][0] = 0;
+	matrix[0][0] = cy*cz;
+	matrix[1][0] = (sx*sy*cz)-(cx*sz);
+	matrix[2][0] = (cx*sy*cz)+(sx*sz);
+	matrix[3][0] = 0;
 
-	matrix.m_matrix[0][1] = cy*sz;
-	matrix.m_matrix[1][1] = (sx*sy*sz)+(cx*cz);
-	matrix.m_matrix[2][1] = (cx*sy*sz)-(sx*cz);
-	matrix.m_matrix[3][1] = 0;
+	matrix[0][1] = cy*sz;
+	matrix[1][1] = (sx*sy*sz)+(cx*cz);
+	matrix[2][1] = (cx*sy*sz)-(sx*cz);
+	matrix[3][1] = 0;
 
-	matrix.m_matrix[0][2] = -sy;
-	matrix.m_matrix[1][2] = sx*cy;
-	matrix.m_matrix[2][2] = cx*cy;
-	matrix.m_matrix[3][2] = 0;
+	matrix[0][2] = -sy;
+	matrix[1][2] = sx*cy;
+	matrix[2][2] = cx*cy;
+	matrix[3][2] = 0;
 
-	matrix.m_matrix[0][3] = 0;
-	matrix.m_matrix[1][3] = 0;
-	matrix.m_matrix[2][3] = 0;
-	matrix.m_matrix[3][3] = 1;
+	matrix[0][3] = 0;
+	matrix[1][3] = 0;
+	matrix[2][3] = 0;
+	matrix[3][3] = 1;
 
 	*this *= matrix;	
 }
@@ -127,25 +118,25 @@ void MercuryMatrix::RotateAngAxis( float fAngle, float ix, float iy, float iz )
 	float y = iy/absin;
 	float z = iz/absin;
 
-	m_matrix[0][0] = x*x*(1-c)+c;
-	m_matrix[0][1] = x*y*(1-c)-z*s;
-	m_matrix[0][2] = x*z*(1-c)+y*s;
-	m_matrix[0][3] = 0;
+	(*this)[0][0] = x*x*(1-c)+c;
+	(*this)[0][1] = x*y*(1-c)-z*s;
+	(*this)[0][2] = x*z*(1-c)+y*s;
+	(*this)[0][3] = 0;
 
-	m_matrix[1][0] = y*x*(1-c)+z*s;
-	m_matrix[1][1] = y*y*(1-c)+c;
-	m_matrix[1][2] = y*z*(1-c)-x*s;
-	m_matrix[1][3] = 0;
+	(*this)[1][0] = y*x*(1-c)+z*s;
+	(*this)[1][1] = y*y*(1-c)+c;
+	(*this)[1][2] = y*z*(1-c)-x*s;
+	(*this)[1][3] = 0;
 
-	m_matrix[2][0] = x*z*(1-c)-y*s;
-	m_matrix[2][1] = y*z*(1-c)+x*s;
-	m_matrix[2][2] = z*z*(1-c)+c;
-	m_matrix[2][3] = 0;
+	(*this)[2][0] = x*z*(1-c)-y*s;
+	(*this)[2][1] = y*z*(1-c)+x*s;
+	(*this)[2][2] = z*z*(1-c)+c;
+	(*this)[2][3] = 0;
 
-	m_matrix[3][0] = 0;
-	m_matrix[3][1] = 0;
-	m_matrix[3][2] = 0;
-	m_matrix[3][3] = 1;
+	(*this)[3][0] = 0;
+	(*this)[3][1] = 0;
+	(*this)[3][2] = 0;
+	(*this)[3][3] = 1;
 }
 
 void MercuryMatrix::Transotale( float tX, float tY, float tZ, float rX, float rY, float rZ, float sX, float sY, float sZ )
@@ -165,25 +156,25 @@ void MercuryMatrix::Transotale( float tX, float tY, float tZ, float rX, float rY
 
 	//Row major
 	//manually transposed
-	matrix.m_matrix[0][0] = sX*cy*cz;
-	matrix.m_matrix[1][0] = sX*((sx*sy*cz)-(cx*sz));
-	matrix.m_matrix[2][0] = sX*((cx*sy*cz)+(sx*sz));
-	matrix.m_matrix[3][0] = 0;
+	matrix[0][0] = sX*cy*cz;
+	matrix[1][0] = sX*((sx*sy*cz)-(cx*sz));
+	matrix[2][0] = sX*((cx*sy*cz)+(sx*sz));
+	matrix[3][0] = 0;
 
-	matrix.m_matrix[0][1] = sY*cy*sz;
-	matrix.m_matrix[1][1] = sY*((sx*sy*sz)+(cx*cz));
-	matrix.m_matrix[2][1] = sY*((cx*sy*sz)-(sx*cz));
-	matrix.m_matrix[3][1] = 0;
+	matrix[0][1] = sY*cy*sz;
+	matrix[1][1] = sY*((sx*sy*sz)+(cx*cz));
+	matrix[2][1] = sY*((cx*sy*sz)-(sx*cz));
+	matrix[3][1] = 0;
 
-	matrix.m_matrix[0][2] = sZ*(-sy);
-	matrix.m_matrix[1][2] = sZ*sx*cy;
-	matrix.m_matrix[2][2] = sZ*cx*cy;
-	matrix.m_matrix[3][2] = 0;
+	matrix[0][2] = sZ*(-sy);
+	matrix[1][2] = sZ*sx*cy;
+	matrix[2][2] = sZ*cx*cy;
+	matrix[3][2] = 0;
 
-	matrix.m_matrix[0][3] = tX;
-	matrix.m_matrix[1][3] = tY;
-	matrix.m_matrix[2][3] = tZ;
-	matrix.m_matrix[3][3] = 1;
+	matrix[0][3] = tX;
+	matrix[1][3] = tY;
+	matrix[2][3] = tZ;
+	matrix[3][3] = 1;
 
 	*this *= matrix;	
 }
@@ -193,9 +184,9 @@ void MercuryMatrix::Scale(float x, float y, float z)
 {
 	MercuryMatrix m;
 
-	m.m_matrix[0][0] = x;
-	m.m_matrix[1][1] = y;
-	m.m_matrix[2][2] = z;
+	m[0][0] = x;
+	m[1][1] = y;
+	m[2][2] = z;
 
 	*this *= m;
 }
@@ -203,14 +194,16 @@ void MercuryMatrix::Scale(float x, float y, float z)
 MercuryMatrix MercuryMatrix::operator*(const MercuryMatrix& m) const
 {
 	MercuryMatrix r(*this);
-	R_ConcatTransforms4 ( (float*)&m_matrix, (float*)&m.m_matrix, (float*)&r.m_matrix);
+//	R_ConcatTransforms4 ( (float*)&m_matrix, (float*)&m.m_matrix, (float*)&r.m_matrix);
+	R_ConcatTransforms4 ( m_matrix, m.m_matrix, r.m_matrix);
 	return r;
 }
 
 MercuryMatrix& MercuryMatrix::operator*=(const MercuryMatrix& m) 
 {
 	MercuryMatrix r(*this);
-	R_ConcatTransforms4 ( (float*)&r.m_matrix, (float*)&m.m_matrix, (float*)&m_matrix);
+//	R_ConcatTransforms4 ( (float*)&r.m_matrix, (float*)&m.m_matrix, (float*)&m_matrix);
+	R_ConcatTransforms4 ( r.m_matrix, m.m_matrix, m_matrix);
 	return *this;
 }
 
@@ -218,7 +211,7 @@ void MercuryMatrix::Print()
 {
 	for (int i = 0; i < 4; ++i)
 	{
-		printf( "%f %f %f %f\n", m_matrix[i][0], m_matrix[i][1], m_matrix[i][2], m_matrix[i][3] );
+		printf( "%f %f %f %f\n", (*this)[i][0], (*this)[i][1], (*this)[i][2], (*this)[i][3] );
 	}
 	printf("\n");
 }

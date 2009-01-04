@@ -4,6 +4,11 @@
 
 //Generic Math functions. Compile these if you can not use optimized functions.
 
+void ZeroFloatRow(FloatRow& r)
+{
+	Copy4f(&r, (FloatRow){ 0.0f, 0.0f, 0.0f, 0.0f });
+}
+
 void Mul4f(const float* first, const float* second, float* out)
 {
     out[0] = first[0] * second[0];
@@ -80,8 +85,14 @@ void Copy16f( void * dest, const void * source )
     ((float*)dest)[15] = ((float*)source)[15];
 }
 
-void R_ConcatTransforms4 ( const float* in1, const float* in2, float* out)
+void R_ConcatTransforms4 ( const FloatRow* in1a, const FloatRow* in2a, FloatRow* outa)
 {
+	float *in1, *in2, *out;
+	
+	in1 = (float*)in1a;
+	in2 = (float*)in2a;
+	out = (float*)outa;
+	
 	out[0] = in1[0] * in2[0] + in1[1] * in2[4] +
 				in1[2] * in2[8] + in1[3] * in2[12];
 	out[1] = in1[0] * in2[1] + in1[1] * in2[5] +
@@ -128,9 +139,8 @@ void VectorMultiply4f( const float * m, float *p, float *out )
 }
 
 #else
-#include <xmmintrin.h>
 
-inline __m128 Hadd4(__m128 x);
+//inline __m128 Hadd4(__m128 x);
 __m128 Hadd4(__m128 x)
 {
 	//add the low and high components of x
@@ -225,33 +235,27 @@ void Copy16f( void * dest, const void * source )
 	_mm_store_ps((float*)&(((float*)dest)[12]), xmm[3]);
 }
 
-void R_ConcatTransforms4 ( const float* in1, const float* in2, float* out)
+void R_ConcatTransforms4 ( const FloatRow* in1, const FloatRow* in2, FloatRow* out)
 {
-	unsigned int x, y;
-	__m128 xmm[8];
-
-	xmm[1] = _mm_load_ps((float*)&(in2[0]));
-	xmm[3] = _mm_load_ps((float*)&(in2[4]));
-	xmm[5] = _mm_load_ps((float*)&(in2[8]));
-	xmm[7] = _mm_load_ps((float*)&(in2[12]));
-
+	unsigned int y;
+	__m128 xmm[4];
+	
 	for (y = 0; y < 4; ++y)
 	{
-		xmm[0] = _mm_set_ps1(in1[(y*4)+0]);
-		xmm[2] = _mm_set_ps1(in1[(y*4)+1]);
-		xmm[4] = _mm_set_ps1(in1[(y*4)+2]);
-		xmm[6] = _mm_set_ps1(in1[(y*4)+3]);
+		//load columns
+		xmm[3] = _mm_shuffle_ps (in1[y], in1[y], 0xff);
+		xmm[2] = _mm_shuffle_ps (in1[y], in1[y], 0xaa);
+		xmm[1] = _mm_shuffle_ps (in1[y], in1[y], 0x55);
+		xmm[0] = _mm_shuffle_ps (in1[y], in1[y], 0x00);
 
-		xmm[0] = _mm_mul_ps( xmm[0], xmm[1] );
-		xmm[2] = _mm_mul_ps( xmm[2], xmm[3] );
-		xmm[4] = _mm_mul_ps( xmm[4], xmm[5] );
-		xmm[6] = _mm_mul_ps( xmm[6], xmm[7] );
+		xmm[0] = _mm_mul_ps( xmm[0], in2[0] );
+		xmm[1] = _mm_mul_ps( xmm[1], in2[1] );
+		xmm[2] = _mm_mul_ps( xmm[2], in2[2] );
+		xmm[3] = _mm_mul_ps( xmm[3], in2[3] );
 
-		xmm[0] = _mm_add_ps( xmm[0], xmm[2] );
-		xmm[4] = _mm_add_ps( xmm[4], xmm[6] );
-		xmm[0] = _mm_add_ps( xmm[0], xmm[4] );
-
-		_mm_store_ps(&(out[(y*4)]), xmm[0]);
+		xmm[0] = _mm_add_ps( xmm[0], xmm[1] );
+		xmm[2] = _mm_add_ps( xmm[2], xmm[3] );
+		out[y] = _mm_add_ps( xmm[0], xmm[2] );
 	}
 }
 
@@ -286,6 +290,11 @@ void VectorMultiply4f( const float * m, float *p, float *out )
 	tmp = _mm_movelh_ps(outxmm[0], outxmm[1]);
 
 	_mm_store_ps(out, tmp);
+}
+
+void ZeroFloatRow(FloatRow& r)
+{
+	r = (FloatRow)_mm_setzero_ps();
 }
 
 #endif
