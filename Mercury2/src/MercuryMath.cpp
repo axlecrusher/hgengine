@@ -130,8 +130,11 @@ void MatrixMultiply4f ( const FloatRow* in1a, const FloatRow* in2a, FloatRow* ou
 				in1[14] * in2[11] + in1[15] * in2[15];
 }
 
-void VectorMultiply4f( const float * m, float *p, float *out )
+void VectorMultiply4f( const FloatRow* matrix, const FloatRow* pa, FloatRow* outa )
 {
+	float *m = (float*)matrix;
+	float *p = (float*)pa;
+	float *out = (float*)outa;
 	out[0] = p[0] * m[0] + p[1] * m[1] + p[2] * m[2] + p[3] * m[3];
 	out[1] = p[0] * m[4] + p[1] * m[5] + p[2] * m[6] + p[3] * m[7];
 	out[2] = p[0] * m[8] + p[1] * m[9] + p[2] * m[10] + p[3] * m[11];
@@ -231,35 +234,25 @@ void MatrixMultiply4f( const FloatRow* in1, const FloatRow* in2, FloatRow* out)
 
 //This is an SSE matrix vector multiply, see the standard C++ code
 //for a clear algorithim.  This seems like it works.
-void VectorMultiply4f( const float * m, float *p, float *out )
+void VectorMultiply4f( const FloatRow* matrix, const FloatRow* p, FloatRow* out )
 {
-	__m128 xmm[5], outxmm[2], tmp;
-
-	xmm[0] = _mm_load_ps((float*)p); //the vector
-
-	//store the matrix
-	xmm[1] = _mm_load_ps((float*)&(m[0]));
-	xmm[2] = _mm_load_ps((float*)&(m[4]));
-	xmm[3] = _mm_load_ps((float*)&(m[8]));
-	xmm[4] = _mm_load_ps((float*)&(m[12]));
-
+	__m128 tmp;
+	
 	//compute term 1 and term 2 and store them in the low order
 	//of outxmm[0]
-	outxmm[0] = Hadd4( _mm_mul_ps( xmm[1], xmm[0] ) );
-	tmp = Hadd4( _mm_mul_ps( xmm[2], xmm[0] ) );
-	outxmm[0] = _mm_unpacklo_ps(outxmm[0], tmp);
+	out[0] = Hadd4( _mm_mul_ps( matrix[1], *p ) );
+	tmp = Hadd4( _mm_mul_ps( matrix[2], *p ) );
+	out[0] = _mm_unpacklo_ps(out[0], tmp);
 
 	//compute term 3 and term 4 and store them in the high order
 	//of outxmm[1]
-	outxmm[1] = Hadd4( _mm_mul_ps( xmm[3], xmm[0] ) );
-	tmp = Hadd4( _mm_mul_ps( xmm[4], xmm[0] ) );
-	outxmm[1] = _mm_unpacklo_ps(outxmm[1], tmp);
+	out[1] = Hadd4( _mm_mul_ps( matrix[3], *p ) );
+	tmp = Hadd4( _mm_mul_ps( matrix[4], *p ) );
+	out[1] = _mm_unpacklo_ps(out[1], tmp);
 
 	//shuffle the low order of outxmm[0] into the loworder of tmp
 	//and shuffle the low order of outxmm[1] into the high order of tmp
-	tmp = _mm_movelh_ps(outxmm[0], outxmm[1]);
-
-	_mm_store_ps(out, tmp);
+	*out = _mm_movelh_ps(out[0], out[1]);
 }
 
 void ZeroFloatRow(FloatRow& r)

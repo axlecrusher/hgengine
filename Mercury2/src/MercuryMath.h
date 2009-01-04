@@ -52,7 +52,7 @@ void Copy4f( void * dest, const void * source );
 void Copy8f( void * dest, const void * source );
 void Copy16f( void * dest, const void * source );
 void MatrixMultiply4f ( const FloatRow* in1, const FloatRow* in2, FloatRow* out );
-void VectorMultiply4f(const float *m, float *p, float *out );
+void VectorMultiply4f(const FloatRow* matrix, const FloatRow* p, FloatRow* out );
 
 #endif
 
