@@ -35,7 +35,7 @@ void TransposeMatrix( FloatRow* m )
 
 void ZeroFloatRow(FloatRow& r)
 {
-	Copy4f(&r, (FloatRow){ 0.0f, 0.0f, 0.0f, 0.0f });
+	Copy4f(&r, &gfrZero );
 }
 
 void Mul4f(const FloatRow* first, const FloatRow* second, FloatRow* out)

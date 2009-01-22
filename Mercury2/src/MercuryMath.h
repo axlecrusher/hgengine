@@ -55,6 +55,8 @@ void MatrixMultiply4f ( const FloatRow* in1, const FloatRow* in2, FloatRow* out 
 void VectorMultiply4f(const FloatRow* matrix, const FloatRow* p, FloatRow* out );
 void TransposeMatrix( FloatRow* m );
 
+const FloatRow gfrZero = { 0.f, 0.f, 0.f, 0.f };
+
 #endif
 
 /*

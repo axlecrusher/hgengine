@@ -33,10 +33,12 @@ void MercuryMatrix::Zero()
 
 void MercuryMatrix::Identity()
 {
-	Copy4f(&m_matrix[0], (void*)&((FloatRow){ 1.0f, 0.0f, 0.0f, 0.0f }));
-	Copy4f(&m_matrix[1], (void*)&((FloatRow){ 0.0f, 1.0f, 0.0f, 0.0f }));
-	Copy4f(&m_matrix[2], (void*)&((FloatRow){ 0.0f, 0.0f, 1.0f, 0.0f }));
-	Copy4f(&m_matrix[3], (void*)&((FloatRow){ 0.0f, 0.0f, 0.0f, 1.0f }));
+	const static float Identity[16] = { 
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f };
+	Copy16f(&m_matrix[0], Identity );
 /*
 	(*this)[0][0] = 1;
 	(*this)[0][1] = 0;
