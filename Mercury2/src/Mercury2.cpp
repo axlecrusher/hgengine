@@ -8,8 +8,6 @@
 
 #include <RenderableNode.h>
 
-#include <sys/time.h>
-
 #include <MercuryCrash.h>
 #include <MercuryBacktrace.h>
 #include <MercuryMessageManager.h>
