@@ -108,7 +108,7 @@ void HGMDLMesh::LoadOBB(MercuryFile* hgmdl)
 void OBB::LoadFromBinary(char* data)
 {
 	memcpy(center, data, sizeof(float)*3);
-	memcpy(extend, data, sizeof(float)*3);
+	memcpy(extend, data+(sizeof(float)*3), sizeof(float)*3);
 }
 
 #include <GL/gl.h>
@@ -152,6 +152,7 @@ void OBB::Render(MercuryNode* node)
 	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
 	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
 
+	glEnd();
 /*	
 	glBegin(GL_QUADS);	
 	//front
@@ -189,9 +190,9 @@ void OBB::Render(MercuryNode* node)
 	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
 	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
 	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
-*/
-	glEnd();
 	
+	glEnd();
+*/	
 	glPointSize(4);
 	glBegin(GL_POINTS);
 	glVertex3f(center[0], center[1], center[2]);
