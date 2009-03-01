@@ -4,14 +4,33 @@
 #include <MercuryVBO.h>
 #include <MercuryFile.h>
 
+class OBB : public MercuryAsset
+{
+	public:
+	void LoadFromBinary(char* data);
+	
+	virtual void Render(MercuryNode* node);
+
+	float center[3];
+	float extend[3];
+};
+
 class HGMDLMesh : public MercuryVBO
 {
 	public:
+		HGMDLMesh();
+		~HGMDLMesh();
 		void LoadFromFile(MercuryFile* hgmdl);
 		void ReadExtraData(MercuryFile* hgmdl);
+		void LoadOBB(MercuryFile* hgmdl);
+		
+		virtual void Render(MercuryNode* node);
+
 	private:
 		MString m_name;
 		bool m_cachable;
+		
+		OBB* m_boundingBox;
 };
 
 #endif

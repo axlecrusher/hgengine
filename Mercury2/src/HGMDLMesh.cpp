@@ -1,5 +1,15 @@
 #include <HGMDLMesh.h>
 
+HGMDLMesh::HGMDLMesh()
+	:MercuryVBO(), m_boundingBox(NULL)
+{
+}
+
+HGMDLMesh::~HGMDLMesh()
+{
+	SAFE_DELETE(m_boundingBox);
+}
+
 void HGMDLMesh::LoadFromFile(MercuryFile* hgmdl)
 {
 	uint32_t nameLength;
@@ -50,14 +60,152 @@ void HGMDLMesh::LoadFromFile(MercuryFile* hgmdl)
 
 void HGMDLMesh::ReadExtraData(MercuryFile* hgmdl)
 {
-	uint32_t type, length;
-	char* data = NULL;
+	uint32_t type;
 	hgmdl->Read( &type, sizeof(char)*4 );
-	hgmdl->Read( &length, sizeof(uint32_t) );
 	
-	data = new char[length];
-	hgmdl->Read( data, length );
-	delete data;
+	switch( type )
+	{
+		case 541213263:
+		{
+			LoadOBB(hgmdl);
+			break;
+		}
+		default:
+		{
+			printf("Junk extra type '%x'\n", type);
+			//read and discard as junk
+			uint32_t length;
+			hgmdl->Read( &length, sizeof(uint32_t) );
+			if ( length > 0 )
+			{
+				char* data = new char[length];
+				hgmdl->Read( data, length );
+				SAFE_DELETE_ARRAY(data);
+			}
+			break;
+		}
+	}
+}
+
+void HGMDLMesh::LoadOBB(MercuryFile* hgmdl)
+{
+	uint32_t length;
+	char* data = NULL;
+	
+	hgmdl->Read( &length, sizeof(uint32_t) );
+	if (length > 0)
+	{
+		data = new char[length];
+		hgmdl->Read( data, length );
+		
+		m_boundingBox = new OBB();
+		m_boundingBox->LoadFromBinary( data );
+	}
+
+	SAFE_DELETE_ARRAY(data);
+}
+
+void OBB::LoadFromBinary(char* data)
+{
+	memcpy(center, data, sizeof(float)*3);
+	memcpy(extend, data, sizeof(float)*3);
+}
+
+#include <GL/gl.h>
+#include <GL/glext.h>
+
+void OBB::Render(MercuryNode* node)
+{
+	glPushAttrib( GL_CURRENT_BIT  );
+	glBegin(GL_LINES);
+	glColor3f(0,1.0f,0);
+
+	//front
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+
+	//back
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+
+	//top
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+
+	//bottom
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+
+/*	
+	glBegin(GL_QUADS);	
+	//front
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+	
+	//back
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+
+	//left side
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	
+	//right side
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+
+	//top
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+
+	//bottom
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+*/
+	glEnd();
+	
+	glPointSize(4);
+	glBegin(GL_POINTS);
+	glVertex3f(center[0], center[1], center[2]);
+	glEnd();
+	
+	glPopAttrib( );
+}
+
+void HGMDLMesh::Render(MercuryNode* node)
+{
+	MercuryVBO::Render(node);
+	
+	if (m_boundingBox)
+		m_boundingBox->Render(node);
 }
 
 /****************************************************************************

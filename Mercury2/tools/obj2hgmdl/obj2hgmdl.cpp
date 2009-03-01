@@ -188,9 +188,9 @@ int main(int argc, char** argv)
 		if (line.length() > 0) LineParser(line);
 	}
 	
-	printf("%f %f %f\n", minX, maxX, (maxX-minX)/2.0f	);
-	printf("%f %f %f\n", minY, maxY, (maxY-minY)/2.0f	);
-	printf("%f %f %f\n", minZ, maxZ, (maxZ-minZ)/2.0f	);
+	printf("X min:%f max:%f %f\n", minX, maxX, (maxX-minX)/2.0f	);
+	printf("Y min:%f max:%f %f\n", minY, maxY, (maxY-minY)/2.0f	);
+	printf("Z min:%f max:%f %f\n", minZ, maxZ, (maxZ-minZ)/2.0f	);
 	
 	WriteMBMF( mbmf );
 	
