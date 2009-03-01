@@ -115,15 +115,15 @@ void WriteOBB(FILE *mbmf)
 	float tmp[3];
 	
 	//center
-	tmp[0] = (maxX-minX)/2.0f;
-	tmp[1] = (maxY-minY)/2.0f;
-	tmp[2] = (maxZ-minZ)/2.0f;
+	tmp[0] = (maxX+minX)/2.0f;
+	tmp[1] = (maxY+minY)/2.0f;
+	tmp[2] = (maxZ+minZ)/2.0f;
 	fwrite(tmp, sizeof(float)*3, 1, mbmf);
-	
+
 	//extends
-	tmp[0] = fabs(tmp[0]);
-	tmp[1] = fabs(tmp[1]);
-	tmp[2] = fabs(tmp[2]);
+	tmp[0] = (maxX-minX)/2.0;
+	tmp[1] = (maxY-minY)/2.0;
+	tmp[2] = (maxZ-minZ)/2.0;
 	fwrite(tmp, sizeof(float)*3, 1, mbmf);
 }
 
@@ -188,9 +188,9 @@ int main(int argc, char** argv)
 		if (line.length() > 0) LineParser(line);
 	}
 	
-	printf("X min:%f max:%f %f\n", minX, maxX, (maxX-minX)/2.0f	);
-	printf("Y min:%f max:%f %f\n", minY, maxY, (maxY-minY)/2.0f	);
-	printf("Z min:%f max:%f %f\n", minZ, maxZ, (maxZ-minZ)/2.0f	);
+	printf("X min:%f max:%f\n", minX, maxX );
+	printf("Y min:%f max:%f\n", minY, maxY );
+	printf("Z min:%f max:%f\n", minZ, maxZ );
 	
 	WriteMBMF( mbmf );
 	
