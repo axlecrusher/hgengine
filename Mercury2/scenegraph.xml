@@ -28,8 +28,8 @@
 		</node>
 		<node type="rotatornode" movz="-2" movx="2" scalex="0.25" scaley="0.25" scalez="0.25" >
 			<node type="renderablenode">
-				<asset type="texture" file="test.bmp"/>
-				<asset type="hgmdlmodel" file="beerhall.hgmdl"/>
+				<asset type="texture" file="gunther.png"/>
+				<asset type="hgmdlmodel" file="gunther.hgmdl"/>
 			</node>
 		</node>
 </SceneGraph>

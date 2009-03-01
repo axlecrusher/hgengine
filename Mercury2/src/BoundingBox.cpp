@@ -1,93 +1,69 @@
-#include <MercuryVBO.h>
-
-#define GL_GLEXT_PROTOTYPES
-
 #include <GL/gl.h>
 #include <GL/glext.h>
+#include <BoundingBox.h>
 
-#include <Texture.h>
-
-#define BUFFER_OFFSET(i) ((char*)NULL + (i))
-
-MercuryVBO::MercuryVBO()
-	:MercuryAsset(), m_initiated(false), m_boundingBox(NULL)
+void BoundingBox::LoadFromBinary(char* data)
 {
-	m_bufferIDs[0] = m_bufferIDs[1] = 0;
+	memcpy(m_center, data, sizeof(float)*3);
+	memcpy(m_extend, data+(sizeof(float)*3), sizeof(float)*3);
 }
 
-MercuryVBO::~MercuryVBO()
+RenderableBoundingBox::RenderableBoundingBox(const BoundingBox* bb)
+	:MercuryAsset(), m_bb(bb)
 {
-	if (m_bufferIDs[0]) glDeleteBuffersARB(2, m_bufferIDs);
-	m_bufferIDs[0] = m_bufferIDs[1] = 0;
-	SAFE_DELETE(m_boundingBox);
 }
 
-void MercuryVBO::Render(MercuryNode* node)
+void RenderableBoundingBox::Render(MercuryNode* node)
 {
-	uint8_t numTextures = Texture::NumberActiveTextures();
-	uint16_t stride = sizeof(float)*8;
+	const float* center = m_bb->GetCenter();
+	const float* extend = m_bb->GetExtend();
 	
-	if ( m_initiated )
-	{
-		if ( this != m_lastVBOrendered)
-		{
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]);
-			glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]);
-		}
-	}
-	else
-		InitVBO();
-		
-	if ( this != m_lastVBOrendered)
-		glVertexPointer(3, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*5));
-	
-	//apply all the active textures
-	for (uint8_t i = 0; i < numTextures; ++i)
-	{
-		glActiveTexture( GL_TEXTURE0+i );
-		glClientActiveTextureARB(GL_TEXTURE0+i);
-		glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*0));
-	}
+	glPushAttrib( GL_CURRENT_BIT  );
+	glBegin(GL_LINES);
+	glColor3f(0,1.0f,0);
 
-	glDrawRangeElements(GL_TRIANGLES, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL);
+	//front
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+
+	//back
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+
+	//top
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+
+	//bottom
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+
+	glEnd();
 	
-	m_lastVBOrendered = this;
+	glPointSize(4);
+	glBegin(GL_POINTS);
+	glVertex3f(center[0], center[1], center[2]);
+	glEnd();
 	
-	if (m_boundingBox)
-	{
-		RenderableBoundingBox rbb(m_boundingBox);
-		rbb.Render(node);
-	}
+	glPopAttrib( );
 }
 
-void MercuryVBO::InitVBO()
-{
-	glGenBuffersARB(2, m_bufferIDs);
-	
-	//vertex VBO
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_vertexData.LengthInBytes(), m_vertexData.Buffer(), GL_STATIC_DRAW_ARB);
-
-	//indices VBO
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]);
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_indexData.LengthInBytes(), m_indexData.Buffer(), GL_STATIC_DRAW_ARB);
-		
-	glEnableClientState(GL_VERTEX_ARRAY);
-
-	m_initiated = true;
-}
-
-void MercuryVBO::AllocateVertexSpace(unsigned int count)
-{
-	m_vertexData.Allocate(count*8);
-}
-
-void MercuryVBO::AllocateIndexSpace(unsigned int count)
-{
-	m_indexData.Allocate(count);
-}
-
-void* MercuryVBO::m_lastVBOrendered = NULL;
 /****************************************************************************
  *   Copyright (C) 2008 by Joshua Allen                                     *
  *                                                                          *

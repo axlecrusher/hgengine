@@ -1,19 +1,27 @@
-#ifndef HGMDLMESH_H
-#define HGMDLMESH_H
+#ifndef BOUNDINGBOX_H
+#define BOUNDINGBOX_H
 
-#include <MercuryVBO.h>
-#include <MercuryFile.h>
+#include <MercuryAsset.h>
 
-class HGMDLMesh : public MercuryVBO
+class BoundingBox
 {
 	public:
-		void LoadFromFile(MercuryFile* hgmdl);
-		void ReadExtraData(MercuryFile* hgmdl);
-		void LoadOBB(MercuryFile* hgmdl);
+		void LoadFromBinary(char* data);
+		inline const float* GetCenter() const { return m_center; }
+		inline const float* GetExtend() const { return m_extend; }
+	private:
+		float m_center[3];
+		float m_extend[3];
+};
+
+class RenderableBoundingBox : public MercuryAsset
+{
+	public:
+		RenderableBoundingBox(const BoundingBox* bb);
+		virtual void Render(MercuryNode* node);
 
 	private:
-		MString m_name;
-		bool m_cachable;
+		const BoundingBox* m_bb;
 };
 
 #endif
@@ -29,8 +37,6 @@ class HGMDLMesh : public MercuryVBO
  *   are met:                                                               *
  *     * Redistributions of source code must retain the above copyright     *
  *      notice, this list of conditions and the following disclaimer.       *
- 
- 
  *     * Redistributions in binary form must reproduce the above            *
  *      copyright notice, this list of conditions and the following         *
  *      disclaimer in the documentation and/or other materials provided     *
