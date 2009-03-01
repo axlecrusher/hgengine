@@ -38,6 +38,26 @@ void HGMDLMesh::LoadFromFile(MercuryFile* hgmdl)
 		//fread(m_indexData.Buffer(), numIndices*sizeof(uint16_t), 1, hgmdl);
 		hgmdl->Read( m_indexData.Buffer(), numIndices*sizeof(uint16_t) );
 	}
+	
+	uint32_t extraDataCount;
+	hgmdl->Read( &extraDataCount, sizeof( uint32_t ) );
+	printf("has %d extras\n", extraDataCount);
+	for (uint32_t i = 0; i < extraDataCount; ++i)
+	{
+		ReadExtraData(hgmdl);
+	}
+}
+
+void HGMDLMesh::ReadExtraData(MercuryFile* hgmdl)
+{
+	uint32_t type, length;
+	char* data = NULL;
+	hgmdl->Read( &type, sizeof(char)*4 );
+	hgmdl->Read( &length, sizeof(uint32_t) );
+	
+	data = new char[length];
+	hgmdl->Read( data, length );
+	delete data;
 }
 
 /****************************************************************************

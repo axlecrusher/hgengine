@@ -8,6 +8,7 @@ class HGMDLMesh : public MercuryVBO
 {
 	public:
 		void LoadFromFile(MercuryFile* hgmdl);
+		void ReadExtraData(MercuryFile* hgmdl);
 	private:
 		MString m_name;
 		bool m_cachable;

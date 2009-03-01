@@ -4,12 +4,18 @@
 #include <stdint.h>
 #include <MercuryPoint.h>
 #include <map>
+#include <math.h>
 
 using namespace std;
+
+float min(float x, float y) { return x<y?x:y; }
+float max(float x, float y) { return x>y?x:y; }
 
 vector< MercuryPoint > v;
 vector< MercuryPoint > vt;
 vector< MercuryPoint > vn;
+
+float minX, maxX, minY, maxY, minZ, maxZ;
 
 struct Vertex
 {
@@ -25,25 +31,7 @@ struct Vertex
 
 vector< Vertex > vertice;
 vector< uint16_t > indice;
-/*
-struct Mesh
-{
-	uint32_t nameLength;
-	char* name;
 
-	bool bCache;
-
-	//Mercury2 imposes a limit of 65535 vertice in one VBO mesh
-	uint32_t vertexDataLength; //in bytes
-	char* vertexData;
-	
-	//Mercury2 imposes a limit of 65535 indices in one VBO mesh
-	uint16_t numberOfIndices;
-	uint16_t* indices;
-};
-
-Mesh currentMesh;
-*/
 void LineParser(const string &line)
 {
 	if (line.empty()) return;
@@ -53,6 +41,14 @@ void LineParser(const string &line)
 		MercuryPoint tv;
 		sscanf(line.c_str(), "v %f %f %f", &tv.x, &tv.y, &tv.z);
 		v.push_back(tv);
+		
+		minX = min(minX, tv.x);
+		minY = min(minY, tv.y);
+		minZ = min(minZ, tv.z);
+
+		maxX = max(maxX, tv.x);
+		maxY = max(maxY, tv.y);
+		maxZ = max(maxZ, tv.z);
 	}
 	else if (token == "vt")
 	{
@@ -110,6 +106,27 @@ void LineParser(const string &line)
 	}
 }
 
+void WriteOBB(FILE *mbmf)
+{
+	char type[] = "OBB ";
+	fwrite(type, sizeof(char)*4, 1, mbmf);
+	
+	uint32_t tmp32 = sizeof(float)*6; fwrite(&tmp32, sizeof(uint32_t), 1, mbmf);
+	float tmp[3];
+	
+	//center
+	tmp[0] = (maxX-minX)/2.0f;
+	tmp[1] = (maxY-minY)/2.0f;
+	tmp[2] = (maxZ-minZ)/2.0f;
+	fwrite(tmp, sizeof(float)*3, 1, mbmf);
+	
+	//extends
+	tmp[0] = fabs(tmp[0]);
+	tmp[1] = fabs(tmp[1]);
+	tmp[2] = fabs(tmp[2]);
+	fwrite(tmp, sizeof(float)*3, 1, mbmf);
+}
+
 void WriteMBMF( FILE *mbmf )
 {
 	uint32_t tmp32;
@@ -140,6 +157,9 @@ void WriteMBMF( FILE *mbmf )
 		tmp16 = indice.size(); fwrite(&tmp16, sizeof(uint16_t), 1, mbmf);
 		for (uint16_t i = 0; i < indice.size(); ++i)
 			fwrite(&indice[i], sizeof(uint16_t), 1, mbmf);
+		
+		tmp32 = 1; fwrite(&tmp32, sizeof(uint32_t), 1, mbmf);
+		WriteOBB(mbmf);
 	}
 	
 	tmp32 = 0;
@@ -159,12 +179,18 @@ int main(int argc, char** argv)
 	mbmf = fopen(argv[2], "wb");
 
 	string line;
-	
+
+	minX = minY = minZ = 1000000.0f;
+	maxX = maxY = maxZ = -1000000.0f;	
 	
 	while ( getline(obj, line) )
 	{
 		if (line.length() > 0) LineParser(line);
 	}
+	
+	printf("%f %f %f\n", minX, maxX, (maxX-minX)/2.0f	);
+	printf("%f %f %f\n", minY, maxY, (maxY-minY)/2.0f	);
+	printf("%f %f %f\n", minZ, maxZ, (maxZ-minZ)/2.0f	);
 	
 	WriteMBMF( mbmf );
 	
