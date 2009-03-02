@@ -11,27 +11,49 @@ void Viewport::Render()
 	MercuryMatrix m = FindGlobalMatrix();
 	m.Transpose();
 
-	glLoadMatrixf( (m * m_frustum).Ptr() );
+	glLoadMatrixf( (m * m_frustum.GetMatrix()).Ptr() );
 	//The following 2 are equivelent to above
 //	glLoadMatrixf( m_frustum.Ptr() );
 //	glMultMatrixf( m.Ptr() );
-		
+	
 	glMatrixMode(GL_MODELVIEW);
 }
 
-void Viewport::Perspective( float fov, float aspect, float znear, float zfar )
+void Viewport::LoadFromXML(const XMLNode& node)
+{
+	m_frustum.SetPerspective( StrToFloat(node.Attribute("fov")),
+							  StrToFloat(node.Attribute("aspect")),
+							  StrToFloat(node.Attribute("near")),
+							  StrToFloat(node.Attribute("far")));
+	
+	m_frustum.LookAt(MercuryVertex(), MercuryVertex(0,0,1), MercuryVertex(0,1,0));
+	
+	RenderableNode::LoadFromXML(node);
+}
+
+void Frustum::SetPerspective( float fov, float aspect, float znear, float zfar )
 {
 	float xmin, xmax, ymin, ymax;
 	
-	ymax = znear * TAN(fov * Q_PI / 360.0);
-	ymin = -ymax;
-	xmin = ymin * aspect;
-	xmax = ymax * aspect;
+	m_fov = fov;
+	m_aspect = aspect;
+	m_zNear = znear;
+	m_zFar = zfar;
 
-	ComputeFrustum(xmin, xmax, ymin, ymax, znear, zfar);
+	float tang = TAN(m_fov * Q_PI / 360.0);
+
+	m_nh = ymax = m_zNear * tang; //nh
+	ymin = -ymax;
+	xmin = ymin * m_aspect;
+	m_nw = xmax = ymax * m_aspect; //nw
+	
+	m_fh = m_zFar*tang;
+	m_fw = m_fh*aspect;
+
+	ComputeFrustum(xmin, xmax, ymin, ymax, m_zNear, m_zFar);
 }
 
-void Viewport::ComputeFrustum(float left, float right, float bottom, float top, float zNear, float zFar)
+void Frustum::ComputeFrustum(float left, float right, float bottom, float top, float zNear, float zFar)
 {
 	float near2 = 2*zNear;
 	float rml = right-left;
@@ -57,15 +79,58 @@ void Viewport::ComputeFrustum(float left, float right, float bottom, float top, 
 	m_frustum.Transpose();  //XXX fix it to remove this
 }
 
-void Viewport::LoadFromXML(const XMLNode& node)
+void Frustum::LookAt(const MercuryVertex& eye, const MercuryVector& look, const MercuryVector& up)
 {
-	Perspective( StrToFloat(node.Attribute("fov")),
-				 StrToFloat(node.Attribute("aspect")),
-				 StrToFloat(node.Attribute("near")),
-				 StrToFloat(node.Attribute("far")));
+	//Right now this only builds the frustum planes
+	MercuryVector X,Y,Z;
 	
-	RenderableNode::LoadFromXML(node);
+	Z = (eye - look).Normalize(); //direction behind camera
+	X = (up * Z).Normalize(); //X axis
+	Y = Z.CrossProduct( X ); //real up
+	
+	m_nc = up - Z * m_zNear;
+	m_fc = up - Z * m_zFar;
+	
+	m_planes[PNEAR].Setup(m_nc, Z*-1);
+	m_planes[PFAR].Setup(m_fc, Z);
+	
+	MercuryVector aux,normal;
+
+	aux = (m_nc + Y*m_nh) - eye;
+	aux.NormalizeSelf();
+	normal = aux * X;
+	m_planes[PTOP].Setup(m_nc+Y*m_nh,normal);
+
+	aux = (m_nc - Y*m_nh) - eye;
+	aux.NormalizeSelf();
+	normal = X * aux;
+	m_planes[PBOTTOM].Setup(m_nc-Y*m_nh,normal);
+	
+	aux = (m_nc - X*m_nw) - eye;
+	aux.NormalizeSelf();
+	normal = aux * Y;
+	m_planes[PLEFT].Setup(m_nc-X*m_nw,normal);
+
+	aux = (m_nc + X*m_nw) - eye;
+	aux.NormalizeSelf();
+	normal = Y * aux;
+	m_planes[PRIGHT].Setup(m_nc+X*m_nw,normal);
 }
+
+/*
+void Frustum::LookAt()
+{
+	
+}
+*/
+/*
+bool Frustum::IsPointInFrustum( float x, float y, float z )
+{
+	for( uint16_t i = 0; i < 6; ++i )
+		if( frustum[i][0] * x + frustum[i][1] * y + frustum[i][2] * z + frustum[i][3] <= 0 )
+			return false;
+	return true;
+}*/
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *

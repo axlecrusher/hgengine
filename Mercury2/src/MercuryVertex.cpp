@@ -1,95 +1,94 @@
-#include <HGMDLModel.h>
+#include <MercuryVertex.h>
+#include <MercuryUtil.h>
+#include <MercuryMath.h>
 
-REGISTER_ASSET_TYPE(HGMDLModel);
-
-const uint16_t EXPCTMJRV = 2;
-const uint16_t EXPCTMNRV = 3;
-
-HGMDLModel::HGMDLModel()
-	:MercuryAsset()
+MercuryVertex::MercuryVertex()
 {
+	m_xyz[0] = m_xyz[1] = m_xyz[2] = 0;
 }
 
-HGMDLModel::~HGMDLModel()
+MercuryVertex::MercuryVertex( float ix, float iy, float iz )
 {
-	REMOVE_ASSET_INSTANCE(HGMDLModel, m_path);
+	m_xyz[0] = ix;
+	m_xyz[1] = iy;
+	m_xyz[2] = iz;
 }
 
-void HGMDLModel::LoadFromXML(const XMLNode& node)
+MercuryVertex::MercuryVertex( const float * in )
 {
-	MString path = node.Attribute("file");
-	LoadHGMDL( path );
+	for (unsigned int i = 0; i < 3; ++i)
+		m_xyz[i] *= in[i];
 }
 
-void HGMDLModel::LoadModel(MercuryFile* hgmdl)
+void MercuryVertex::NormalizeSelf()
 {
-	char fingerPrint[5];
-	fingerPrint[4] = 0;
-
-	hgmdl->Read( fingerPrint, 4 );
-
-	MString p(fingerPrint);
-	if (p != "MBMF")
-	{
-		printf("Not a HGMDL file.\n");
-		return;
-	}
-	
-	uint16_t majorVersion;
-	uint16_t minorVersion;
-	
-	hgmdl->Read( &majorVersion, 2 );
-	hgmdl->Read( &minorVersion, 2 );
-	
-	if ((majorVersion != EXPCTMJRV) || (minorVersion != EXPCTMNRV))
-	{
-		printf("Can only read HGMDL version %d.%d, this file is %d.%d\n", EXPCTMJRV,EXPCTMNRV,majorVersion,minorVersion);
-		return;
-	}
-	
-	uint16_t numMeshes;
-
-	hgmdl->Read( &numMeshes, sizeof( uint16_t ) );
-	for (uint16_t i = 0; i < numMeshes; ++i)
-	{
-		MAutoPtr< HGMDLMesh > mesh( new HGMDLMesh() );
-		mesh->LoadFromFile( hgmdl );
-		m_meshes.push_back(mesh);
-	}
+	float imag = 1.0f/Length();
+	for (unsigned int i = 0; i < 3; ++i)
+		m_xyz[i] *= imag;
+}
+		
+MercuryVertex MercuryVertex::Normalize() const
+{
+	MercuryVertex r(*this);
+	r.NormalizeSelf();
+	return r;
 }
 
-void HGMDLModel::Render(MercuryNode* node)
+float MercuryVertex::Length() const
 {
-	for(uint16_t i = 0; i < m_meshes.size(); ++i)
-		m_meshes[i]->Render(node);
+	float length = m_xyz[0]*m_xyz[0];
+	length += m_xyz[1]*m_xyz[1];
+	length += m_xyz[2]*m_xyz[2];
+	return SQRT(length);
 }
 
-void HGMDLModel::LoadHGMDL( const MString& path )
+float MercuryVertex::GetBiggestElement() const
 {
-	if ( m_isInstanced ) return;
-	if ( !path.empty() )
-	{
-		ADD_ASSET_INSTANCE(HGMDLModel, path, this);
-		m_path = path;
-		MercuryFile * f = FILEMAN.Open( path );
-		if( !f )
-		{
-			printf( "Could not open file: \"%s\" for model\n", path.c_str() );
-			return;
-		}
-		LoadModel( f );
-		delete f;
-	}
+	float tmp = m_xyz[0];
+	tmp = max<float>(tmp, m_xyz[1]);
+	return max<float>(tmp, m_xyz[2]);
 }
 
-HGMDLModel* HGMDLModel::Generate()
+const MercuryVertex& MercuryVertex::operator *= (const MercuryVertex& p)
 {
-	printf("new HGMDL\n");
-	return new HGMDLModel();
+	for (unsigned int i = 0; i < 3; ++i)
+		m_xyz[i] *= p.m_xyz[i];
+	return *this;
 }
+		
+const MercuryVertex& MercuryVertex::operator /= (const MercuryVertex& p)
+{
+	for (unsigned int i = 0; i < 3; ++i)
+		m_xyz[i] /= p.m_xyz[i];
+	return *this;
+}
+
+bool MercuryVertex::operator==(const MercuryVertex& p) const
+{
+	for (unsigned int i = 0; i < 3; ++i)
+		if (m_xyz[i] != p.m_xyz[i]) return false;
+	return true;
+}
+
+bool MercuryVertex::operator==(const float f) const
+{
+	for (unsigned int i = 0; i < 3; ++i)
+		if (m_xyz[i] != f) return false;
+	return true;
+}
+
+MercuryVertex MercuryVertex::CrossProduct(const MercuryVertex& p) const
+{
+	MercuryVertex ret;
+	ret.m_xyz[0] = m_xyz[1]*p.m_xyz[2] - m_xyz[2]*p.m_xyz[1];
+	ret.m_xyz[1] = m_xyz[2]*p.m_xyz[0] - m_xyz[0]*p.m_xyz[2];
+	ret.m_xyz[2] = m_xyz[0]*p.m_xyz[1] - m_xyz[1]*p.m_xyz[0];
+	return ret;
+}
+
 
 /****************************************************************************
- *   Copyright (C) 2008 by Joshua Allen                                     *
+ *   Copyright (C) 2009 by Joshua Allen                                     *
  *                                                                          *
  *                                                                          *
  *   All rights reserved.                                                   *

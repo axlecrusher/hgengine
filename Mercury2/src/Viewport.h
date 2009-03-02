@@ -3,18 +3,47 @@
 
 #include <RenderableNode.h>
 #include <MercuryMatrix.h>
+#include <MercuryVertex.h>
+#include <MercuryPlane.h>
+
+class Frustum
+{
+	enum PlanePos
+	{
+		PTOP = 0,
+		PBOTTOM,
+		PLEFT,
+		PRIGHT,
+		PNEAR,
+		PFAR
+	};
+
+	public:
+		void SetPerspective( float fov, float aspect, float znear, float zfar );
+		const MercuryMatrix& GetMatrix() const { return m_frustum; }
+		void ComputeFrustum(float left, float right, float bottom, float top, float zNear, float zFar);
+		
+		void LookAt(const MercuryVertex& eye, const MercuryVector& look, const MercuryVector& up);
+	private:
+		MercuryMatrix m_frustum;
+		
+		float m_aspect, m_fov, m_zNear, m_zFar;
+		float m_nh, m_nw, m_fh, m_fw;
+		
+		MercuryVector m_nc, m_fc;
+		MercuryPlane m_planes[6];
+};
+
 class Viewport : public RenderableNode
 {
 	public:
 		virtual void Render();
 		
-		void Perspective( float fov, float aspect, float znear, float zfar );
 		virtual void LoadFromXML(const XMLNode& node);
 		
 		GENRTTI(Viewport);
 	private:
-		void ComputeFrustum(float left, float right, float bottom, float top, float zNear, float zFar);
-		MercuryMatrix m_frustum;
+		Frustum m_frustum;
 };
 
 #endif

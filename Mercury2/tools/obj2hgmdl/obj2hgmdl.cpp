@@ -136,7 +136,8 @@ void WriteMBMF( FILE *mbmf )
 	bool b;
 	
 	fwrite("MBMF", 4, 1, mbmf);
-	tmp32 = 200; fwrite(&tmp32, sizeof(uint32_t), 1, mbmf);
+	tmp16 = 2; fwrite(&tmp16, sizeof(uint16_t), 1, mbmf);
+	tmp16 = 3; fwrite(&tmp16, sizeof(uint16_t), 1, mbmf);
 	
 	tmp16 = 1; fwrite(&tmp16, sizeof(uint16_t), 1, mbmf);
 	

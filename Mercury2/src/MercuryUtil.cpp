@@ -66,7 +66,6 @@ long FileToString( const MString & sFileName, char * & data )
 	return length;
 }
 
-
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
  *      *
