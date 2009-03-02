@@ -10,6 +10,8 @@ REGISTER_NODE_TYPE(RenderableNode);
 uint64_t RenderWaited = 0;
 uint64_t UpdateWaited = 0;
 
+MercuryMatrix GLOBALMATRIX;
+
 RenderableNode::RenderableNode()
 	:m_hidden(false)
 {
@@ -45,7 +47,7 @@ void RenderableNode::Render()
 	
 	if (m_hidden || IsCulled()) return;
 	
-	MercuryMatrix m = FindGlobalMatrix();
+	MercuryMatrix m = GLOBALMATRIX = FindGlobalMatrix();
 	m.Transpose();
 	glLoadMatrixf( m.Ptr() );
 	

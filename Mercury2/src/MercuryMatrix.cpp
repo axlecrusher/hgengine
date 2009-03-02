@@ -39,27 +39,6 @@ void MercuryMatrix::Identity()
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f };
 	Copy16f(&m_matrix[0], Identity );
-/*
-	(*this)[0][0] = 1;
-	(*this)[0][1] = 0;
-	(*this)[0][2] = 0;
-	(*this)[0][3] = 0;
-	
-	(*this)[1][0] = 0;
-	(*this)[1][1] = 1;
-	(*this)[1][2] = 0;
-	(*this)[1][3] = 0;
-	
-	(*this)[2][0] = 0;
-	(*this)[2][1] = 0;
-	(*this)[2][2] = 1;
-	(*this)[2][3] = 0;
-	
-	(*this)[3][0] = 0;
-	(*this)[3][1] = 0;
-	(*this)[3][2] = 0;
-	(*this)[3][3] = 1;
-	*/
 }
 
 void MercuryMatrix::Translate(float x, float y, float z)
@@ -207,7 +186,7 @@ MercuryMatrix& MercuryMatrix::operator*=(const MercuryMatrix& m)
 	return *this;
 }
 
-void MercuryMatrix::Print()
+void MercuryMatrix::Print() const
 {
 	for (int i = 0; i < 4; ++i)
 	{
@@ -215,6 +194,19 @@ void MercuryMatrix::Print()
 	}
 	printf("\n");
 }
+
+MercuryVector MercuryMatrix::operator*(const MercuryVector& v) const
+{
+	float tmp[4];
+	v.ConvertToVector4( tmp );
+	FloatRow r, tvo;
+	Float2FloatRow( tmp, &r );
+	VectorMultiply4f( m_matrix, &r, &tvo);
+	FloatRow2Float( &tvo, tmp );
+	MercuryVertex(tmp).Print();
+	return MercuryVertex(tmp);
+}
+
 
 /* 
  * Copyright (c) 2006 Joshua Allen

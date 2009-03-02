@@ -6,17 +6,18 @@
 #include <MercuryVertex.h>
 #include <MercuryPlane.h>
 
+enum PlanePos
+{
+	PTOP = 0,
+ PBOTTOM,
+ PLEFT,
+ PRIGHT,
+ PNEAR,
+ PFAR
+};
+
 class Frustum
 {
-	enum PlanePos
-	{
-		PTOP = 0,
-		PBOTTOM,
-		PLEFT,
-		PRIGHT,
-		PNEAR,
-		PFAR
-	};
 
 	public:
 		void SetPerspective( float fov, float aspect, float znear, float zfar );
@@ -24,6 +25,10 @@ class Frustum
 		void ComputeFrustum(float left, float right, float bottom, float top, float zNear, float zFar);
 		
 		void LookAt(const MercuryVertex& eye, const MercuryVector& look, const MercuryVector& up);
+		
+		bool Clip(const BoundingBox& bb) const;
+		
+		MercuryPlane m_planes[6];
 	private:
 		MercuryMatrix m_frustum;
 		
@@ -31,8 +36,9 @@ class Frustum
 		float m_nh, m_nw, m_fh, m_fw;
 		
 		MercuryVector m_nc, m_fc;
-		MercuryPlane m_planes[6];
 };
+
+extern const Frustum* FRUSTUM;
 
 class Viewport : public RenderableNode
 {

@@ -170,6 +170,22 @@ void VectorMultiply4f( const FloatRow* matrix, const FloatRow* pa, FloatRow* out
 	out[3] = p[0] * m[12] + p[1] * m[13] + p[2] * m[14] + p[3] * m[15];
 }
 
+void Float2FloatRow(const float* f, FloatRow* r)
+{
+	*r[0] = f[0];
+	*r[1] = f[1];
+	*r[2] = f[2];
+	*r[3] = f[3];
+}
+
+void FloatRow2Float( const FloatRow* fr, float* f)
+{
+	f[0] = (*fr)[0];
+	f[1] = (*fr)[1];
+	f[2] = (*fr)[2];
+	f[3] = (*fr)[3];
+}
+
 #else
 
 //inline __m128 Hadd4(__m128 x);
@@ -287,6 +303,16 @@ void VectorMultiply4f( const FloatRow* matrix, const FloatRow* p, FloatRow* out 
 void ZeroFloatRow(FloatRow& r)
 {
 	r = (FloatRow)_mm_setzero_ps();
+}
+
+FloatRow Float2FloatRow(const float* f, , FloatRow* r)
+{
+	r = _mm_load_ps( f );
+}
+
+void FloatRow2Float( const FloatRow* fr, float* f)
+{
+	_mm_store_ps( f, *fr );
 }
 
 #endif

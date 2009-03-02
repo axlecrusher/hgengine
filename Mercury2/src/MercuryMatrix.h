@@ -4,6 +4,7 @@
 //This matrix will work identically to float[16]
 #include "MercuryMath.h"
 #include "MercuryUtil.h"
+#include <MercuryVertex.h>
 
 class MercuryMatrix;
 
@@ -27,6 +28,8 @@ public:
 
 	MercuryMatrix operator*(const MercuryMatrix& m) const;
 	MercuryMatrix& operator*=(const MercuryMatrix& m);
+	
+	MercuryVector operator*(const MercuryVertex& v) const;
 
 	void Translate(float x, float y, float z);
 	///Rotate along the 3 primariy axes by given amounts (in deg)
@@ -40,7 +43,7 @@ public:
 	void Zero();
 	void Identity();
 	
-	void Print();
+	void Print() const;
 }
 #if !defined( WIN32 ) || defined( _MSC_VER )
 M_ALIGN(64);

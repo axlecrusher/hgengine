@@ -3,15 +3,22 @@
 
 REGISTER_NODE_TYPE(Viewport);
 
+const Frustum* FRUSTUM = NULL;
+
 void Viewport::Render()
 {
+	FRUSTUM = &m_frustum;
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 		
 	MercuryMatrix m = FindGlobalMatrix();
 	m.Transpose();
+	
+	MercuryMatrix f = m_frustum.GetMatrix();
+	f.Transpose();
 
-	glLoadMatrixf( (m * m_frustum.GetMatrix()).Ptr() );
+	glLoadMatrixf( (m * f).Ptr() );
 	//The following 2 are equivelent to above
 //	glLoadMatrixf( m_frustum.Ptr() );
 //	glMultMatrixf( m.Ptr() );
@@ -76,7 +83,7 @@ void Frustum::ComputeFrustum(float left, float right, float bottom, float top, f
 	m_frustum[2][3] = D;
 	m_frustum[3][2] = -1;
 	
-	m_frustum.Transpose();  //XXX fix it to remove this
+//	m_frustum.Transpose();  //XXX fix it to remove this
 }
 
 void Frustum::LookAt(const MercuryVertex& eye, const MercuryVector& look, const MercuryVector& up)
@@ -116,6 +123,17 @@ void Frustum::LookAt(const MercuryVertex& eye, const MercuryVector& look, const 
 	normal = Y * aux;
 	m_planes[PRIGHT].Setup(m_nc+X*m_nw,normal);
 }
+
+bool Frustum::Clip(const BoundingBox& bb) const
+{
+	bool inView = false;
+	for (uint8_t i = 0; (i < 6) && !inView; ++i)
+	{
+		inView = m_planes[i].IsBehindPlane( bb )?inView:true;
+	}
+	
+	return !inView;
+};
 
 /*
 void Frustum::LookAt()

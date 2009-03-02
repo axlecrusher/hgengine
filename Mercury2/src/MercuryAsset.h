@@ -5,6 +5,7 @@
 #include <MercuryNode.h>
 #include <MessageHandler.h>
 #include <map>
+#include <MercuryMatrix.h>
 
 class MercuryAsset : public RefBase, MessageHandler
 {
@@ -22,6 +23,7 @@ class MercuryAsset : public RefBase, MessageHandler
 		virtual void LoadFromXML(const XMLNode& node) {};
 		
 		inline void IsInstanced(bool b) { m_isInstanced = b; }
+		const MercuryMatrix& GetGlobalMatrix() const;
 	protected:
 		bool m_isInstanced;
 };

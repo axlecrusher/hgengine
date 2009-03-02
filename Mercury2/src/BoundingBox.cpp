@@ -2,6 +2,8 @@
 #include <GL/glext.h>
 #include <BoundingBox.h>
 
+#include <Viewport.h>
+
 void BoundingBox::LoadFromBinary(char* data)
 {
 	memcpy(m_center, data, sizeof(float)*3);
@@ -15,6 +17,17 @@ RenderableBoundingBox::RenderableBoundingBox(const BoundingBox* bb)
 
 void RenderableBoundingBox::Render(MercuryNode* node)
 {
+	const BoundingBox& bb = *m_bb;
+	
+	MercuryVertex c = GetGlobalMatrix() * m_bb->GetCenter();
+	
+//	GetGlobalMatrix().Print();
+//	c.Print();
+	
+	BoundingBox gbb( c, bb.GetExtend() );
+	
+//	printf("clip %d\n", FRUSTUM->Clip(gbb) );
+	
 	const float* center = m_bb->GetCenter();
 	const float* extend = m_bb->GetExtend();
 	

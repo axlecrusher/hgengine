@@ -2,16 +2,24 @@
 #define BOUNDINGBOX_H
 
 #include <MercuryAsset.h>
+#include <MercuryVertex.h>
 
 class BoundingBox
 {
 	public:
+		BoundingBox() {};
+		BoundingBox(const MercuryVertex& center, const MercuryVertex& extend)
+			:m_center(center), m_extend(extend)
+		{};
+		
 		void LoadFromBinary(char* data);
-		inline const float* GetCenter() const { return m_center; }
-		inline const float* GetExtend() const { return m_extend; }
+		
+		inline const MercuryVertex& GetCenter() const { return m_center; }
+		inline const MercuryVertex& GetExtend() const { return m_extend; }
+		
 	private:
-		float m_center[3];
-		float m_extend[3];
+		MercuryVertex m_center;
+		MercuryVertex m_extend;
 };
 
 class RenderableBoundingBox : public MercuryAsset

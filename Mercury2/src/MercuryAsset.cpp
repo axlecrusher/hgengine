@@ -65,6 +65,12 @@ void AssetFactory::RemoveAssetInstance(const MString& key)
 		m_assetInstances.erase( asset );
 		printf("removed asset %s\n", key.c_str());
 	}
+	
+}
+
+const MercuryMatrix& MercuryAsset::GetGlobalMatrix() const
+{
+	return GLOBALMATRIX;
 }
 
 std::map<MString, MercuryAsset*> AssetFactory::m_assetInstances;

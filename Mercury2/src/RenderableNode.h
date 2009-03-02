@@ -11,6 +11,7 @@
 
 extern uint64_t RenderWaited;
 extern uint64_t UpdateWaited;
+extern MercuryMatrix GLOBALMATRIX;
 
 class RenderableNode : public MercuryNode
 {

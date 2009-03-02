@@ -26,8 +26,8 @@
     <run>
       <mainprogram>/home/josh/Mercury2/debug/src/mercury2</mainprogram>
       <terminal>false</terminal>
-      <programargs/>
-      <globaldebugarguments/>
+      <programargs></programargs>
+      <globaldebugarguments></globaldebugarguments>
       <globalcwd>/home/josh/Mercury2</globalcwd>
       <useglobalprogram>true</useglobalprogram>
       <autocompile>false</autocompile>
@@ -59,16 +59,16 @@
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevg77options</f77compiler>
-        <cxxflags>-O2 -g -Wall</cxxflags>
+        <cxxflags>-O0 -g -Wall</cxxflags>
         <envvars/>
-        <topsourcedir/>
-        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE -DRUN_FROM_START_FOLDER -DUSE_SSE</cppflags>
+        <topsourcedir></topsourcedir>
+        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE -DRUN_FROM_START_FOLDER</cppflags>
         <ldflags>-lpthread -lX11 -lGL -lxml2 -lpng</ldflags>
-        <ccompilerbinary/>
-        <cxxcompilerbinary/>
-        <f77compilerbinary/>
-        <cflags>-O2 -g -Wall</cflags>
-        <f77flags/>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
+        <cflags>-O0 -g -Wall</cflags>
+        <f77flags></f77flags>
       </debug>
       <default>
         <envvars/>
