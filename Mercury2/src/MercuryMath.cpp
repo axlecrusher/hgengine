@@ -4,7 +4,7 @@
 void TransposeMatrix( FloatRow* m )
 {
 	float tmp;
-	float *_m = (float*)m;
+	float *_m = *m;
 	
 	tmp = _m[1];
 	_m[1] = _m[4];
@@ -40,34 +40,34 @@ void ZeroFloatRow(FloatRow& r)
 
 void Mul4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
 {
-    ((float*)out)[0] = ((float*)first)[0] * ((float*)second)[0];
-    ((float*)out)[1] = ((float*)first)[1] * ((float*)second)[1];
-    ((float*)out)[2] = ((float*)first)[2] * ((float*)second)[2];
-    ((float*)out)[3] = ((float*)first)[3] * ((float*)second)[3];
+    (*out)[0] = (*first)[0] * (*second)[0];
+    (*out)[1] = (*first)[1] * (*second)[1];
+    (*out)[2] = (*first)[2] * (*second)[2];
+    (*out)[3] = (*first)[3] * (*second)[3];
 }
 
 void Div4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
 {
-    ((float*)out)[0] = ((float*)first)[0] / ((float*)second)[0];
-    ((float*)out)[1] = ((float*)first)[1] / ((float*)second)[1];
-    ((float*)out)[2] = ((float*)first)[2] / ((float*)second)[2];
-    ((float*)out)[3] = ((float*)first)[3] / ((float*)second)[3];
+    (*out)[0] = (*first)[0] / (*second)[0];
+    (*out)[1] = (*first)[1] / (*second)[1];
+    (*out)[2] = (*first)[2] / (*second)[2];
+    (*out)[3] = (*first)[3] / (*second)[3];
 }
 
 void Add4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
 {
-    ((float*)out)[0] = ((float*)first)[0] + ((float*)second)[0];
-    ((float*)out)[1] = ((float*)first)[1] + ((float*)second)[1];
-    ((float*)out)[2] = ((float*)first)[2] + ((float*)second)[2];
-    ((float*)out)[3] = ((float*)first)[3] + ((float*)second)[3];
+    (*out)[0] = (*first)[0] + (*second)[0];
+    (*out)[1] = (*first)[1] + (*second)[1];
+    (*out)[2] = (*first)[2] + (*second)[2];
+    (*out)[3] = (*first)[3] + (*second)[3];
 }
 
 void Sub4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
 {
-    ((float*)out)[0] = ((float*)first)[0] - ((float*)second)[0];
-    ((float*)out)[1] = ((float*)first)[1] - ((float*)second)[1];
-    ((float*)out)[2] = ((float*)first)[2] - ((float*)second)[2];
-    ((float*)out)[3] = ((float*)first)[3] - ((float*)second)[3];
+    (*out)[0] = (*first)[0] - (*second)[0];
+    (*out)[1] = (*first)[1] - (*second)[1];
+    (*out)[2] = (*first)[2] - (*second)[2];
+    (*out)[3] = (*first)[3] - (*second)[3];
 }
 
 void Copy4f( void * dest, const void * source )
@@ -116,11 +116,9 @@ void Copy16f( void * dest, const void * source )
 
 void MatrixMultiply4f ( const FloatRow* in1a, const FloatRow* in2a, FloatRow* outa)
 {
-	float *in1, *in2, *out;
-	
-	in1 = (float*)in1a;
-	in2 = (float*)in2a;
-	out = (float*)outa;
+	const float *in1 = *in1a;
+	const float *in2 = *in2a;
+	float *out = *outa;
 	
 	out[0] = in1[0] * in2[0] + in1[1] * in2[4] +
 				in1[2] * in2[8] + in1[3] * in2[12];
@@ -161,9 +159,9 @@ void MatrixMultiply4f ( const FloatRow* in1a, const FloatRow* in2a, FloatRow* ou
 
 void VectorMultiply4f( const FloatRow* matrix, const FloatRow* pa, FloatRow* outa )
 {
-	float *m = (float*)matrix;
-	float *p = (float*)pa;
-	float *out = (float*)outa;
+	const float *m = *matrix;
+	const float *p = *pa;
+	float *out = *outa;
 	out[0] = p[0] * m[0] + p[1] * m[1] + p[2] * m[2] + p[3] * m[3];
 	out[1] = p[0] * m[4] + p[1] * m[5] + p[2] * m[6] + p[3] * m[7];
 	out[2] = p[0] * m[8] + p[1] * m[9] + p[2] * m[10] + p[3] * m[11];
@@ -172,7 +170,7 @@ void VectorMultiply4f( const FloatRow* matrix, const FloatRow* pa, FloatRow* out
 
 void Float2FloatRow(const float* f, FloatRow* r)
 {
-	float* row = (float*)r;
+	float* row = *r;
 	row[0] = f[0];
 	row[1] = f[1];
 	row[2] = f[2];
