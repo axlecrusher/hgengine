@@ -20,12 +20,8 @@ void RenderableBoundingBox::Render(MercuryNode* node)
 	const BoundingBox& bb = *m_bb;
 	
 	MercuryVertex c = GetGlobalMatrix() * m_bb->GetCenter();
-	
-//	GetGlobalMatrix().Print();
-	c.Print();
-	
 	BoundingBox gbb( c, bb.GetExtend() );
-	
+	c.Print();
 //	printf("clip %d\n", FRUSTUM->Clip(gbb) );
 	
 	const float* center = m_bb->GetCenter();

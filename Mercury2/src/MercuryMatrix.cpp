@@ -201,6 +201,7 @@ MercuryVector MercuryMatrix::operator*(const MercuryVector& v) const
 	FloatRow r, tvo;
 	
 	v.ConvertToVector4( tmp );
+	tmp[3] = 1;
 	Float2FloatRow( tmp, &r );
 	VectorMultiply4f( m_matrix, &r, &tvo);
 	FloatRow2Float( &tvo, tmp );
