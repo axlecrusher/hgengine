@@ -203,7 +203,6 @@ MercuryVector MercuryMatrix::operator*(const MercuryVector& v) const
 	Float2FloatRow( tmp, &r );
 	VectorMultiply4f( m_matrix, &r, &tvo);
 	FloatRow2Float( &tvo, tmp );
-	MercuryVertex(tmp).Print();
 	return MercuryVertex(tmp);
 }
 

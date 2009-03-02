@@ -22,7 +22,7 @@ void RenderableBoundingBox::Render(MercuryNode* node)
 	MercuryVertex c = GetGlobalMatrix() * m_bb->GetCenter();
 	
 //	GetGlobalMatrix().Print();
-//	c.Print();
+	c.Print();
 	
 	BoundingBox gbb( c, bb.GetExtend() );
 	

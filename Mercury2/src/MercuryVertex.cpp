@@ -20,6 +20,12 @@ MercuryVertex::MercuryVertex( const float * in )
 		m_xyz[i] = in[i];
 }
 
+MercuryVertex::MercuryVertex( const MercuryVertex& v)
+{
+	for (unsigned int i = 0; i < 3; ++i)
+		m_xyz[i] = v.m_xyz[i];
+}
+
 void MercuryVertex::NormalizeSelf()
 {
 	float imag = 1.0f/Length();

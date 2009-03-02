@@ -7,6 +7,7 @@ class MercuryVertex
 		MercuryVertex();
 		MercuryVertex( float ix, float iy, float iz );
 		MercuryVertex( const float * in );
+		MercuryVertex( const MercuryVertex& v);
 
 		///Direct conversion to float*
 		operator float* () { return m_xyz; }
