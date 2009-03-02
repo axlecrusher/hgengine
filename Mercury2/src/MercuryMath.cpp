@@ -172,10 +172,11 @@ void VectorMultiply4f( const FloatRow* matrix, const FloatRow* pa, FloatRow* out
 
 void Float2FloatRow(const float* f, FloatRow* r)
 {
-	*r[0] = f[0];
-	*r[1] = f[1];
-	*r[2] = f[2];
-	*r[3] = f[3];
+	float* row = (float*)r;
+	row[0] = f[0];
+	row[1] = f[1];
+	row[2] = f[2];
+	row[3] = f[3];
 }
 
 void FloatRow2Float( const FloatRow* fr, float* f)
