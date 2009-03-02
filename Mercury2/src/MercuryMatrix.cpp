@@ -198,11 +198,13 @@ void MercuryMatrix::Print() const
 MercuryVector MercuryMatrix::operator*(const MercuryVector& v) const
 {
 	float tmp[4];
-	v.ConvertToVector4( tmp );
 	FloatRow r, tvo;
+	
+	v.ConvertToVector4( tmp );
 	Float2FloatRow( tmp, &r );
 	VectorMultiply4f( m_matrix, &r, &tvo);
 	FloatRow2Float( &tvo, tmp );
+	
 	return MercuryVertex(tmp);
 }
 
