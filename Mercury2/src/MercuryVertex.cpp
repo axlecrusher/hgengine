@@ -17,7 +17,7 @@ MercuryVertex::MercuryVertex( float ix, float iy, float iz )
 MercuryVertex::MercuryVertex( const float * in )
 {
 	for (unsigned int i = 0; i < 3; ++i)
-		m_xyz[i] *= in[i];
+		m_xyz[i] = in[i];
 }
 
 void MercuryVertex::NormalizeSelf()
@@ -85,6 +85,17 @@ MercuryVertex MercuryVertex::CrossProduct(const MercuryVertex& p) const
 	ret.m_xyz[2] = m_xyz[0]*p.m_xyz[1] - m_xyz[1]*p.m_xyz[0];
 	return ret;
 }
+
+float MercuryVertex::DotProduct(const MercuryVertex& rhs) const
+{
+	return (m_xyz[0]*rhs.m_xyz[0]+m_xyz[1]*rhs.m_xyz[1]+m_xyz[2]*rhs.m_xyz[2]);
+}
+
+void MercuryVertex::Print() const
+{
+	printf("%f %f %f\n", m_xyz[0], m_xyz[1], m_xyz[2]);
+}
+
 
 
 /****************************************************************************

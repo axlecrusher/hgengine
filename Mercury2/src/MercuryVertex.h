@@ -61,6 +61,9 @@ class MercuryVertex
 
 		///Obtain the cross product (*this) x p
 		MercuryVertex CrossProduct(const MercuryVertex& p) const;
+		
+		float DotProduct(const MercuryVertex& rhs) const;
+		void Print() const;
 
 		float m_xyz[3];
 };
