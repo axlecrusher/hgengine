@@ -8,13 +8,14 @@ if test $OSTYPE = "darwin8.0"; then
 	ISMAC=1; fi
 
 
-OPTIONS="X11 libxml OGL"
+OPTIONS="X11 libxml OGL sse"
 OPT_X11=1
 OPT_OGL=1
 OPT_libxml=1
+OPT_sse=1
 
 DEFINES="WAS_CONFIGURED USE_MSTRING"
-CC_BASE="-O2 -g0 -Wall -DUSE_SSE"
+CC_BASE="-O2 -g0 -Wall"
 
 for i in $*; do
 	if test $i = "--help"; then 
@@ -65,7 +66,7 @@ if test $OPT_OGL = 1; then
 	NEED_L="$NEED_L GL"
 fi
 
-if test $OPT_sse = 1; then
+if test $OPT_ss = 1; then
 	DEFINES="$DEFINES USE_SSE"
 fi
 
