@@ -4,7 +4,7 @@
 void TransposeMatrix( FloatRow* m )
 {
 	float tmp;
-	float *_m = *m;
+	float *_m = (float*)m;
 	
 	tmp = _m[1];
 	_m[1] = _m[4];
@@ -284,14 +284,14 @@ void VectorMultiply4f( const FloatRow* matrix, const FloatRow* p, FloatRow* out 
 	
 	//compute term 1 and term 2 and store them in the low order
 	//of outxmm[0]
-	out[0] = Hadd4( _mm_mul_ps( matrix[1], *p ) );
-	tmp = Hadd4( _mm_mul_ps( matrix[2], *p ) );
+	out[0] = Hadd4( _mm_mul_ps( matrix[0], *p ) );
+	tmp = Hadd4( _mm_mul_ps( matrix[1], *p ) );
 	out[0] = _mm_unpacklo_ps(out[0], tmp);
 
 	//compute term 3 and term 4 and store them in the high order
 	//of outxmm[1]
-	out[1] = Hadd4( _mm_mul_ps( matrix[3], *p ) );
-	tmp = Hadd4( _mm_mul_ps( matrix[4], *p ) );
+	out[1] = Hadd4( _mm_mul_ps( matrix[2], *p ) );
+	tmp = Hadd4( _mm_mul_ps( matrix[3], *p ) );
 	out[1] = _mm_unpacklo_ps(out[1], tmp);
 
 	//shuffle the low order of outxmm[0] into the loworder of tmp
@@ -304,9 +304,9 @@ void ZeroFloatRow(FloatRow& r)
 	r = (FloatRow)_mm_setzero_ps();
 }
 
-FloatRow Float2FloatRow(const float* f, , FloatRow* r)
+void Float2FloatRow(const float* f, FloatRow* r)
 {
-	r = _mm_load_ps( f );
+	*r = _mm_load_ps( f );
 }
 
 void FloatRow2Float( const FloatRow* fr, float* f)
