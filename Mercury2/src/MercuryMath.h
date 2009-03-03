@@ -44,10 +44,10 @@ inline int LRINTF(float x) { int r = (int)x; (x-r)>=0.5?++r:0; return r; };
 
 //#define DotProduct(x,y) ((x)[0]*(y)[0]+(x)[1]*(y)[1]+(x)[2]*(y)[2])
 
-void Mul4f(const FloatRow* first, const FloatRow* second, FloatRow* out);
-void Div4f(const FloatRow* first, const FloatRow* second, FloatRow* out);
-void Add4f(const FloatRow* first, const FloatRow* second, FloatRow* out);
-void Sub4f(const FloatRow* first, const FloatRow* second, FloatRow* out);
+void Mul4f(const FloatRow& first, const FloatRow& second, FloatRow& out);
+void Div4f(const FloatRow& first, const FloatRow& second, FloatRow& out);
+void Add4f(const FloatRow& first, const FloatRow& second, FloatRow& out);
+void Sub4f(const FloatRow& first, const FloatRow& second, FloatRow& out);
 void Copy4f( void * dest, const void * source );
 void Copy8f( void * dest, const void * source );
 void Copy16f( void * dest, const void * source );
@@ -55,8 +55,8 @@ void MatrixMultiply4f ( const FloatRow* in1, const FloatRow* in2, FloatRow* out 
 void VectorMultiply4f(const FloatRow* matrix, const FloatRow& p, FloatRow& out );
 void TransposeMatrix( FloatRow* m );
 
-void Float2FloatRow(const float* f, FloatRow* r);
-void FloatRow2Float( const FloatRow* fr, float* f);
+void Float2FloatRow(const float* f, FloatRow& r);
+void FloatRow2Float(const FloatRow& fr, float* f);
 
 const FloatRow gfrZero = { 0.f, 0.f, 0.f, 0.f };
 

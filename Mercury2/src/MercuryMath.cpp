@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include "MercuryMath.h"
 
 //the SSE version of this was really slow, this is quicker
@@ -38,80 +39,46 @@ void ZeroFloatRow(FloatRow& r)
 	Copy4f(&r, &gfrZero );
 }
 
-void Mul4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
+void Mul4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
-    (*out)[0] = (*first)[0] * (*second)[0];
-    (*out)[1] = (*first)[1] * (*second)[1];
-    (*out)[2] = (*first)[2] * (*second)[2];
-    (*out)[3] = (*first)[3] * (*second)[3];
+	for (uint8_t i = 0; i < 4; ++i)
+	    out[i] = first[i] * second[i];
 }
 
-void Div4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
+void Div4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
-    (*out)[0] = (*first)[0] / (*second)[0];
-    (*out)[1] = (*first)[1] / (*second)[1];
-    (*out)[2] = (*first)[2] / (*second)[2];
-    (*out)[3] = (*first)[3] / (*second)[3];
+	for (uint8_t i = 0; i < 4; ++i)
+		out[i] = first[i] / second[i];
 }
 
-void Add4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
+void Add4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
-    (*out)[0] = (*first)[0] + (*second)[0];
-    (*out)[1] = (*first)[1] + (*second)[1];
-    (*out)[2] = (*first)[2] + (*second)[2];
-    (*out)[3] = (*first)[3] + (*second)[3];
+	for (uint8_t i = 0; i < 4; ++i)
+		out[i] = first[i] + second[i];
 }
 
-void Sub4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
+void Sub4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
-    (*out)[0] = (*first)[0] - (*second)[0];
-    (*out)[1] = (*first)[1] - (*second)[1];
-    (*out)[2] = (*first)[2] - (*second)[2];
-    (*out)[3] = (*first)[3] - (*second)[3];
+	for (uint8_t i = 0; i < 4; ++i)
+		out[i] = first[i] - second[i];
 }
 
 void Copy4f( void * dest, const void * source )
 {
-    ((float*)dest)[0] = ((float*)source)[0];
-    ((float*)dest)[1] = ((float*)source)[1];
-    ((float*)dest)[2] = ((float*)source)[2];
-    ((float*)dest)[3] = ((float*)source)[3];
+	for (uint8_t i = 0; i < 4; ++i)
+		((float*)dest)[i] = ((float*)source)[i];
 }
 
 void Copy8f( void * dest, const void * source )
 {
-    ((float*)dest)[0] = ((float*)source)[0];
-    ((float*)dest)[1] = ((float*)source)[1];
-    ((float*)dest)[2] = ((float*)source)[2];
-    ((float*)dest)[3] = ((float*)source)[3];
-
-    ((float*)dest)[4] = ((float*)source)[4];
-    ((float*)dest)[5] = ((float*)source)[5];
-    ((float*)dest)[6] = ((float*)source)[6];
-    ((float*)dest)[7] = ((float*)source)[7];
+	for (uint8_t i = 0; i < 8; ++i)
+		((float*)dest)[i] = ((float*)source)[i];
 }
 
 void Copy16f( void * dest, const void * source )
 {
-    ((float*)dest)[0] = ((float*)source)[0];
-    ((float*)dest)[1] = ((float*)source)[1];
-    ((float*)dest)[2] = ((float*)source)[2];
-    ((float*)dest)[3] = ((float*)source)[3];
-
-    ((float*)dest)[4] = ((float*)source)[4];
-    ((float*)dest)[5] = ((float*)source)[5];
-    ((float*)dest)[6] = ((float*)source)[6];
-    ((float*)dest)[7] = ((float*)source)[7];
-
-    ((float*)dest)[8] = ((float*)source)[8];
-    ((float*)dest)[9] = ((float*)source)[9];
-    ((float*)dest)[10] = ((float*)source)[10];
-    ((float*)dest)[11] = ((float*)source)[11];
-
-    ((float*)dest)[12] = ((float*)source)[12];
-    ((float*)dest)[13] = ((float*)source)[13];
-    ((float*)dest)[14] = ((float*)source)[14];
-    ((float*)dest)[15] = ((float*)source)[15];
+	for (uint8_t i = 0; i < 16; ++i)
+		((float*)dest)[i] = ((float*)source)[i];
 }
 
 void MatrixMultiply4f ( const FloatRow* in1a, const FloatRow* in2a, FloatRow* outa)
@@ -168,21 +135,16 @@ void VectorMultiply4f( const FloatRow* matrix, const FloatRow& pa, FloatRow& out
 	out[3] = p[0] * m[12] + p[1] * m[13] + p[2] * m[14] + p[3] * m[15];
 }
 
-void Float2FloatRow(const float* f, FloatRow* r)
+void Float2FloatRow(const float* f, FloatRow& r)
 {
-	float* row = *r;
-	row[0] = f[0];
-	row[1] = f[1];
-	row[2] = f[2];
-	row[3] = f[3];
+	for (uint8_t i = 0; i < 4; ++i)
+		r[i] = f[i];
 }
 
-void FloatRow2Float( const FloatRow* fr, float* f)
+void FloatRow2Float( const FloatRow& r, float* f)
 {
-	f[0] = (*fr)[0];
-	f[1] = (*fr)[1];
-	f[2] = (*fr)[2];
-	f[3] = (*fr)[3];
+	for (uint8_t i = 0; i < 4; ++i)
+		f[i] = r[i];
 }
 
 #else
@@ -196,24 +158,24 @@ __m128 Hadd4(__m128 x)
 	return _mm_add_ps( x, _mm_shuffle_ps(x, x, _MM_SHUFFLE(1,1,1,1)) );
 }
 
-void Mul4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
+void Mul4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
-	*out = _mm_mul_ps( *first, *second );
+	out = _mm_mul_ps( first, second );
 }
 
-void Div4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
+void Div4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
-	*out = _mm_div_ps( *first, *second );
+	out = _mm_div_ps( first, second );
 }
 
-void Add4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
+void Add4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
-	*out = _mm_add_ps( *first, *second );
+	out = _mm_add_ps( first, second );
 }
 
-void Sub4f(const FloatRow* first, const FloatRow* second, FloatRow* out)
+void Sub4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
-	*out = _mm_sub_ps( *first, *second );
+	out = _mm_sub_ps( first, second );
 }
 
 void Copy4f( void * dest, const void * source )
@@ -302,14 +264,14 @@ void ZeroFloatRow(FloatRow& r)
 	r = (FloatRow)_mm_setzero_ps();
 }
 
-void Float2FloatRow(const float* f, FloatRow* r)
+void Float2FloatRow(const float* f, FloatRow& r)
 {
-	*r = _mm_load_ps( f );
+	r = _mm_load_ps( f );
 }
 
-void FloatRow2Float( const FloatRow* fr, float* f)
+void FloatRow2Float( const FloatRow& r, float* f)
 {
-	_mm_store_ps( f, *fr );
+	_mm_store_ps( f, r );
 }
 
 #endif
