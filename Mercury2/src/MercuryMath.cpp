@@ -157,11 +157,11 @@ void MatrixMultiply4f ( const FloatRow* in1a, const FloatRow* in2a, FloatRow* ou
 				in1[14] * in2[11] + in1[15] * in2[15];
 }
 
-void VectorMultiply4f( const FloatRow* matrix, const FloatRow* pa, FloatRow* outa )
+void VectorMultiply4f( const FloatRow* matrix, const FloatRow& pa, FloatRow& outa )
 {
 	const float *m = *matrix;
-	const float *p = *pa;
-	float *out = *outa;
+	const float *p = pa;
+	float *out = outa;
 	out[0] = p[0] * m[0] + p[1] * m[1] + p[2] * m[2] + p[3] * m[3];
 	out[1] = p[0] * m[4] + p[1] * m[5] + p[2] * m[6] + p[3] * m[7];
 	out[2] = p[0] * m[8] + p[1] * m[9] + p[2] * m[10] + p[3] * m[11];
