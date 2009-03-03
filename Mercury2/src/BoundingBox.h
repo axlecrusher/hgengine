@@ -3,23 +3,29 @@
 
 #include <MercuryAsset.h>
 #include <MercuryVertex.h>
+#include <MercuryMatrix.h>
 
 class BoundingBox
 {
 	public:
 		BoundingBox() {};
-		BoundingBox(const MercuryVertex& center, const MercuryVertex& extend)
-			:m_center(center), m_extend(extend)
-		{};
+		BoundingBox(const MercuryVertex& center, const MercuryVertex& extend);
 		
 		void LoadFromBinary(char* data);
 		
 		inline const MercuryVertex& GetCenter() const { return m_center; }
 		inline const MercuryVertex& GetExtend() const { return m_extend; }
 		
+		BoundingBox Transform( const MercuryMatrix& m ) const;
+		const MercuryVector& Normal(uint8_t i) const { return m_normals[i]; }
+		
 	private:
+		void ComputeNormals();
+		
 		MercuryVertex m_center;
 		MercuryVertex m_extend;
+		
+		MercuryVector m_normals[3];
 };
 
 class RenderableBoundingBox : public MercuryAsset

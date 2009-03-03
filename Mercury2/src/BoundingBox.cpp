@@ -4,10 +4,43 @@
 
 #include <Viewport.h>
 
+BoundingBox::BoundingBox(const MercuryVertex& center, const MercuryVertex& extend)
+	:m_center(center), m_extend(extend)
+{
+	ComputeNormals();
+};
+
 void BoundingBox::LoadFromBinary(char* data)
 {
 	memcpy(m_center, data, sizeof(float)*3);
 	memcpy(m_extend, data+(sizeof(float)*3), sizeof(float)*3);
+	ComputeNormals();
+}
+
+void BoundingBox::ComputeNormals()
+{
+	MercuryVertex t(m_center);
+	t.SetX( t.GetX() + m_extend.GetX() );
+	m_normals[0] = (m_center - t).Normalize();
+	
+	t = m_center;
+	t.SetY( t.GetY() + m_extend.GetY() );
+	m_normals[1] = (m_center - t).Normalize();
+
+	t = m_center;
+	t.SetZ( t.GetZ() + m_extend.GetZ() );
+	m_normals[2] = (m_center - t).Normalize();
+}
+
+BoundingBox BoundingBox::Transform( const MercuryMatrix& m ) const
+{
+	BoundingBox bb;
+	bb.m_extend = m_center;
+	bb.m_center = m * m_center;
+	bb.m_normals[0] = (m * m_normals[0]).Normalize();
+	bb.m_normals[1] = (m * m_normals[1]).Normalize();
+	bb.m_normals[2] = (m * m_normals[2]).Normalize();
+	return bb;
 }
 
 RenderableBoundingBox::RenderableBoundingBox(const BoundingBox* bb)
@@ -19,10 +52,10 @@ void RenderableBoundingBox::Render(MercuryNode* node)
 {
 	const BoundingBox& bb = *m_bb;
 	
-	MercuryVertex c = GetGlobalMatrix() * m_bb->GetCenter();
-	BoundingBox gbb( c, bb.GetExtend() );
-	c.Print();
-//	printf("clip %d\n", FRUSTUM->Clip(gbb) );
+	BoundingBox gbb = m_bb->Transform( GetGlobalMatrix() );
+	
+	FRUSTUM->m_planes[PFAR].IsBehindPlane( gbb.GetCenter() );
+//	printf("clip %d\n", FRUSTUM->m_planes[PFAR].IsBehindPlane( gbb.GetCenter() ));
 	
 	const float* center = m_bb->GetCenter();
 	const float* extend = m_bb->GetExtend();
