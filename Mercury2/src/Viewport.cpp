@@ -92,15 +92,16 @@ void Frustum::LookAt(const MercuryVertex& eye, const MercuryVector& look, const 
 	MercuryVector X,Y,Z;
 	
 	Z = (eye - look).Normalize(); //direction behind camera
-	X = (up * Z).Normalize(); //X axis
+	X = (up.CrossProduct(Z)).Normalize(); //X axis
 	Y = Z.CrossProduct( X ); //real up
 	
-	m_nc = up - Z * m_zNear;
-	m_fc = up - Z * m_zFar;
+	m_nc = (eye - Z) * m_zNear;
+	m_fc = (eye - Z) * m_zFar;
 	
-	m_planes[PNEAR].Setup(m_nc, Z*-1);
+	m_planes[PNEAR].Setup(m_nc, Z*(-1));
 	m_planes[PFAR].Setup(m_fc, Z);
-	
+//	m_fc.Print();
+//	Z.Print();
 	MercuryVector aux,normal;
 
 	aux = (m_nc + Y*m_nh) - eye;
