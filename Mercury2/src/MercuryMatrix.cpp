@@ -203,9 +203,9 @@ MercuryVector MercuryMatrix::operator*(const MercuryVector& v) const
 	v.ConvertToVector4( tmp );
 	tmp[3] = 1;
 	Float2FloatRow( tmp, &r );
-	VectorMultiply4f( m_matrix, &r, &tvo);
+	VectorMultiply4f( m_matrix, r, tvo);
 	FloatRow2Float( &tvo, tmp );
-	
+	printf("%f %f %f %f\n", tmp[0], tmp[1], tmp[2], tmp[3]);
 	return MercuryVertex(tmp);
 }
 

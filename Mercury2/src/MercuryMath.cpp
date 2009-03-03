@@ -278,25 +278,23 @@ void MatrixMultiply4f( const FloatRow* in1, const FloatRow* in2, FloatRow* out)
 
 //This is an SSE matrix vector multiply, see the standard C++ code
 //for a clear algorithim.  This seems like it works.
-void VectorMultiply4f( const FloatRow* matrix, const FloatRow* p, FloatRow* out )
+void VectorMultiply4f( const FloatRow* matrix, const FloatRow& p, FloatRow& out )
 {
-	__m128 tmp;
+	__m128 tmp, XY;
 	
-	//compute term 1 and term 2 and store them in the low order
-	//of outxmm[0]
-	out[0] = Hadd4( _mm_mul_ps( matrix[0], *p ) );
-	tmp = Hadd4( _mm_mul_ps( matrix[1], *p ) );
-	out[0] = _mm_unpacklo_ps(out[0], tmp);
+	//compute term X and term Y and store them in the low order of XY
+	XY = Hadd4( _mm_mul_ps( matrix[0], p ) ); //compute X
+	tmp = Hadd4( _mm_mul_ps( matrix[1], p ) ); //compute Y
+	XY = _mm_unpacklo_ps(XY, tmp);
 
-	//compute term 3 and term 4 and store them in the high order
-	//of outxmm[1]
-	out[1] = Hadd4( _mm_mul_ps( matrix[2], *p ) );
-	tmp = Hadd4( _mm_mul_ps( matrix[3], *p ) );
-	out[1] = _mm_unpacklo_ps(out[1], tmp);
+	//compute term Z and term W and store them in the low order of out
+	out = Hadd4( _mm_mul_ps( matrix[2], p ) ); //compute Z
+	tmp = Hadd4( _mm_mul_ps( matrix[3], p ) ); //compute W
+	out = _mm_unpacklo_ps(out, tmp);
 
-	//shuffle the low order of outxmm[0] into the loworder of tmp
-	//and shuffle the low order of outxmm[1] into the high order of tmp
-	*out = _mm_movelh_ps(out[0], out[1]);
+	//shuffle the low order of XY into the loworder of out
+	//and shuffle the low order of out into the high order of out
+	out = _mm_movelh_ps(XY, out);
 }
 
 void ZeroFloatRow(FloatRow& r)
