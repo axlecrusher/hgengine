@@ -19,9 +19,11 @@ bool MercuryPlane::IsBehindPlane(const BoundingBox& bb) const
 	x += ABS( extends.GetY() * m_normal.DotProduct( A2 ) );
 	x += ABS( extends.GetZ() * m_normal.DotProduct( A3 ) );
 	
-	float d = m_normal.DotProduct( m_center );
+	float d = m_normal.DotProduct( center+m_center );
+	if ( ABS(d) <= x ) //intersection
+		return false;
 	
-	return ABS( d ) > x;
+	return IsBehindPlane( center ); //if we don't intersect, just see what side we are on
 }
 
 
