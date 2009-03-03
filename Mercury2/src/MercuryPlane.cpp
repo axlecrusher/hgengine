@@ -4,7 +4,8 @@
 
 bool MercuryPlane::IsBehindPlane(const MercuryVertex& point) const
 {
-	return m_normal.DotProduct( point ) < 0;
+	// origional algorithim was -dotproduct < 0
+	return m_normal.DotProduct( point+m_center ) >= 0;
 }
 
 bool MercuryPlane::IsBehindPlane(const BoundingBox& bb) const
@@ -12,15 +13,8 @@ bool MercuryPlane::IsBehindPlane(const BoundingBox& bb) const
 	const MercuryVertex& center = bb.GetCenter();
 	const MercuryVertex& extends = bb.GetExtend();
 	
-	MercuryVertex A1, A2, A3, tmp;
-	
-	tmp = center+MercuryVertex( extends.GetX(), 0, 0 );
-	A1 = (center-tmp).Normalize();
-	tmp = center+MercuryVertex( 0, extends.GetY(), 0 );
-	A2 = (center-tmp).Normalize();
-	tmp = center+MercuryVertex( 0, 0, extends.GetZ() );
-	A3 = (center-tmp).Normalize();
-	
+	const MercuryVertex &A1(bb.Normal(0)), &A2(bb.Normal(1)), &A3(bb.Normal(2));
+		
 	float x = ABS( extends.GetX() * m_normal.DotProduct( A1 ) );
 	x += ABS( extends.GetY() * m_normal.DotProduct( A2 ) );
 	x += ABS( extends.GetZ() * m_normal.DotProduct( A3 ) );
