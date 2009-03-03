@@ -35,9 +35,9 @@ class MercuryVertex
 		///Write out to be = to this point
 		inline void ConvertToVector3( float* out ) const { out[0] = m_xyz[0]; out[1] = m_xyz[1]; out[2] = m_xyz[2]; }
 		///Write out to be = to this point, however the 4th element will be 0
-		inline void ConvertToVector4( float* out ) const { out[0] = m_xyz[0]; out[1] = m_xyz[1]; out[2] = m_xyz[2]; out[3] = 0; }
+		inline void ConvertToVector4( float* out, float w = 0 ) const { out[0] = m_xyz[0]; out[1] = m_xyz[1]; out[2] = m_xyz[2]; out[3] = w; }
 		///Write out to be = - to this point, however the 4th element will be 0
-		inline void ConvertToIVector4( float* out ) const { out[0] = -m_xyz[0]; out[1] = -m_xyz[1]; out[2] = -m_xyz[2]; out[3] = 0; }
+		inline void ConvertToIVector4( float* out, float w = 0 ) const { out[0] = -m_xyz[0]; out[1] = -m_xyz[1]; out[2] = -m_xyz[2]; out[3] = w; }
 
 		const MercuryVertex& operator *= (const MercuryVertex& p);
 		const MercuryVertex& operator /= (const MercuryVertex& p);
