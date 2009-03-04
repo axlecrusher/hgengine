@@ -53,9 +53,7 @@ void RenderableBoundingBox::Render(MercuryNode* node)
 	const BoundingBox& bb = *m_bb;
 	
 	BoundingBox gbb = m_bb->Transform( GetGlobalMatrix() );
-	
-	FRUSTUM->m_planes[PFAR].IsBehindPlane( gbb.GetCenter() );
-//	printf("clip %d\n", FRUSTUM->m_planes[PFAR].IsBehindPlane( gbb.GetCenter() ));
+	if ( FRUSTUM->Clip( gbb ) ) return;
 	
 	const float* center = m_bb->GetCenter();
 	const float* extend = m_bb->GetExtend();

@@ -127,10 +127,10 @@ void Frustum::LookAt(const MercuryVertex& eye, const MercuryVector& look, const 
 
 bool Frustum::Clip(const BoundingBox& bb) const
 {
-	bool inView = false;
-	for (uint8_t i = 0; (i < 6) && !inView; ++i)
+	bool inView = true;
+	for (uint8_t i = 0; (i < 6) && inView; ++i)
 	{
-		inView = m_planes[i].IsBehindPlane( bb )?inView:true;
+		inView = m_planes[i].IsBehindPlane( bb )?false:inView;
 	}
 	
 	return !inView;
