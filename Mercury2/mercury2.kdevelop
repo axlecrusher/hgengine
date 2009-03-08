@@ -2,7 +2,7 @@
 <kdevelop>
   <general>
     <author>Joshua Allen</author>
-    <email></email>
+    <email/>
     <version>2.0</version>
     <projectmanagement>KDevAutoProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
@@ -14,8 +14,8 @@
     <projectname>Mercury2</projectname>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description></description>
-    <defaultencoding></defaultencoding>
+    <description/>
+    <defaultencoding/>
     <versioncontrol/>
   </general>
   <kdevautoproject>
@@ -24,10 +24,10 @@
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
-      <mainprogram>/home/josh/Mercury2/debug/src/mercury2</mainprogram>
+      <mainprogram/>
       <terminal>false</terminal>
-      <programargs></programargs>
-      <globaldebugarguments></globaldebugarguments>
+      <programargs/>
+      <globaldebugarguments/>
       <globalcwd>/home/josh/Mercury2</globalcwd>
       <useglobalprogram>true</useglobalprogram>
       <autocompile>false</autocompile>
@@ -59,16 +59,16 @@
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevg77options</f77compiler>
-        <cxxflags>-O0 -g -Wall</cxxflags>
+        <cxxflags>-O2 -g -Wall</cxxflags>
         <envvars/>
-        <topsourcedir></topsourcedir>
-        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE -DRUN_FROM_START_FOLDER</cppflags>
+        <topsourcedir/>
+        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE -DRUN_FROM_START_FOLDER -DUSE_SSE</cppflags>
         <ldflags>-lpthread -lX11 -lGL -lxml2 -lpng</ldflags>
-        <ccompilerbinary></ccompilerbinary>
-        <cxxcompilerbinary></cxxcompilerbinary>
-        <f77compilerbinary></f77compilerbinary>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
         <cflags>-O0 -g -Wall</cflags>
-        <f77flags></f77flags>
+        <f77flags/>
       </debug>
       <default>
         <envvars/>
@@ -193,8 +193,8 @@
       <includestyle>3</includestyle>
       <root>/usr/qt/3</root>
       <designerintegration>EmbeddedKDevDesigner</designerintegration>
-      <qmake>/usr/qt/3/bin/qmake</qmake>
-      <designer>/usr/qt/3/bin/designer</designer>
+      <qmake></qmake>
+      <designer></designer>
       <designerpluginpaths/>
     </qt>
     <references/>
@@ -222,7 +222,7 @@
       <includePaths>.;</includePaths>
     </codecompletion>
     <creategettersetter>
-      <prefixGet></prefixGet>
+      <prefixGet/>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
@@ -243,11 +243,11 @@
   </cppsupportpart>
   <kdevdebugger>
     <general>
-      <gdbpath></gdbpath>
+      <gdbpath/>
       <dbgshell>libtool</dbgshell>
-      <configGdbScript></configGdbScript>
-      <runShellScript></runShellScript>
-      <runGdbScript></runGdbScript>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>

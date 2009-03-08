@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <GL/gl.h>
 #include <TransformNode.h>
+#include <unistd.h>
 
 using namespace std;
 

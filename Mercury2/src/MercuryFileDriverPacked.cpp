@@ -1,4 +1,5 @@
 #include <MercuryFileDriverPacked.h>
+#include <string.h>
 
 const MString PackagePrefix = "Packages/";
 

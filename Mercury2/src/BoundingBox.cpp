@@ -1,7 +1,7 @@
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include <BoundingBox.h>
-
+#include <string.h>
 #include <Viewport.h>
 
 BoundingBox::BoundingBox(const MercuryVertex& center, const MercuryVertex& extend)
@@ -50,8 +50,6 @@ RenderableBoundingBox::RenderableBoundingBox(const BoundingBox* bb)
 
 void RenderableBoundingBox::Render(MercuryNode* node)
 {
-	const BoundingBox& bb = *m_bb;
-	
 	BoundingBox gbb = m_bb->Transform( GetGlobalMatrix() );
 	if ( FRUSTUM->Clip( gbb ) ) return;
 	

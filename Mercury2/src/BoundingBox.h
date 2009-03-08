@@ -4,6 +4,7 @@
 #include <MercuryAsset.h>
 #include <MercuryVertex.h>
 #include <MercuryMatrix.h>
+#include <stdint.h>
 
 class BoundingBox
 {

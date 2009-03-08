@@ -1,6 +1,7 @@
 #include <RawImageData.h>
 #include <MercuryUtil.h>
 #include <ImageLoader.h>
+#include <string.h>
 
 using namespace std;
 

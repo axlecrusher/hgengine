@@ -1,6 +1,8 @@
 #ifndef ALIGNEDBUFFER_H
 #define ALIGNEDBUFFER_H
 
+#include <stdint.h>
+
 template <typename T>
 class AlignedBuffer
 {

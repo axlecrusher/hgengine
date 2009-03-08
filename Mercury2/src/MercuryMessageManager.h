@@ -7,6 +7,7 @@
 #include <PriorityQueue.h>
 #include <MercuryString.h>
 #include <MercuryUtil.h>
+#include <stdint.h>
 
 /* This message system uses absolute integer time values to fire off events.
 This ensures accuarate firing times while eliminating floating point error.

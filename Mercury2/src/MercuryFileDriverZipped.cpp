@@ -3,6 +3,7 @@
 
 //For the store compression on zips
 #include <zlib.h>
+#include <string.h>
 
 const MString PackagePrefix = "Packages/";
 

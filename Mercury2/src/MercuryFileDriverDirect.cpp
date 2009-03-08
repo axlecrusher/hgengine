@@ -14,6 +14,8 @@
 #define FSHEADER ""
 #endif
 
+#include <string.h>
+
 //Core base only.
 MercuryFile::MercuryFile()
 {
