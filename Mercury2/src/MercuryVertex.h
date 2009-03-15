@@ -1,6 +1,10 @@
 #ifndef MERCURYVECTOR_H
 #define MERCURYVECTOR_H
 
+#include <MercuryMath.h>
+
+# define __inline__     __inline__      __attribute__((always_inline))
+
 class MercuryVertex
 {
 	public:
@@ -10,18 +14,21 @@ class MercuryVertex
 		MercuryVertex( const MercuryVertex& v);
 
 		///Direct conversion to float*
-		operator float* () { return m_xyz; }
+		__inline__ operator float* () { return (float*)&m_xyzw; }
 		///Direct conversion to const float*
-		operator const float* () const { return m_xyz; }
+		__inline__ operator const float* () const { return (float*)&m_xyzw; }
 
-		inline const float GetX() const { return m_xyz[0]; }
-		inline const float GetY() const { return m_xyz[1]; }
-		inline const float GetZ() const { return m_xyz[2]; }
-		inline void SetX(const float ix) { m_xyz[0] = ix; }
-		inline void SetY(const float iy) { m_xyz[1] = iy; }
-		inline void SetZ(const float iz) { m_xyz[2] = iz; }
+		inline FloatRow& ToFloatRow() { return m_xyzw; }
+		inline const FloatRow& ToFloatRow() const { return m_xyzw; }
+
+		inline const float GetX() const { return (*this)[0]; }
+		inline const float GetY() const { return (*this)[1]; }
+		inline const float GetZ() const { return (*this)[2]; }
+		inline void SetX(const float ix) { (*this)[0] = ix; }
+		inline void SetY(const float iy) { (*this)[1] = iy; }
+		inline void SetZ(const float iz) { (*this)[2] = iz; }
 		
-		inline void Zero() { m_xyz[0] = 0; m_xyz[1] = 0; m_xyz[2] = 0; }
+		inline void Zero() { (*this)[0] = 0; (*this)[1] = 0; (*this)[2] = 0; }
 
 		///Normalize (make |point| = 1)
 		void NormalizeSelf();
@@ -33,26 +40,26 @@ class MercuryVertex
 		float GetBiggestElement() const;
 
 		///Write out to be = to this point
-		inline void ConvertToVector3( float* out ) const { out[0] = m_xyz[0]; out[1] = m_xyz[1]; out[2] = m_xyz[2]; }
+		inline void ConvertToVector3( float* out ) const { out[0] = (*this)[0]; out[1] = (*this)[1]; out[2] = (*this)[2]; }
 		///Write out to be = to this point, however the 4th element will be 0
-		inline void ConvertToVector4( float* out, float w = 0 ) const { out[0] = m_xyz[0]; out[1] = m_xyz[1]; out[2] = m_xyz[2]; out[3] = w; }
+		inline void ConvertToVector4( float* out, float w = 0 ) const { out[0] = (*this)[0]; out[1] = (*this)[1]; out[2] = (*this)[2]; out[3] = w; }
 		///Write out to be = - to this point, however the 4th element will be 0
-		inline void ConvertToIVector4( float* out, float w = 0 ) const { out[0] = -m_xyz[0]; out[1] = -m_xyz[1]; out[2] = -m_xyz[2]; out[3] = w; }
+		inline void ConvertToIVector4( float* out, float w = 0 ) const { out[0] = -(*this)[0]; out[1] = -(*this)[1]; out[2] = -(*this)[2]; out[3] = w; }
 
 		const MercuryVertex& operator *= (const MercuryVertex& p);
 		const MercuryVertex& operator /= (const MercuryVertex& p);
 		inline MercuryVertex operator * (const MercuryVertex& p) const { MercuryVertex r(*this); r*=p; return r; }
 		inline MercuryVertex operator / (const MercuryVertex& p) const { MercuryVertex r(*this); r/=p; return r; }
 
-		inline MercuryVertex& operator += ( const MercuryVertex& other )		{ m_xyz[0]+=other.m_xyz[0]; m_xyz[1]+=other.m_xyz[1]; m_xyz[2]+=other.m_xyz[2]; return *this; }
-		inline MercuryVertex& operator -= ( const MercuryVertex& other )		{ m_xyz[0]-=other.m_xyz[0]; m_xyz[1]-=other.m_xyz[1]; m_xyz[2]-=other.m_xyz[2]; return *this; }
-		inline MercuryVertex& operator *= ( float f ) { m_xyz[0]*=f; m_xyz[1]*=f; m_xyz[2]*=f; return *this; }
-		inline MercuryVertex& operator /= ( float f ) { m_xyz[0]/=f; m_xyz[1]/=f; m_xyz[2]/=f; return *this; }
+		inline MercuryVertex& operator += ( const MercuryVertex& other )		{ (*this)[0]+=other[0]; (*this)[1]+=other[1]; (*this)[2]+=other[2]; return *this; }
+		inline MercuryVertex& operator -= ( const MercuryVertex& other )		{ (*this)[0]-=other[0]; (*this)[1]-=other[1]; (*this)[2]-=other[2]; return *this; }
+		inline MercuryVertex& operator *= ( float f ) { (*this)[0]*=f; (*this)[1]*=f; (*this)[2]*=f; return *this; }
+		inline MercuryVertex& operator /= ( float f ) { (*this)[0]/=f; (*this)[1]/=f; (*this)[2]/=f; return *this; }
 
-		inline MercuryVertex operator + ( const MercuryVertex& other ) const	{ return MercuryVertex( m_xyz[0]+other.m_xyz[0], m_xyz[1]+other.m_xyz[1], m_xyz[2]+other.m_xyz[2] ); }
-		inline MercuryVertex operator - ( const MercuryVertex& other ) const	{ return MercuryVertex( m_xyz[0]-other.m_xyz[0], m_xyz[1]-other.m_xyz[1], m_xyz[2]-other.m_xyz[2] ); }
-		inline MercuryVertex operator * ( float f ) const { return MercuryVertex( m_xyz[0]*f, m_xyz[1]*f, m_xyz[2]*f ); }
-		inline MercuryVertex operator / ( float f ) const { return MercuryVertex( m_xyz[0]/f, m_xyz[1]/f, m_xyz[2]/f ); }
+		inline MercuryVertex operator + ( const MercuryVertex& other ) const	{ return MercuryVertex( (*this)[0]+other[0], (*this)[1]+other[1], (*this)[2]+other[2] ); }
+		inline MercuryVertex operator - ( const MercuryVertex& other ) const	{ return MercuryVertex( (*this)[0]-other[0], (*this)[1]-other[1], (*this)[2]-other[2] ); }
+		inline MercuryVertex operator * ( float f ) const { return MercuryVertex( (*this)[0]*f, (*this)[1]*f, (*this)[2]*f ); }
+		inline MercuryVertex operator / ( float f ) const { return MercuryVertex( (*this)[0]/f, (*this)[1]/f, (*this)[2]/f ); }
 
 		bool operator==(const MercuryVertex& p) const;
 		inline bool operator!=(const MercuryVertex& p) const { return !(*this == p); }
@@ -62,11 +69,15 @@ class MercuryVertex
 
 		///Obtain the cross product (*this) x p
 		MercuryVertex CrossProduct(const MercuryVertex& p) const;
+		MercuryVertex CrossProductSSE(const MercuryVertex& p) const;
 		
 		float DotProduct(const MercuryVertex& rhs) const;
+		MercuryVertex DotProduct3(const MercuryVertex& rhs1, const MercuryVertex& rhs2, const MercuryVertex& rhs3) const;
+
 		void Print() const;
 
-		float m_xyz[3];
+//		float (*this)[3];
+		FloatRow m_xyzw;
 };
 
 typedef MercuryVertex MercuryVector;

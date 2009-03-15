@@ -9,11 +9,11 @@
 enum PlanePos
 {
 	PTOP = 0,
- PBOTTOM,
- PLEFT,
- PRIGHT,
- PNEAR,
- PFAR
+	PBOTTOM,
+	PLEFT,
+	PRIGHT,
+	PNEAR,
+	PFAR
 };
 
 class Frustum
@@ -23,13 +23,10 @@ class Frustum
 		void SetPerspective( float fov, float aspect, float znear, float zfar );
 		const MercuryMatrix& GetMatrix() const { return m_frustum; }
 		void ComputeFrustum(float left, float right, float bottom, float top, float zNear, float zFar);
-		
 		void LookAt(const MercuryVertex& eye, const MercuryVector& look, const MercuryVector& up);
-		
 		bool Clip(const BoundingBox& bb) const;
-		
-		MercuryPlane m_planes[6];
 	private:
+		MercuryPlane m_planes[6];
 		MercuryMatrix m_frustum;
 		
 		float m_aspect, m_fov, m_zNear, m_zFar;

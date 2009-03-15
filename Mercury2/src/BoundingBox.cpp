@@ -32,7 +32,7 @@ void BoundingBox::ComputeNormals()
 	m_normals[2] = (m_center - t).Normalize();
 }
 
-BoundingBox BoundingBox::Transform( const MercuryMatrix& m ) const
+void BoundingBox::Transform( const MercuryMatrix& m )
 {
 	BoundingBox bb;
 	bb.m_extend = m_center;
@@ -40,7 +40,8 @@ BoundingBox BoundingBox::Transform( const MercuryMatrix& m ) const
 	bb.m_normals[0] = (m * m_normals[0]).Normalize();
 	bb.m_normals[1] = (m * m_normals[1]).Normalize();
 	bb.m_normals[2] = (m * m_normals[2]).Normalize();
-	return bb;
+	*this = bb;
+//	return bb;
 }
 
 RenderableBoundingBox::RenderableBoundingBox(const BoundingBox* bb)
@@ -50,7 +51,8 @@ RenderableBoundingBox::RenderableBoundingBox(const BoundingBox* bb)
 
 void RenderableBoundingBox::Render(MercuryNode* node)
 {
-	BoundingBox gbb = m_bb->Transform( GetGlobalMatrix() );
+	BoundingBox gbb = *m_bb;
+	gbb.Transform( GetGlobalMatrix() );
 	if ( FRUSTUM->Clip( gbb ) ) return;
 	
 	const float* center = m_bb->GetCenter();

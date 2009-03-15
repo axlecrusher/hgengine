@@ -6,18 +6,25 @@
 #include <MercuryMatrix.h>
 #include <stdint.h>
 
-class BoundingBox
+class BoundingVolume
+{
+	public:
+		virtual void LoadFromBinary(char* data) = 0;
+		virtual void Transform( const MercuryMatrix& m ) = 0;
+};
+
+class BoundingBox : public BoundingVolume
 {
 	public:
 		BoundingBox() {};
 		BoundingBox(const MercuryVertex& center, const MercuryVertex& extend);
 		
-		void LoadFromBinary(char* data);
+		virtual void LoadFromBinary(char* data);
 		
 		inline const MercuryVertex& GetCenter() const { return m_center; }
 		inline const MercuryVertex& GetExtend() const { return m_extend; }
 		
-		BoundingBox Transform( const MercuryMatrix& m ) const;
+		virtual void Transform( const MercuryMatrix& m );
 		const MercuryVector& Normal(uint8_t i) const { return m_normals[i]; }
 		
 	private:

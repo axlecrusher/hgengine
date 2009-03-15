@@ -4,33 +4,33 @@
 
 MercuryVertex::MercuryVertex()
 {
-	m_xyz[0] = m_xyz[1] = m_xyz[2] = 0;
+	(*this)[0] = (*this)[1] = (*this)[2] = 0;
 }
 
 MercuryVertex::MercuryVertex( float ix, float iy, float iz )
 {
-	m_xyz[0] = ix;
-	m_xyz[1] = iy;
-	m_xyz[2] = iz;
+	(*this)[0] = ix;
+	(*this)[1] = iy;
+	(*this)[2] = iz;
 }
 
 MercuryVertex::MercuryVertex( const float * in )
 {
 	for (unsigned int i = 0; i < 3; ++i)
-		m_xyz[i] = in[i];
+		(*this)[i] = in[i];
 }
 
 MercuryVertex::MercuryVertex( const MercuryVertex& v)
 {
 	for (unsigned int i = 0; i < 3; ++i)
-		m_xyz[i] = v.m_xyz[i];
+		(*this)[i] = v[i];
 }
 
 void MercuryVertex::NormalizeSelf()
 {
 	float imag = 1.0f/Length();
 	for (unsigned int i = 0; i < 3; ++i)
-		m_xyz[i] *= imag;
+		(*this)[i] *= imag;
 }
 		
 MercuryVertex MercuryVertex::Normalize() const
@@ -42,64 +42,81 @@ MercuryVertex MercuryVertex::Normalize() const
 
 float MercuryVertex::Length() const
 {
-	float length = m_xyz[0]*m_xyz[0];
-	length += m_xyz[1]*m_xyz[1];
-	length += m_xyz[2]*m_xyz[2];
+	float length = (*this)[0]*(*this)[0];
+	length += (*this)[1]*(*this)[1];
+	length += (*this)[2]*(*this)[2];
 	return SQRT(length);
 }
 
 float MercuryVertex::GetBiggestElement() const
 {
-	float tmp = m_xyz[0];
-	tmp = max<float>(tmp, m_xyz[1]);
-	return max<float>(tmp, m_xyz[2]);
+	float tmp = (*this)[0];
+	tmp = max<float>(tmp, (*this)[1]);
+	return max<float>(tmp, (*this)[2]);
 }
 
 const MercuryVertex& MercuryVertex::operator *= (const MercuryVertex& p)
 {
 	for (unsigned int i = 0; i < 3; ++i)
-		m_xyz[i] *= p.m_xyz[i];
+		(*this)[i] *= p[i];
 	return *this;
 }
 		
 const MercuryVertex& MercuryVertex::operator /= (const MercuryVertex& p)
 {
 	for (unsigned int i = 0; i < 3; ++i)
-		m_xyz[i] /= p.m_xyz[i];
+		(*this)[i] /= p[i];
 	return *this;
 }
 
 bool MercuryVertex::operator==(const MercuryVertex& p) const
 {
 	for (unsigned int i = 0; i < 3; ++i)
-		if (m_xyz[i] != p.m_xyz[i]) return false;
+		if ((*this)[i] != p[i]) return false;
 	return true;
 }
 
 bool MercuryVertex::operator==(const float f) const
 {
 	for (unsigned int i = 0; i < 3; ++i)
-		if (m_xyz[i] != f) return false;
+		if ((*this)[i] != f) return false;
 	return true;
 }
 
 MercuryVertex MercuryVertex::CrossProduct(const MercuryVertex& p) const
 {
 	MercuryVertex ret;
-	ret.m_xyz[0] = m_xyz[1]*p.m_xyz[2] - m_xyz[2]*p.m_xyz[1];
-	ret.m_xyz[1] = m_xyz[2]*p.m_xyz[0] - m_xyz[0]*p.m_xyz[2];
-	ret.m_xyz[2] = m_xyz[0]*p.m_xyz[1] - m_xyz[1]*p.m_xyz[0];
+	ret[0] = (*this)[1]*p[2] - (*this)[2]*p[1];
+	ret[1] = (*this)[2]*p[0] - (*this)[0]*p[2];
+	ret[2] = (*this)[0]*p[1] - (*this)[1]*p[0];
 	return ret;
+}
+
+MercuryVertex MercuryVertex::CrossProductSSE(const MercuryVertex& p) const
+{
+	//right now this is a hare slower than the C cross product above
+	MercuryVertex r;
+	MMCrossProduct( m_xyzw, p.m_xyzw, r.m_xyzw );
+	return r;
 }
 
 float MercuryVertex::DotProduct(const MercuryVertex& rhs) const
 {
-	return (m_xyz[0]*rhs.m_xyz[0]+m_xyz[1]*rhs.m_xyz[1]+m_xyz[2]*rhs.m_xyz[2]);
+	return ((*this)[0]*rhs[0]+(*this)[1]*rhs[1]+(*this)[2]*rhs[2]);
+}
+
+MercuryVertex MercuryVertex::DotProduct3(const MercuryVertex& rhs1, const MercuryVertex& rhs2, const MercuryVertex& rhs3) const
+{
+	MercuryVertex dp;
+	dp[0] = DotProduct(rhs1);
+	dp[1] = DotProduct(rhs2);
+	dp[2] = DotProduct(rhs3);
+	return dp;
 }
 
 void MercuryVertex::Print() const
 {
-	printf("%f %f %f\n", m_xyz[0], m_xyz[1], m_xyz[2]);
+	printf("%f %f %f\n", (*this)[0], (*this)[1], (*this)[2]);
 }
 
 

@@ -2,10 +2,14 @@
 #include <stdio.h>
 #include <MercuryMath.h>
 
+#define SIGNED_DIST(x) m_normal.DotProduct(x)
+
+// origional algorithim was -x<0
+#define BEHIND_PLANE(x) x>=0
+
 bool MercuryPlane::IsBehindPlane(const MercuryVertex& point) const
 {
-	// origional algorithim was -dotproduct < 0
-	return m_normal.DotProduct( point+m_center ) >= 0;
+	return BEHIND_PLANE( SIGNED_DIST( point+m_center ) );
 }
 
 bool MercuryPlane::IsBehindPlane(const BoundingBox& bb) const
@@ -14,16 +18,17 @@ bool MercuryPlane::IsBehindPlane(const BoundingBox& bb) const
 	const MercuryVertex& extends = bb.GetExtend();
 	
 	const MercuryVertex &A1(bb.Normal(0)), &A2(bb.Normal(1)), &A3(bb.Normal(2));
-		
-	float x = ABS( extends.GetX() * m_normal.DotProduct( A1 ) );
-	x += ABS( extends.GetY() * m_normal.DotProduct( A2 ) );
-	x += ABS( extends.GetZ() * m_normal.DotProduct( A3 ) );
 	
-	float d = m_normal.DotProduct( center+m_center );
+	MercuryVertex dp = m_normal.DotProduct3(A1, A2, A3);
+	float x = ABS( extends.GetX() * dp[0] );
+	x += ABS( extends.GetY() * dp[1] );
+	x += ABS( extends.GetZ() * dp[2] );
+	
+	float d = SIGNED_DIST( center+m_center );
 	if ( ABS(d) <= x ) //intersection
 		return false;
-	
-	return IsBehindPlane( center ); //if we don't intersect, just see what side we are on
+
+	return BEHIND_PLANE(d); //if we don't intersect, just see what side we are on
 }
 
 
