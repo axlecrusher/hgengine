@@ -85,16 +85,6 @@ bool MercuryVertex::operator==(const float f) const
 
 MercuryVertex MercuryVertex::CrossProduct(const MercuryVertex& p) const
 {
-	MercuryVertex ret;
-	ret[0] = (*this)[1]*p[2] - (*this)[2]*p[1];
-	ret[1] = (*this)[2]*p[0] - (*this)[0]*p[2];
-	ret[2] = (*this)[0]*p[1] - (*this)[1]*p[0];
-	return ret;
-}
-
-MercuryVertex MercuryVertex::CrossProductSSE(const MercuryVertex& p) const
-{
-	//right now this is a hare slower than the C cross product above
 	MercuryVertex r;
 	MMCrossProduct( m_xyzw, p.m_xyzw, r.m_xyzw );
 	return r;

@@ -69,7 +69,6 @@ class MercuryVertex
 
 		///Obtain the cross product (*this) x p
 		MercuryVertex CrossProduct(const MercuryVertex& p) const;
-		MercuryVertex CrossProductSSE(const MercuryVertex& p) const;
 		
 		float DotProduct(const MercuryVertex& rhs) const;
 		MercuryVertex DotProduct3(const MercuryVertex& rhs1, const MercuryVertex& rhs2, const MercuryVertex& rhs3) const;
