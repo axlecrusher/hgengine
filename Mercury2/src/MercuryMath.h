@@ -58,6 +58,7 @@ void TransposeMatrix( FloatRow* m );
 //void Float2FloatRow(const float* f, FloatRow& r);
 //void FloatRow2Float(const FloatRow& fr, float* f);
 
+#ifdef USE_SSE
 inline void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
 {
 	__m128 a,b,c,d,r;//using more registers is faster
@@ -71,6 +72,14 @@ inline void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& re
 	r -= _mm_mul_ps( c, d );
 	result = r;
 }
+#else
+inline void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
+{
+	result[0] = r1[1]*r2[2] - r1[2]*r2[1];
+	result[1] = r1[2]*r2[0] - r1[0]*r2[2];
+	result[2] = r1[0]*r2[1] - r1[1]*r2[0];
+}
+#endif
 
 const FloatRow gfrZero = { 0.f, 0.f, 0.f, 0.f };
 
