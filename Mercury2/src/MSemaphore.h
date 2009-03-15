@@ -6,7 +6,8 @@ class MSemaphore
 	public:
 		MSemaphore();
 		
-		unsigned long ReadValue();
+		unsigned long Read();
+		unsigned long ReadAndClear();
 		unsigned long Decrement();
 		unsigned long Increment();
 

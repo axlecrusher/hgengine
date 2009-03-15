@@ -5,9 +5,14 @@ MSemaphore::MSemaphore()
 {
 }
 
-unsigned long MSemaphore::ReadValue()
+unsigned long MSemaphore::Read()
 {
 	return __sync_or_and_fetch(&m_counter, 0);
+}
+
+unsigned long MSemaphore::ReadAndClear()
+{
+	return __sync_fetch_and_and(&m_counter, 0);
 }
 
 unsigned long MSemaphore::Decrement()

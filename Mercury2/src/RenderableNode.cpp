@@ -163,14 +163,14 @@ void RenderableNode::LoadFromXML(const XMLNode& node)
 unsigned long RenderableNode::Spinlock( unsigned long value )
 {
 	unsigned long waited = 0;
-	while (m_semaphore.ReadValue() != value) ++waited;
+	while (m_semaphore.Read() != value) ++waited;
 	return waited;
 }
 
 unsigned long RenderableNode::SpinlockWait( unsigned long value, unsigned long usec )
 {
 	unsigned long waited = 0;
-	while (m_semaphore.ReadValue() != value)
+	while (m_semaphore.Read() != value)
 	{
 //		waited=true;
 		++waited;

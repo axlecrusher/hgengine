@@ -50,6 +50,7 @@ void MercuryVBO::Render(MercuryNode* node)
 	}
 
 	glDrawRangeElements(GL_TRIANGLES, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL);
+	m_vboBatches.Increment();
 	
 	m_lastVBOrendered = this;
 	
@@ -88,6 +89,8 @@ void MercuryVBO::AllocateIndexSpace(unsigned int count)
 }
 
 void* MercuryVBO::m_lastVBOrendered = NULL;
+MSemaphore MercuryVBO::m_vboBatches;
+
 /****************************************************************************
  *   Copyright (C) 2008 by Joshua Allen                                     *
  *                                                                          *

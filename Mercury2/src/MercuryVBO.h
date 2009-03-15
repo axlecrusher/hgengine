@@ -5,6 +5,8 @@
 #include <AlignedBuffer.h>
 #include <BoundingBox.h>
 
+#include <MSemaphore.h>
+
 class MercuryVBO : public MercuryAsset
 {
 	public:
@@ -15,6 +17,9 @@ class MercuryVBO : public MercuryAsset
 
 		void AllocateVertexSpace(unsigned int count);
 		void AllocateIndexSpace(unsigned int count);
+
+		static uint32_t BatchCount() { return m_vboBatches.Read(); }
+		static uint32_t ResetBatchCount() { return m_vboBatches.ReadAndClear(); }
 	
 	private:
 		virtual void InitVBO();
@@ -27,6 +32,8 @@ class MercuryVBO : public MercuryAsset
 		AlignedBuffer<float> m_vertexData;
 		AlignedBuffer<uint16_t> m_indexData;
 		BoundingBox* m_boundingBox;
+
+		static MSemaphore m_vboBatches;
 };
 
 #endif

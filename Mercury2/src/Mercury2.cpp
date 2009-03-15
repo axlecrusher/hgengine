@@ -17,7 +17,7 @@
 MSemaphore UpdateLoopGo;
 void* UpdateThread(void* node)
 {
-	while( UpdateLoopGo.ReadValue() < 1 )
+	while( UpdateLoopGo.Read() < 1 )
 	{
 		MercuryNode* n = (MercuryNode*)node;
 		n->RecursiveUpdate(0.01f);
@@ -69,7 +69,8 @@ int main()
 		fpsTimer.Touch(timer);
 		if (fpsTimer.Age() > 1)
 		{
-			printf("FPS: %f\n", m_count/fpsTimer.Age());
+			float batches = MercuryVBO::ResetBatchCount()/(float)m_count;
+			printf("FPS: %f, VBO batches %f\n", m_count/fpsTimer.Age(), batches);
 			m_count = 0;
 			fpsTimer = timer;
 		}
