@@ -31,7 +31,6 @@ class MercuryVBO : public MercuryAsset
 	protected:
 		AlignedBuffer<float> m_vertexData;
 		AlignedBuffer<uint16_t> m_indexData;
-		BoundingBox* m_boundingBox;
 
 		static MSemaphore m_vboBatches;
 };

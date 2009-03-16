@@ -2,10 +2,14 @@
 #include <RenderableNode.h>
 
 MercuryAsset::MercuryAsset()
-	:m_isInstanced(false)
+	:m_isInstanced(false), m_boundingVolume(NULL)
 {
 }
 
+MercuryAsset::~MercuryAsset()
+{
+	SAFE_DELETE(m_boundingVolume);
+}
 
 void MercuryAsset::Init(MercuryNode* node)
 {
@@ -66,11 +70,6 @@ void AssetFactory::RemoveAssetInstance(const MString& key)
 		printf("removed asset %s\n", key.c_str());
 	}
 	
-}
-
-const MercuryMatrix& MercuryAsset::GetGlobalMatrix() const
-{
-	return GLOBALMATRIX;
 }
 
 std::map<MString, MercuryAsset*> AssetFactory::m_assetInstances;

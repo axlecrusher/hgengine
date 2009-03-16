@@ -41,22 +41,17 @@ void BoundingBox::Transform( const MercuryMatrix& m )
 	bb.m_normals[1] = (m * m_normals[1]).Normalize();
 	bb.m_normals[2] = (m * m_normals[2]).Normalize();
 	*this = bb;
-//	return bb;
 }
 
-RenderableBoundingBox::RenderableBoundingBox(const BoundingBox* bb)
-	:MercuryAsset(), m_bb(bb)
+void BoundingBox::Render()
 {
-}
+//	BoundingBox gbb = *this;
 
-void RenderableBoundingBox::Render(MercuryNode* node)
-{
-	BoundingBox gbb = *m_bb;
-	gbb.Transform( GetGlobalMatrix() );
-	if ( FRUSTUM->Clip( gbb ) ) return;
+//	gbb.Transform( ((RenderableNode*)node)->GetGlobalMatrix() );
+//	if ( FRUSTUM->Clip( gbb ) ) return;
 	
-	const float* center = m_bb->GetCenter();
-	const float* extend = m_bb->GetExtend();
+	const float* center = GetCenter();
+	const float* extend = GetExtend();
 	
 	glPushAttrib( GL_CURRENT_BIT  );
 	glBegin(GL_LINES);

@@ -24,7 +24,8 @@ RenderableNode::~RenderableNode()
 	m_render.clear();
 	m_postrender.clear();
 }
-
+/*
+//this function exists for threaded rendering
 void RenderableNode::Update(float dTime)
 {
 	static unsigned long waitTime = 0;
@@ -41,7 +42,7 @@ void RenderableNode::Update(float dTime)
 	
 	UpdateWaited += waited;
 }
-
+*/
 void RenderableNode::Render()
 {
 	list< MercuryAsset* >::iterator i;
@@ -116,17 +117,15 @@ void RenderableNode::RecursiveRender( MercuryNode* n )
 	RenderableNode* rn;
 	if ( ( rn = Cast(n) ) )
 	{
+/*
 		MSemaphoreDecOnDestroy s( &(rn->m_semaphore) );
-		
 		int unsigned long waited = rn->SpinlockWait(1, waitTime);
-		if (waited > 0)
-			waitTime = (waitTime<1000000)?waitTime+1000:waitTime;
-		else
-			waitTime = (waitTime!=0)?waitTime-1000:0;
-	
+		if (waited > 0) waitTime = (waitTime<1000000)?waitTime+1000:waitTime;
+		else waitTime = (waitTime!=0)?waitTime-1000:0;	
 		RenderWaited += waited;
-
+*/
 //		++RenderWaited += rn->Spinlock(1);
+
 		rn->Render();
 	}
 	
@@ -159,7 +158,7 @@ void RenderableNode::LoadFromXML(const XMLNode& node)
 	
 	MercuryNode::LoadFromXML( node );
 }
-
+/*
 unsigned long RenderableNode::Spinlock( unsigned long value )
 {
 	unsigned long waited = 0;
@@ -178,7 +177,7 @@ unsigned long RenderableNode::SpinlockWait( unsigned long value, unsigned long u
 	}
 	return waited;
 }
-
+*/
 
 
 /***************************************************************************

@@ -1,7 +1,7 @@
 #ifndef BOUNDINGBOX_H
 #define BOUNDINGBOX_H
 
-#include <MercuryAsset.h>
+#include <MercuryNode.h>
 #include <MercuryVertex.h>
 #include <MercuryMatrix.h>
 #include <stdint.h>
@@ -9,8 +9,11 @@
 class BoundingVolume
 {
 	public:
+		virtual ~BoundingVolume() {};
+
 		virtual void LoadFromBinary(char* data) = 0;
 		virtual void Transform( const MercuryMatrix& m ) = 0;
+		virtual void Render() {};
 };
 
 class BoundingBox : public BoundingVolume
@@ -18,6 +21,7 @@ class BoundingBox : public BoundingVolume
 	public:
 		BoundingBox() {};
 		BoundingBox(const MercuryVertex& center, const MercuryVertex& extend);
+		virtual ~BoundingBox() {};
 		
 		virtual void LoadFromBinary(char* data);
 		
@@ -26,6 +30,8 @@ class BoundingBox : public BoundingVolume
 		
 		virtual void Transform( const MercuryMatrix& m );
 		const MercuryVector& Normal(uint8_t i) const { return m_normals[i]; }
+
+		virtual void Render();
 		
 	private:
 		void ComputeNormals();
@@ -35,7 +41,7 @@ class BoundingBox : public BoundingVolume
 		
 		MercuryVector m_normals[3];
 };
-
+/*
 class RenderableBoundingBox : public MercuryAsset
 {
 	public:
@@ -45,7 +51,7 @@ class RenderableBoundingBox : public MercuryAsset
 	private:
 		const BoundingBox* m_bb;
 };
-
+*/
 #endif
 
 /****************************************************************************

@@ -10,7 +10,7 @@
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 
 MercuryVBO::MercuryVBO()
-	:MercuryAsset(), m_initiated(false), m_boundingBox(NULL)
+	:MercuryAsset(), m_initiated(false)
 {
 	m_bufferIDs[0] = m_bufferIDs[1] = 0;
 }
@@ -19,7 +19,6 @@ MercuryVBO::~MercuryVBO()
 {
 	if (m_bufferIDs[0]) glDeleteBuffersARB(2, m_bufferIDs);
 	m_bufferIDs[0] = m_bufferIDs[1] = 0;
-	SAFE_DELETE(m_boundingBox);
 }
 
 void MercuryVBO::Render(MercuryNode* node)
@@ -54,11 +53,7 @@ void MercuryVBO::Render(MercuryNode* node)
 	
 	m_lastVBOrendered = this;
 	
-	if (m_boundingBox)
-	{
-		RenderableBoundingBox rbb(m_boundingBox);
-		rbb.Render(node);
-	}
+	if (m_boundingVolume) m_boundingVolume->Render();
 }
 
 void MercuryVBO::InitVBO()

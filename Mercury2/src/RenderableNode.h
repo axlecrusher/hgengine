@@ -21,7 +21,7 @@ class RenderableNode : public MercuryNode
 		~RenderableNode();
 		
 		virtual void Render();
-		virtual void Update(float dTime);
+//		virtual void Update(float dTime);
 				
 		///Returnes true if N is of type RenderableNode
 //		static bool IsMyType( MercuryNode* n );
@@ -44,8 +44,6 @@ class RenderableNode : public MercuryNode
 		bool m_hidden;
 	private:
 		bool IsInAssetList(MercuryAsset* asset) const;
-		unsigned long Spinlock( unsigned long value );
-		unsigned long SpinlockWait( unsigned long value, unsigned long usec );
 		
 		std::list< MAutoPtr< MercuryAsset > > m_assets;	///serves as a holder for memory
 		
@@ -55,8 +53,11 @@ class RenderableNode : public MercuryNode
 		std::list< MercuryAsset* > m_prerender;
 		std::list< MercuryAsset* > m_render;
 		std::list< MercuryAsset* > m_postrender;
-		
-		MSemaphore m_semaphore;
+
+//Below is stuff for threaded rendering		
+//		unsigned long Spinlock( unsigned long value );
+//		unsigned long SpinlockWait( unsigned long value, unsigned long usec );
+//		MSemaphore m_semaphore;
 };
 
 #endif

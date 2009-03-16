@@ -87,9 +87,9 @@ void HGMDLMesh::LoadOBB(MercuryFile* hgmdl)
 	{
 		data = new char[length];
 		hgmdl->Read( data, length );
-		
-		m_boundingBox = new BoundingBox();
-		m_boundingBox->LoadFromBinary( data );
+
+		m_boundingVolume = new BoundingBox();
+		m_boundingVolume->LoadFromBinary( data );
 	}
 
 	SAFE_DELETE_ARRAY(data);
