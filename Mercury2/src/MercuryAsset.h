@@ -16,9 +16,9 @@ class MercuryAsset : public RefBase, MessageHandler
 		
 		virtual void Init(MercuryNode* node);
 		
-		virtual void PreRender(MercuryNode* node) {};
-		virtual void Render(MercuryNode* node) = 0;
-		virtual void PostRender(MercuryNode* node) {};
+		virtual void PreRender(const MercuryNode* node) {};
+		virtual void Render(const MercuryNode* node) = 0;
+		virtual void PostRender(const MercuryNode* node) {};
 		
 		///Loads an asset from an XMLAsset representing itself
 		virtual void LoadFromXML(const XMLNode& node) {};

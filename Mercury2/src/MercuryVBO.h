@@ -13,7 +13,7 @@ class MercuryVBO : public MercuryAsset
 		MercuryVBO();
 		virtual ~MercuryVBO();
 		
-		virtual void Render(MercuryNode* node);
+		virtual void Render(const MercuryNode* node);
 
 		void AllocateVertexSpace(unsigned int count);
 		void AllocateIndexSpace(unsigned int count);

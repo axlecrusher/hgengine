@@ -21,7 +21,7 @@ MercuryVBO::~MercuryVBO()
 	m_bufferIDs[0] = m_bufferIDs[1] = 0;
 }
 
-void MercuryVBO::Render(MercuryNode* node)
+void MercuryVBO::Render(const MercuryNode* node)
 {
 	uint8_t numTextures = Texture::NumberActiveTextures();
 	uint16_t stride = sizeof(float)*8;

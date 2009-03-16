@@ -82,12 +82,12 @@ void Texture::LoadFromRaw(const RawImageData* raw)
 	
 };
 
-void Texture::Render(MercuryNode* node)
+void Texture::Render(const MercuryNode* node)
 {
 	BindTexture();
 }
 
-void Texture::PostRender(MercuryNode* node)
+void Texture::PostRender(const MercuryNode* node)
 {
 	UnbindTexture();
 }

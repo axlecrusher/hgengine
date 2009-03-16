@@ -58,7 +58,7 @@ void HGMDLModel::LoadModel(MercuryFile* hgmdl)
 	}
 }
 
-void HGMDLModel::Render(MercuryNode* node)
+void HGMDLModel::Render(const MercuryNode* node)
 {
 	for(uint16_t i = 0; i < m_meshes.size(); ++i)
 		m_meshes[i]->Render(node);
