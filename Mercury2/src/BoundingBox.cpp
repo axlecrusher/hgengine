@@ -10,6 +10,18 @@ BoundingBox::BoundingBox(const MercuryVertex& center, const MercuryVertex& exten
 	ComputeNormals();
 };
 
+BoundingBox::BoundingBox(const BoundingBox& bb)
+	:m_center(bb.m_center), m_extend(bb.m_extend)
+{
+	for (uint8_t i = 0; i < 3; ++i)
+		m_normals[i] = bb.m_normals[i];
+}
+
+BoundingVolume* BoundingBox::SpawnClone() const
+{
+	return new BoundingBox(*this);
+}
+
 void BoundingBox::LoadFromBinary(char* data)
 {
 	memcpy(m_center, data, sizeof(float)*3);

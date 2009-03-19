@@ -28,6 +28,9 @@ class XMLNode
 		MString Name() const;
 		MString Content() const;
 		MString Attribute(const MString & tag) const;
+
+//		MString FindFallbackAttribute();
+		XMLNode FindFallbackNode(const MString& path) const;
 		
 		inline bool IsValid() const { return m_node!=NULL; }
 		

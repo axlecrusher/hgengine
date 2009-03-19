@@ -14,6 +14,7 @@ class BoundingVolume
 		virtual void LoadFromBinary(char* data) = 0;
 		virtual void Transform( const MercuryMatrix& m ) = 0;
 		virtual void Render() {};
+		virtual BoundingVolume* SpawnClone() const = 0;
 };
 
 class BoundingBox : public BoundingVolume
@@ -21,6 +22,8 @@ class BoundingBox : public BoundingVolume
 	public:
 		BoundingBox() {};
 		BoundingBox(const MercuryVertex& center, const MercuryVertex& extend);
+		BoundingBox(const BoundingBox& bb);
+
 		virtual ~BoundingBox() {};
 		
 		virtual void LoadFromBinary(char* data);
@@ -32,6 +35,7 @@ class BoundingBox : public BoundingVolume
 		const MercuryVector& Normal(uint8_t i) const { return m_normals[i]; }
 
 		virtual void Render();
+		virtual BoundingVolume* SpawnClone() const;
 		
 	private:
 		void ComputeNormals();

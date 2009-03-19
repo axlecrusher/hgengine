@@ -7,12 +7,12 @@
 using namespace std;
 
 REGISTER_NODE_TYPE(RenderableNode);
-
+/*
 uint64_t RenderWaited = 0;
 uint64_t UpdateWaited = 0;
 
 MercuryMatrix GLOBALMATRIX;
-
+*/
 RenderableNode::RenderableNode()
 	:m_hidden(false)
 {
@@ -43,13 +43,32 @@ void RenderableNode::Update(float dTime)
 	UpdateWaited += waited;
 }
 */
+
+void RenderableNode::Update(float dTime)
+{
+	MercuryMatrix m = FindGlobalMatrix();
+
+	std::list< MAutoPtr< MercuryAsset > >::iterator i;
+	for (i = m_assets.begin(); i != m_assets.end(); ++i )
+	{
+		const BoundingVolume* v = (*i)->GetBoundingVolume();
+		if (v)
+		{
+			BoundingVolume* nv = v->SpawnClone();
+			nv->Transform(m);
+			SAFE_DELETE(nv);
+			//do some stuff to figure out if this node is culled
+		}
+	}
+}
+
 void RenderableNode::Render()
 {
 	list< MercuryAsset* >::iterator i;
+	MercuryMatrix m = FindGlobalMatrix();
 	
 	if (m_hidden || IsCulled()) return;
 	
-	MercuryMatrix m = GLOBALMATRIX = FindGlobalMatrix();
 	m.Transpose();
 	glLoadMatrixf( m.Ptr() );
 	
@@ -113,7 +132,7 @@ bool RenderableNode::IsInAssetList( MercuryAsset* asset ) const
 
 void RenderableNode::RecursiveRender( MercuryNode* n )
 {
-	static unsigned long waitTime = 0;
+//	static unsigned long waitTime = 0;
 	RenderableNode* rn;
 	if ( ( rn = Cast(n) ) )
 	{

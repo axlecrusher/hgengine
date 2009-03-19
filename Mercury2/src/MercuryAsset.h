@@ -24,6 +24,8 @@ class MercuryAsset : public RefBase, MessageHandler
 		virtual void LoadFromXML(const XMLNode& node) {};
 		
 		inline void IsInstanced(bool b) { m_isInstanced = b; }
+
+		inline const BoundingVolume* GetBoundingVolume() const { return m_boundingVolume; }
 	protected:
 		bool m_isInstanced;
 		BoundingVolume* m_boundingVolume;

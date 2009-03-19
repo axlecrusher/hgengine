@@ -84,9 +84,9 @@ int main()
 	SAFE_DELETE(root);
 	SAFE_DELETE(w);
 	
-	uint64_t totalWaited = UpdateWaited + RenderWaited;
-	printf("Update wait %%%f\n", (UpdateWaited/double(totalWaited))*100.0f);
-	printf("Render wait %%%f\n", (RenderWaited/double(totalWaited))*100.0f);
+//	uint64_t totalWaited = UpdateWaited + RenderWaited;
+//	printf("Update wait %%%f\n", (UpdateWaited/double(totalWaited))*100.0f);
+//	printf("Render wait %%%f\n", (RenderWaited/double(totalWaited))*100.0f);
 	
 	return 0;
 }

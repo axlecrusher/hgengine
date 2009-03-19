@@ -10,9 +10,9 @@
 
 #define MCHECKASSETS
 
-extern uint64_t RenderWaited;
-extern uint64_t UpdateWaited;
-extern MercuryMatrix GLOBALMATRIX;
+//extern uint64_t RenderWaited;
+//extern uint64_t UpdateWaited;
+//extern MercuryMatrix GLOBALMATRIX;
 
 class RenderableNode : public MercuryNode
 {
@@ -21,7 +21,7 @@ class RenderableNode : public MercuryNode
 		~RenderableNode();
 		
 		virtual void Render();
-//		virtual void Update(float dTime);
+		virtual void Update(float dTime);
 				
 		///Returnes true if N is of type RenderableNode
 //		static bool IsMyType( MercuryNode* n );

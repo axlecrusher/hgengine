@@ -74,7 +74,48 @@ MString XMLNode::Attribute(const MString& tag) const
 		data = MString((const char*)d);
 		xmlFree(d);
 	}
+	else
+	{
+		d = xmlGetProp(m_node, (const xmlChar*)"fallback");
+		if (d)
+		{
+			//start searching at the root
+			XMLNode root( xmlDocGetRootElement(m_doc) );
+			//prevent infinite recursion on self
+			if ( root.m_node != m_node )
+			{
+				XMLNode fall = root.FindFallbackNode( MString((const char*)d) );
+				data = fall.Attribute(tag);
+			}
+		}
+	}
+
+	if (d) xmlFree(d);
+
 	return data;
+}
+/*
+MString XMLNode::FindFallbackAttribute(const MString& path)
+{
+	
+	xmlChar* d = xmlGetProp(m_node, (const xmlChar*)tag.c_str());
+	if (d)
+	{
+		
+	}
+	MString p = path;
+}
+*/
+XMLNode XMLNode::FindFallbackNode(const MString& path) const
+{
+	if (path.length() > 0)
+	{
+		MString name = path.substr(0, path.find("."));
+		for (XMLNode n = this->Child(); n.IsValid(); n = n.NextNode())
+			if (n.Attribute("name") == name) return n.FindFallbackNode(path);
+		return XMLNode();
+	}
+	return *this;
 }
 
 XMLDocument::XMLDocument()
