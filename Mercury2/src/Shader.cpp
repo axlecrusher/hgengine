@@ -54,6 +54,8 @@ void Shader::Render(const MercuryNode* node)
 {
 	bool bApply = true;
 
+	CheckForNewer();
+
 	//If there's a currnet shader, we may want to abort switching shaders
 	if( CurrentShader )
 	{
@@ -87,6 +89,7 @@ void Shader::LoadFromXML(const XMLNode& node)
 bool Shader::LoadShader( )
 {
 	GetTimeCodes( iTimeCode );
+
 	MString s1 = sShaderName, s2 = sShaderName, s3 = sShaderName;
 	MercuryFile * f1;
 	MercuryFile * f2;
@@ -354,6 +357,7 @@ void Shader::CheckForNewer( )
 {
 	unsigned long iCurTimes[3];
 	GetTimeCodes( iCurTimes );
+
 	if( iCurTimes[0] != iTimeCode[0] || iCurTimes[1] != iTimeCode[1] || iCurTimes[2] != iTimeCode[2] )
 	{
 		DestroyShader( );
@@ -364,16 +368,28 @@ void Shader::CheckForNewer( )
 void Shader::GetTimeCodes( unsigned long * iOut )
 {
 	MercuryFile * f = FILEMAN.Open( sShaderName + ".frag" );
-	iOut[0] = f->GetModTime();
-	f->Close();
+	if( f )
+	{
+		iOut[0] = f->GetModTime();
+		f->Close();
+	} else
+		iOut[0] = 0;
 
 	f = FILEMAN.Open( sShaderName + ".vert" );
-	iOut[1] = f->GetModTime();
-	f->Close();
+	if( f )
+	{
+		iOut[1] = f->GetModTime();
+		f->Close();
+	} else
+		iOut[1] = 0;
 
 	f = FILEMAN.Open( sShaderName + ".geom" );
-	iOut[2] = f->GetModTime();
-	f->Close();
+	if( f )
+	{
+		iOut[2] = f->GetModTime();
+		f->Close();
+	} else
+		iOut[2] = 0;
 }
 
 void Shader::ActivateShader()
