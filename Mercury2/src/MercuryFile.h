@@ -44,7 +44,12 @@ public:
 	virtual bool Check() = 0;
 	///Return true if end of file
 	virtual bool Eof() = 0;
-	///Return the last time the file was modified, if 0, this means unknown.
+	///Return the last time the file was modified.
+	/** If the time is unknown, 0 is returned. This time has nothing to
+	    do with actual changed time.  It is system dependent and should
+	    only be used to see if a file has been changed, unless the user
+	    wishes to take advantage of something they know about the
+	    underlying system. */
 	virtual unsigned long GetModTime() { return 0; }
 
 	const MString& GetName() const { return m_sPath; }
