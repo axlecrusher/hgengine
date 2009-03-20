@@ -23,35 +23,60 @@ XMLNode::~XMLNode()
 
 XMLNode XMLNode::NextNode() const
 {
-	for (xmlNode* node = m_node->next; node; node=node->next)
-		if (node->type == XML_ELEMENT_NODE)
-			return XMLNode(node,m_doc);
+	if ( IsValid() )
+	{
+		for (xmlNode* node = m_node->next; node; node=node->next)
+			if (node->type == XML_ELEMENT_NODE)
+				return XMLNode(node,m_doc);
+
+//falling back here seem like a bad idea, high chance of infinite loops?
+//		XMLNode fall = FindFallbackNode();
+//		return fall.NextNode();
+	}
 	return XMLNode();
 }
 
 XMLNode XMLNode::PreviousNode() const
 {
-	for (xmlNode* node = m_node->prev; node; node=node->prev)
-		if (node->type == XML_ELEMENT_NODE)
-			return XMLNode(node,m_doc);
+	if ( IsValid() )
+	{
+		for (xmlNode* node = m_node->prev; node; node=node->prev)
+			if (node->type == XML_ELEMENT_NODE)
+				return XMLNode(node,m_doc);
+
+//falling back here seem like a bad idea, high chance of infinite loops?
+//		XMLNode fall = FindFallbackNode();
+//		return fall.PreviousNode();
+	}
 	return XMLNode();
 }
 
 XMLNode XMLNode::Child() const
 {
-	for (xmlNode* node = m_node->children; node; node=node->next)
-		if (node->type == XML_ELEMENT_NODE) return XMLNode(node,m_doc);
+	if ( IsValid() )
+	{
+		for (xmlNode* node = m_node->children; node; node=node->next)
+			if (node->type == XML_ELEMENT_NODE) return XMLNode(node,m_doc);
+
+//falling back here seem like a bad idea, high chance of infinite loops?
+//		XMLNode fall = FindFallbackNode();
+//		return fall.Child();
+	}
 	return XMLNode();
 }
 
 MString XMLNode::Name() const
 {
-	return MString((const char*)m_node->name); //XXX fix utf8
+	if ( !IsValid() ) return "";
+	return MString((const char*)m_node->name);
 }
 
 MString XMLNode::Content() const
 {
 	MString data;
+
+	if ( !IsValid() ) return data;
+
 //	xmlChar* d = xmlNodeListGetString(m_doc, m_node->xmlChildrenNode, 1);
 	xmlChar* d = xmlNodeGetContent(m_node);
 	
@@ -67,6 +92,9 @@ MString XMLNode::Content() const
 MString XMLNode::Attribute(const MString& tag) const
 {
 	MString data;
+
+	if ( !IsValid() ) return data;
+
 	xmlChar* d = xmlGetProp(m_node, (const xmlChar*)tag.c_str());
 
 	if (d)
@@ -76,43 +104,44 @@ MString XMLNode::Attribute(const MString& tag) const
 	}
 	else
 	{
-		d = xmlGetProp(m_node, (const xmlChar*)"fallback");
-		if (d)
-		{
-			//start searching at the root
-			XMLNode root( xmlDocGetRootElement(m_doc) );
-			//prevent infinite recursion on self
-			if ( root.m_node != m_node )
-			{
-				XMLNode fall = root.FindFallbackNode( MString((const char*)d) );
-				data = fall.Attribute(tag);
-			}
-		}
+		XMLNode fall = FindFallbackNode();
+		data = fall.Attribute(tag);		
 	}
-
-	if (d) xmlFree(d);
 
 	return data;
 }
-/*
-MString XMLNode::FindFallbackAttribute(const MString& path)
+
+XMLNode XMLNode::FindFallbackNode() const
 {
-	
-	xmlChar* d = xmlGetProp(m_node, (const xmlChar*)tag.c_str());
+	xmlChar* d = xmlGetProp(m_node, (const xmlChar*)"fallback");
+	XMLNode n;
+
 	if (d)
 	{
-		
+		//start searching at the root
+		XMLNode root( xmlDocGetRootElement(m_doc) );
+		//prevent infinite recursion on self
+		if ( root.m_node != m_node )
+		{	
+			n = root.RecursiveFindFallbackNode( MString((const char*)d) );
+		}
+		xmlFree(d);
 	}
-	MString p = path;
+
+	return n;
 }
-*/
-XMLNode XMLNode::FindFallbackNode(const MString& path) const
+
+XMLNode XMLNode::RecursiveFindFallbackNode(const MString& path) const
 {
+	if ( !IsValid() ) return XMLNode();
+
 	if (path.length() > 0)
 	{
-		MString name = path.substr(0, path.find("."));
+		int pos = path.find(".");
+		MString name = pos<=0?path:path.substr(0, pos);
+		MString rpath = pos<=0?"":path.substr(pos);
 		for (XMLNode n = this->Child(); n.IsValid(); n = n.NextNode())
-			if (n.Attribute("name") == name) return n.FindFallbackNode(path);
+			if (n.Attribute("name") == name) return n.RecursiveFindFallbackNode(rpath);
 		return XMLNode();
 	}
 	return *this;

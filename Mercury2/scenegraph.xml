@@ -2,18 +2,23 @@
 		<node type="transformnode" movz="0" roty="0">
 			<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100"/>
 		</node>
-		<node type="transformnode" movz="-3">
+		<node type="transformnode" movz="-3" name="fallbackTest">
 			<node type="renderablenode">
 				<asset type="texture" file="test.bmp"/>
 				<asset type="quad"/>
 			</node>
+			<node type="transformnode" movx="-1" movy="-1" fallback="fallbackTest">
+				<node type="renderablenode">
+					<asset type="quad"/>
+				</node>
+			</node>
 		</node>
-		<node type="transformnode" movz="-3" movx="-1" movy="-1">
+		<node type="transformnode" movx="-1" movy="-1" fallback="fallbackTest">
 			<node type="renderablenode">
 				<asset type="quad"/>
 			</node>
 		</node>
-		<node type="transformnode" movz="-3" movx="1" movy="-1">
+		<node type="transformnode" movx="1" movy="-1" fallback="fallbackTest">
 			<node type="renderablenode">
 				<asset type="texture" file="test2.png"/>
 				<asset type="texture" file="test.bmp"/>

@@ -30,11 +30,12 @@ class XMLNode
 		MString Attribute(const MString & tag) const;
 
 //		MString FindFallbackAttribute();
-		XMLNode FindFallbackNode(const MString& path) const;
 		
 		inline bool IsValid() const { return m_node!=NULL; }
-		
+		XMLNode FindFallbackNode() const;
 	private:
+		XMLNode RecursiveFindFallbackNode(const MString& path) const;
+
 		xmlNode* m_node;
 		xmlDoc* m_doc; //parent doc, don't free
 };
