@@ -7,28 +7,24 @@
 				<asset type="texture" file="test.bmp"/>
 				<asset type="quad"/>
 			</node>
-			<node type="transformnode" movx="-1" movy="-1" fallback="fallbackTest">
-				<node type="renderablenode">
-					<asset type="quad"/>
-				</node>
-			</node>
 		</node>
-		<node type="transformnode" movx="-1" movy="-1" fallback="fallbackTest">
+		<node type="transformnode" movz="-3" movx="-1" movy="-1">
 			<node type="renderablenode">
 				<asset type="quad"/>
 			</node>
 		</node>
-		<node type="transformnode" movx="1" movy="-1" fallback="fallbackTest">
+		<node type="transformnode" movz="-3" movx="1" movy="-1" >
 			<node type="renderablenode">
 				<asset type="texture" file="test2.png"/>
 				<asset type="texture" file="test.bmp"/>
 				<asset type="quad"/>
 			</node>
 		</node>
-		<node type="rotatornode" movy="0" movz="-2" scalex="0.25" scaley="0.25" scalez="0.25" >
-			<node type="renderablenode">
-				<asset type="texture" file="test.bmp"/>
-				<asset type="hgmdlmodel" file="beerhall.hgmdl"/>
+		<node type="transformnode" movx="1" movy="1" fallback="fallbackTest">
+			<node type="transformnode" movx="-2">
+				<node type="renderablenode">
+					<asset type="quad"/>
+				</node>
 			</node>
 		</node>
 </SceneGraph>

@@ -12,13 +12,14 @@ XMLNode::XMLNode(xmlNode* node, xmlDoc* doc)
 }
 
 XMLNode::XMLNode(const XMLNode& n)
-	:m_node(n.m_node)
+	:m_node(n.m_node), m_doc(n.m_doc)
 {
 }
 
 XMLNode::~XMLNode()
 {
 	m_node = NULL;
+	m_doc = NULL;
 }
 
 XMLNode XMLNode::NextNode() const
@@ -29,9 +30,9 @@ XMLNode XMLNode::NextNode() const
 			if (node->type == XML_ELEMENT_NODE)
 				return XMLNode(node,m_doc);
 
-//falling back here seem like a bad idea, high chance of infinite loops?
-//		XMLNode fall = FindFallbackNode();
-//		return fall.NextNode();
+		XMLNode parent(m_node->parent, m_doc);
+		XMLNode fall = parent.FindFallbackNode();
+		return fall.Child();
 	}
 	return XMLNode();
 }
@@ -43,10 +44,6 @@ XMLNode XMLNode::PreviousNode() const
 		for (xmlNode* node = m_node->prev; node; node=node->prev)
 			if (node->type == XML_ELEMENT_NODE)
 				return XMLNode(node,m_doc);
-
-//falling back here seem like a bad idea, high chance of infinite loops?
-//		XMLNode fall = FindFallbackNode();
-//		return fall.PreviousNode();
 	}
 	return XMLNode();
 }
@@ -58,9 +55,8 @@ XMLNode XMLNode::Child() const
 		for (xmlNode* node = m_node->children; node; node=node->next)
 			if (node->type == XML_ELEMENT_NODE) return XMLNode(node,m_doc);
 
-//falling back here seem like a bad idea, high chance of infinite loops?
-//		XMLNode fall = FindFallbackNode();
-//		return fall.Child();
+		XMLNode fall = FindFallbackNode();
+		return fall.Child();
 	}
 	return XMLNode();
 }
@@ -145,6 +141,12 @@ XMLNode XMLNode::RecursiveFindFallbackNode(const MString& path) const
 		return XMLNode();
 	}
 	return *this;
+}
+
+const XMLNode& XMLNode::operator=(const XMLNode& n)
+{
+	m_node = n.m_node;
+	m_doc = n.m_doc;
 }
 
 XMLDocument::XMLDocument()

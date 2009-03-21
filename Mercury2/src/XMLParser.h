@@ -33,6 +33,8 @@ class XMLNode
 		
 		inline bool IsValid() const { return m_node!=NULL; }
 		XMLNode FindFallbackNode() const;
+
+		const XMLNode& operator=(const XMLNode& n);
 	private:
 		XMLNode RecursiveFindFallbackNode(const MString& path) const;
 

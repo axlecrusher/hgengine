@@ -24,7 +24,7 @@
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
-      <mainprogram/>
+      <mainprogram>/home/josh/Mercury2/debug/src/mercury2</mainprogram>
       <terminal>false</terminal>
       <programargs/>
       <globaldebugarguments/>
@@ -37,7 +37,7 @@
     </run>
     <configurations>
       <optimized>
-        <builddir>optimized</builddir>
+        <builddir>/home/josh/Mercury2/optimized</builddir>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevg77options</f77compiler>
@@ -55,14 +55,14 @@
       </optimized>
       <debug>
         <configargs>--enable-debug=full</configargs>
-        <builddir>debug</builddir>
+        <builddir>/home/josh/Mercury2/debug</builddir>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevg77options</f77compiler>
-        <cxxflags>-O2 -g -Wall</cxxflags>
+        <cxxflags>-O0 -g -Wall</cxxflags>
         <envvars/>
         <topsourcedir/>
-        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE -DRUN_FROM_START_FOLDER -DUSE_SSE</cppflags>
+        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE -DRUN_FROM_START_FOLDER</cppflags>
         <ldflags>-lpthread -lX11 -lGL -lxml2 -lpng</ldflags>
         <ccompilerbinary/>
         <cxxcompilerbinary/>
@@ -259,4 +259,33 @@
       <outputradix>10</outputradix>
     </display>
   </kdevdebugger>
+  <dist>
+    <custom>false</custom>
+    <bzip>false</bzip>
+    <archname/>
+    <appname>Mercury2</appname>
+    <version>2.0</version>
+    <release/>
+    <vendor/>
+    <licence/>
+    <summary/>
+    <group/>
+    <packager/>
+    <description/>
+    <changelog/>
+    <devpackage>false</devpackage>
+    <docspackage>false</docspackage>
+    <appicon>false</appicon>
+    <arch>2</arch>
+    <genHTML>false</genHTML>
+    <useRPM>false</useRPM>
+    <ftpkde>false</ftpkde>
+    <appskde>false</appskde>
+    <url/>
+  </dist>
+  <ctagspart>
+    <customArguments/>
+    <customTagfilePath>/home/josh/Mercury2/tags</customTagfilePath>
+    <activeTagsFiles/>
+  </ctagspart>
 </kdevelop>
