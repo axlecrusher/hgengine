@@ -7,6 +7,8 @@
 #include <GL/gl.h>
 #include <GL/glext.h>
 
+#include <string.h>
+
 using namespace std;
 
 REGISTER_ASSET_TYPE( Shader );
