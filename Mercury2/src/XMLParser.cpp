@@ -147,6 +147,7 @@ const XMLNode& XMLNode::operator=(const XMLNode& n)
 {
 	m_node = n.m_node;
 	m_doc = n.m_doc;
+	return *this;
 }
 
 XMLDocument::XMLDocument()
