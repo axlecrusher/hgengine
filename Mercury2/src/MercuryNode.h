@@ -13,9 +13,9 @@
 **/
 
 #define GENRTTI(x) static const x* Cast(const MercuryNode* n) \
-{ return dynamic_cast<const x*>(n); } \
+{ if (n==NULL) return NULL; return dynamic_cast<const x*>(n); } \
 static x* Cast(MercuryNode* n) \
-{ return dynamic_cast<x*>(n); }
+{ if (n==NULL) return NULL; return dynamic_cast<x*>(n); }
 
 /*
 #define GENRTTI(x) static bool IsMyType(const MercuryNode* n) \
@@ -32,9 +32,10 @@ class MercuryNode : public MessageHandler
 		void AddChild(MercuryNode* n);
 		void RemoveChild(MercuryNode* n);
 		
-		MercuryNode* Parent() const;
-		MercuryNode* NextSibling() const;
-		MercuryNode* PrevSibling() const;
+		inline MercuryNode* Parent() const { return m_parent; }
+		inline MercuryNode* NextSibling() const { return m_nextSibling; }
+		inline MercuryNode* PrevSibling() const { return m_prevSibling; }
+		MercuryNode* FirstChild() const;
 		MercuryNode* NextChild(const MercuryNode* n) const; ///Finds the next child in regards to n
 		MercuryNode* PrevChild(const MercuryNode* n) const; ///Finds the previous child in regards to n
 		const std::list< MercuryNode* >& Children() const { return m_children; }
@@ -63,6 +64,11 @@ class MercuryNode : public MessageHandler
 	protected:
 		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
 		MercuryNode* m_parent;
+		MercuryNode* m_prevSibling;
+		MercuryNode* m_nextSibling;
+
+		static bool m_rebuildRenderGraph;
+
 };
 
 class NodeFactory

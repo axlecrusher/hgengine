@@ -7,7 +7,7 @@ using namespace std;
 REGISTER_NODE_TYPE(MercuryNode);
 
 MercuryNode::MercuryNode()
-	:m_parent(NULL)
+	:m_parent(NULL), m_prevSibling(NULL), m_nextSibling(NULL)
 {
 }
 
@@ -24,11 +24,23 @@ MercuryNode::~MercuryNode()
 
 void MercuryNode::AddChild(MercuryNode* n)
 {
+//	list< MercuryNode* >::iterator last = m_children.end();
+	
+	n->m_prevSibling = NULL;
+	n->m_nextSibling = NULL;
+	if (m_children.end() != m_children.begin())
+	{
+		MercuryNode* last = m_children.back();
+		last->m_nextSibling = n;
+		n->m_prevSibling = last;
+	}
+	
 	m_children.push_back(n);
 	n->m_parent = this;
 	
 	OnAddChild();
 	n->OnAdded();
+	m_rebuildRenderGraph = true;
 }
 
 void MercuryNode::RemoveChild(MercuryNode* n)
@@ -38,46 +50,44 @@ void MercuryNode::RemoveChild(MercuryNode* n)
 	{
 		if (*i == n)
 		{
+			MercuryNode* next = n->m_nextSibling;
+			MercuryNode* prev = n->m_prevSibling;
+
 			n->OnRemoved();
 			OnRemoveChild();
+			
+			if (prev) prev->m_nextSibling = next;
+			if (next) next->m_prevSibling = prev;
+
+			n->m_nextSibling = NULL;
+			n->m_prevSibling = NULL;
 			n->m_parent = NULL;
+			
 			m_children.erase(i);
+			m_rebuildRenderGraph = true;
+			
 			return;
 		}
 	}
 }
 
-MercuryNode* MercuryNode::Parent() const
+MercuryNode* MercuryNode::FirstChild() const
 {
-	return m_parent;
-}
-
-MercuryNode* MercuryNode::NextSibling() const
-{
-	if (m_parent) return m_parent->NextChild(this);
+	if (m_children.begin() != m_children.end())
+		return *(m_children.begin());
 	return NULL;
 }
 
-MercuryNode* MercuryNode::PrevSibling() const
+MercuryNode* MercuryNode::NextChild(const MercuryNode* child) const
 {
-	if (m_parent) return m_parent->PrevChild(this);
-	return NULL;
+	if (child==NULL) return NULL;
+	return child->NextSibling();
 }
 
-MercuryNode* MercuryNode::NextChild(const MercuryNode* n) const
+MercuryNode* MercuryNode::PrevChild(const MercuryNode* child) const
 {
-	list< MercuryNode* >::const_iterator i;
-	for (i = m_children.begin(); i != m_children.end(); ++i )
-		if (*i == n) return *i;
-	return NULL;
-}
-
-MercuryNode* MercuryNode::PrevChild(const MercuryNode* n) const
-{
-	list< MercuryNode* >::const_iterator i;
-	for (i = m_children.end(); i != m_children.begin(); --i )
-		if (*i == n) return *i;
-	return NULL;
+	if (child==NULL) return NULL;
+	return child->PrevSibling();
 }
 
 void MercuryNode::RecursiveUpdate(float dTime)
@@ -140,6 +150,7 @@ MercuryNode* NodeFactory::Generate(const MString& type)
 	return NULL;
 }
 
+bool MercuryNode::m_rebuildRenderGraph = false;
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
  *      *
