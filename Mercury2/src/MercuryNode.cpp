@@ -94,9 +94,8 @@ void MercuryNode::RecursiveUpdate(float dTime)
 {
 	Update(dTime);
 	
-	list< MercuryNode* >::iterator i;
-	for (i = m_children.begin(); i != m_children.end(); ++i )
-		(*i)->RecursiveUpdate(dTime);
+	for (MercuryNode* child = FirstChild(); child != NULL; child = NextChild(child))
+		child->RecursiveUpdate(dTime);
 }
 
 void MercuryNode::ThreadedUpdate(float dTime)
