@@ -7,12 +7,7 @@
 using namespace std;
 
 REGISTER_NODE_TYPE(RenderableNode);
-/*
-uint64_t RenderWaited = 0;
-uint64_t UpdateWaited = 0;
 
-MercuryMatrix GLOBALMATRIX;
-*/
 RenderableNode::RenderableNode()
 	:m_hidden(false)
 {
@@ -24,25 +19,6 @@ RenderableNode::~RenderableNode()
 	m_render.clear();
 	m_postrender.clear();
 }
-/*
-//this function exists for threaded rendering
-void RenderableNode::Update(float dTime)
-{
-	static unsigned long waitTime = 0;
-	MSemaphoreIncOnDestroy s( &m_semaphore );
-//	if ( Spinlock(0) ) ++UpdateWaited;	
-//	if ( SpinlockWait(0, 100000) ) ++UpdateWaited;
-//	UpdateWaited += Spinlock(0);
-	
-	int unsigned long waited = SpinlockWait(0, waitTime);
-	if (waited > 0)
-		waitTime = (waitTime<1000000)?waitTime+1000:waitTime;
-	else
-		waitTime = (waitTime!=0)?waitTime-1000:0;
-	
-	UpdateWaited += waited;
-}
-*/
 
 void RenderableNode::Update(float dTime)
 {
@@ -132,19 +108,9 @@ bool RenderableNode::IsInAssetList( MercuryAsset* asset ) const
 
 void RenderableNode::RecursiveRender( MercuryNode* n )
 {
-//	static unsigned long waitTime = 0;
 	RenderableNode* rn;
 	if ( ( rn = Cast(n) ) )
 	{
-/*
-		MSemaphoreDecOnDestroy s( &(rn->m_semaphore) );
-		int unsigned long waited = rn->SpinlockWait(1, waitTime);
-		if (waited > 0) waitTime = (waitTime<1000000)?waitTime+1000:waitTime;
-		else waitTime = (waitTime!=0)?waitTime-1000:0;	
-		RenderWaited += waited;
-*/
-//		++RenderWaited += rn->Spinlock(1);
-
 		rn->Render();
 	}
 	
@@ -177,27 +143,6 @@ void RenderableNode::LoadFromXML(const XMLNode& node)
 	
 	MercuryNode::LoadFromXML( node );
 }
-/*
-unsigned long RenderableNode::Spinlock( unsigned long value )
-{
-	unsigned long waited = 0;
-	while (m_semaphore.Read() != value) ++waited;
-	return waited;
-}
-
-unsigned long RenderableNode::SpinlockWait( unsigned long value, unsigned long usec )
-{
-	unsigned long waited = 0;
-	while (m_semaphore.Read() != value)
-	{
-//		waited=true;
-		++waited;
-		if (usec>0) usleep(usec);
-	}
-	return waited;
-}
-*/
-
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
