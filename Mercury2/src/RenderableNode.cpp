@@ -38,22 +38,23 @@ void RenderableNode::Update(float dTime)
 	}
 }
 
-void RenderableNode::Render()
+void RenderableNode::PreRender(const MercuryMatrix& matrix)
 {
 	list< MercuryAsset* >::iterator i;
-	MercuryMatrix m = FindGlobalMatrix();
-	
-	if (m_hidden || IsCulled()) return;
-	
-	m.Transpose();
-	glLoadMatrixf( m.Ptr() );
-	
 	for (i = m_prerender.begin(); i != m_prerender.end(); ++i )
 		(*i)->PreRender(this);
+}
 
+void RenderableNode::Render(const MercuryMatrix& matrix)
+{
+	list< MercuryAsset* >::iterator i;
 	for (i = m_render.begin(); i != m_render.end(); ++i )
 		(*i)->Render(this);
-	
+}
+
+void RenderableNode::PostRender(const MercuryMatrix& matrix)
+{
+	list< MercuryAsset* >::iterator i;
 	for (i = m_postrender.begin(); i != m_postrender.end(); ++i )
 		(*i)->PostRender(this);
 }
@@ -104,21 +105,6 @@ bool RenderableNode::IsInAssetList( MercuryAsset* asset ) const
 	for (i = m_assets.begin(); i != m_assets.end(); ++i )
 		if ( (*i) == asset ) return true;
 	return false;
-}
-
-void RenderableNode::RecursiveRender( MercuryNode* n )
-{
-	RenderableNode* rn;
-	if ( ( rn = Cast(n) ) )
-	{
-		rn->Render();
-	}
-	
-	const list< MercuryNode* >& children = n->Children();
-	list< MercuryNode* >::const_iterator i;
-	
-	for (i = children.begin(); i != children.end(); ++i )
-		RenderableNode::RecursiveRender( *i );
 }
 
 void RenderableNode::LoadFromXML(const XMLNode& node)

@@ -16,21 +16,24 @@ class RenderableNode : public MercuryNode
 		RenderableNode();
 		~RenderableNode();
 		
-		virtual void Render();
 		virtual void Update(float dTime);
-				
+
 		inline void AddAsset(MAutoPtr< MercuryAsset > asset) { m_assets.push_back(asset); }
 		
 		void AddPreRender(MercuryAsset* asset);
 		void AddRender(MercuryAsset* asset);
 		void AddPostRender(MercuryAsset* asset);
 		
-		static void RecursiveRender( MercuryNode* n );
+		virtual void PreRender(const MercuryMatrix& matrix);
+		virtual void Render(const MercuryMatrix& matrix);
+		virtual void PostRender(const MercuryMatrix& matrix);
+		
 		virtual void LoadFromXML(const XMLNode& node);
 		
 		const MercuryMatrix& FindGlobalMatrix() const;
 		
 		virtual bool IsCulled() { return false; }
+		bool IsHidden() { return m_hidden; }
 
 		GENRTTI(RenderableNode);
 	protected:

@@ -1,15 +1,41 @@
+#include <MercuryMatrix.h>
 #include <RenderGraph.h>
+
+#include <GL/gl.h>
 
 void RenderGraphEntry::Render()
 {
-	if (m_node) m_node->Render();
+	MercuryMatrix m;
+	
+	if (m_node)
+	{	
+		if ( !(m_node->IsHidden() || m_node->IsCulled()) )
+		{
+			m = m_node->FindGlobalMatrix();
+			m.Transpose();
+			glLoadMatrixf( m.Ptr() );
+			m_node->PreRender( m );
+			m_node->Render( m );
+		}
+	}
+	
 	std::list< RenderGraphEntry >::iterator i;
 	for (i = m_children.begin(); i != m_children.end(); ++i )
 		i->Render();
+
+	if (m_node)
+	{
+		if ( !(m_node->IsHidden() || m_node->IsCulled()) )
+		{
+			glLoadMatrixf( m.Ptr() );
+			m_node->PostRender( m );
+		}
+	}
 }
 
 void RenderGraph::Build( MercuryNode* node )
 {
+	printf("rebuilding render graph\n");
 	m_root = RenderGraphEntry();
 	Build(node, m_root);
 }

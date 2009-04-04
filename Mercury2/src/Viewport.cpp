@@ -3,22 +3,15 @@
 
 REGISTER_NODE_TYPE(Viewport);
 
-const Frustum* FRUSTUM = NULL;
-
-void Viewport::Render()
+void Viewport::Render(const MercuryMatrix& matrix)
 {
-	FRUSTUM = &m_frustum;
-	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
-		
-	MercuryMatrix m = FindGlobalMatrix();
-	m.Transpose();
 	
 	MercuryMatrix f = m_frustum.GetMatrix();
 	f.Transpose();
 
-	glLoadMatrixf( (m * f).Ptr() );
+	glLoadMatrixf( (matrix * f).Ptr() );
 	//The following 2 are equivelent to above
 //	glLoadMatrixf( m_frustum.Ptr() );
 //	glMultMatrixf( m.Ptr() );
