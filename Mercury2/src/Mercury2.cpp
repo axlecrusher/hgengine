@@ -13,6 +13,7 @@
 #include <MercuryMessageManager.h>
 
 #include <MercuryTimer.h>
+#include <RenderGraph.h>
 
 MSemaphore UpdateLoopGo;
 void* UpdateThread(void* node)
@@ -53,6 +54,7 @@ int main()
 	
 	MercuryTimer timer;
 	MercuryTimer fpsTimer;
+	RenderGraph renderGraph;
 		
 	//uncomment the next 2 lines to use threads
 //	MercuryThread updateThread;
@@ -62,7 +64,14 @@ int main()
 		timer.Touch();
 		MESSAGEMAN::GetInstance().PumpMessages( timer.MicrosecondsSinceInit() );
 		root->RecursiveUpdate( timer.Age() ); //comment to use threads
-		RenderableNode::RecursiveRender(root);
+		
+		if ( MercuryNode::NeedsRebuild() )
+		{
+			renderGraph.Build(root);
+		}
+		
+		renderGraph.Render();
+//		RenderableNode::RecursiveRender(root);
 		w->SwapBuffers();
 		++m_count;
 		
