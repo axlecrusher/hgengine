@@ -60,6 +60,8 @@ class MercuryNode : public MessageHandler
 		virtual void OnRemoved() {};
 
 		GENRTTI(MercuryNode);
+		
+		inline static bool NeedsRebuild() { bool t=m_rebuildRenderGraph; m_rebuildRenderGraph = false; return t; }
 	
 	protected:
 		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
