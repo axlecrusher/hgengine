@@ -44,6 +44,7 @@ public:
 	void Identity();
 	
 	void Print() const;
+	static MercuryMatrix IdentityMatrix;
 }
 #if !defined( WIN32 ) || defined( _MSC_VER )
 M_ALIGN(64);
@@ -51,10 +52,9 @@ M_ALIGN(64);
 M_ALIGN(16);
 #endif
 
-namespace MercuryMath
-{
-	extern MercuryMatrix IdentityMatrix;
-}
+//namespace MercuryMath
+//{
+//}
 
 
 #endif

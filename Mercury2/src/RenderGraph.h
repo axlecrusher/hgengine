@@ -8,8 +8,8 @@ class RenderGraphEntry
 {
 	friend class RenderGraph;
 	public:
-		RenderGraphEntry(RenderableNode* node = NULL)
-	:m_node(node)
+		RenderGraphEntry(const MercuryMatrix* matrix = &MercuryMatrix::IdentityMatrix, RenderableNode* node = NULL)
+	:m_node(node), m_matrix(matrix)
 		{}
 		
 		void AddChild(RenderGraphEntry entry);
@@ -17,6 +17,7 @@ class RenderGraphEntry
 	private:
 		RenderableNode* m_node; //we don't own this, no new or free
 		std::list< RenderGraphEntry > m_children;
+		const MercuryMatrix* m_matrix;
 };
 
 class RenderGraph

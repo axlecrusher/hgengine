@@ -71,7 +71,7 @@ const MercuryMatrix& TransformNode::GetParentMatrix() const
 		n = n->Parent();
 	}
 	
-	return MercuryMath::IdentityMatrix;
+	return MercuryMatrix::IdentityMatrix;
 }
 
 void TransformNode::RippleTaintDown()

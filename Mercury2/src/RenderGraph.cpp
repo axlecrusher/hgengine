@@ -11,7 +11,7 @@ void RenderGraphEntry::Render()
 	{	
 		if ( !(m_node->IsHidden() || m_node->IsCulled()) )
 		{
-			m = m_node->FindGlobalMatrix();
+			m = *m_matrix;
 			m.Transpose();
 			glLoadMatrixf( m.Ptr() );
 			m_node->PreRender( m );
@@ -49,7 +49,7 @@ void RenderGraph::Build( MercuryNode* node, RenderGraphEntry& entry)
 	{
 		//found a new renderable
 		printf("Found renderable %p\n", rn);
-		entry.m_children.push_back( RenderGraphEntry(rn) );
+		entry.m_children.push_back( RenderGraphEntry(&rn->FindGlobalMatrix(), rn) );
 		lastEntry = &(entry.m_children.back());
 	}
 	

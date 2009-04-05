@@ -3,7 +3,7 @@
 
 namespace MercuryMath
 {
-	MercuryMatrix IdentityMatrix;
+	static MercuryMatrix IdentityMatrix;
 }
 
 MercuryMatrix::MercuryMatrix()
@@ -202,6 +202,7 @@ MercuryVector MercuryMatrix::operator*(const MercuryVector& v) const
 	return r;
 }
 
+MercuryMatrix MercuryMatrix::IdentityMatrix;
 
 /* 
  * Copyright (c) 2006 Joshua Allen
