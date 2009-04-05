@@ -100,8 +100,11 @@ MString XMLNode::Attribute(const MString& tag) const
 	}
 	else
 	{
-		XMLNode fall = FindFallbackNode();
-		data = fall.Attribute(tag);		
+		if (tag != "name") //probably don't want to fallback for names if a name does not exist
+		{
+			XMLNode fall = FindFallbackNode();
+			data = fall.Attribute(tag);
+		}
 	}
 
 	return data;
@@ -115,7 +118,7 @@ XMLNode XMLNode::FindFallbackNode() const
 	if (d)
 	{
 		//start searching at the root
-		XMLNode root( xmlDocGetRootElement(m_doc) );
+		XMLNode root( xmlDocGetRootElement(m_doc), m_doc );
 		//prevent infinite recursion on self
 		if ( root.m_node != m_node )
 		{	
@@ -133,16 +136,13 @@ XMLNode XMLNode::RecursiveFindFallbackNode(const MString& path) const
 
 	if (path.length() > 0)
 	{
-		printf("finding fallback %s\n", path.c_str());
 		int pos = path.find(".");
 		MString name = pos<=0?path:path.substr(0, pos);
 		MString rpath = pos<=0?"":path.substr(pos+1); //skip the period
 		for (XMLNode n = this->Child(); n.IsValid(); n = n.NextNode())
 			if (n.Attribute("name") == name)
-			{
-				printf("found fallback %s\n", name.c_str());
 				return n.RecursiveFindFallbackNode(rpath);
-			}
+		
 		return XMLNode();
 	}
 	return *this;
