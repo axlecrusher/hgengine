@@ -133,11 +133,16 @@ XMLNode XMLNode::RecursiveFindFallbackNode(const MString& path) const
 
 	if (path.length() > 0)
 	{
+		printf("finding fallback %s\n", path.c_str());
 		int pos = path.find(".");
 		MString name = pos<=0?path:path.substr(0, pos);
-		MString rpath = pos<=0?"":path.substr(pos);
+		MString rpath = pos<=0?"":path.substr(pos+1); //skip the period
 		for (XMLNode n = this->Child(); n.IsValid(); n = n.NextNode())
-			if (n.Attribute("name") == name) return n.RecursiveFindFallbackNode(rpath);
+			if (n.Attribute("name") == name)
+			{
+				printf("found fallback %s\n", name.c_str());
+				return n.RecursiveFindFallbackNode(rpath);
+			}
 		return XMLNode();
 	}
 	return *this;
