@@ -2,7 +2,7 @@
 #define MERCURYPLANE_H
 
 #include <MercuryVertex.h>
-#include <BoundingBox.h>
+//#include <BoundingBox.h>
 
 class MercuryPlane
 {
@@ -16,8 +16,10 @@ class MercuryPlane
 		inline void SetCenter(const MercuryVertex& center) { m_center = center; }
 		inline void SetNormal(const MercuryVertex& normal) { m_normal = normal.Normalize(); }
 		
+		inline const MercuryVector& GetNormal() const { return m_normal; }
+		inline const MercuryVector& GetCenter() const { return m_center; }
+		
 		bool IsBehindPlane(const MercuryVertex& point) const;
-		bool IsBehindPlane(const BoundingBox& bb) const;
 	private:
 		MercuryVertex m_center;
 		MercuryVector m_normal;

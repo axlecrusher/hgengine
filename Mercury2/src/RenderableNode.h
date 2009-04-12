@@ -32,7 +32,7 @@ class RenderableNode : public MercuryNode
 		
 		const MercuryMatrix& FindGlobalMatrix() const;
 		
-		virtual bool IsCulled() { return false; }
+		virtual bool IsCulled(const MercuryMatrix& matrix);
 		bool IsHidden() { return m_hidden; }
 
 		GENRTTI(RenderableNode);

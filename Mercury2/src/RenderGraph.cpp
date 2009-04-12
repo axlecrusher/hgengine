@@ -6,17 +6,15 @@
 void RenderGraphEntry::Render()
 {
 	MercuryMatrix m;
-	
+		
 	if (m_node)
 	{	
-		if ( !(m_node->IsHidden() || m_node->IsCulled()) )
-		{
-			m = *m_matrix;
-			m.Transpose();
-			glLoadMatrixf( m.Ptr() );
-			m_node->PreRender( m );
-			m_node->Render( m );
-		}
+		if ( m_node->IsHidden() || m_node->IsCulled(*m_matrix) ) return;
+		m = *m_matrix;
+		m.Transpose();
+		glLoadMatrixf( m.Ptr() );
+		m_node->PreRender( m );
+		m_node->Render( m );
 	}
 	
 	std::list< RenderGraphEntry >::iterator i;
@@ -25,17 +23,14 @@ void RenderGraphEntry::Render()
 
 	if (m_node)
 	{
-		if ( !(m_node->IsHidden() || m_node->IsCulled()) )
-		{
-			glLoadMatrixf( m.Ptr() );
-			m_node->PostRender( m );
-		}
+		glLoadMatrixf( m.Ptr() );
+		m_node->PostRender( m );
 	}
 }
 
 void RenderGraph::Build( MercuryNode* node )
 {
-	printf("rebuilding render graph\n");
+//	printf("rebuilding render graph\n");
 	m_root = RenderGraphEntry();
 	Build(node, m_root);
 }
@@ -48,7 +43,6 @@ void RenderGraph::Build( MercuryNode* node, RenderGraphEntry& entry)
 	if ( rn )
 	{
 		//found a new renderable
-		printf("Found renderable %p\n", rn);
 		entry.m_children.push_back( RenderGraphEntry(&rn->FindGlobalMatrix(), rn) );
 		lastEntry = &(entry.m_children.back());
 	}

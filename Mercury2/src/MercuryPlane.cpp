@@ -12,27 +12,6 @@ bool MercuryPlane::IsBehindPlane(const MercuryVertex& point) const
 	return BEHIND_PLANE( SIGNED_DIST( point+m_center ) );
 }
 
-bool MercuryPlane::IsBehindPlane(const BoundingBox& bb) const
-{
-	const MercuryVertex& center = bb.GetCenter();
-	const MercuryVertex& extends = bb.GetExtend();
-	
-	const MercuryVertex &A1(bb.Normal(0)), &A2(bb.Normal(1)), &A3(bb.Normal(2));
-	
-	MercuryVertex dp = m_normal.DotProduct3(A1, A2, A3);
-	float x = ABS( extends.GetX() * dp[0] );
-	x += ABS( extends.GetY() * dp[1] );
-	x += ABS( extends.GetZ() * dp[2] );
-	
-	float d = SIGNED_DIST( center+m_center );
-	if ( ABS(d) <= x ) //intersection
-		return false;
-
-	return BEHIND_PLANE(d); //if we don't intersect, just see what side we are on
-}
-
-
-
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
  *                                                                          *

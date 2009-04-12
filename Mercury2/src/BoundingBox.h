@@ -4,7 +4,9 @@
 #include <MercuryNode.h>
 #include <MercuryVertex.h>
 #include <MercuryMatrix.h>
+#include <Frustum.h>
 #include <stdint.h>
+#include <MercuryPlane.h>
 
 class BoundingVolume
 {
@@ -15,6 +17,9 @@ class BoundingVolume
 		virtual void Transform( const MercuryMatrix& m ) = 0;
 		virtual void Render() {};
 		virtual BoundingVolume* SpawnClone() const = 0;
+		
+		virtual bool Clip( const MercuryPlane& p ) = 0;
+		virtual bool Clip( const Frustum& f ) = 0;
 };
 
 class BoundingBox : public BoundingVolume
@@ -37,6 +42,9 @@ class BoundingBox : public BoundingVolume
 		virtual void Render();
 		virtual BoundingVolume* SpawnClone() const;
 		
+		virtual bool Clip( const MercuryPlane& p );
+		virtual bool Clip( const Frustum& f );
+
 	private:
 		void ComputeNormals();
 		
@@ -45,17 +53,7 @@ class BoundingBox : public BoundingVolume
 		
 		MercuryVector m_normals[3];
 };
-/*
-class RenderableBoundingBox : public MercuryAsset
-{
-	public:
-		RenderableBoundingBox(const BoundingBox* bb);
-		virtual void Render(MercuryNode* node);
 
-	private:
-		const BoundingBox* m_bb;
-};
-*/
 #endif
 
 /****************************************************************************

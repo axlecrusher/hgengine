@@ -4,6 +4,11 @@
 #include <string.h>
 #include <Viewport.h>
 
+#define SIGNED_DIST(x) m_normal.DotProduct(x)
+
+// origional algorithim was -x<0
+#define BEHIND_PLANE(x) x>=0
+
 BoundingBox::BoundingBox(const MercuryVertex& center, const MercuryVertex& extend)
 	:m_center(center), m_extend(extend)
 {
@@ -54,6 +59,32 @@ void BoundingBox::Transform( const MercuryMatrix& m )
 	bb.m_normals[2] = (m * m_normals[2]).Normalize();
 	*this = bb;
 }
+
+bool BoundingBox::Clip( const MercuryPlane& p )
+{
+	MercuryVertex dp = p.GetNormal().DotProduct3(m_normals[0], m_normals[1], m_normals[2]);
+	float x = ABS( m_extend.GetX() * dp[0] );
+	x += ABS( m_extend.GetY() * dp[1] );
+	x += ABS( m_extend.GetZ() * dp[2] );
+	
+	float d = p.GetNormal().DotProduct( m_center+p.GetCenter() ); //signed distance
+	if ( ABS(d) <= x ) //intersection
+		return false;
+
+	return BEHIND_PLANE(d); //if we don't intersect, just see what side we are on
+}
+
+bool BoundingBox::Clip( const Frustum& f )
+{
+	bool inView = true;
+	for (uint8_t i = 0; (i < 6) && inView; ++i)
+	{
+		inView = Clip( f.GetPlane(i) )?false:inView;
+	}
+	
+	return !inView;
+}
+
 
 void BoundingBox::Render()
 {

@@ -3,6 +3,7 @@
 #include <GL/gl.h>
 #include <TransformNode.h>
 #include <unistd.h>
+#include <Viewport.h>
 
 using namespace std;
 
@@ -22,6 +23,7 @@ RenderableNode::~RenderableNode()
 
 void RenderableNode::Update(float dTime)
 {
+	/*
 	MercuryMatrix m = FindGlobalMatrix();
 
 	std::list< MAutoPtr< MercuryAsset > >::iterator i;
@@ -36,6 +38,7 @@ void RenderableNode::Update(float dTime)
 			//do some stuff to figure out if this node is culled
 		}
 	}
+	*/
 }
 
 void RenderableNode::PreRender(const MercuryMatrix& matrix)
@@ -128,6 +131,28 @@ void RenderableNode::LoadFromXML(const XMLNode& node)
 	}
 	
 	MercuryNode::LoadFromXML( node );
+}
+
+bool RenderableNode::IsCulled(const MercuryMatrix& matrix)
+{
+	bool clip = false;
+	
+	std::list< MAutoPtr< MercuryAsset > >::iterator i;
+	for (i = m_assets.begin(); i != m_assets.end(); ++i )
+	{
+		const BoundingVolume* bv = (*i)->GetBoundingVolume();
+		if (bv)
+		{
+			BoundingVolume* v = bv->SpawnClone();
+			v->Transform( matrix );
+			clip = v->Clip( *FRUSTUM );
+			delete v;
+			if ( clip == false ) return false;
+		}
+		else
+			return false;
+	}
+	return clip;
 }
 
 /***************************************************************************
