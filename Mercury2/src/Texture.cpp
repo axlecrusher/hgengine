@@ -99,14 +99,15 @@ void Texture::LoadFromXML(const XMLNode& node)
 
 void Texture::BindTexture()
 {
-		m_textureResource = GL_TEXTURE0+m_activeTextures;
-		glActiveTexture( m_textureResource );
-		glClientActiveTextureARB(m_textureResource);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glEnable( GL_TEXTURE_2D );
-		glBindTexture(GL_TEXTURE_2D, m_textureID);
-		glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
-		++m_activeTextures;
+	m_textureResource = GL_TEXTURE0+m_activeTextures;
+	glActiveTexture( m_textureResource );
+	glClientActiveTextureARB(m_textureResource);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnable( GL_TEXTURE_2D );
+	glBindTexture(GL_TEXTURE_2D, m_textureID);
+	glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+	++m_activeTextures;
+	++m_textureBinds;
 }
 
 void Texture::UnbindTexture()
@@ -145,7 +146,7 @@ MAutoPtr< Texture > Texture::LoadFromFile(const MString& path)
 
 bool Texture::m_initTextureSuccess = false;
 unsigned short Texture::m_activeTextures = 0;
-
+uint32_t Texture::m_textureBinds = 0;
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *

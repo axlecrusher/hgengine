@@ -14,6 +14,9 @@
 
 #include <MercuryTimer.h>
 #include <RenderGraph.h>
+#include <Texture.h>
+
+bool SHOWBOUNDINGVOLUME = false;
 
 MSemaphore UpdateLoopGo;
 void* UpdateThread(void* node)
@@ -80,7 +83,8 @@ int main()
 		if (fpsTimer.Age() > 1)
 		{
 			float batches = MercuryVBO::ResetBatchCount()/(float)m_count;
-			printf("FPS: %f, VBO batches %f\n", m_count/fpsTimer.Age(), batches);
+			float binds = Texture::ReadAndResetBindCount()/(float)m_count;
+			printf("FPS: %f, VBO batches %f, TBinds %f\n", m_count/fpsTimer.Age(), batches, binds);
 			m_count = 0;
 			fpsTimer = timer;
 		}

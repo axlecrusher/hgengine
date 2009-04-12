@@ -1,11 +1,6 @@
 #include "MercuryMatrix.h"
 #include <stdio.h>
 
-namespace MercuryMath
-{
-	static MercuryMatrix IdentityMatrix;
-}
-
 MercuryMatrix::MercuryMatrix()
 {
 	Identity();

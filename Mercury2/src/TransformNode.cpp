@@ -52,7 +52,7 @@ void TransformNode::ComputeMatrix()
 	m_tainted = false;
 	
 	MercuryMatrix local;
-	local.Identity();
+//	local.Identity();
 
 	local.Transotale( m_position.x, m_position.y, m_position.z,
 							  m_rotation.x, m_rotation.y, m_rotation.z,

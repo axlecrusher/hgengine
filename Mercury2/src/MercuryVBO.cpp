@@ -9,6 +9,8 @@
 
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 
+extern bool SHOWBOUNDINGVOLUME;
+
 MercuryVBO::MercuryVBO()
 	:MercuryAsset(), m_initiated(false)
 {
@@ -49,11 +51,11 @@ void MercuryVBO::Render(const MercuryNode* node)
 	}
 
 	glDrawRangeElements(GL_TRIANGLES, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL);
-	m_vboBatches.Increment();
+	m_vboBatches++;
 	
 	m_lastVBOrendered = this;
 	
-	if (m_boundingVolume) m_boundingVolume->Render();
+	if (m_boundingVolume && SHOWBOUNDINGVOLUME) m_boundingVolume->Render();
 }
 
 void MercuryVBO::InitVBO()
@@ -84,7 +86,7 @@ void MercuryVBO::AllocateIndexSpace(unsigned int count)
 }
 
 void* MercuryVBO::m_lastVBOrendered = NULL;
-MSemaphore MercuryVBO::m_vboBatches;
+uint32_t MercuryVBO::m_vboBatches;
 
 /****************************************************************************
  *   Copyright (C) 2008 by Joshua Allen                                     *
