@@ -65,20 +65,17 @@ void Sub4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 
 void Copy4f( void * dest, const void * source )
 {
-	for (uint8_t i = 0; i < 4; ++i)
-		((float*)dest)[i] = ((float*)source)[i];
+	COPY<float,4>((float*)source, (float*)dest);
 }
 
 void Copy8f( void * dest, const void * source )
 {
-	for (uint8_t i = 0; i < 8; ++i)
-		((float*)dest)[i] = ((float*)source)[i];
+	COPY<float,8>((float*)source, (float*)dest);
 }
 
 void Copy16f( void * dest, const void * source )
 {
-	for (uint8_t i = 0; i < 16; ++i)
-		((float*)dest)[i] = ((float*)source)[i];
+	COPY<float,16>((float*)source, (float*)dest);
 }
 
 void MatrixMultiply4f ( const FloatRow* in1a, const FloatRow* in2a, FloatRow* outa)

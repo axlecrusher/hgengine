@@ -15,6 +15,8 @@ private:
 	///[row][column] (The internal matrix)
 //	float m_matrix[4][4];
 	FloatRow m_matrix[4];
+	
+	static MercuryMatrix IdentityMatrix;
 public:
 	MercuryMatrix();
 	inline MercuryMatrix(const MercuryMatrix& m) { *this = m; }
@@ -41,10 +43,9 @@ public:
 	inline void Transpose() { TransposeMatrix( m_matrix ); }
 
 	void Zero();
-	void Identity();
+	static const MercuryMatrix& Identity();
 	
 	void Print() const;
-	static MercuryMatrix IdentityMatrix;
 }
 #if !defined( WIN32 ) || defined( _MSC_VER )
 M_ALIGN(64);

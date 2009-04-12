@@ -16,6 +16,18 @@ void ZeroFloatRow(FloatRow& r);
 #define RADDEG	57.2957795130823208767f		//radian to degree
 #define	Q_PI	3.14159265358979323846f
 
+template<typename t, unsigned i>
+inline void COPY(const t* s, t*d)
+{
+	d[i-1] = s[i-1];
+	COPY<t,i-1>(s,d);
+}
+
+template<> inline void COPY<float,0>(const float* s, float* d)
+{
+	d[0] = s[0];
+}
+
 #if defined(WIN32)
 //In win32, sin works faster than sinf and similar functions
 #define SIN( x )		float( sin ( x ) )

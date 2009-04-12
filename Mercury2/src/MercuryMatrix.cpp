@@ -3,7 +3,7 @@
 
 MercuryMatrix::MercuryMatrix()
 {
-	Identity();
+	*this = Identity();
 }
 
 const MercuryMatrix& MercuryMatrix::operator=(const MercuryMatrix& m)
@@ -26,14 +26,19 @@ void MercuryMatrix::Zero()
 	ZeroFloatRow( m_matrix[3] );
 }
 
-void MercuryMatrix::Identity()
+const MercuryMatrix& MercuryMatrix::Identity()
 {
-	const static float Identity[16] = { 
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f };
-	Copy16f(&m_matrix[0], Identity );
+	if (IdentityMatrix.m_matrix[0][0] != 1.0f)
+	{
+		float identity[16] = {
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f };
+		Copy16f(MercuryMatrix::IdentityMatrix.m_matrix[0], identity );
+	}
+	
+	return IdentityMatrix;
 }
 
 void MercuryMatrix::Translate(float x, float y, float z)

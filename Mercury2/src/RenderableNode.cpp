@@ -70,7 +70,7 @@ const MercuryMatrix& RenderableNode::FindGlobalMatrix() const
 		if ( (tn = TransformNode::Cast(n)) )
 			return tn->GetGlobalMatrix();
 
-	return MercuryMatrix::IdentityMatrix;
+	return MercuryMatrix::Identity();
 }
 
 void RenderableNode::AddPreRender(MercuryAsset* asset)

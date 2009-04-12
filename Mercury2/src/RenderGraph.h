@@ -8,8 +8,14 @@ class RenderGraphEntry
 {
 	friend class RenderGraph;
 	public:
-		RenderGraphEntry(const MercuryMatrix* matrix = &MercuryMatrix::IdentityMatrix, RenderableNode* node = NULL)
-	:m_node(node), m_matrix(matrix)
+		RenderGraphEntry()
+		{
+			m_node = NULL;
+			m_matrix = &MercuryMatrix::Identity();
+		}
+		
+		RenderGraphEntry(const MercuryMatrix* matrix, RenderableNode* node)
+			:m_node(node), m_matrix(matrix)
 		{}
 		
 		void AddChild(RenderGraphEntry entry);
