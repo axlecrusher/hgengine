@@ -2,7 +2,7 @@
 <kdevelop>
   <general>
     <author>Joshua Allen</author>
-    <email/>
+    <email></email>
     <version>2.0</version>
     <projectmanagement>KDevAutoProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
@@ -14,8 +14,8 @@
     <projectname>Mercury2</projectname>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description/>
-    <defaultencoding/>
+    <description></description>
+    <defaultencoding></defaultencoding>
     <versioncontrol/>
   </general>
   <kdevautoproject>
@@ -61,14 +61,14 @@
         <f77compiler>kdevg77options</f77compiler>
         <cxxflags>-O0 -g -Wall</cxxflags>
         <envvars/>
-        <topsourcedir/>
-        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE -DRUN_FROM_START_FOLDER</cppflags>
-        <ldflags>-lpthread -lX11 -lGL -lxml2 -lpng</ldflags>
-        <ccompilerbinary/>
-        <cxxcompilerbinary/>
-        <f77compilerbinary/>
+        <topsourcedir></topsourcedir>
+        <cppflags>-Isrc/ -I/usr/include/libxml2/ -DHGENGINE -DRUN_FROM_START_FOLDER -pg</cppflags>
+        <ldflags>-lpthread -lX11 -lGL -lxml2 -lpng -pg</ldflags>
+        <ccompilerbinary></ccompilerbinary>
+        <cxxcompilerbinary></cxxcompilerbinary>
+        <f77compilerbinary></f77compilerbinary>
         <cflags>-O0 -g -Wall</cflags>
-        <f77flags/>
+        <f77flags></f77flags>
       </debug>
       <default>
         <envvars/>
@@ -222,7 +222,7 @@
       <includePaths>.;</includePaths>
     </codecompletion>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
@@ -243,11 +243,11 @@
   </cppsupportpart>
   <kdevdebugger>
     <general>
-      <gdbpath/>
+      <gdbpath></gdbpath>
       <dbgshell>libtool</dbgshell>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
