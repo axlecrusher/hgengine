@@ -83,8 +83,9 @@ int main()
 		if (fpsTimer.Age() > 1)
 		{
 			float batches = MercuryVBO::ResetBatchCount()/(float)m_count;
-			float binds = Texture::ReadAndResetBindCount()/(float)m_count;
-			printf("FPS: %f, VBO batches %f, TBinds %f\n", m_count/fpsTimer.Age(), batches, binds);
+			float VBinds = MercuryVBO::ResetBindCount()/(float)m_count;
+			float Tbinds = Texture::ReadAndResetBindCount()/(float)m_count;
+			printf("FPS: %f, VBO batches %f, TBinds %f, VBinds %f\n", m_count/fpsTimer.Age(), batches, Tbinds, VBinds);
 			m_count = 0;
 			fpsTimer = timer;
 		}

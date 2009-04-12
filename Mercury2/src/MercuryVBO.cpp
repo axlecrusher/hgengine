@@ -40,7 +40,10 @@ void MercuryVBO::Render(const MercuryNode* node)
 		InitVBO();
 		
 	if ( this != m_lastVBOrendered)
+	{		
 		glVertexPointer(3, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*5));
+		++m_vboBinds;
+	}
 	
 	//apply all the active textures
 	for (uint8_t i = 0; i < numTextures; ++i)
@@ -87,6 +90,7 @@ void MercuryVBO::AllocateIndexSpace(unsigned int count)
 
 void* MercuryVBO::m_lastVBOrendered = NULL;
 uint32_t MercuryVBO::m_vboBatches;
+uint32_t MercuryVBO::m_vboBinds;
 
 /****************************************************************************
  *   Copyright (C) 2008 by Joshua Allen                                     *

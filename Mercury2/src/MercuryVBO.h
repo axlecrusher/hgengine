@@ -20,6 +20,7 @@ class MercuryVBO : public MercuryAsset
 
 		static uint32_t BatchCount() { return m_vboBatches; }
 		static uint32_t ResetBatchCount() { uint32_t t = m_vboBatches; m_vboBatches = 0; return t; }
+		static uint32_t ResetBindCount() { uint32_t t = m_vboBinds; m_vboBinds = 0; return t; }
 	
 	private:
 		virtual void InitVBO();
@@ -33,6 +34,7 @@ class MercuryVBO : public MercuryAsset
 		AlignedBuffer<uint16_t> m_indexData;
 
 		static uint32_t m_vboBatches;
+		static uint32_t m_vboBinds;
 };
 
 #endif

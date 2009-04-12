@@ -6,6 +6,7 @@
 
 #include <GL/gl.h>
 #include <GL/glext.h>
+#include <GL/glu.h>
 
 using namespace std;
 
@@ -62,6 +63,7 @@ void Texture::LoadFromRaw(const RawImageData* raw)
 	}
 
 	glBindTexture(GL_TEXTURE_2D, m_textureID);
+/*	
 	glTexImage2D(GL_TEXTURE_2D,
 				0,
 				ByteType,
@@ -71,8 +73,10 @@ void Texture::LoadFromRaw(const RawImageData* raw)
 				ByteType,
 				GL_UNSIGNED_BYTE,
 				m_raw->m_data);
+*/
+	gluBuild2DMipmaps( GL_TEXTURE_2D, 3, m_raw->m_width, m_raw->m_height, ByteType, GL_UNSIGNED_BYTE, m_raw->m_data );
 	
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
 //	glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
@@ -80,6 +84,8 @@ void Texture::LoadFromRaw(const RawImageData* raw)
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	
+//	gluBuild2DMipmaps( GL_TEXTURE_2D, 3, m_raw->m_width, m_raw->m_height, ByteType, GL_UNSIGNED_BYTE, m_raw->m_data );
+
 };
 
 void Texture::Render(const MercuryNode* node)
