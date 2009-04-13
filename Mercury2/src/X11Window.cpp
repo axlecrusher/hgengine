@@ -142,7 +142,12 @@ bool X11Window::PumpMessages()
 				XMotionEvent* e = (XMotionEvent*)&event;
 				break;
 			}
-
+			case ConfigureNotify:
+			{
+				XConfigureEvent* e = (XConfigureEvent*)&event;
+				glViewport(0,0, e->width, e->height);
+				break;
+			}
 			default:
 				break;
 		}
