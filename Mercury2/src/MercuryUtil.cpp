@@ -14,10 +14,10 @@ MString ToUpper(const MString& s)
 	return t;
 }
 
-float StrToFloat(const  MString & s)
+float StrToFloat(const  MString & s, float d)
 {
-	float x;
-	sscanf(s.c_str(), "%f", &x);
+	float x = d;
+	if ( s.length() > 0) sscanf(s.c_str(), "%f", &x);
 	return x;
 }
 

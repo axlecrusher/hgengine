@@ -12,6 +12,7 @@ extern const Frustum* FRUSTUM;
 class Viewport : public RenderableNode
 {
 	public:
+		Viewport();
 		virtual void Render(const MercuryMatrix& matrix);
 		
 		virtual void LoadFromXML(const XMLNode& node);
@@ -19,6 +20,8 @@ class Viewport : public RenderableNode
 		GENRTTI(Viewport);
 	private:
 		Frustum m_frustum;
+		float m_xFactor, m_yFactor;
+		int m_minx, m_miny;
 };
 
 #endif

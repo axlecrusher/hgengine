@@ -29,7 +29,7 @@ bool isAligned(size_t align, const void* mem);
 
 MString ToUpper(const MString & s);
 
-float StrToFloat(const MString & s);
+float StrToFloat(const MString & s, float d = 0);
 
 template<typename T>
 const T& max(const T& t1, const T& t2)

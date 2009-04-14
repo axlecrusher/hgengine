@@ -25,6 +25,9 @@ public:
 	}
 	
 	virtual void* GetProcAddress(const MString& x) = 0;
+	
+	inline int Width() const { return m_width; }
+	inline int Height() const { return m_height; }
 
 protected:
 	static Callback0R< MercuryWindow* > genWindowClbk;

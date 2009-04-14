@@ -1,13 +1,22 @@
 #include <Viewport.h>
 #include <GL/gl.h>
+#include <MercuryWindow.h>
 
 REGISTER_NODE_TYPE(Viewport);
 const Frustum* FRUSTUM;
+
+Viewport::Viewport()
+	:m_xFactor(1), m_yFactor(0.5), m_minx(0), m_miny(0)
+{
+}
 
 void Viewport::Render(const MercuryMatrix& matrix)
 {
 	FRUSTUM = &m_frustum;
 	
+	MercuryWindow* w = MercuryWindow::GetCurrentWindow();
+	glViewport(m_minx, m_miny, w->Width()*m_xFactor, w->Height()*m_yFactor);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	
@@ -24,11 +33,19 @@ void Viewport::Render(const MercuryMatrix& matrix)
 
 void Viewport::LoadFromXML(const XMLNode& node)
 {
+	m_xFactor = StrToFloat(node.Attribute("xfactor"), 1.0f);
+	m_yFactor = StrToFloat(node.Attribute("yfactor"), 1.0f);
+	m_minx = StrToFloat(node.Attribute("minx"), 0);
+	m_miny = StrToFloat(node.Attribute("miny"), 0);
+
+	MercuryWindow* w = MercuryWindow::GetCurrentWindow();
+
 	m_frustum.SetPerspective( StrToFloat(node.Attribute("fov")),
-							  StrToFloat(node.Attribute("aspect")),
+				  (w->Width()*m_xFactor)/(w->Height()*m_yFactor),
+//							  StrToFloat(node.Attribute("aspect")),
 							  StrToFloat(node.Attribute("near")),
 							  StrToFloat(node.Attribute("far")));
-	
+		
 	m_frustum.LookAt(MercuryVertex(), MercuryVertex(0,0,1), MercuryVertex(0,1,0));
 	
 	RenderableNode::LoadFromXML(node);
