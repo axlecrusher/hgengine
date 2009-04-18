@@ -117,18 +117,43 @@ XMLNode XMLNode::FindFallbackNode() const
 
 	if (d)
 	{
-		//start searching at the root
-		XMLNode root( xmlDocGetRootElement(m_doc), m_doc );
+		MString path((const char*)d);
+
+		int pos = path.find(".");
+		MString name = pos<=0?path:path.substr(0, pos);
+		MString rpath = pos<=0?"":path.substr(pos+1); //skip the period
+		
+		XMLNode parent = FindParentWithName( name );
+		if ( !parent.IsValid() )
+		{
+			//nothing found, do search down from root
+			parent = XMLNode( xmlDocGetRootElement(m_doc), m_doc );
+			rpath = path;
+		}
+
 		//prevent infinite recursion on self
-		if ( root.m_node != m_node )
+		if ( parent.m_node != m_node )
 		{	
-			n = root.RecursiveFindFallbackNode( MString((const char*)d) );
+			n = parent.RecursiveFindFallbackNode( rpath );
 		}
 		xmlFree(d);
 	}
 
 	return n;
 }
+
+XMLNode XMLNode::FindParentWithName(const MString& name) const
+{
+	if ( (!name.empty()) && (m_node->parent) )
+	{
+		XMLNode parent(m_node->parent, m_doc);
+		if (parent.Attribute("name") == name)
+			return parent;
+		return parent.FindParentWithName( name );
+	}
+	return XMLNode();
+}
+
 
 XMLNode XMLNode::RecursiveFindFallbackNode(const MString& path) const
 {

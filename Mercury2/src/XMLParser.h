@@ -37,6 +37,7 @@ class XMLNode
 		const XMLNode& operator=(const XMLNode& n);
 	private:
 		XMLNode RecursiveFindFallbackNode(const MString& path) const;
+		XMLNode FindParentWithName(const MString& name) const;
 
 		xmlNode* m_node;
 		xmlDoc* m_doc; //parent doc, don't free
