@@ -63,10 +63,10 @@ fi
 
 if test $OPT_OGL = 1; then
 	NEED_H="GL/gl.h"
-	NEED_L="$NEED_L GL"
+	NEED_L="$NEED_L GL GLU"
 fi
 
-if test $OPT_ss = 1; then
+if test $OPT_sse = 1; then
 	DEFINES="$DEFINES USE_SSE"
 fi
 
