@@ -18,6 +18,8 @@ class X11Window : public MercuryWindow
 		virtual bool PumpMessages();
 
 		virtual void* GetProcAddress(const MString& x);
+		
+		virtual void Clear();
 
 	private:
 		Display* m_display;

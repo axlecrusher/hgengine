@@ -156,6 +156,11 @@ bool X11Window::PumpMessages()
 	return true;
 }
 
+void X11Window::Clear()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
 void* X11Window::GetProcAddress(const MString& x)
 {
 return NULL;	

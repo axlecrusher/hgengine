@@ -73,7 +73,7 @@ int main()
 			renderGraph.Build(root);
 		}
 		
-		
+		w->Clear();
 		renderGraph.Render();
 //		RenderableNode::RecursiveRender(root);
 		w->SwapBuffers();

@@ -17,7 +17,6 @@ void Viewport::Render(const MercuryMatrix& matrix)
 	MercuryWindow* w = MercuryWindow::GetCurrentWindow();
 	glViewport(m_minx, m_miny, w->Width()*m_xFactor, w->Height()*m_yFactor);
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	
 	MercuryMatrix f = m_frustum.GetMatrix();
