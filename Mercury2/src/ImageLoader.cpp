@@ -1,7 +1,19 @@
 #include <ImageLoader.h>
 #include <MercuryUtil.h>
+#include <Texture.h>
 
 using namespace std;
+
+void* ImageLoader::ImageLoaderThread(void* d)
+{
+	ThreadData *pd = (ThreadData*)d;
+	ThreadData data = *pd;
+	delete pd;
+	RawImageData* imageData = data.imageloader->LoadImage( data.filename );
+	((Texture*)data.asset)->SetRawData(imageData);
+	data.asset->LoadedCallback();
+	return 0;
+}
 
 ImageLoader& ImageLoader::GetInstance()
 {
@@ -24,7 +36,7 @@ RawImageData* ImageLoader::LoadImage(const MString& filename)
 	MercuryFile* f = FILEMAN.Open( filename );
 	char fingerprint[4];
 	fingerprint[3] = 0;
-
+	
 	if( !f )
 	{
 		printf( "Error opening image: %s\n", filename.c_str() );
@@ -47,6 +59,14 @@ RawImageData* ImageLoader::LoadImage(const MString& filename)
 	}
 	delete f;
 	return NULL;
+}
+
+void ImageLoader::LoadImageThreaded(MercuryAsset* t, const MString& filename)
+{
+	ThreadData* data = new ThreadData(this, t, filename);
+	MercuryThread loaderThread;
+	loaderThread.HaltOnDestroy(false);
+	loaderThread.Create( ImageLoader::ImageLoaderThread, data, true );
 }
 
 /****************************************************************************

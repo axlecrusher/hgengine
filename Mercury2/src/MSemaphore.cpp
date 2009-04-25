@@ -25,6 +25,22 @@ unsigned long MSemaphore::Increment()
 	return __sync_add_and_fetch(&m_counter, 1);
 }
 
+void MSemaphore::WaitAndSet(unsigned long value, unsigned long newVal)
+{
+	while ( !__sync_bool_compare_and_swap(&m_counter, value, newVal) );
+}
+
+MSemaphoreLock::MSemaphoreLock(MSemaphore* s)
+	:m_s(s)
+{
+	m_s->WaitAndSet(0,1);
+}
+
+MSemaphoreLock::~MSemaphoreLock()
+{
+	m_s->WaitAndSet(1,0);
+}
+
 MSemaphoreIncOnDestroy::MSemaphoreIncOnDestroy(MSemaphore* s)
 	:m_s(s)
 {

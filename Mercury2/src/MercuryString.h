@@ -32,7 +32,7 @@ public:
 	inline const char * c_str() const { return m_sCur; }
 	inline unsigned long length() const { return m_iLen; }
 	inline unsigned long size() const { return m_iLen; }
-	inline bool empty() const { return m_iLen == 0; }
+	inline bool empty() const { return m_iLen <= 0; }
 
 	void append( const MString & app );
 	void append( const char app );

@@ -110,6 +110,7 @@ void MercuryNode::ThreadedUpdate(float dTime)
 
 void MercuryNode::LoadFromXML(const XMLNode& node)
 {
+	SetName( node.Attribute("name") );
 	//Not much to do here except run through all the children nodes
 	for (XMLNode child = node.Child(); child.IsValid(); child = child.NextNode())
 	{

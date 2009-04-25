@@ -18,6 +18,19 @@ void MercuryAsset::Init(MercuryNode* node)
 		rn->AddRender(this);
 }
 
+void MercuryAsset::SetLoadState(LoadState ls)
+{
+	MSemaphoreLock lock( &m_lock );
+	m_loadState = ls;
+}
+
+LoadState MercuryAsset::GetLoadState()
+{
+	MSemaphoreLock lock( &m_lock );
+	return m_loadState;
+}
+
+
 AssetFactory& AssetFactory::GetInstance()
 {
 	static AssetFactory* instance = NULL;

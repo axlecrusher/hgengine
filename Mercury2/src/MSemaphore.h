@@ -10,9 +10,19 @@ class MSemaphore
 		unsigned long ReadAndClear();
 		unsigned long Decrement();
 		unsigned long Increment();
+		void WaitAndSet(unsigned long value, unsigned long newVal);
 
 	private:
 		unsigned long m_counter;
+};
+
+class MSemaphoreLock
+{
+	public:
+		MSemaphoreLock(MSemaphore* s);
+		~MSemaphoreLock();
+	private:
+		MSemaphore* m_s;
 };
 
 class MSemaphoreIncOnDestroy

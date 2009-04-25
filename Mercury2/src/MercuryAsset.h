@@ -7,6 +7,14 @@
 #include <map>
 #include <MercuryMatrix.h>
 #include <BoundingBox.h>
+#include <MSemaphore.h>
+
+enum LoadState
+{
+	LOADING,
+	LOADED,
+	NONE
+};
 
 class MercuryAsset : public RefBase, MessageHandler
 {
@@ -23,12 +31,20 @@ class MercuryAsset : public RefBase, MessageHandler
 		///Loads an asset from an XMLAsset representing itself
 		virtual void LoadFromXML(const XMLNode& node) {};
 		
+		virtual void LoadedCallback() {};
+		
 		inline void IsInstanced(bool b) { m_isInstanced = b; }
 
 		inline const BoundingVolume* GetBoundingVolume() const { return m_boundingVolume; }
 	protected:
+		void SetLoadState(LoadState ls);
+		LoadState GetLoadState();
+		
 		bool m_isInstanced;
 		BoundingVolume* m_boundingVolume;
+	private:
+		LoadState m_loadState;
+		MSemaphore m_lock;
 };
 
 class AssetFactory

@@ -17,13 +17,16 @@ class Texture : public MercuryAsset
 			
 		virtual void LoadFromXML(const XMLNode& node);
 		
-		void LoadFromRaw(const RawImageData* raw);
+		void LoadFromRaw();
+		virtual void LoadedCallback();
 		
 		inline static unsigned short NumberActiveTextures() { return m_activeTextures; }
 		inline static uint32_t ReadAndResetBindCount() { uint32_t t = m_textureBinds; m_textureBinds = 0; return t; }
 		
 		static Texture* Generate();
 		static MAutoPtr< Texture > LoadFromFile(const MString& path);
+		
+		void SetRawData(RawImageData* raw);
 	private:
 		void LoadImage(const MString& path);
 		

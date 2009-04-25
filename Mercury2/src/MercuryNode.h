@@ -41,7 +41,7 @@ class MercuryNode : public MessageHandler
 		const std::list< MercuryNode* >& Children() const { return m_children; }
 		
 		virtual void Update(float dTime) {};
-		void RecursiveUpdate(float dTime);
+		virtual void RecursiveUpdate(float dTime);
 		void ThreadedUpdate(float dTime);
 		
 		///Run on parent when a child is added
@@ -62,7 +62,9 @@ class MercuryNode : public MessageHandler
 		GENRTTI(MercuryNode);
 		
 		inline static bool NeedsRebuild() { bool t=m_rebuildRenderGraph; m_rebuildRenderGraph = false; return t; }
-	
+		inline void SetName(const MString& name) { m_name = name; }
+		inline MString GetName() const { return m_name; }
+		
 	protected:
 		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
 		MercuryNode* m_parent;
@@ -70,6 +72,7 @@ class MercuryNode : public MessageHandler
 		MercuryNode* m_nextSibling;
 
 		static bool m_rebuildRenderGraph;
+		MString m_name;
 
 };
 

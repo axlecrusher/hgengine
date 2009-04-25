@@ -41,11 +41,12 @@ void Texture::Init(MercuryNode* node)
 		rn->AddPostRender( this );
 }
 
-void Texture::LoadFromRaw(const RawImageData* raw)
+void Texture::LoadFromRaw()
 {
+	if ( !m_raw ) return;
 	if ( !m_textureID ) glGenTextures(1, &m_textureID);
 	
-	m_raw = raw;
+//	m_raw = raw;
 	int ByteType;
 	
 	switch (m_raw->m_ColorByteType)
@@ -90,6 +91,11 @@ void Texture::LoadFromRaw(const RawImageData* raw)
 
 void Texture::Render(const MercuryNode* node)
 {
+	if (GetLoadState() == LOADED)
+	{
+		LoadFromRaw();
+		SetLoadState(NONE);
+	}
 	BindTexture();
 }
 
@@ -100,7 +106,7 @@ void Texture::PostRender(const MercuryNode* node)
 
 void Texture::LoadFromXML(const XMLNode& node)
 {
-	LoadImage( node.Attribute("file") );	
+	LoadImage( node.Attribute("file") );
 }
 
 void Texture::BindTexture()
@@ -132,9 +138,28 @@ void Texture::LoadImage(const MString& path)
 	{
 		ADD_ASSET_INSTANCE(Texture, path, this);
 		m_filename = path;
-		RawImageData* d = ImageLoader::GetInstance().LoadImage( m_filename );
-		if (d) LoadFromRaw( d );
+		SetLoadState(LOADING);
+		
+		MercuryThread loaderThread;
+//		ImageLoader::LoadImageThreaded(this, m_filename );
+		ImageLoader::GetInstance().LoadImageThreaded(this, m_filename );
+//		LoadFromRaw();
+//		RawImageData* d = ImageLoader::GetInstance().LoadImage( m_filename );
+//		if (d) LoadFromRaw( d );
+//		m_raw = d;
 	}
+}
+
+void Texture::LoadedCallback()
+{
+	printf("loaded!!!!!\n");
+	SetLoadState(LOADED);
+}
+
+void Texture::SetRawData(RawImageData* raw)
+{
+	SAFE_DELETE(m_raw);
+	m_raw = raw;
 }
 
 Texture* Texture::Generate()

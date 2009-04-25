@@ -7,15 +7,33 @@
 #include <list>
 #include <MercuryUtil.h>
 
+#include <MercuryAsset.h>
+
 class ImageLoader
 {
 	public:
 		static ImageLoader& GetInstance();
 		bool RegisterFactoryCallback(const MString& type, Callback1R< MercuryFile *, RawImageData* >);
 		RawImageData* LoadImage(const MString& filename);
-	
+		void LoadImageThreaded(MercuryAsset* t, const MString& filename);
+		
 	private:
+		static void* ImageLoaderThread(void* d);
 		std::list< std::pair< MString, Callback1R< MercuryFile*, RawImageData* > > > m_factoryCallbacks;
+};
+
+class ThreadData
+{
+	public:
+		ThreadData(ImageLoader* il, MercuryAsset* a, const MString& f)
+		{
+			asset = a;
+			filename = f;
+			imageloader = il;
+		}
+		MercuryAsset* asset;
+		MString filename;
+		ImageLoader* imageloader;
 };
 
 static InstanceCounter<ImageLoader> ILcounter("ImageLoader");
