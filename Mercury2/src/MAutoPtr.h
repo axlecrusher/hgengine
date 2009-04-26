@@ -114,6 +114,8 @@ class MAutoPtr
 		inline operator const T*() const { return m_ptr; }
 
 		inline bool IsValid() { return m_ptr != NULL; }  //true if valid
+		
+		inline T* Ptr() { return m_ptr; }
 	private:
 		void IncrementReference() //not thread safe, must guard
 		{

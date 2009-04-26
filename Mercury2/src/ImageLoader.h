@@ -31,7 +31,9 @@ class ThreadData
 			filename = f;
 			imageloader = il;
 		}
-		MercuryAsset* asset;
+		
+		//use and autoptr here to prevent crashes if asset is removed during load
+		MAutoPtr< MercuryAsset > asset;
 		MString filename;
 		ImageLoader* imageloader;
 };

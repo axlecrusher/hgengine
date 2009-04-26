@@ -8,9 +8,10 @@ void* ImageLoader::ImageLoaderThread(void* d)
 {
 	ThreadData *pd = (ThreadData*)d;
 	ThreadData data = *pd;
+	Texture *texture = (Texture*)data.asset.Ptr();
 	delete pd;
 	RawImageData* imageData = data.imageloader->LoadImage( data.filename );
-	((Texture*)data.asset)->SetRawData(imageData);
+	texture->SetRawData(imageData);
 	data.asset->LoadedCallback();
 	return 0;
 }
