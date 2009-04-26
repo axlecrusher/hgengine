@@ -2,7 +2,7 @@
 #include <RenderableNode.h>
 
 MercuryAsset::MercuryAsset()
-	:m_isInstanced(false), m_boundingVolume(NULL)
+	:m_isInstanced(false), m_boundingVolume(NULL), m_loadState(NONE)
 {
 }
 
@@ -30,6 +30,10 @@ LoadState MercuryAsset::GetLoadState()
 	return m_loadState;
 }
 
+void MercuryAsset::LoadedCallback()
+{
+	SetLoadState( LOADED );
+}
 
 AssetFactory& AssetFactory::GetInstance()
 {

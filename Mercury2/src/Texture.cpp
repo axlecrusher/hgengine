@@ -24,7 +24,7 @@ Texture::Texture()
 
 Texture::~Texture()
 {
-	REMOVE_ASSET_INSTANCE(TEXTURE, m_filename);
+	REMOVE_ASSET_INSTANCE(TEXTURE, m_path);
 	
 	if (m_textureID) glDeleteTextures(1, &m_textureID);
 	m_textureID = 0;
@@ -136,24 +136,18 @@ void Texture::LoadImage(const MString& path)
 	if (m_isInstanced) return;
 	if ( !path.empty() )
 	{
-		ADD_ASSET_INSTANCE(Texture, path, this);
-		m_filename = path;
 		SetLoadState(LOADING);
+		ADD_ASSET_INSTANCE(Texture, path, this);
+		m_path = path;
 		
-		MercuryThread loaderThread;
+//		MercuryThread loaderThread;
 //		ImageLoader::LoadImageThreaded(this, m_filename );
-		ImageLoader::GetInstance().LoadImageThreaded(this, m_filename );
+		ImageLoader::GetInstance().LoadImageThreaded(this);
 //		LoadFromRaw();
 //		RawImageData* d = ImageLoader::GetInstance().LoadImage( m_filename );
 //		if (d) LoadFromRaw( d );
 //		m_raw = d;
 	}
-}
-
-void Texture::LoadedCallback()
-{
-	printf("loaded!!!!!\n");
-	SetLoadState(LOADED);
 }
 
 void Texture::SetRawData(RawImageData* raw)
@@ -170,7 +164,7 @@ Texture* Texture::Generate()
 MAutoPtr< Texture > Texture::LoadFromFile(const MString& path)
 {
 	MAutoPtr< MercuryAsset > t( AssetFactory::GetInstance().Generate("Texture", path) );
-	Texture *a = (Texture*)&(*t);
+	Texture *a = (Texture*)t.Ptr();
 	a->LoadImage( path );
 	return a;
 }

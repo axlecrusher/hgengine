@@ -18,7 +18,6 @@ class Texture : public MercuryAsset
 		virtual void LoadFromXML(const XMLNode& node);
 		
 		void LoadFromRaw();
-		virtual void LoadedCallback();
 		
 		inline static unsigned short NumberActiveTextures() { return m_activeTextures; }
 		inline static uint32_t ReadAndResetBindCount() { uint32_t t = m_textureBinds; m_textureBinds = 0; return t; }
@@ -41,7 +40,7 @@ class Texture : public MercuryAsset
 		static unsigned short m_activeTextures;
 		static uint32_t m_textureBinds;
 		
-		MString m_filename;
+//		MString m_filename;
 };
 
 #endif

@@ -21,7 +21,7 @@ void HGMDLModel::LoadFromXML(const XMLNode& node)
 	LoadHGMDL( path );
 }
 
-void HGMDLModel::LoadModel(MercuryFile* hgmdl)
+void HGMDLModel::LoadModel(MercuryFile* hgmdl, HGMDLModel* model)
 {
 	char fingerPrint[5];
 	fingerPrint[4] = 0;
@@ -54,14 +54,15 @@ void HGMDLModel::LoadModel(MercuryFile* hgmdl)
 	{
 		MAutoPtr< HGMDLMesh > mesh( new HGMDLMesh() );
 		mesh->LoadFromFile( hgmdl );
-		m_meshes.push_back(mesh);
+		model->m_meshes.push_back(mesh);
 	}
 }
 
 void HGMDLModel::Render(const MercuryNode* node)
 {
-	for(uint16_t i = 0; i < m_meshes.size(); ++i)
-		m_meshes[i]->Render(node);
+	if ( GetLoadState() != LOADING )
+		for(uint16_t i = 0; i < m_meshes.size(); ++i)
+			m_meshes[i]->Render(node);
 }
 
 void HGMDLModel::LoadHGMDL( const MString& path )
@@ -69,16 +70,14 @@ void HGMDLModel::LoadHGMDL( const MString& path )
 	if ( m_isInstanced ) return;
 	if ( !path.empty() )
 	{
+		SetLoadState(LOADING);
 		ADD_ASSET_INSTANCE(HGMDLModel, path, this);
 		m_path = path;
-		MercuryFile * f = FILEMAN.Open( path );
-		if( !f )
-		{
-			printf( "Could not open file: \"%s\" for model\n", path.c_str() );
-			return;
-		}
-		LoadModel( f );
-		delete f;
+		
+		LoaderThreadData* ltd = new LoaderThreadData( this );
+		MercuryThread loaderThread;
+		loaderThread.HaltOnDestroy(false);
+		loaderThread.Create( LoaderThread, ltd );
 	}
 }
 
@@ -86,6 +85,29 @@ HGMDLModel* HGMDLModel::Generate()
 {
 	printf("new HGMDL\n");
 	return new HGMDLModel();
+}
+
+void* HGMDLModel::LoaderThread(void* d)
+{
+	LoaderThreadData *pd = (LoaderThreadData*)d;
+	LoaderThreadData data = *pd;
+	delete pd;
+	
+	HGMDLModel *model = (HGMDLModel*)data.asset.Ptr();
+	
+	MercuryFile * f = FILEMAN.Open( model->m_path );
+	if( !f )
+	{
+		printf( "Could not open file: \"%s\" for model\n", model->m_path.c_str() );
+		return 0;
+	}
+	
+	LoadModel(f, model);
+	
+	delete f;
+	
+	model->LoadedCallback();
+	return 0;
 }
 
 /****************************************************************************

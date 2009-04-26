@@ -6,11 +6,12 @@ using namespace std;
 
 void* ImageLoader::ImageLoaderThread(void* d)
 {
-	ThreadData *pd = (ThreadData*)d;
-	ThreadData data = *pd;
-	Texture *texture = (Texture*)data.asset.Ptr();
+	LoaderThreadData *pd = (LoaderThreadData*)d;
+	LoaderThreadData data = *pd;
 	delete pd;
-	RawImageData* imageData = data.imageloader->LoadImage( data.filename );
+	
+	Texture *texture = (Texture*)data.asset.Ptr();
+	RawImageData* imageData = GetInstance().LoadImage( data.asset->Path() );
 	texture->SetRawData(imageData);
 	data.asset->LoadedCallback();
 	return 0;
@@ -62,9 +63,9 @@ RawImageData* ImageLoader::LoadImage(const MString& filename)
 	return NULL;
 }
 
-void ImageLoader::LoadImageThreaded(MercuryAsset* t, const MString& filename)
+void ImageLoader::LoadImageThreaded(MercuryAsset* t)
 {
-	ThreadData* data = new ThreadData(this, t, filename);
+	LoaderThreadData* data = new LoaderThreadData(t);
 	MercuryThread loaderThread;
 	loaderThread.HaltOnDestroy(false);
 	loaderThread.Create( ImageLoader::ImageLoaderThread, data, true );

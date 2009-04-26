@@ -40,8 +40,9 @@ class RenderableNode : public MercuryNode
 		bool m_hidden;
 	private:
 		bool IsInAssetList(MercuryAsset* asset) const;
-				
-		std::list< MAutoPtr< MercuryAsset > > m_assets;	///serves as a holder for memory
+		
+		//The asset is actually stored here
+		std::list< MAutoPtr< MercuryAsset > > m_assets;
 		
 		//we will just use normal pointers here because we don't want to waste too much time
 		//dereferencing the autopointer. As a precaution when assets are added to these lists,

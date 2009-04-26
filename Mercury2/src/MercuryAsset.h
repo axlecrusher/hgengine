@@ -16,6 +16,9 @@ enum LoadState
 	NONE
 };
 
+/* Assets are stored in renderable nodes with MAuto pointers.
+The renderable nodes handle the memory management
+*/
 class MercuryAsset : public RefBase, MessageHandler
 {
 	public:
@@ -31,20 +34,34 @@ class MercuryAsset : public RefBase, MessageHandler
 		///Loads an asset from an XMLAsset representing itself
 		virtual void LoadFromXML(const XMLNode& node) {};
 		
-		virtual void LoadedCallback() {};
+		virtual void LoadedCallback(); //thread safe
 		
 		inline void IsInstanced(bool b) { m_isInstanced = b; }
 
 		inline const BoundingVolume* GetBoundingVolume() const { return m_boundingVolume; }
+		inline const MString& Path() const { return m_path; }
 	protected:
-		void SetLoadState(LoadState ls);
-		LoadState GetLoadState();
+		void SetLoadState(LoadState ls); //thread safe
+		LoadState GetLoadState(); //thread safe
 		
 		bool m_isInstanced;
 		BoundingVolume* m_boundingVolume;
+		MString m_path;
 	private:
 		LoadState m_loadState;
 		MSemaphore m_lock;
+};
+
+class LoaderThreadData
+{
+	public:
+		LoaderThreadData(MercuryAsset* a)
+		{
+			asset = a;
+		}
+		
+		//use and autoptr here to prevent crashes if asset is removed during load
+		MAutoPtr< MercuryAsset > asset;
 };
 
 class AssetFactory
@@ -62,6 +79,7 @@ class AssetFactory
 
 		std::list< std::pair< MString, Callback0R< MAutoPtr<MercuryAsset> > > > m_factoryCallbacks;
 		
+		//the actual storage point is in renderable nodes
 		static std::map<MString, MercuryAsset*> m_assetInstances;
 
 };
