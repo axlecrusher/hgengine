@@ -1,7 +1,7 @@
 #ifndef MERCURYTIMER_H
 #define MERCURYTIMER_H
 
-#include <stdint.h>
+#include <Mint.h>
 
 int64_t GetTimeInMicroSeconds();
 

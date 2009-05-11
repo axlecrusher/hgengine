@@ -195,6 +195,16 @@ bool Win32Window::PumpMessages()
 	return true;
 }
 
+void* Win32Window::GetProcAddress(const MString& x)
+{
+	return NULL;
+}
+
+void Win32Window::Clear()
+{
+}
+
+
 LRESULT CALLBACK WindowCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)

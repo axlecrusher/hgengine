@@ -1,6 +1,7 @@
 #ifndef MERCURYWINDOW_H
 #define MERCURYWINDOW_H
 
+#include <global.h>
 #include <MercuryUtil.h>
 #include <list>
 #include <Callback.h>
@@ -36,7 +37,8 @@ protected:
 	static MercuryWindow* m_windowInstance;
 	
 	MString m_title;
-	int m_width, m_height, m_bits, m_depthBits;
+	int m_width, m_height;
+	uint8_t m_bits, m_depthBits;
 	bool m_fullscreen;
 };
 

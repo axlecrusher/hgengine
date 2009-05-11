@@ -1,4 +1,4 @@
-#include <stdint.h>
+#include <Mint.h>
 #include "MercuryMath.h"
 
 //the SSE version of this was really slow, this is quicker

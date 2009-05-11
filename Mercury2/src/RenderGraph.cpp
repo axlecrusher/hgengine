@@ -1,7 +1,7 @@
 #include <MercuryMatrix.h>
 #include <RenderGraph.h>
 
-#include <GL/gl.h>
+#include <GLHeaders.h>
 
 void RenderGraphEntry::Render()
 {

@@ -1,8 +1,8 @@
 #include <RenderableNode.h>
 #include <assert.h>
-#include <GL/gl.h>
+#include <GLHeaders.h>
 #include <TransformNode.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <Viewport.h>
 
 using namespace std;
@@ -67,8 +67,11 @@ const MercuryMatrix& RenderableNode::FindGlobalMatrix() const
 	MercuryNode* n = NULL;
 	TransformNode* tn;
 	for (n = Parent(); n; n = n->Parent())
-		if ( (tn = TransformNode::Cast(n)) )
+	{
+		tn = TransformNode::Cast(n);
+		if ( tn )
 			return tn->GetGlobalMatrix();
+	}
 
 	return MercuryMatrix::Identity();
 }

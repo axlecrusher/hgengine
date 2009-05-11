@@ -1,11 +1,13 @@
 #include "MercuryFileDriverDirect.h"
 
-#if !defined(WIN32)
+#ifndef WIN32
 #include <dirent.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#else
+#include <windows.h>
 #endif
 
 #if defined(_EE)
@@ -169,7 +171,7 @@ unsigned long MercuryFileObjectDirect::GetModTime()
 	if( !m_fF )
 		return 0;
 #if defined(WIN32)
-	HANDLE hFile = CreateFile( m_sPath.c_str(), GENERIC_READ, FILE_SHARE_READ, 
+	HANDLE hFile = CreateFile( (LPCWSTR)(m_sPath.c_str()), GENERIC_READ, FILE_SHARE_READ, 
 		NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
 	if( !hFile )
 		return 0;
@@ -203,7 +205,7 @@ MercuryFileDirverDirect::MercuryFileDirverDirect()
 	char buffer[1024];
 	char * path_end;
 	int retcode = 0;
-	if( ( retcode = GetModuleFileName( NULL, buffer, 1024 ) ) < 0 )
+	if( ( retcode = GetModuleFileName( NULL, (LPWCH)buffer, 1024 ) ) < 0 )
 	{
 		fprintf( stderr, "WARNING:  Could not change path of program to path of executable! Faild to get it with response: %d\n", retcode );
 	}
@@ -213,7 +215,7 @@ MercuryFileDirverDirect::MercuryFileDirverDirect()
 		fprintf( stderr, "WARNING:  Could not change path of program to path of executable!  Path retreived: \"%s\".\n", buffer );
 	}
 	*path_end = 0;
-	if( !SetCurrentDirectory( buffer ) )
+	if( !SetCurrentDirectory( (LPCWSTR)buffer ) )
 	{
 		fprintf( stderr, "WARNING:  Could not set operational folder.", buffer );
 	}
@@ -256,7 +258,7 @@ void MercuryFileDirverDirect::ListDirectory( const MString & sPath, MVector< MSt
 {
 #if defined(WIN32)
 	WIN32_FIND_DATA fd;
-	HANDLE hFind = ::FindFirstFile( sPath, &fd );
+	HANDLE hFind = ::FindFirstFile( (LPCWSTR)(sPath.c_str()), &fd );
 	if( INVALID_HANDLE_VALUE == hFind )		// no files found
 		return;
 	do
@@ -267,7 +269,7 @@ void MercuryFileDirverDirect::ListDirectory( const MString & sPath, MVector< MSt
 		if( (!bDirsOnly)  &&  (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
 			continue;	// skip
 
-		MString sDirName( fd.cFileName );
+		MString sDirName( ((char*)fd.cFileName) );
 
 		if( sDirName == "."  ||  sDirName == ".." )
 			continue;

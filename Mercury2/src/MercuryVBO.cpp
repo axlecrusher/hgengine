@@ -2,8 +2,8 @@
 
 #define GL_GLEXT_PROTOTYPES
 
-#include <GL/gl.h>
-#include <GL/glext.h>
+#include <GLHeaders.h>
+
 
 #include <Texture.h>
 
@@ -45,7 +45,7 @@ void MercuryVBO::Render(const MercuryNode* node)
 		++m_vboBinds;
 	}
 	
-	//apply all the active textures
+	//apply all the active Textures
 	for (uint8_t i = 0; i < numTextures; ++i)
 	{
 		glActiveTexture( GL_TEXTURE0+i );

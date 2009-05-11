@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <MercuryString.h>
 #include <assert.h>
+#include <global.h>
 
 /*#ifndef NULL
 #define NULL 0
@@ -30,15 +31,16 @@ bool isAligned(size_t align, const void* mem);
 MString ToUpper(const MString & s);
 
 float StrToFloat(const MString & s, float d = 0);
+int32_t StrToInt(const MString & s, int32_t d = 0);
 
 template<typename T>
-const T& max(const T& t1, const T& t2)
+const T& MAX(const T& t1, const T& t2)
 {
 	return t1>t2?t1:t2;
 }
 
 template<typename T>
-const T& min(const T& t1, const T& t2)
+const T& MIN(const T& t1, const T& t2)
 {
 	return t1<t2?t1:t2;
 }

@@ -1,5 +1,5 @@
 #include <Viewport.h>
-#include <GL/gl.h>
+#include <GLHeaders.h>
 #include <MercuryWindow.h>
 
 REGISTER_NODE_TYPE(Viewport);
@@ -15,7 +15,7 @@ void Viewport::Render(const MercuryMatrix& matrix)
 	FRUSTUM = &m_frustum;
 	
 	MercuryWindow* w = MercuryWindow::GetCurrentWindow();
-	glViewport(m_minx, m_miny, w->Width()*m_xFactor, w->Height()*m_yFactor);
+	glViewport(m_minx, m_miny, (GLsizei)(w->Width()*m_xFactor), (GLsizei)(w->Height()*m_yFactor));
 
 	glMatrixMode(GL_PROJECTION);
 	
@@ -34,8 +34,8 @@ void Viewport::LoadFromXML(const XMLNode& node)
 {
 	m_xFactor = StrToFloat(node.Attribute("xfactor"), 1.0f);
 	m_yFactor = StrToFloat(node.Attribute("yfactor"), 1.0f);
-	m_minx = StrToFloat(node.Attribute("minx"), 0);
-	m_miny = StrToFloat(node.Attribute("miny"), 0);
+	m_minx = StrToInt(node.Attribute("minx"), 0);
+	m_miny = StrToInt(node.Attribute("miny"), 0);
 
 	MercuryWindow* w = MercuryWindow::GetCurrentWindow();
 

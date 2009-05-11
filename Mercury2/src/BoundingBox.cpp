@@ -1,5 +1,4 @@
-#include <GL/gl.h>
-#include <GL/glext.h>
+#include <GLHeaders.h>
 #include <BoundingBox.h>
 #include <string.h>
 #include <Viewport.h>

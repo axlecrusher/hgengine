@@ -1,6 +1,6 @@
 #include <MercuryUtil.h>
 #include <MercuryFile.h>
-#include <stdint.h>
+#include <Mint.h>
 
 MString ToUpper(const MString& s)
 {
@@ -21,6 +21,12 @@ float StrToFloat(const  MString & s, float d)
 	return x;
 }
 
+int32_t StrToInt(const  MString & s, int32_t d)
+{
+	int32_t x = d;
+	if ( s.length() > 0) sscanf(s.c_str(), "%d", &x);
+	return x;
+}
 void* mmemalign(size_t align, size_t size, void*& mem)
 {
 	uintptr_t mask = ~(uintptr_t)(align - 1);

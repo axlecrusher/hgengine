@@ -2,6 +2,7 @@
 #define MAUTOPTR_H
 
 #include <MercuryThreads.h>
+#include <stdlib.h>
 
 class RefBase
 {

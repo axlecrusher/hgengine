@@ -51,8 +51,8 @@ float MercuryVertex::Length() const
 float MercuryVertex::GetBiggestElement() const
 {
 	float tmp = (*this)[0];
-	tmp = max<float>(tmp, (*this)[1]);
-	return max<float>(tmp, (*this)[2]);
+	tmp = MAX<float>(tmp, (*this)[1]);
+	return MAX<float>(tmp, (*this)[2]);
 }
 
 const MercuryVertex& MercuryVertex::operator *= (const MercuryVertex& p)

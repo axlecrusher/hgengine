@@ -5,7 +5,7 @@
 #include <MercuryVertex.h>
 #include <MercuryMatrix.h>
 #include <Frustum.h>
-#include <stdint.h>
+#include <Mint.h>
 #include <MercuryPlane.h>
 
 class BoundingVolume

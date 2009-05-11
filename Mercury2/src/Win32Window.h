@@ -15,6 +15,8 @@ public:
 	virtual bool PumpMessages();
 
 	static MercuryWindow* GenWin32Window();
+	virtual void* GetProcAddress(const MString& x);
+	virtual void Clear();
 
 private:
 	void GenWindow();

@@ -4,8 +4,8 @@
 
 #define GL_GLEXT_PROTOTYPES
 
-#include <GL/gl.h>
-#include <GL/glext.h>
+#include <GLHeaders.h>
+
 
 #include <string.h>
 
@@ -47,8 +47,8 @@ Shader::~Shader()
 void Shader::Init(MercuryNode* node)
 {
 	MercuryAsset::Init( node );
-	RenderableNode* rn;
-	if ( (rn=RenderableNode::Cast( node )) )
+	RenderableNode* rn = RenderableNode::Cast( node );
+	if ( rn )
 		rn->AddPostRender( this );
 }
 
@@ -84,7 +84,7 @@ void Shader::PostRender(const MercuryNode* node)
 void Shader::LoadFromXML(const XMLNode& node)
 {
 	sShaderName = node.Attribute("file");
-	fPriority = atof( node.Attribute("priority").c_str() );
+	fPriority = StrToFloat( node.Attribute("priority").c_str() );
 	LoadShader( );	
 }
 

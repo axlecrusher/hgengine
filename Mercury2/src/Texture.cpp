@@ -4,10 +4,7 @@
 
 #define GL_GLEXT_PROTOTYPES
 
-#include <GL/gl.h>
-#include <GL/glext.h>
-#include <GL/glu.h>
-
+#include <GLHeaders.h>
 using namespace std;
 
 REGISTER_ASSET_TYPE(Texture);
@@ -36,8 +33,8 @@ void Texture::Init(MercuryNode* node)
 {
 	MercuryAsset::Init( node );
 	
-	RenderableNode* rn;
-	if ( (rn=RenderableNode::Cast( node )) )
+	RenderableNode* rn = RenderableNode::Cast( node );
+	if ( rn )
 		rn->AddPostRender( this );
 }
 
@@ -106,7 +103,7 @@ void Texture::PostRender(const MercuryNode* node)
 
 void Texture::LoadFromXML(const XMLNode& node)
 {
-	LoadImage( node.Attribute("file") );
+	LoadImagePath( node.Attribute("file") );
 }
 
 void Texture::BindTexture()
@@ -131,7 +128,7 @@ void Texture::UnbindTexture()
 	--m_activeTextures;
 }
 
-void Texture::LoadImage(const MString& path)
+void Texture::LoadImagePath(const MString& path)
 {
 	if (m_isInstanced) return;
 	if ( !path.empty() )
@@ -165,12 +162,12 @@ MAutoPtr< Texture > Texture::LoadFromFile(const MString& path)
 {
 	MAutoPtr< MercuryAsset > t( AssetFactory::GetInstance().Generate("Texture", path) );
 	Texture *a = (Texture*)t.Ptr();
-	a->LoadImage( path );
+	a->LoadImagePath( path );
 	return a;
 }
 
 bool Texture::m_initTextureSuccess = false;
-unsigned short Texture::m_activeTextures = 0;
+uint8_t Texture::m_activeTextures = 0;
 uint32_t Texture::m_textureBinds = 0;
 
 /***************************************************************************

@@ -4,14 +4,19 @@
 #include <sys/time.h>
 #else
 #include <windows.h>
+
+
 #endif
 
 int64_t GetTimeInMicroSeconds()
 {
+#ifndef WIN32
 	struct timeval tv;
 	gettimeofday( &tv, 0 );
-	
 	return (int64_t(tv.tv_sec) * 1000000) + tv.tv_usec;
+#else
+	return timeGetTime() * uint64_t(1000);
+#endif
 }
 
 MercuryTimer::MercuryTimer()

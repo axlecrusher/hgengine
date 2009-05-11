@@ -6,7 +6,7 @@
 #include <MercuryAsset.h>
 #include <MercuryMatrix.h>
 #include <MSemaphore.h>
-#include <stdint.h>
+#include <Mint.h>
 
 #define MCHECKASSETS
 

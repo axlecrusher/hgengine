@@ -2,6 +2,7 @@
 #define MESSAGEHANDLER_H
 
 #include <MercuryString.h>
+#include <global.h>
 
 class MessageHandler
 {

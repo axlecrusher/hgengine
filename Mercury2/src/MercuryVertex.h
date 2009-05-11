@@ -3,7 +3,11 @@
 
 #include <MercuryMath.h>
 
-# define __inline__     __inline__      __attribute__((always_inline))
+#ifndef WIN32
+#define __inline__     __inline__      __attribute__((always_inline))
+#else
+#define __inline__ inline
+#endif
 
 class MercuryVertex
 {

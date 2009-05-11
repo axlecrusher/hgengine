@@ -1,6 +1,12 @@
 #ifndef MSEMAPHORE_H
 #define MSEMAPHORE_H
 
+#include <global.h>
+
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 class MSemaphore
 {
 	public:
@@ -13,7 +19,12 @@ class MSemaphore
 		void WaitAndSet(unsigned long value, unsigned long newVal);
 
 	private:
-		unsigned long m_counter;
+
+#ifndef WIN32
+		int32_t m_counter;
+#else
+		volatile LONG m_counter;
+#endif
 };
 
 class MSemaphoreLock

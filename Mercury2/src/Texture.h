@@ -19,7 +19,7 @@ class Texture : public MercuryAsset
 		
 		void LoadFromRaw();
 		
-		inline static unsigned short NumberActiveTextures() { return m_activeTextures; }
+		inline static uint8_t NumberActiveTextures() { return m_activeTextures; }
 		inline static uint32_t ReadAndResetBindCount() { uint32_t t = m_textureBinds; m_textureBinds = 0; return t; }
 		
 		static Texture* Generate();
@@ -27,7 +27,7 @@ class Texture : public MercuryAsset
 		
 		void SetRawData(RawImageData* raw);
 	private:
-		void LoadImage(const MString& path);
+		void LoadImagePath(const MString& path);
 		
 		void BindTexture();
 		void UnbindTexture();
@@ -37,7 +37,7 @@ class Texture : public MercuryAsset
 		unsigned int m_textureResource;
 		
 		static bool m_initTextureSuccess;
-		static unsigned short m_activeTextures;
+		static uint8_t m_activeTextures;
 		static uint32_t m_textureBinds;
 		
 //		MString m_filename;

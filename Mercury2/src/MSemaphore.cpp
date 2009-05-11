@@ -4,6 +4,7 @@ MSemaphore::MSemaphore()
 	:m_counter(0)
 {
 }
+#ifndef WIN32
 
 unsigned long MSemaphore::Read()
 {
@@ -29,6 +30,73 @@ void MSemaphore::WaitAndSet(unsigned long value, unsigned long newVal)
 {
 	while ( !__sync_bool_compare_and_swap(&m_counter, value, newVal) );
 }
+
+#else
+
+//These functions seem to be missing from x86 WinBase
+FORCEINLINE
+LONG
+MyInterlockedOr (
+    __inout LONG volatile *Destination,
+    __in    LONG Value
+    )
+{
+    LONG Old;
+
+    do {
+        Old = *Destination;
+    } while (InterlockedCompareExchange(Destination,
+                                          Old | Value,
+                                          Old) != Old);
+
+    return Old;
+}
+
+FORCEINLINE
+LONG
+MyInterlockedAnd (
+    __inout LONG volatile *Destination,
+    __in    LONG Value
+    )
+{
+    LONG Old;
+
+    do {
+        Old = *Destination;
+    } while (InterlockedCompareExchange(Destination,
+                                          Old & Value,
+                                          Old) != Old);
+
+    return Old;
+}
+
+unsigned long MSemaphore::Read()
+{
+	return MyInterlockedOr(&m_counter, 0);
+}
+
+unsigned long MSemaphore::ReadAndClear()
+{
+	return MyInterlockedAnd(&m_counter, 0);
+}
+
+unsigned long MSemaphore::Decrement()
+{
+	return InterlockedDecrement(&m_counter);
+}
+
+unsigned long MSemaphore::Increment()
+{
+	return InterlockedIncrement(&m_counter);
+}
+
+void MSemaphore::WaitAndSet(unsigned long value, unsigned long newVal)
+{
+	InterlockedCompareExchange(&m_counter, newVal, value);
+//	while ( !__sync_bool_compare_and_swap(&m_counter, value, newVal) );
+}
+
+#endif
 
 MSemaphoreLock::MSemaphoreLock(MSemaphore* s)
 	:m_s(s)
