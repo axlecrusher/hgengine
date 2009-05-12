@@ -2,8 +2,6 @@
 #include <RenderableNode.h>
 #include <MercuryFile.h>
 
-#define GL_GLEXT_PROTOTYPES
-
 #include <GLHeaders.h>
 
 

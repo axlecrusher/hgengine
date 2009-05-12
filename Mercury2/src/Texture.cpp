@@ -2,8 +2,6 @@
 #include <RenderableNode.h>
 #include <ImageLoader.h>
 
-#define GL_GLEXT_PROTOTYPES
-
 #include <GLHeaders.h>
 using namespace std;
 

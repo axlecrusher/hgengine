@@ -1,7 +1,5 @@
 #include <MercuryVBO.h>
 
-#define GL_GLEXT_PROTOTYPES
-
 #include <GLHeaders.h>
 
 
