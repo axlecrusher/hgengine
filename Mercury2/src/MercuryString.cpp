@@ -44,7 +44,7 @@ MString::MString( const char sIn )
 
 MString::MString( const char * sIn )
 {
-	m_iLen = strlen( sIn );
+	m_iLen = (unsigned long)strlen( sIn );
 	m_iAlloc = m_iLen + 1;
 	m_sCur = (char*)malloc( m_iAlloc );
 	memcpy( m_sCur, sIn, m_iAlloc );
@@ -92,7 +92,7 @@ const MString & MString::operator = ( const char * rhs )
 	if (rhs != m_sCur)
 	{
 		free (m_sCur);
-		m_iLen = strlen( rhs );
+		m_iLen = (unsigned long)strlen( rhs );
 		m_iAlloc = m_iLen + 1;
 		m_sCur = (char*)malloc( m_iAlloc );
 		memcpy( m_sCur, rhs, m_iAlloc );
@@ -115,7 +115,7 @@ const MString MString::operator + ( const char * rhs ) const
 {
 	if ( !rhs )
 		return (*this);
-	int iRhsLen = strlen( rhs );
+	int iRhsLen = (int)strlen( rhs );
 	int iNextMalloc = NEXT_ALLOC( m_iLen, iRhsLen );
 	MString ret( iNextMalloc );
 	ret.m_iLen = m_iLen + iRhsLen;
@@ -138,7 +138,7 @@ const MString MString::operator + ( const char rhs ) const
 
 const MString & MString::operator += ( const char * rhs )
 {
-	int iRhsLen = strlen( rhs );
+	int iRhsLen = (int)strlen( rhs );
 	MANAGE_ALLOC( iRhsLen )
 	memcpy( m_sCur + m_iLen, rhs, iRhsLen );
 	m_iLen += iRhsLen;
@@ -202,7 +202,7 @@ void MString::append( const char app )
 
 void MString::append( const char * app )
 {
-	int iRhsLen = strlen( app );
+	int iRhsLen = (int)strlen( app );
 	MANAGE_ALLOC( iRhsLen )
 	memcpy( m_sCur + m_iLen, app, iRhsLen );
 	m_iLen += iRhsLen;
@@ -238,7 +238,7 @@ void MString::assign( const MString & app )
 void MString::assign( const char * app )
 {
 	free( m_sCur );
-	m_iLen = strlen( app );
+	m_iLen = (unsigned long)strlen( app );
 	m_iAlloc = m_iLen + 1;
 	m_sCur = (char*)malloc( m_iAlloc );
 	memcpy( m_sCur, app, m_iAlloc );
@@ -282,7 +282,7 @@ int MString::find( const char * tofind, int start ) const
 
 int MString::rfind( const char * tofind ) const
 {
-	int iLen = strlen( tofind );
+	int iLen = (int)strlen( tofind );
 	int iTarg = m_iLen - iLen;
 
 	while ( iTarg >= 0 )
@@ -400,7 +400,11 @@ MString ssprintf( const char *fmt, ...)
 		va_start(va, fmt);
 		char * base = (char*)malloc( CurMal + 1 );
 		#if defined(WIN32)
-		  int len = _vsnprintf( base, CurMal, fmt, va );
+			#if defined( LEAN_HG )
+				int len = _vsnprintf( base, CurMal, fmt, va );
+			#else
+				int len = _vsnprintf_s( base, CurMal, CurMal, fmt, va );
+			#endif
 		#else
 		  int len = vsnprintf( base, CurMal, fmt, va );
 		#endif
