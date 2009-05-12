@@ -1,4 +1,5 @@
 #include <Win32Window.h>
+#include <GLHeaders.h>
 
 LRESULT CALLBACK WindowCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam); //Window callback
 Callback0R< MercuryWindow* > MercuryWindow::genWindowClbk(Win32Window::GenWin32Window); //Register window generation callback
@@ -197,11 +198,13 @@ bool Win32Window::PumpMessages()
 
 void* Win32Window::GetProcAddress(const MString& x)
 {
-	return NULL;
+	return wglGetProcAddress( x.c_str() );
 }
 
 void Win32Window::Clear()
 {
+	glClearColor( .1f, .1f, .1f, 0.0f );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
 
