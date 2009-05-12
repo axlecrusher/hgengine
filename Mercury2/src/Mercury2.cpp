@@ -15,6 +15,7 @@
 #include <MercuryTimer.h>
 #include <RenderGraph.h>
 #include <Texture.h>
+#include <GLHeaders.h>
 
 bool SHOWBOUNDINGVOLUME = false;
 
@@ -42,10 +43,15 @@ int SignalHandler( int signal )
 int main()
 {
 	unsigned long m_count = 0;
-	
+
 	cnset_execute_on_crash( SignalHandler );
 
 	MercuryWindow* w = MercuryWindow::MakeWindow();
+
+#ifdef WIN32
+	SetupOGLExtensions();
+#endif
+
 	MercuryNode* root = new MercuryNode();
 	
 	XMLDocument* doc = XMLDocument::Load("scenegraph.xml");
