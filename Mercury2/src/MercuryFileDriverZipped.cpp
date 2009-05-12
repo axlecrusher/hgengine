@@ -5,6 +5,12 @@
 #include <zlib.h>
 #include <string.h>
 
+#if defined(WIN32)
+#  if defined(_MSC_VER)
+#    pragma comment(lib, "zdll.lib")
+#  endif
+#endif
+
 const MString PackagePrefix = "Packages/";
 
 
