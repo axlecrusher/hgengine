@@ -41,7 +41,7 @@ bool MercuryFile::ReadLine( MString & data )
 	data = "";
 	char b1[1];
 	bool Success;
-	while ( Success = ( Read( b1, 1 ) > 0 ) )
+	while ( ( Success = ( Read( b1, 1 ) > 0 ) ) )
 	{
 		if ( ( b1[0] == '\r' ) || ( b1[0] == '\n' ) )
 			break;
