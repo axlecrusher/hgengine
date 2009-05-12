@@ -213,6 +213,7 @@ MercuryFileDirverDirect::MercuryFileDirverDirect()
 	if( !path_end )
 	{
 		fprintf( stderr, "WARNING:  Could not change path of program to path of executable!  Path retreived: \"%s\".\n", buffer );
+		return;
 	}
 	*path_end = 0;
 	if( !SetCurrentDirectory( (LPCWSTR)buffer ) )
