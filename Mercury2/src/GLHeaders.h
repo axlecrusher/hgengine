@@ -3,6 +3,8 @@
 
 #ifdef WIN32
 #include <windows.h>
+#else
+#define GL_GLEXT_PROTOTYPES
 #endif
 
 #include <GL/gl.h>
@@ -12,9 +14,8 @@
 #include <freeglut/glut.h>
 #include <OGLExtensions.h>
 #else
-#define GL_GLEXT_PROTOTYPES
 #include <GL/glext.h>
-#include <glut.h>
+#include <GL/freeglut.h>
 #endif
 
 #endif
