@@ -1,14 +1,24 @@
 #include <ImageLoader.h>
-#include <png.h>
 #include <MercuryUtil.h>
 
 #include <assert.h>
+
+#if defined(WIN32)
+#  include <png.h>
+#  if defined(_MSC_VER)
+#    pragma comment(lib, "libpng.lib")
+#  endif
+#  pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
+#else
+#  include <png.h>
+#endif
+
 
 void PNGRead( png_struct *png, png_byte *p, png_size_t size )
 {
 	MercuryFile * f = (MercuryFile*)png->io_ptr;
 
-	int got = f->Read( p, size );
+	int got = f->Read( p, (unsigned long)size );
 //	int got = fread(p, size, 1, f );
 
 	if( got == -1 )
