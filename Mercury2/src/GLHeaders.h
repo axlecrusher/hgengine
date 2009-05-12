@@ -9,10 +9,12 @@
 
 #ifdef WIN32
 #include <glext.h>
+#include <freeglut/glut.h>
+#include <OGLExtensions.h>
 #else
+#define GL_GLEXT_PROTOTYPES
 #include <GL/glext.h>
-#endif
-
 #include <glut.h>
+#endif
 
 #endif
