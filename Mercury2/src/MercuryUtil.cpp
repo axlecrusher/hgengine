@@ -17,14 +17,22 @@ MString ToUpper(const MString& s)
 float StrToFloat(const  MString & s, float d)
 {
 	float x = d;
+#if defined( WIN32 ) && !defined( LEAN_HG )
+	if ( s.length() > 0) sscanf_s(s.c_str(), "%f", &x);
+#else
 	if ( s.length() > 0) sscanf(s.c_str(), "%f", &x);
+#endif
 	return x;
 }
 
 int32_t StrToInt(const  MString & s, int32_t d)
 {
 	int32_t x = d;
+#if defined( WIN32 ) && !defined( LEAN_HG )
+	if ( s.length() > 0) sscanf_s(s.c_str(), "%d", &x);
+#else
 	if ( s.length() > 0) sscanf(s.c_str(), "%d", &x);
+#endif
 	return x;
 }
 void* mmemalign(size_t align, size_t size, void*& mem)
