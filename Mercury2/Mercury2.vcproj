@@ -41,8 +41,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="src/;src/include;src/include/zlib;src/include/png;src/include/libxml2;src/include/freeglut"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;HGENGINE"
+				AdditionalIncludeDirectories=".;src;src/include;src/include/png;src/include/zlib"
+				PreprocessorDefinitions="HGENGINE,WIN32"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -117,8 +117,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="src/"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				AdditionalIncludeDirectories=".;src;src/include;src/include/png;src/include/zlib"
+				PreprocessorDefinitions="HGENGINE,WIN32"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -210,6 +210,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryBacktrace.c"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryCrash.c"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryFile.cpp"
 				>
 			</File>
@@ -283,6 +291,10 @@
 			</File>
 			<File
 				RelativePath=".\src\MSemaphore.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\OGLExtensions.cpp"
 				>
 			</File>
 			<File
@@ -489,6 +501,10 @@
 			</File>
 			<File
 				RelativePath=".\src\MSemaphore.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\OGLExtensions.h"
 				>
 			</File>
 			<File
