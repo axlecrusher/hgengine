@@ -4,7 +4,11 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
-//#include <SMOException.h>
+#if defined(WIN32)
+#  if defined(_MSC_VER)
+#    pragma comment(lib, "libxml2.lib")
+#  endif
+#endif
 
 XMLNode::XMLNode(xmlNode* node, xmlDoc* doc)
 	:m_node(node), m_doc(doc)
