@@ -16,7 +16,7 @@ class MScopedArray
 		{
 			m_criticalSection.Wait();
 			IncrementReference();
-			m_criticalSection.Open();
+			m_criticalSection.UnLock();
 		}
 	
 		MScopedArray()
@@ -30,14 +30,14 @@ class MScopedArray
 			m_ptr = autoPtr.m_ptr;
 			m_count = autoPtr.m_count;
 			IncrementReference();
-			m_criticalSection.Open();
+			m_criticalSection.UnLock();
 		}
 		
 		inline ~MScopedArray()
 		{
 			m_criticalSection.Wait();
 			DecrementReference();
-			m_criticalSection.Open();
+			m_criticalSection.UnLock();
 		}
 		
 		inline unsigned int Count()
@@ -45,7 +45,7 @@ class MScopedArray
 			unsigned int count = 0;
 			m_criticalSection.Wait();
 			if( m_ptr && m_count ) count = *m_count;
-			m_criticalSection.Open();
+			m_criticalSection.UnLock();
 			return count;
 		}
 		
@@ -54,7 +54,7 @@ class MScopedArray
 			m_criticalSection.Wait();
 			DecrementReference();
 			m_ptr = NULL;
-			m_criticalSection.Open();
+			m_criticalSection.UnLock();
 		}
 /*		
 		void Forget()
@@ -64,7 +64,7 @@ class MScopedArray
 				if (m_ptr->m_count)
 					if ((m_ptr->m_count) > 0) { --m_ptr->m_count; }
 			m_ptr = NULL;
-			m_criticalSection.Open();
+			m_criticalSection.UnLock();
 		}
 */		
 		//Comparative
@@ -89,7 +89,7 @@ class MScopedArray
 			DecrementReference();
 			m_ptr = rhs.m_ptr;
 			IncrementReference();
-			m_criticalSection.Open();
+			m_criticalSection.UnLock();
 			return *this;
 		}
 

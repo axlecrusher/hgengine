@@ -75,12 +75,14 @@ public:
 	///Unlock a mutex for the next thing waiting in line.
 	int UnLock( );
 	
+private:
+	
 	///Start up a mutex.  You need to do this as well as UnLock() afterwards when in a constructor.
 	int Open( );
-	
+
 	///Clean up a mutex.  This is done automatically on destruction of mutex.
 	int Close( );
-private:
+
 	MString m_name;
 	int iLockCount;
 

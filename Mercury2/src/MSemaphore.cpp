@@ -33,10 +33,9 @@ void MSemaphore::WaitAndSet(unsigned long value, unsigned long newVal)
 
 #else
 
-//These functions seem to be missing from x86 WinBase
 FORCEINLINE
 LONG
-MyInterlockedOr (
+OrAndFetch (
     __inout LONG volatile *Destination,
     __in    LONG Value
     )
@@ -49,9 +48,10 @@ MyInterlockedOr (
                                           Old | Value,
                                           Old) != Old);
 
-    return Old;
+    return Old | Value;
 }
 
+//Function seem to be missing from x86 WinBase
 FORCEINLINE
 LONG
 MyInterlockedAnd (
@@ -72,7 +72,8 @@ MyInterlockedAnd (
 
 unsigned long MSemaphore::Read()
 {
-	return MyInterlockedOr(&m_counter, 0);
+	return OrAndFetch(&m_counter, 0);
+//	return MyInterlockedOr(&m_counter, 0);
 }
 
 unsigned long MSemaphore::ReadAndClear()

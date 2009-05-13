@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 MercuryThread::MercuryThread()
-	:m_name("(null)"), m_haltOnDestroy(true), m_thread(0)
+	:m_haltOnDestroy(true), m_thread(0)
 {
 #if defined( WIN32 )
 	mkThreadData = NULL;
@@ -186,7 +186,10 @@ int MercuryMutex::Open( )
 	p->nLength = sizeof( SECURITY_ATTRIBUTES );
 	p->bInheritHandle = true;
 	p->lpSecurityDescriptor = NULL;
-	m_mutex = CreateMutex( p, true, (LPCWSTR)m_name.c_str() );
+	if ( m_name.empty() )
+		m_mutex = CreateMutex( p, true, NULL );
+	else
+		m_mutex = CreateMutex( p, true, (LPCWSTR)m_name.c_str() );
 	free( p );
 	return (int)m_mutex;
 #else
