@@ -65,8 +65,27 @@ MyInterlockedAnd (
     return Old;
 }
 
+FORCEINLINE
+LONG
+__sync_and_and_fetch (
+    __inout LONG volatile *Destination,
+    __in    LONG Value
+    )
+{
+    LONG Old;
+
+    do {
+        Old = *Destination;
+    } while (InterlockedCompareExchange(Destination,
+                                          Old & Value,
+                                          Old) != Old);
+
+    return Old & Value;
+}
+
 #define SYNC_OR_AND_FETCH(d,v) OrAndFetch(d,v)
 #define COMPARE_AND_SWAP(d,o,n) InterlockedCompareExchange(d, n, o)
+#define SYNC_AND_AND_FETCH(d,v) __sync_and_and_fetch(d,v)
 
 unsigned long MSemaphore::ReadAndClear()
 {
@@ -90,15 +109,15 @@ unsigned long MSemaphore::Read()
 	return SYNC_OR_AND_FETCH(&m_semaphore, 0);
 }
 
-void MSemaphore::WaitAndSet(unsigned long value, unsigned long newVal)
+void MSemaphore::WaitAndSet(uint32_t value, uint32_t newVal)
 {
-	while( COMPARE_AND_SWAP(&m_semaphore, value, newVal) != value );
+	while( COMPARE_AND_SWAP(&m_semaphore, value, newVal) != ((int32_t)value) );
 }
 
 void MSemaphore::Wait()
 {
 	uint32_t thread = MercuryThread::Current();
-	if ( SYNC_OR_AND_FETCH(&m_semaphore, 0) == thread) //recursive lock
+	if ( SYNC_OR_AND_FETCH(&m_semaphore, 0) == ((int32_t)thread) ) //recursive lock
 	{
 		++m_lockCount;
 		return;
@@ -111,7 +130,7 @@ void MSemaphore::Wait()
 void MSemaphore::UnLock()
 {
 	uint32_t thread = MercuryThread::Current();
-	if ( SYNC_OR_AND_FETCH(&m_semaphore, 0) == thread) //unlock given from correct thread
+	if ( SYNC_OR_AND_FETCH(&m_semaphore, 0) == ((int32_t)thread) ) //unlock given from correct thread
 	{
 		--m_lockCount;
 		if (m_lockCount == 0) SYNC_AND_AND_FETCH(&m_semaphore, 0 );

@@ -16,7 +16,7 @@ class MSemaphore
 		unsigned long ReadAndClear();
 		unsigned long Decrement();
 		unsigned long Increment();
-		void WaitAndSet(unsigned long value, unsigned long newVal);
+		void WaitAndSet(uint32_t value, uint32_t newVal);
 		
 		void Wait();
 		void UnLock();
@@ -27,7 +27,7 @@ class MSemaphore
 #ifndef WIN32
 		uint32_t m_semaphore;
 #else
-		volatile LONG m_counter; //align to 32bit boundary
+		volatile LONG m_semaphore; //align to 32bit boundary
 #endif
 };
 

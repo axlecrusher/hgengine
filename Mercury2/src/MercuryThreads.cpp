@@ -121,7 +121,11 @@ void MercuryThread::Close( )
 
 unsigned long MercuryThread::Current()
 {
+#ifdef WIN32
+	return GetCurrentThreadId();
+#else
 	return pthread_self();
+#endif
 }
 
 
