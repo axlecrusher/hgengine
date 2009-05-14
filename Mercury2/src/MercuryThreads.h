@@ -44,6 +44,8 @@ public:
 
 //	inline void Exit() { pthread_exit(NULL); }
 	inline void HaltOnDestroy(bool t) { m_haltOnDestroy = t; }
+	
+	static unsigned long Current();
 private:
 	MString m_name;
 
