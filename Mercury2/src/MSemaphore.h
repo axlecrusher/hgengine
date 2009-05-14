@@ -17,13 +17,19 @@ class MSemaphore
 		unsigned long Decrement();
 		unsigned long Increment();
 		void WaitAndSet(unsigned long value, unsigned long newVal);
-
+		
+		void Wait();
+		void UnLock();
 	private:
 
+		//what exactly needs to be volatile
+		uint32_t m_lockCount;
 #ifndef WIN32
-		int32_t m_counter;
+		uint32_t m_counter;
+		uint32_t m_thread;
 #else
-		volatile LONG m_counter;
+		volatile LONG m_counter; //align to 32bit boundary
+		volatile LONG m_thread;
 #endif
 };
 

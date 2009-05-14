@@ -1,4 +1,5 @@
 #include <MSemaphore.h>
+#include <MercuryThreads.h>
 
 MSemaphore::MSemaphore()
 	:m_counter(0)
@@ -6,10 +7,9 @@ MSemaphore::MSemaphore()
 }
 #ifndef WIN32
 
-unsigned long MSemaphore::Read()
-{
-	return __sync_or_and_fetch(&m_counter, 0);
-}
+#define SYNC_OR_AND_FETCH(d,v) __sync_or_and_fetch(d,v)
+#define COMPARE_AND_SWAP(d,o,n) __sync_val_compare_and_swap(d,o,n)
+#define SYNC_AND_AND_FETCH(d,v) __sync_and_and_fetch(d,v)
 
 unsigned long MSemaphore::ReadAndClear()
 {
@@ -28,7 +28,7 @@ unsigned long MSemaphore::Increment()
 
 void MSemaphore::WaitAndSet(unsigned long value, unsigned long newVal)
 {
-	while ( !__sync_bool_compare_and_swap(&m_counter, value, newVal) );
+	while( (unsigned long)__sync_val_compare_and_swap(&m_counter, value, newVal) != value );
 }
 
 #else
@@ -70,11 +70,8 @@ MyInterlockedAnd (
     return Old;
 }
 
-unsigned long MSemaphore::Read()
-{
-	return OrAndFetch(&m_counter, 0);
-//	return MyInterlockedOr(&m_counter, 0);
-}
+#define SYNC_OR_AND_FETCH(d,v) OrAndFetch(d,v)
+#define COMPARE_AND_SWAP(d,o,n) InterlockedCompareExchange(d, n, o)
 
 unsigned long MSemaphore::ReadAndClear()
 {
@@ -93,21 +90,48 @@ unsigned long MSemaphore::Increment()
 
 void MSemaphore::WaitAndSet(unsigned long value, unsigned long newVal)
 {
-	InterlockedCompareExchange(&m_counter, newVal, value);
-//	while ( !__sync_bool_compare_and_swap(&m_counter, value, newVal) );
+	while ( InterlockedCompareExchange(Destination, newVal, value) != value );
 }
 
 #endif
 
+unsigned long MSemaphore::Read()
+{
+	return SYNC_OR_AND_FETCH(&m_counter, 0);
+}
+
+void MSemaphore::Wait()
+{
+	uint32_t thread = MercuryThread::Current();
+	if ( COMPARE_AND_SWAP(&m_thread, 0, thread) == thread) //recursive lock
+	{
+		++m_lockCount;
+		return;
+	}
+	WaitAndSet(0,1);
+	++m_lockCount;
+}
+
+void MSemaphore::UnLock()
+{
+	uint32_t thread = MercuryThread::Current();
+	if ( SYNC_OR_AND_FETCH(&m_thread, 0) == thread) //unlock given from correct thread
+	{
+		--m_lockCount;
+		if (m_lockCount == 0) WaitAndSet(1,0);
+		SYNC_AND_AND_FETCH(&m_thread, 0 );
+	}
+}
+
 MSemaphoreLock::MSemaphoreLock(MSemaphore* s)
 	:m_s(s)
 {
-	m_s->WaitAndSet(0,1);
+	m_s->Wait();
 }
 
 MSemaphoreLock::~MSemaphoreLock()
 {
-	m_s->WaitAndSet(1,0);
+	m_s->UnLock();
 }
 
 MSemaphoreIncOnDestroy::MSemaphoreIncOnDestroy(MSemaphore* s)

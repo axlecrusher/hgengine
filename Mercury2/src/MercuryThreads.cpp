@@ -119,6 +119,12 @@ void MercuryThread::Close( )
 	}
 }
 
+unsigned long MercuryThread::Current()
+{
+	return pthread_self();
+}
+
+
 //Mutex functions
 MercuryMutex::MercuryMutex( )
 :m_name("(null)")
