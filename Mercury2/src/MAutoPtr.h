@@ -2,7 +2,9 @@
 #define MAUTOPTR_H
 
 #include <MercuryThreads.h>
+#include <MSemaphore.h>
 #include <stdlib.h>
+
 
 class RefBase
 {
@@ -135,11 +137,15 @@ class MAutoPtr
 		
 		T* m_ptr;
 		
-		static MercuryMutex m_criticalSection;
+//		static MercuryMutex m_criticalSection;
+		static MSemaphore m_criticalSection;
 };
 
 template<typename T>
-MercuryMutex MAutoPtr<T>::m_criticalSection = MercuryMutex();
+MSemaphore MAutoPtr<T>::m_criticalSection;
+
+//template<typename T>
+//MercuryMutex MAutoPtr<T>::m_criticalSection = MercuryMutex();
 
 #endif
 
