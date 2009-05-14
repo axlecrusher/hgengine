@@ -1,9 +1,12 @@
 #include <MSemaphore.h>
 #include <MercuryThreads.h>
 
+#include <stdio.h>
+
 MSemaphore::MSemaphore()
-	:m_counter(0)
+	:m_lockCount(0), m_semaphore(0)
 {
+	printf("cs %d\n", m_semaphore);
 }
 #ifndef WIN32
 
@@ -13,22 +16,17 @@ MSemaphore::MSemaphore()
 
 unsigned long MSemaphore::ReadAndClear()
 {
-	return __sync_fetch_and_and(&m_counter, 0);
+	return __sync_fetch_and_and(&m_semaphore, 0);
 }
 
 unsigned long MSemaphore::Decrement()
 {
-	return __sync_sub_and_fetch(&m_counter, 1);
+	return __sync_sub_and_fetch(&m_semaphore, 1);
 }
 
 unsigned long MSemaphore::Increment()
 {
-	return __sync_add_and_fetch(&m_counter, 1);
-}
-
-void MSemaphore::WaitAndSet(unsigned long value, unsigned long newVal)
-{
-	while( (unsigned long)__sync_val_compare_and_swap(&m_counter, value, newVal) != value );
+	return __sync_add_and_fetch(&m_semaphore, 1);
 }
 
 #else
@@ -75,51 +73,51 @@ MyInterlockedAnd (
 
 unsigned long MSemaphore::ReadAndClear()
 {
-	return MyInterlockedAnd(&m_counter, 0);
+	return MyInterlockedAnd(&m_semaphore, 0);
 }
 
 unsigned long MSemaphore::Decrement()
 {
-	return InterlockedDecrement(&m_counter);
+	return InterlockedDecrement(&m_semaphore);
 }
 
 unsigned long MSemaphore::Increment()
 {
-	return InterlockedIncrement(&m_counter);
-}
-
-void MSemaphore::WaitAndSet(unsigned long value, unsigned long newVal)
-{
-	while ( InterlockedCompareExchange(Destination, newVal, value) != value );
+	return InterlockedIncrement(&m_semaphore);
 }
 
 #endif
 
 unsigned long MSemaphore::Read()
 {
-	return SYNC_OR_AND_FETCH(&m_counter, 0);
+	return SYNC_OR_AND_FETCH(&m_semaphore, 0);
+}
+
+void MSemaphore::WaitAndSet(unsigned long value, unsigned long newVal)
+{
+	while( COMPARE_AND_SWAP(&m_semaphore, value, newVal) != value );
 }
 
 void MSemaphore::Wait()
 {
 	uint32_t thread = MercuryThread::Current();
-	if ( COMPARE_AND_SWAP(&m_thread, 0, thread) == thread) //recursive lock
+	if ( SYNC_OR_AND_FETCH(&m_semaphore, 0) == thread) //recursive lock
 	{
 		++m_lockCount;
 		return;
 	}
-	WaitAndSet(0,1);
+	
+	WaitAndSet(0,thread); //new lock
 	++m_lockCount;
 }
 
 void MSemaphore::UnLock()
 {
 	uint32_t thread = MercuryThread::Current();
-	if ( SYNC_OR_AND_FETCH(&m_thread, 0) == thread) //unlock given from correct thread
+	if ( SYNC_OR_AND_FETCH(&m_semaphore, 0) == thread) //unlock given from correct thread
 	{
 		--m_lockCount;
-		if (m_lockCount == 0) WaitAndSet(1,0);
-		SYNC_AND_AND_FETCH(&m_thread, 0 );
+		if (m_lockCount == 0) SYNC_AND_AND_FETCH(&m_semaphore, 0 );
 	}
 }
 

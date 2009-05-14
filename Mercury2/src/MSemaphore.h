@@ -22,14 +22,12 @@ class MSemaphore
 		void UnLock();
 	private:
 
-		//what exactly needs to be volatile
+		//what exactly needs to be volatile?
 		uint32_t m_lockCount;
 #ifndef WIN32
-		uint32_t m_counter;
-		uint32_t m_thread;
+		uint32_t m_semaphore;
 #else
 		volatile LONG m_counter; //align to 32bit boundary
-		volatile LONG m_thread;
 #endif
 };
 
