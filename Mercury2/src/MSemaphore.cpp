@@ -1,12 +1,9 @@
 #include <MSemaphore.h>
 #include <MercuryThreads.h>
 
-#include <stdio.h>
-
 MSemaphore::MSemaphore()
 	:m_lockCount(0), m_semaphore(0)
 {
-	printf("cs %d\n", m_semaphore);
 }
 #ifndef WIN32
 
