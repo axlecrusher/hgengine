@@ -81,9 +81,17 @@ void Shader::PostRender(const MercuryNode* node)
 
 void Shader::LoadFromXML(const XMLNode& node)
 {
-	sShaderName = node.Attribute("file");
-	fPriority = StrToFloat( node.Attribute("priority").c_str() );
-	LoadShader( );	
+	LoadShader( node.Attribute("file"), StrToFloat( node.Attribute("priority") ) );
+}
+
+void Shader::LoadShader( const MString& path, float priority )
+{
+	if (m_isInstanced) return;
+	
+	sShaderName = path;
+	fPriority = priority;
+	ADD_ASSET_INSTANCE(Shader, sShaderName, this);
+	LoadShader( );
 }
 
 bool Shader::LoadShader( )

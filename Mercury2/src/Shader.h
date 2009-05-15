@@ -72,6 +72,8 @@ public:
 	///Explicitly get the OpenGL ProgramID in the event you need it for advanced techniques
 	unsigned int	GetProgramID() { return iProgramID; }
 private:
+	void LoadShader( const MString& path, float priority );
+	
 	///Suggested function for loading shaders.
 	/** This function looks for {sShaderName}.vert and {sShaderName}.frag.  It will
 	    attempt to load, compile and link the files.  If any errors are found, they will
