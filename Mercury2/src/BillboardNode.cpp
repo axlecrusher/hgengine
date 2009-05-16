@@ -8,23 +8,30 @@ MercuryMatrix Billboard::ManipulateMatrix(const MercuryMatrix& matrix)
 {
 	MercuryMatrix m = RenderableNode::ManipulateMatrix( matrix );
 	
-	MercuryVertex center(m.Ptr()[3], m.Ptr()[7], m.Ptr()[11]);
+	//Compute the object's center point (position?) in world space
+	MercuryVertex center(0,0,0,1);
+	center = matrix * center;
 
-//	printf( "%f %f %f    %f %f %f\n", center[0], center[1], center[2], EYE[0], EYE[1], EYE[2] );	
-//	MercuryVector v	 = center.Normalize() *-1;
-
-	MercuryVector v = (EYE - center).Normalize();
-	MercuryVector up = (LOOKAT.CrossProduct( v )).Normalize();
-
-	float angleCos = LOOKAT.DotProduct(v);
-
+	//vector from object to eye projected on XZ
+	MercuryVector objToEye = (EYE - center); objToEye[1] = 0; objToEye.NormalizeSelf();
+	
+	MercuryVector objLookAt(0,0,1); //origional look vector of object
+	objLookAt = matrix * objLookAt; //convert to world space
+	objLookAt.NormalizeSelf();
+//	objLookAt.Print();
+	
+//	MercuryVector up = (objLookAt.CrossProduct( objToEye )).Normalize();
+//	up = objLookAt;
+//	up.Print();
+	MercuryVector up(0,0,1);  //we wan't the camera's up
+	
+	float angleCos = LOOKAT.DotProduct(objToEye);
 
 	if ((angleCos < 0.99990) && (angleCos > -0.9999))
 	{
 		float f = ACOS(angleCos)*RADDEG;
-
 		MercuryMatrix mtmp;
-		mtmp.RotateAngAxis(-f, up[0], up[1], up[2]);
+		mtmp.RotateAngAxis(f, up[0], up[1], up[2]);
 		m = m * mtmp;
 	}
 	

@@ -19,7 +19,7 @@ class Viewport : public RenderableNode
 		virtual void PreRender(const MercuryMatrix& matrix);
 		
 		virtual void LoadFromXML(const XMLNode& node);
-		
+	
 		GENRTTI(Viewport);
 	private:
 		Frustum m_frustum;

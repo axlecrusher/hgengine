@@ -29,15 +29,23 @@ void Viewport::PreRender(const MercuryMatrix& matrix)
 	
 	glMatrixMode(GL_MODELVIEW);
 	
-	VIEWMATRIX = matrix;
-	EYE[0] = matrix[0][3]; // same as float* [3]
-	EYE[1] = matrix[1][3]; // same as float* [7]
-	EYE[2] = matrix[2][3]; // same as float* [11]
+	//compute the position of the eye
+	EYE = MercuryVertex(0,0,0,1);
+	EYE = matrix * EYE;
 	EYE *= -1;
+
+//	VIEWMATRIX = MercuryMatrix::Identity();
+//	VIEWMATRIX.Scale(1,1,1);
+//	VIEWMATRIX.Translate( EYE[0], EYE[1], EYE[2] );
+//	VIEWMATRIX.RotateXYZ( matrix[0][0], matrix[1][1], matrix[2][2] );
+	VIEWMATRIX = matrix;
+//	matrix.Print();
 	
 	MercuryVector l(0,0,1);
 	LOOKAT = (matrix * l).Normalize();
-//	LOOKAT.Print();
+	
+	//Sets up the clipping frustum
+	m_frustum.LookAt(EYE, LOOKAT, MercuryVertex(0,1,0));
 }
 
 void Viewport::LoadFromXML(const XMLNode& node)
@@ -54,8 +62,6 @@ void Viewport::LoadFromXML(const XMLNode& node)
 //							  StrToFloat(node.Attribute("aspect")),
 							  StrToFloat(node.Attribute("near")),
 							  StrToFloat(node.Attribute("far")));
-		
-	m_frustum.LookAt(MercuryVertex(), MercuryVertex(0,0,1), MercuryVertex(0,1,0));
 	
 	RenderableNode::LoadFromXML(node);
 }
