@@ -1,8 +1,10 @@
 <SceneGraph>
-		<node type="transformnode" movy="-8" rotx="90">
+	<node type="transformnode" movy="0" rotx="90">
+		<node type="transformnode" movy="-8" movz="5">
 			<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100"/>
 		</node>
-		<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
+	</node>
+	<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
 			<node type="renderablenode">
 				<asset type="texture" file="map.png"/>
 				<asset type="hgmdlmodel" file="map.hgmdl" />
@@ -12,7 +14,7 @@
 			<asset type="texture" file="lamp.png"/>
 			<node type="transformnode" movz="-5" movx="0" movy="0" name="lamprow" >
 				<node type="transformnode" rotx="-90" name="lamp">
-					<node type="billboard" >
+					<node type="renderablenode" >
 						<asset type="hgmdlmodel" file="lamp.hgmdl" />
 					</node>
 				</node>
