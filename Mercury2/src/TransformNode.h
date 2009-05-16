@@ -27,7 +27,7 @@ class TransformNode : public MercuryNode
 		
 		void SetTaint(bool taint);
 
-		void ComputeMatrix();
+		virtual void ComputeMatrix();
 		
 		virtual void LoadFromXML(const XMLNode& node);
 		
@@ -43,6 +43,7 @@ class TransformNode : public MercuryNode
 		MercuryPoint m_rotation;
 
 //		MercuryMatrix m_localMatrix;
+	protected:
 		MercuryMatrix m_globalMatrix;
 		
 		bool m_tainted;

@@ -34,6 +34,8 @@ class RenderableNode : public MercuryNode
 		
 		virtual bool IsCulled(const MercuryMatrix& matrix);
 		bool IsHidden() { return m_hidden; }
+		
+		virtual MercuryMatrix ManipulateMatrix(const MercuryMatrix& matrix);
 
 		GENRTTI(RenderableNode);
 	protected:

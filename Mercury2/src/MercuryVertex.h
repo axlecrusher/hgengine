@@ -25,9 +25,9 @@ class MercuryVertex
 		inline FloatRow& ToFloatRow() { return m_xyzw; }
 		inline const FloatRow& ToFloatRow() const { return m_xyzw; }
 
-		inline const float GetX() const { return (*this)[0]; }
-		inline const float GetY() const { return (*this)[1]; }
-		inline const float GetZ() const { return (*this)[2]; }
+		inline float GetX() const { return (*this)[0]; }
+		inline float GetY() const { return (*this)[1]; }
+		inline float GetZ() const { return (*this)[2]; }
 		inline void SetX(const float ix) { (*this)[0] = ix; }
 		inline void SetY(const float iy) { (*this)[1] = iy; }
 		inline void SetZ(const float iz) { (*this)[2] = iz; }

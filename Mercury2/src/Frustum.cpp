@@ -53,6 +53,9 @@ void Frustum::LookAt(const MercuryVertex& eye, const MercuryVector& look, const 
 	//Right now this only builds the frustum planes
 	MercuryVector X,Y,Z;
 	
+	m_lookAt = look;
+	m_eye = eye;
+	
 	Z = (eye - look).Normalize(); //direction behind camera
 	X = (up.CrossProduct(Z)).Normalize(); //X axis
 	Y = Z.CrossProduct( X ); //real up

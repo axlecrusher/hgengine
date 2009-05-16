@@ -158,6 +158,11 @@ bool RenderableNode::IsCulled(const MercuryMatrix& matrix)
 	return clip;
 }
 
+MercuryMatrix RenderableNode::ManipulateMatrix(const MercuryMatrix& matrix)
+{
+	return matrix;
+}
+
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
  *      *
