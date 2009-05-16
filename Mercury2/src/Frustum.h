@@ -24,8 +24,6 @@ class Frustum
 		void LookAt(const MercuryVertex& eye, const MercuryVector& look, const MercuryVector& up);
 		
 		inline const MercuryPlane& GetPlane(int i) const { return m_planes[i]; }
-		inline const MercuryVertex& GetLookAt() const { return m_lookAt; }
-		inline const MercuryVertex& GetEye() const { return m_eye; }
 	private:
 		
 		MercuryPlane m_planes[6];
@@ -35,8 +33,6 @@ class Frustum
 		float m_nh, m_nw, m_fh, m_fw;
 		
 		MercuryVector m_nc, m_fc;
-		MercuryVertex m_lookAt;
-		MercuryVertex m_eye;
 };
 
 #endif

@@ -35,7 +35,7 @@ void Viewport::PreRender(const MercuryMatrix& matrix)
 	EYE[2] = matrix[2][3]; // same as float* [11]
 	EYE *= -1;
 	
-	MercuryVector l(0,0,1,1);
+	MercuryVector l(0,0,1);
 	LOOKAT = (matrix * l).Normalize();
 //	LOOKAT.Print();
 }
