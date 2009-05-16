@@ -9,23 +9,23 @@ MercuryMatrix Billboard::ManipulateMatrix(const MercuryMatrix& matrix)
 	MercuryMatrix m = RenderableNode::ManipulateMatrix( matrix );
 	
 	MercuryVertex center(m.Ptr()[3], m.Ptr()[7], m.Ptr()[11]);
-	
+
+//	printf( "%f %f %f    %f %f %f\n", center[0], center[1], center[2], EYE[0], EYE[1], EYE[2] );	
+//	MercuryVector v	 = center.Normalize() *-1;
+
 	MercuryVector v = (EYE - center).Normalize();
-	MercuryVector up = LOOKAT.CrossProduct( v );
+	MercuryVector up = (LOOKAT.CrossProduct( v )).Normalize();
+
 	float angleCos = LOOKAT.DotProduct(v);
 
-//	VIEWMATRIX.Ptr()[3];
-//	EYE.Print();
-//	center.Print();
-	
-//	printf("angleCos %f\n",angleCos);
 
 	if ((angleCos < 0.99990) && (angleCos > -0.9999))
 	{
 		float f = ACOS(angleCos)*RADDEG;
-//		printf("billboard!!! %f %f %f\n",up[0]*f, up[1]*f, up[2]*f );
 
-		m.RotateXYZ(up[0]*f, up[1]*f, up[2]*f);
+		MercuryMatrix mtmp;
+		mtmp.RotateAngAxis(-f, up[0], up[1], up[2]);
+		m = m * mtmp;
 	}
 	
 	return m;
