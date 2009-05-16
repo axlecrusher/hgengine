@@ -30,13 +30,12 @@ void Viewport::PreRender(const MercuryMatrix& matrix)
 	glMatrixMode(GL_MODELVIEW);
 	
 	VIEWMATRIX = matrix;
-	EYE[0] = matrix[0][3];
-	EYE[1] = matrix[1][3];
-	EYE[2] = matrix[2][3];
+	EYE[0] = matrix[0][3]; // same as float* [3]
+	EYE[1] = matrix[1][3]; // same as float* [7]
+	EYE[2] = matrix[2][3]; // same as float* [11]
 	EYE *= -1;
 	
-	MercuryVector l(0,0,1);
-//	l += EYE;
+	MercuryVector l(0,0,1,1);
 	LOOKAT = (matrix * l).Normalize();
 //	LOOKAT.Print();
 }

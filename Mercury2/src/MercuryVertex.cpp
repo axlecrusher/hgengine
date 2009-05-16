@@ -4,25 +4,26 @@
 
 MercuryVertex::MercuryVertex()
 {
-	(*this)[0] = (*this)[1] = (*this)[2] = 0;
+	(*this)[0] = (*this)[1] = (*this)[2] = (*this)[3] = 0;
 }
 
-MercuryVertex::MercuryVertex( float ix, float iy, float iz )
+MercuryVertex::MercuryVertex( float ix, float iy, float iz, float iw )
 {
 	(*this)[0] = ix;
 	(*this)[1] = iy;
 	(*this)[2] = iz;
+	(*this)[3] = iw;
 }
-
+/*
 MercuryVertex::MercuryVertex( const float * in )
 {
-	for (unsigned int i = 0; i < 3; ++i)
+	for (unsigned int i = 0; i < 4; ++i)
 		(*this)[i] = in[i];
 }
-
+*/
 MercuryVertex::MercuryVertex( const MercuryVertex& v)
 {
-	for (unsigned int i = 0; i < 3; ++i)
+	for (unsigned int i = 0; i < 4; ++i)
 		(*this)[i] = v[i];
 }
 
@@ -106,7 +107,7 @@ MercuryVertex MercuryVertex::DotProduct3(const MercuryVertex& rhs1, const Mercur
 
 void MercuryVertex::Print() const
 {
-	printf("%f %f %f\n", (*this)[0], (*this)[1], (*this)[2]);
+	printf("Vertex: %f %f %f %f\n", (*this)[0], (*this)[1], (*this)[2], (*this)[3]);
 }
 
 
