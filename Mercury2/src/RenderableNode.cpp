@@ -160,7 +160,7 @@ bool RenderableNode::IsCulled(const MercuryMatrix& matrix)
 
 MercuryMatrix RenderableNode::ManipulateMatrix(const MercuryMatrix& matrix)
 {
-	return matrix;
+	return VIEWMATRIX * matrix;
 }
 
 /***************************************************************************

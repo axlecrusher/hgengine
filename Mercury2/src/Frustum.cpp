@@ -2,6 +2,7 @@
 
 void Frustum::SetPerspective( float fov, float aspect, float znear, float zfar )
 {
+	//Should go in projection matrix
 	float xmin, xmax, ymin, ymax;
 	
 	m_fov = fov;
@@ -24,6 +25,7 @@ void Frustum::SetPerspective( float fov, float aspect, float znear, float zfar )
 
 void Frustum::ComputeFrustum(float left, float right, float bottom, float top, float zNear, float zFar)
 {
+	//Should go in projection matrix
 	float near2 = 2*zNear;
 	float rml = right-left;
 	float tmb = top - bottom;

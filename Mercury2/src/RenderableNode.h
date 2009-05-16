@@ -24,8 +24,11 @@ class RenderableNode : public MercuryNode
 		void AddRender(MercuryAsset* asset);
 		void AddPostRender(MercuryAsset* asset);
 		
+		///This will get the world space matrix
 		virtual void PreRender(const MercuryMatrix& matrix);
+		
 		virtual void Render(const MercuryMatrix& matrix);
+		
 		virtual void PostRender(const MercuryMatrix& matrix);
 		
 		virtual void LoadFromXML(const XMLNode& node);

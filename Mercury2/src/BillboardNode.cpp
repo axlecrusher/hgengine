@@ -6,30 +6,28 @@ REGISTER_NODE_TYPE(Billboard);
 
 MercuryMatrix Billboard::ManipulateMatrix(const MercuryMatrix& matrix)
 {
-	MercuryMatrix m = matrix;
-//	m.Transpose();
+	MercuryMatrix m = RenderableNode::ManipulateMatrix( matrix );
 	
-	//manually transposed
-	MercuryVertex center(m[3][0], m[3][1], m[3][2]);
+	MercuryVertex center(m.Ptr()[3], m.Ptr()[7], m.Ptr()[11]);
 	
-	const MercuryVertex& eye = FRUSTUM->GetEye();
-	const MercuryVector& lookAt = FRUSTUM->GetLookAt();
-		
-	MercuryVector v = (eye - center).Normalize();
-	MercuryVector up = lookAt.CrossProduct( v );
-	float angleCos = lookAt.DotProduct(v);
+	MercuryVector v = (EYE - center).Normalize();
+	MercuryVector up = LOOKAT.CrossProduct( v );
+	float angleCos = LOOKAT.DotProduct(v);
+
+//	VIEWMATRIX.Ptr()[3];
+//	EYE.Print();
+//	center.Print();
 	
+//	printf("angleCos %f\n",angleCos);
+
 	if ((angleCos < 0.99990) && (angleCos > -0.9999))
 	{
 		float f = ACOS(angleCos)*RADDEG;
 //		printf("billboard!!! %f %f %f\n",up[0]*f, up[1]*f, up[2]*f );
 
-//		MercuryMatrix m;
-//		m.RotateXYZ(ACOS(angleCosine)*RADDEG,upAux[0], upAux[1], upAux[2])
-//		glRotatef(ACOS(angleCosine)*RADDEG,upAux[0], upAux[1], upAux[2]);
 		m.RotateXYZ(up[0]*f, up[1]*f, up[2]*f);
 	}
-//	m.Transpose();
+	
 	return m;
 }
 

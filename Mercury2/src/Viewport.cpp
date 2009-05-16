@@ -4,30 +4,41 @@
 
 REGISTER_NODE_TYPE(Viewport);
 const Frustum* FRUSTUM;
+MercuryMatrix VIEWMATRIX;
+MercuryVertex EYE;
+MercuryVector LOOKAT;
 
 Viewport::Viewport()
 	:m_xFactor(1), m_yFactor(0.5), m_minx(0), m_miny(0)
 {
 }
 
-void Viewport::Render(const MercuryMatrix& matrix)
+void Viewport::PreRender(const MercuryMatrix& matrix)
 {
 	FRUSTUM = &m_frustum;
 	
 	MercuryWindow* w = MercuryWindow::GetCurrentWindow();
 	glViewport(m_minx, m_miny, (GLsizei)(w->Width()*m_xFactor), (GLsizei)(w->Height()*m_yFactor));
 
+	//Load the frustum into the projection
+	//"eye" position does not go into projection
 	glMatrixMode(GL_PROJECTION);
-	
 	MercuryMatrix f = m_frustum.GetMatrix();
 	f.Transpose();
-
-	glLoadMatrixf( (matrix * f).Ptr() );
-	//The following 2 are equivelent to above
-//	glLoadMatrixf( m_frustum.Ptr() );
-//	glMultMatrixf( m.Ptr() );
+	glLoadMatrixf( f.Ptr() );
 	
 	glMatrixMode(GL_MODELVIEW);
+	
+	VIEWMATRIX = matrix;
+	EYE[0] = matrix[0][3];
+	EYE[1] = matrix[1][3];
+	EYE[2] = matrix[2][3];
+	EYE *= -1;
+	
+	MercuryVector l(0,0,1);
+//	l += EYE;
+	LOOKAT = (matrix * l).Normalize();
+//	LOOKAT.Print();
 }
 
 void Viewport::LoadFromXML(const XMLNode& node)

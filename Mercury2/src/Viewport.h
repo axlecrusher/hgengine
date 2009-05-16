@@ -8,12 +8,15 @@
 #include <Frustum.h>
 
 extern const Frustum* FRUSTUM;
+extern MercuryMatrix VIEWMATRIX;
+extern MercuryVertex EYE;
+extern MercuryVector LOOKAT;
 
 class Viewport : public RenderableNode
 {
 	public:
 		Viewport();
-		virtual void Render(const MercuryMatrix& matrix);
+		virtual void PreRender(const MercuryMatrix& matrix);
 		
 		virtual void LoadFromXML(const XMLNode& node);
 		

@@ -9,11 +9,11 @@ void RenderGraphEntry::Render()
 		
 	if (m_node)
 	{	
+		m_node->PreRender( *m_matrix );
 		m = m_node->ManipulateMatrix( *m_matrix );
 		if ( m_node->IsHidden() || m_node->IsCulled(m) ) return;
 		m.Transpose();
 		glLoadMatrixf( m.Ptr() );
-		m_node->PreRender( m );
 		m_node->Render( m );
 	}
 	
