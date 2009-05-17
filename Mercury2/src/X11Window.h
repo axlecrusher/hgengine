@@ -22,6 +22,8 @@ class X11Window : public MercuryWindow
 		virtual void Clear();
 
 	private:
+		bool IsKeyRepeat(XKeyEvent* e);
+		
 		Display* m_display;
 		GLXContext m_renderCtx;
 		Window m_window;

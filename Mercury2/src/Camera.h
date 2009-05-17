@@ -9,6 +9,7 @@ class CameraNode : public TransformNode
 		CameraNode();
 		virtual void ComputeMatrix();
 		virtual void HandleMessage(const MString& message, const MessageData* data);
+		virtual void Update(float dTime);
 
 		GENRTTI(CameraNode);
 	private:

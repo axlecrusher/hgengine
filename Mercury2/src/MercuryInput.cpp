@@ -15,6 +15,46 @@ void MouseInput::ProcessMouseInput(int dx, int dy)
 	POST_MESSAGE( INPUTEVENT_MOUSE, mi, 0 );
 }
 
+KeyboardInput::KeyboardInput()
+	:key(0), isDown(false)
+{
+	//init initial keymap
+	if (m_keyStates[0] < 1)
+	{
+		m_keyStates[0] = 1;
+		for (uint16_t i = 1; i < 512; ++i)
+			m_keyStates[i] = 0;
+	}	
+}
+
+void KeyboardInput::ProcessKeyInput(uint16_t key, bool isDown)
+{
+	KeyboardInput* ki = new KeyboardInput();
+	ki->isDown = isDown;
+	ki->key = key;
+
+	if (isDown)
+	{
+		m_keyStates[key] |= (1 << 1);
+		printf("press %d\n", key);
+	}
+	else
+	{
+		m_keyStates[key] &= ~(1 << 1);
+		printf("release %d\n", key);
+	}
+	
+	POST_MESSAGE( INPUTEVENT_KEYBOARD, ki, 0 );
+}
+
+bool KeyboardInput::IsKeyDown(uint16_t key)
+{
+	return (m_keyStates[key] & (1 << 1)) > 0;
+}
+
+uint8_t KeyboardInput::m_keyStates[512];
+
+
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
  *                                                                          *

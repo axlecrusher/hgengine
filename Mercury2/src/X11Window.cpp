@@ -110,7 +110,9 @@ bool X11Window::PumpMessages()
 			case ClientMessage:
 			{
 				if ( unsigned(event.xclient.data.l[0]) == m_wmDeleteMessage )
+				{
 					XDestroyWindow(m_display,m_window);
+				}
 				break;
 			}
 			case DestroyNotify:
@@ -152,15 +154,18 @@ bool X11Window::PumpMessages()
 			}
 			case KeyPress:
 			{
-				XKeyEvent* e = (XKeyEvent*)&event;
-//				unsigned int* keycode = new unsigned int( e->keycode );
-//				POST_MESSAGE( "KeyPress", (void*)keycode, 0 );
+				//ignore autorepeat
+//				if ( IsKeyRepeat(&event.xkey) ) break;
+				
+				KeyboardInput::ProcessKeyInput(event.xkey.keycode, true);
 				break;
 			}
 			case KeyRelease:
 			{
-				XKeyEvent* e = (XKeyEvent*)&event;
-				e->keycode;
+				//ignore autorepeat
+//				if ( IsKeyRepeat(&event.xkey) ) break;
+				
+				KeyboardInput::ProcessKeyInput(event.xkey.keycode, false);
 				break;
 			}
 			case MotionNotify:
@@ -181,6 +186,25 @@ bool X11Window::PumpMessages()
 		}
 	}
 	return true;
+}
+
+bool X11Window::IsKeyRepeat(XKeyEvent* e)
+{
+	XEvent nEvent;
+	
+	if ( XPending(m_display) > 0 )
+	{
+		XPeekEvent(m_display, &nEvent);
+		if ( (nEvent.type == KeyRelease || nEvent.type == KeyPress) &&
+			nEvent.xkey.keycode == e->keycode && 
+			nEvent.xkey.time == e->time)
+		{
+			XNextEvent(m_display, &nEvent); //forget next event
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 void X11Window::Clear()

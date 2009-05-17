@@ -36,6 +36,20 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 	}
 }
 
+void CameraNode::Update(float dTime)
+{
+	MercuryVector p = GetPosition();
+	
+	if ( KeyboardInput::IsKeyDown(25) ) p[2] -= dTime*2;
+	if ( KeyboardInput::IsKeyDown(38) ) p[0] -= dTime*2;
+	if ( KeyboardInput::IsKeyDown(39) ) p[2] += dTime*2;
+	if ( KeyboardInput::IsKeyDown(40) ) p[0] += dTime*2;
+
+	SetPosition( p );
+	
+	TransformNode::Update( dTime );
+}
+
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
  *                                                                          *
