@@ -2,6 +2,7 @@
 #define MERCURYVECTOR_H
 
 #include <MercuryMath.h>
+#include <MercuryString.h>
 
 #ifndef WIN32
 #define __inline__     __inline__      __attribute__((always_inline))
@@ -77,7 +78,7 @@ class MercuryVertex
 		float DotProduct(const MercuryVertex& rhs) const;
 		MercuryVertex DotProduct3(const MercuryVertex& rhs1, const MercuryVertex& rhs2, const MercuryVertex& rhs3) const;
 
-		void Print() const;
+		void Print(const MString& s = "Vertex") const;
 
 //		float (*this)[3];
 		FloatRow m_xyzw;

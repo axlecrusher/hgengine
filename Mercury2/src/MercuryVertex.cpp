@@ -105,9 +105,9 @@ MercuryVertex MercuryVertex::DotProduct3(const MercuryVertex& rhs1, const Mercur
 	return dp;
 }
 
-void MercuryVertex::Print() const
+void MercuryVertex::Print(const MString& s) const
 {
-	printf("Vertex: %f %f %f %f\n", (*this)[0], (*this)[1], (*this)[2], (*this)[3]);
+	printf("%s: %f %f %f %f\n", s.c_str(), (*this)[0], (*this)[1], (*this)[2], (*this)[3]);
 }
 
 
