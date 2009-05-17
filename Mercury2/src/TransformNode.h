@@ -2,7 +2,7 @@
 #define TRANSFORMNODE_H
 
 #include <MercuryNode.h>
-#include <MercuryPoint.h>
+#include <MercuryVertex.h>
 #include <MercuryMatrix.h>
 
 //I am not sure if I like the idea of rippling a taint flag down the tree
@@ -14,13 +14,13 @@ class TransformNode : public MercuryNode
 		
 		virtual void Update(float dTime);
 
-		void SetScale( const MercuryPoint& scale );
-		void SetPosition( const MercuryPoint& position );
-		void SetRotation( const MercuryPoint& rotation );
+		void SetScale( const MercuryVertex& scale );
+		void SetPosition( const MercuryVertex& position );
+		void SetRotation( const MercuryVertex& rotation );
 		
-		inline const MercuryPoint& GetScale() const { return m_scale; }
-		inline const MercuryPoint& GetPosition() const { return m_position; }
-		inline const MercuryPoint& GetRotation() const { return m_rotation; }
+		inline const MercuryVertex& GetScale() const { return m_scale; }
+		inline const MercuryVertex& GetPosition() const { return m_position; }
+		inline const MercuryVertex& GetRotation() const { return m_rotation; }
 		
 		inline const MercuryMatrix& GetGlobalMatrix() const { return m_globalMatrix; }
 		const MercuryMatrix& GetParentMatrix() const;
@@ -38,12 +38,12 @@ class TransformNode : public MercuryNode
 	private:
 		void RippleTaintDown();
 		
-		MercuryPoint m_scale;
-		MercuryPoint m_position;
-		MercuryPoint m_rotation;
-
 //		MercuryMatrix m_localMatrix;
 	protected:
+		MercuryVertex m_scale;
+		MercuryVertex m_position;
+		MercuryVertex m_rotation;
+
 		MercuryMatrix m_globalMatrix;
 		
 		bool m_tainted;

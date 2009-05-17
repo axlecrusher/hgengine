@@ -4,7 +4,7 @@ REGISTER_NODE_TYPE(TransformNode);
 REGISTER_NODE_TYPE(RotatorNode);
 
 TransformNode::TransformNode()
-	:m_scale( MercuryPoint(1,1,1) )
+	:m_scale( MercuryVertex(1,1,1) )
 {
 	SetTaint( true );  //taint because of the scale set above
 }
@@ -14,7 +14,7 @@ void TransformNode::Update(float dTime)
 	if (m_tainted) ComputeMatrix();
 }
 
-void TransformNode::SetScale( const MercuryPoint& scale )
+void TransformNode::SetScale( const MercuryVertex& scale )
 {
 	if (scale != m_scale)
 	{
@@ -23,7 +23,7 @@ void TransformNode::SetScale( const MercuryPoint& scale )
 	}
 }
 
-void TransformNode::SetPosition( const MercuryPoint& position )
+void TransformNode::SetPosition( const MercuryVertex& position )
 {
 	if (position != m_position)
 	{
@@ -32,7 +32,7 @@ void TransformNode::SetPosition( const MercuryPoint& position )
 	}
 }
 
-void TransformNode::SetRotation( const MercuryPoint& rotation )
+void TransformNode::SetRotation( const MercuryVertex& rotation )
 {
 	if (rotation != m_rotation)
 	{
@@ -54,9 +54,9 @@ void TransformNode::ComputeMatrix()
 	MercuryMatrix local;
 //	local.Identity();
 
-	local.Transotale( m_position.x, m_position.y, m_position.z,
-							  m_rotation.x, m_rotation.y, m_rotation.z,
-							  m_scale.x, m_scale.y, m_scale.z );
+	local.Transotale( m_position[0], m_position[1], m_position[2],
+			  m_rotation[0], m_rotation[1], m_rotation[2],
+     m_scale[0], m_scale[1], m_scale[2] );
 	
 	m_globalMatrix = GetParentMatrix() * local;
 }
@@ -94,7 +94,7 @@ void TransformNode::RippleTaintDown()
 
 void TransformNode::LoadFromXML(const XMLNode& node)
 {
-	MercuryPoint rot(m_rotation), pos(m_position), scale(m_scale);
+	MercuryVertex rot(m_rotation), pos(m_position), scale(m_scale);
 	
 	//only change the values that exist in the XML
 	if ( !node.Attribute("rotx").empty() )
@@ -150,9 +150,9 @@ void TransformNode::OnAdded()
 
 void RotatorNode::Update(float dTime)
 {
-	MercuryPoint r = GetRotation();
-	r.x += (dTime)*25;
-	r.y += (dTime)*75;
+	float* r = m_rotation;
+	r[0] += (dTime)*25;
+	r[1] += (dTime)*75;
 	
 	SetRotation( r );
 	
