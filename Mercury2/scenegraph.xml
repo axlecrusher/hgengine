@@ -1,8 +1,6 @@
 <SceneGraph>
-	<node type="transformnode" rotx="0" roty="-90">
-		<node type="transformnode" movx="-6" movz="5">
-			<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100"/>
-		</node>
+	<node type="cameranode" movx="6" movz="-5.5" movy="3" rotx="-45" roty="90">
+		<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100"/>
 	</node>
 	<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
 		<node type="renderablenode">
