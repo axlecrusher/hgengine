@@ -155,17 +155,17 @@ bool X11Window::PumpMessages()
 			case KeyPress:
 			{
 				//ignore autorepeat
-//				if ( IsKeyRepeat(&event.xkey) ) break;
+				if ( IsKeyRepeat(&event.xkey) ) break;
 				
-				KeyboardInput::ProcessKeyInput(event.xkey.keycode, true);
+				KeyboardInput::ProcessKeyInput(event.xkey.keycode, true, false);
 				break;
 			}
 			case KeyRelease:
 			{
 				//ignore autorepeat
-//				if ( IsKeyRepeat(&event.xkey) ) break;
+				if ( IsKeyRepeat(&event.xkey) ) break;
 				
-				KeyboardInput::ProcessKeyInput(event.xkey.keycode, false);
+				KeyboardInput::ProcessKeyInput(event.xkey.keycode, false, false);
 				break;
 			}
 			case MotionNotify:
@@ -200,6 +200,7 @@ bool X11Window::IsKeyRepeat(XKeyEvent* e)
 			nEvent.xkey.time == e->time)
 		{
 			XNextEvent(m_display, &nEvent); //forget next event
+			KeyboardInput::ProcessKeyInput(e->keycode, true, true); //set repeat flag
 			return true;
 		}
 	}

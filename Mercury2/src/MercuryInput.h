@@ -23,13 +23,15 @@ class MouseInput : public MessageData
 class KeyboardInput : public MessageData
 {
 	public:
-		static void ProcessKeyInput(uint16_t key, bool isDown);
+		static void ProcessKeyInput(uint16_t key, bool isDown, bool repeat);
 		static bool IsKeyDown(uint16_t key);
+		static bool IsKeyRepeat(uint16_t key);
 		
 		KeyboardInput();
 		
 		int16_t key;
 		bool isDown;
+		bool isRepeat;
 	private:
 		static uint8_t m_keyStates[512];
 };

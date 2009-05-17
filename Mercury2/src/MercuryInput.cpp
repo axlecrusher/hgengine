@@ -27,22 +27,20 @@ KeyboardInput::KeyboardInput()
 	}	
 }
 
-void KeyboardInput::ProcessKeyInput(uint16_t key, bool isDown)
+void KeyboardInput::ProcessKeyInput(uint16_t key, bool isDown, bool repeat)
 {
 	KeyboardInput* ki = new KeyboardInput();
 	ki->isDown = isDown;
 	ki->key = key;
+	ki->isRepeat = repeat;
+	
+	//if statements are for old people, bruit force it
 
-	if (isDown)
-	{
-		m_keyStates[key] |= (1 << 1);
-		printf("press %d\n", key);
-	}
-	else
-	{
-		m_keyStates[key] &= ~(1 << 1);
-		printf("release %d\n", key);
-	}
+	m_keyStates[key] &= ~(1 << 1); //disable
+	m_keyStates[key] |= (isDown << 1); //enable if true
+	
+	m_keyStates[key] &= ~(1 << 2); //disable
+	m_keyStates[key] |= (repeat << 2); //enable if true
 	
 	POST_MESSAGE( INPUTEVENT_KEYBOARD, ki, 0 );
 }
@@ -51,6 +49,12 @@ bool KeyboardInput::IsKeyDown(uint16_t key)
 {
 	return (m_keyStates[key] & (1 << 1)) > 0;
 }
+
+bool KeyboardInput::IsKeyRepeat(uint16_t key)
+{
+	return (m_keyStates[key] & (1 << 2)) > 0;
+}
+
 
 uint8_t KeyboardInput::m_keyStates[512];
 
