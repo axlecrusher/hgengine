@@ -3,7 +3,7 @@
 FOLDERS="src"
 
 
-SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp src/MercuryNode.cpp src/MercuryPoint.cpp \
+SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp src/MercuryNode.cpp \
 	src/MercuryThreads.cpp  src/MercuryMath.cpp src/MercuryWindow.cpp src/RenderableNode.cpp \
 	src/TransformNode.cpp src/MercuryMatrix.cpp src/Viewport.cpp src/Quad.cpp src/MercuryUtil.cpp \
 	src/Texture.cpp src/RawImageData.cpp src/BMPLoader.cpp src/PNGLoader.cpp src/ImageLoader.cpp \
@@ -11,7 +11,7 @@ SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp src/MercuryNode.cpp src/MercuryPo
 	src/HGMDLModel.cpp src/MercuryString.cpp src/MercuryCrash.c src/MercuryBacktrace.c \
 	src/MercuryFile.cpp src/MercuryTimer.cpp src/MercuryMessageManager.cpp src/MercuryVertex.cpp \
 	src/MercuryPlane.cpp src/BoundingBox.cpp src/Shader.cpp src/RenderGraph.cpp src/Frustum.cpp \
-	src/BillboardNode.cpp"
+	src/BillboardNode.cpp src/Camera.cpp"
 
 SOURCES="$SOURCES src/MercuryFileDriverDirect.cpp src/MercuryFileDriverMem.cpp \
 	src/MercuryFileDriverPacked.cpp src/MercuryFileDriverZipped.cpp"
