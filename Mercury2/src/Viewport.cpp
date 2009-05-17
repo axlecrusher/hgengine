@@ -39,9 +39,9 @@ void Viewport::PreRender(const MercuryMatrix& matrix)
 	LOOKAT = (matrix * z).Normalize();
 	
 //	matrix.Print();
-	EYE.Print("Eye");
-	LOOKAT.Print("Lookat");
-	printf("******\n");
+//	EYE.Print("Eye");
+//	LOOKAT.Print("Lookat");
+//	printf("******\n");
 //	LOOKAT = (matrix * l).Normalize();
 //	LOOKAT.
 //	LOOKAT.Print();

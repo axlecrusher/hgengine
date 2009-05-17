@@ -1,20 +1,19 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#include <MercuryInput.h>
+#include <MercuryMessageManager.h>
 
-#include <TransformNode.h>
-
-class CameraNode : public TransformNode
+MouseInput::MouseInput()
+	:MessageData(), dx(0), dy(0), buttonMasks(0)
 {
-	public:
-		CameraNode();
-		virtual void ComputeMatrix();
-		virtual void HandleMessage(const MString& message, const MessageData* data);
+}
 
-		GENRTTI(CameraNode);
-	private:
-};
-
-#endif
+void MouseInput::ProcessMouseInput(int dx, int dy)
+{	
+	MouseInput* mi = new MouseInput();
+	mi->dx = dx;
+	mi->dy = dy;
+	
+	POST_MESSAGE( INPUTEVENT_MOUSE, mi, 0 );
+}
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *

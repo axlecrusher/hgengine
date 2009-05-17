@@ -1,9 +1,17 @@
 #include <MercuryMessageManager.h>
 
-void MercuryMessageManager::PostMessage(const MString& message, float delay)
+MessageHolder::MessageHolder()
+	:data(NULL)
 {
+}
+
+void MercuryMessageManager::PostMessage(const MString& message, MessageData* data, float delay)
+{
+	MessageHolder m;
+	m.message = message;
+	m.data = data;
 	uint64_t fireTime = m_currTime + uint64_t(delay*1000000);
-	m_messageQueue.Insert(fireTime, message);
+	m_messageQueue.Insert(fireTime, m);
 }
 
 void MercuryMessageManager::PumpMessages(const uint64_t& currTime)
@@ -13,8 +21,9 @@ void MercuryMessageManager::PumpMessages(const uint64_t& currTime)
 	{
 		if ( m_messageQueue.PeekNextPriority() > m_currTime ) return;
 		
-		MString& message = m_messageQueue.GetNext();
+		MessageHolder& message = m_messageQueue.GetNext();
 		FireOffMessage( message );
+		SAFE_DELETE( message.data );
 		m_messageQueue.PopNext();
 	}
 }
@@ -24,15 +33,17 @@ void MercuryMessageManager::RegisterForMessage(const MString& message, MessageHa
 	m_messageRecipients[message].push_back(ptr);
 }
 
-void MercuryMessageManager::FireOffMessage(const MString& message)
+void MercuryMessageManager::FireOffMessage(const MessageHolder& message)
 {
-	std::map< MString, std::list< MessageHandler* > >::iterator i = m_messageRecipients.find(message);
+	std::map< MString, std::list< MessageHandler* > >::iterator i = m_messageRecipients.find(message.message);
 	
+	if ( i != m_messageRecipients.end() )
+	{
+		std::list< MessageHandler* >::iterator recipients = i->second.begin();
 	
-	std::list< MessageHandler* >::iterator recipients = i->second.begin();
-	
-	for (; recipients != i->second.end(); ++recipients)
-		(*recipients)->HandleMessage(message);
+		for (; recipients != i->second.end(); ++recipients)
+			(*recipients)->HandleMessage(message.message, message.data);
+	}
 }
 
 MercuryMessageManager& MercuryMessageManager::GetInstance()

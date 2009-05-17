@@ -1,4 +1,6 @@
 #include <X11Window.h>
+#include <MercuryMessageManager.h>
+#include <MercuryInput.h>
 
 Callback0R< MercuryWindow* > MercuryWindow::genWindowClbk(X11Window::GenX11Window); //Register window generation callback
 
@@ -34,7 +36,7 @@ X11Window::X11Window(const MString& title, int width, int height, int bits, int 
 	attr.background_pixel = 0;
 	attr.border_pixel = 0;
 	attr.colormap = XCreateColormap( m_display, root_window, visinfo->visual, AllocNone);
-	attr.event_mask = StructureNotifyMask | SubstructureNotifyMask | ExposureMask | ButtonPressMask | ButtonReleaseMask | ButtonPressMask | PointerMotionMask | ButtonMotionMask | EnterWindowMask | LeaveWindowMask |KeyPressMask |KeyReleaseMask | SubstructureNotifyMask;
+	attr.event_mask = StructureNotifyMask | SubstructureNotifyMask | ExposureMask | ButtonPressMask | ButtonReleaseMask | ButtonPressMask | PointerMotionMask | ButtonMotionMask | EnterWindowMask | LeaveWindowMask |KeyPressMask |KeyReleaseMask | SubstructureNotifyMask | FocusChangeMask;
 	
 	unsigned long mask = CWBackPixel | CWBorderPixel | CWColormap | CWEventMask;
 
@@ -97,10 +99,12 @@ bool X11Window::SwapBuffers()
 
 bool X11Window::PumpMessages()
 {
+	static bool inFocus = false;
 	XEvent event;
 	while ( XPending(m_display) > 0)
 	{
 		XNextEvent(m_display, &event);
+
 		switch (event.type)
 		{
 			case ClientMessage:
@@ -115,6 +119,27 @@ bool X11Window::PumpMessages()
 				if (e->window == m_window) return false;
 				break;
 			}
+			case ConfigureNotify:
+			{
+				XConfigureEvent* e = (XConfigureEvent*)&event;
+				m_width = e->width;
+				m_height = e->height;
+				break;
+			}
+			case FocusIn:
+			case FocusOut:
+			{
+				XFocusChangeEvent*e = (XFocusChangeEvent*)&event;
+				inFocus = (event.type == FocusIn);
+				if (inFocus) XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
+				break;
+			}
+		}
+
+		//The events below only get processed if window is in focus
+		if ( !inFocus ) continue;
+		switch (event.type)
+		{
 			case ButtonPress:
 			{
 				XButtonEvent* e = (XButtonEvent*)&event;
@@ -128,7 +153,8 @@ bool X11Window::PumpMessages()
 			case KeyPress:
 			{
 				XKeyEvent* e = (XKeyEvent*)&event;
-				e->keycode;
+//				unsigned int* keycode = new unsigned int( e->keycode );
+//				POST_MESSAGE( "KeyPress", (void*)keycode, 0 );
 				break;
 			}
 			case KeyRelease:
@@ -140,13 +166,14 @@ bool X11Window::PumpMessages()
 			case MotionNotify:
 			{
 				XMotionEvent* e = (XMotionEvent*)&event;
-				break;
-			}
-			case ConfigureNotify:
-			{
-				XConfigureEvent* e = (XConfigureEvent*)&event;
-				m_width = e->width;
-				m_height = e->height;
+				int x, y;
+				x = m_width/2 - e->x;
+				y = m_height/2 - e->y;
+				if (x!=0 || y!=0) //prevent recursive XWarp
+				{
+					MouseInput::ProcessMouseInput(x, y);
+					XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
+				}
 				break;
 			}
 			default:

@@ -1,17 +1,22 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef MERCURYINPUT_H
+#define MERCURYINPUT_H
 
-#include <TransformNode.h>
+#include <MessageHandler.h>
 
-class CameraNode : public TransformNode
+const MString INPUTEVENT_MOUSE = "MouseInputEvent";
+
+class MouseInput : public MessageData
 {
 	public:
-		CameraNode();
-		virtual void ComputeMatrix();
-		virtual void HandleMessage(const MString& message, const MessageData* data);
-
-		GENRTTI(CameraNode);
-	private:
+		static const uint8_t LEFTBUTTON = 1;
+		static const uint8_t RIGHTBUTTON = 2;
+		static const uint8_t CENTERBUTTON = 4;
+		
+		static void ProcessMouseInput(int x, int y);
+		
+		MouseInput();
+		int32_t dx, dy;
+		uint8_t buttonMasks;
 };
 
 #endif

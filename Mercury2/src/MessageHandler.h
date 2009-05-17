@@ -4,11 +4,17 @@
 #include <MercuryString.h>
 #include <global.h>
 
+class MessageData
+{
+	public:
+		virtual ~MessageData() {};
+};
+
 class MessageHandler
 {
 	public:
 		virtual ~MessageHandler() {};
-		virtual void HandleMessage(const MString& message) {};
+		virtual void HandleMessage(const MString& message, const MessageData* data) {};
 };
 
 #endif

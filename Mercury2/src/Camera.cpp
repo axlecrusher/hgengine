@@ -1,6 +1,14 @@
 #include <Camera.h>
+#include <MercuryMessageManager.h>
+#include <MercuryInput.h>
 
 REGISTER_NODE_TYPE(CameraNode);
+
+CameraNode::CameraNode()
+	:TransformNode()
+{
+	REGISTER_FOR_MESSAGE( INPUTEVENT_MOUSE );
+}
 
 void CameraNode::ComputeMatrix()
 {
@@ -12,6 +20,20 @@ void CameraNode::ComputeMatrix()
 	local.Translate( m_position*-1 );
 	
 	m_globalMatrix = GetParentMatrix() * local;
+}
+
+void CameraNode::HandleMessage(const MString& message, const MessageData* data)
+{
+	if (message == INPUTEVENT_MOUSE)
+	{
+		MouseInput* m = (MouseInput*)data;
+		
+		MercuryVector r = m_rotation;
+		r[0] += m->dy/30.0f;
+		r[1] += m->dx/30.0f;
+		
+		SetRotation(r);
+	}
 }
 
 /****************************************************************************
