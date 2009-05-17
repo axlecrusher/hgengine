@@ -34,8 +34,12 @@ public:
 	MercuryVector operator*(const MercuryVertex& v) const;
 
 	void Translate(float x, float y, float z);
+	inline void Translate(const MercuryVertex& v) { Translate(v[0], v[1], v[2]); }
+	
 	///Rotate along the 3 primariy axes by given amounts (in deg)
 	void RotateXYZ(float x, float y, float z);
+	inline void RotateXYZ(const MercuryVertex& v) { RotateXYZ(v[0], v[1], v[2]); }
+	
 	///Rotate a given amount (fAngle) in degrees around pAxis
 	void RotateAngAxis( float fAngle, float x, float y, float z );
 	void Scale(float x, float y, float z);
