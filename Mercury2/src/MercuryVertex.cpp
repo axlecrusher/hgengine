@@ -14,13 +14,13 @@ MercuryVertex::MercuryVertex( float ix, float iy, float iz, float iw )
 	(*this)[2] = iz;
 	(*this)[3] = iw;
 }
-/*
+
 MercuryVertex::MercuryVertex( const float * in )
 {
-	for (unsigned int i = 0; i < 4; ++i)
+	for (unsigned int i = 0; i < 3; ++i)
 		(*this)[i] = in[i];
 }
-*/
+
 MercuryVertex::MercuryVertex( const MercuryVertex& v)
 {
 	for (unsigned int i = 0; i < 4; ++i)

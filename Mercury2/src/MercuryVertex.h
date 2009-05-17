@@ -14,7 +14,7 @@ class MercuryVertex
 	public:
 		MercuryVertex();
 		MercuryVertex( float ix, float iy, float iz, float iw = 0 );
-//		MercuryVertex( const float * in );
+		MercuryVertex( const float * in );
 		MercuryVertex( const MercuryVertex& v);
 
 		///Direct conversion to float*
