@@ -17,7 +17,7 @@ MercuryVertex::MercuryVertex( float ix, float iy, float iz, float iw )
 
 MercuryVertex::MercuryVertex( const float * in )
 {
-	for (unsigned int i = 0; i < 3; ++i)
+	for (unsigned int i = 0; i < 4; ++i)
 		(*this)[i] = in[i];
 }
 
@@ -30,7 +30,7 @@ MercuryVertex::MercuryVertex( const MercuryVertex& v)
 void MercuryVertex::NormalizeSelf()
 {
 	float imag = 1.0f/Length();
-	for (unsigned int i = 0; i < 3; ++i)
+	for (unsigned int i = 0; i < 4; ++i)
 		(*this)[i] *= imag;
 }
 		
@@ -46,6 +46,7 @@ float MercuryVertex::Length() const
 	float length = (*this)[0]*(*this)[0];
 	length += (*this)[1]*(*this)[1];
 	length += (*this)[2]*(*this)[2];
+	length += (*this)[3]*(*this)[3];
 	return SQRT(length);
 }
 
@@ -53,39 +54,41 @@ float MercuryVertex::GetBiggestElement() const
 {
 	float tmp = (*this)[0];
 	tmp = MAX<float>(tmp, (*this)[1]);
-	return MAX<float>(tmp, (*this)[2]);
+	tmp = MAX<float>(tmp, (*this)[2]);
+	return MAX<float>(tmp, (*this)[3]);
 }
 
 const MercuryVertex& MercuryVertex::operator *= (const MercuryVertex& p)
 {
-	for (unsigned int i = 0; i < 3; ++i)
+	for (unsigned int i = 0; i < 4; ++i)
 		(*this)[i] *= p[i];
 	return *this;
 }
 		
 const MercuryVertex& MercuryVertex::operator /= (const MercuryVertex& p)
 {
-	for (unsigned int i = 0; i < 3; ++i)
+	for (unsigned int i = 0; i < 4; ++i)
 		(*this)[i] /= p[i];
 	return *this;
 }
 
 bool MercuryVertex::operator==(const MercuryVertex& p) const
 {
-	for (unsigned int i = 0; i < 3; ++i)
+	for (unsigned int i = 0; i < 4; ++i)
 		if ((*this)[i] != p[i]) return false;
 	return true;
 }
 
 bool MercuryVertex::operator==(const float f) const
 {
-	for (unsigned int i = 0; i < 3; ++i)
+	for (unsigned int i = 0; i < 4; ++i)
 		if ((*this)[i] != f) return false;
 	return true;
 }
 
 MercuryVertex MercuryVertex::CrossProduct(const MercuryVertex& p) const
 {
+	//XXX should this use all 4 components?
 	MercuryVertex r;
 	MMCrossProduct( m_xyzw, p.m_xyzw, r.m_xyzw );
 	return r;
@@ -93,11 +96,13 @@ MercuryVertex MercuryVertex::CrossProduct(const MercuryVertex& p) const
 
 float MercuryVertex::DotProduct(const MercuryVertex& rhs) const
 {
+	//XXX should this use all 4 components?
 	return ((*this)[0]*rhs[0]+(*this)[1]*rhs[1]+(*this)[2]*rhs[2]);
 }
 
 MercuryVertex MercuryVertex::DotProduct3(const MercuryVertex& rhs1, const MercuryVertex& rhs2, const MercuryVertex& rhs3) const
 {
+	//XXX should this use all 4 components?
 	MercuryVertex dp;
 	dp[0] = DotProduct(rhs1);
 	dp[1] = DotProduct(rhs2);
