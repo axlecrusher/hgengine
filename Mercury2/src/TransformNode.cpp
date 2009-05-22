@@ -68,7 +68,6 @@ const MercuryMatrix& TransformNode::GetParentMatrix() const
 	while (n)
 	{
 		tn = TransformNode::Cast( n );
-		tn = TransformNode::Cast( n );
 		if ( tn ) return tn->GetGlobalMatrix();
 		n = n->Parent();
 	}
