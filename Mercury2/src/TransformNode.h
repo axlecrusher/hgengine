@@ -4,6 +4,7 @@
 #include <MercuryNode.h>
 #include <MercuryVertex.h>
 #include <MercuryMatrix.h>
+#include <MQuaternion.h>
 
 //I am not sure if I like the idea of rippling a taint flag down the tree
 //if a transform hs changed.  There is probably a better way of doing this.
@@ -16,11 +17,11 @@ class TransformNode : public MercuryNode
 
 		void SetScale( const MercuryVertex& scale );
 		void SetPosition( const MercuryVertex& position );
-		void SetRotation( const MercuryVertex& rotation );
+		void SetRotation( const MQuaternion& rotation );
 		
 		inline const MercuryVertex& GetScale() const { return m_scale; }
 		inline const MercuryVertex& GetPosition() const { return m_position; }
-		inline const MercuryVertex& GetRotation() const { return m_rotation; }
+		inline const MQuaternion& GetRotation() const { return m_rotation; }
 		
 		inline const MercuryMatrix& GetGlobalMatrix() const { return m_globalMatrix; }
 		const MercuryMatrix& GetParentMatrix() const;
@@ -42,7 +43,8 @@ class TransformNode : public MercuryNode
 	protected:
 		MercuryVertex m_scale;
 		MercuryVertex m_position;
-		MercuryVertex m_rotation;
+//		MercuryVertex m_rotation;
+		MQuaternion m_rotation;
 
 		MercuryMatrix m_globalMatrix;
 		

@@ -16,7 +16,9 @@ void CameraNode::ComputeMatrix()
 	
 	MercuryMatrix local;
 	
-	local.RotateXYZ( m_rotation*-1 );
+//	local.RotateXYZ( m_rotation*-1 );
+//	m_rotation.
+	AngleMatrix( m_rotation.ToVertex()*-1, local);
 	local.Translate( m_position*-1 );
 	
 	m_globalMatrix = GetParentMatrix() * local;
@@ -28,7 +30,7 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 	{
 		MouseInput* m = (MouseInput*)data;
 		
-		MercuryVector r = m_rotation;
+		MQuaternion r = m_rotation;
 		r[0] += m->dy/30.0f;
 		r[1] += m->dx/30.0f;
 		

@@ -32,7 +32,7 @@ void TransformNode::SetPosition( const MercuryVertex& position )
 	}
 }
 
-void TransformNode::SetRotation( const MercuryVertex& rotation )
+void TransformNode::SetRotation( const MQuaternion& rotation )
 {
 	if (rotation != m_rotation)
 	{
@@ -94,17 +94,18 @@ void TransformNode::RippleTaintDown()
 
 void TransformNode::LoadFromXML(const XMLNode& node)
 {
-	MercuryVertex rot(m_rotation), pos(m_position), scale(m_scale);
+	MercuryVertex pos(m_position), scale(m_scale);
+	MQuaternion rot(m_rotation);
 	
 	//only change the values that exist in the XML
 	if ( !node.Attribute("rotx").empty() )
-		rot.SetX( StrToFloat( node.Attribute("rotx") ) );
+		rot[0] = StrToFloat( node.Attribute("rotx") );
 
 	if ( !node.Attribute("roty").empty() )
-		rot.SetY( StrToFloat( node.Attribute("roty") ) );
+		rot[1] = StrToFloat( node.Attribute("roty") );
 
 	if ( !node.Attribute("rotz").empty() )
-		rot.SetZ( StrToFloat( node.Attribute("rotz") ) );
+		rot[2] = StrToFloat( node.Attribute("rotz") );
 
 	if ( !node.Attribute("scalex").empty() )
 		scale.SetX( StrToFloat( node.Attribute("scalex") ) );
@@ -150,7 +151,7 @@ void TransformNode::OnAdded()
 
 void RotatorNode::Update(float dTime)
 {
-	float* r = m_rotation;
+	MQuaternion r = m_rotation;
 	r[0] += (dTime)*25;
 	r[1] += (dTime)*75;
 	
