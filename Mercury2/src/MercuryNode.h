@@ -93,7 +93,7 @@ static InstanceCounter<NodeFactory> NFcounter("NodeFactory");
 	MercuryNode* FactoryFunct##class() { return new class(); } \
 	Callback0R<MercuryNode*> factoryclbk##class( FactoryFunct##class ); \
 	bool GlobalRegisterSuccess##class = NodeFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class); \
-	extern "C" { int Install##class() { printf( "Installing "#class ); return NodeFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class); } }
+	extern "C" { int Install##class() { printf( "Installing "#class "\n" ); NodeFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class); return 0; } }
 
 
 #endif

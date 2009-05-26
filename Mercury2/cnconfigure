@@ -191,7 +191,7 @@ echo "PROJ=$PROJ" >> Makefile
 echo "CFLAGS=$CC_BASE $CFLAGS" >> Makefile
 echo "LDFLAGS=$LDFLAGS" >> Makefile
 echo "">>Makefile
-echo -e "all : \$(PROJ) library" >> Makefile
+echo -e "all : \$(PROJ) library allmodules" >> Makefile
 echo -e "\$(PROJ) : \$(OBJ)" >> Makefile
 echo -e "\tg++ -o \$@ \$^ \$(LDFLAGS)" >> Makefile
 echo -e "help : " >> Makefile
@@ -216,11 +216,14 @@ for i in $SOURCES; do
 #	echo -e "\t@if \$(CC) \$(CFLAGS) -c -o \$@ \$<; then echo -e \"[\$\\\\\\\\033[32mOK\\\\\\\\033[0m]\"; else echo -e \"[\\\\\\\\033[31mFAIL\\\\\\\\033[0m]\"; fi" >> Makefile
 done
 
+echo "allmodules :" >> Makefile
+echo -ne "\t(cd modules&&make&&cd ..)\n" >> Makefile
 echo "clean:" >> Makefile
 echo -ne "\trm -f " >> Makefile
 for i in $FOLDERS; do
 	echo -ne "$i/*.o $i/*~ $i/core.* " >>Makefile
 done
 echo "\$(PROJ) \$(PROJ).so" >> Makefile
+echo -ne "\trm -f modules/*.so modules/*.o modules/*~\n" >>Makefile
 
 
