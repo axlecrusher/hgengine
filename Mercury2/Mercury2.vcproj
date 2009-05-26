@@ -290,6 +290,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\ModuleManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\ModuleManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MQuaternion.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MQuaternion.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MSemaphore.cpp"
 				>
 			</File>
