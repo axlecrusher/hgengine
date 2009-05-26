@@ -3,10 +3,10 @@
 
 MQuaternion::MQuaternion(float W, float X, float Y, float Z)
 {
-	m_xyzw[3] = X;
-	m_xyzw[0] = Y;
-	m_xyzw[1] = Z;
-	m_xyzw[2] = W;
+	m_xyzw[0] = X;
+	m_xyzw[1] = Y;
+	m_xyzw[2] = Z;
+	m_xyzw[3] = W;
 }
 
 MQuaternion::MQuaternion(float* xyzw)
@@ -25,14 +25,7 @@ MQuaternion::MQuaternion(const MercuryVertex& p)
 
 float & MQuaternion::operator [] (int i)
 {
-	switch (i)
-	{
-		case 0: return m_xyzw[0];
-		case 1: return m_xyzw[1];
-		case 2: return m_xyzw[2];
-		case 3: return m_xyzw[3];
-	}
-	return m_xyzw[0];	//haha we won't even get here.
+	return m_xyzw[i];
 }
 
 void MQuaternion::SetEuler(const MercuryVector& angles)
