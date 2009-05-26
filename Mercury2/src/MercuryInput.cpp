@@ -6,11 +6,19 @@ MouseInput::MouseInput()
 {
 }
 
-void MouseInput::ProcessMouseInput(int dx, int dy)
+void MouseInput::ProcessMouseInput(int dx, int dy, bool leftButton, bool rightButton, bool centerButton)
 {	
 	MouseInput* mi = new MouseInput();
 	mi->dx = dx;
 	mi->dy = dy;
+	
+	uint8_t buttonMasks = 0;
+	buttonMasks |= (leftButton << MB_LEFT); //enable if true
+	buttonMasks |= (rightButton << MB_RIGHT); //enable if true
+	buttonMasks |= (centerButton << MB_CENTER); //enable if true
+	mi->buttonMasks = buttonMasks;
+	
+	currentButtonMasks = buttonMasks;
 	
 	POST_MESSAGE( INPUTEVENT_MOUSE, mi, 0 );
 }
@@ -57,6 +65,7 @@ bool KeyboardInput::IsKeyRepeat(uint16_t key)
 
 
 uint8_t KeyboardInput::m_keyStates[512];
+uint8_t MouseInput::currentButtonMasks;
 
 
 /****************************************************************************

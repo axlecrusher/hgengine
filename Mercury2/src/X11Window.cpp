@@ -143,13 +143,10 @@ bool X11Window::PumpMessages()
 		switch (event.type)
 		{
 			case ButtonPress:
-			{
-				XButtonEvent* e = (XButtonEvent*)&event;
-				break;
-			}
 			case ButtonRelease:
 			{
 				XButtonEvent* e = (XButtonEvent*)&event;
+				MouseInput::ProcessMouseInput(0, 0, e->button & Button1, e->button & Button3, e->button & Button2);
 				break;
 			}
 			case KeyPress:
@@ -172,11 +169,16 @@ bool X11Window::PumpMessages()
 			{
 				XMotionEvent* e = (XMotionEvent*)&event;
 				int x, y;
+				bool left, right, center;
+				left = e->state & Button1Mask;
+				right = e->state & Button3Mask;
+				center = e->state & Button2Mask;
 				x = m_width/2 - e->x;
 				y = m_height/2 - e->y;
 				if (x!=0 || y!=0) //prevent recursive XWarp
 				{
-					MouseInput::ProcessMouseInput(x, y);
+					MouseInput::ProcessMouseInput(x, y,
+					left, right, center);
 					XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
 				}
 				break;

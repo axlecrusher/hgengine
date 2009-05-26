@@ -6,18 +6,24 @@
 const MString INPUTEVENT_MOUSE = "MouseInputEvent";
 const MString INPUTEVENT_KEYBOARD = "KeyboardInputEvent";
 
+enum MouseButton
+{
+	MB_NONE = 0,
+	MB_LEFT = 1,
+	MB_RIGHT = 2,
+	MB_CENTER = 3
+};
+
 class MouseInput : public MessageData
 {
 	public:
-		static const uint8_t LEFTBUTTON = 1;
-		static const uint8_t RIGHTBUTTON = 2;
-		static const uint8_t CENTERBUTTON = 4;
-		
-		static void ProcessMouseInput(int x, int y);
+		static void ProcessMouseInput(int dx, int dy, bool leftButton, bool rightButton, bool centerButton);
 		
 		MouseInput();
 		int32_t dx, dy;
 		uint8_t buttonMasks;
+	private:
+		static uint8_t currentButtonMasks;
 };
 
 class KeyboardInput : public MessageData
