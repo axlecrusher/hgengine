@@ -10,7 +10,7 @@
 #define RTLD_NOW 0
 #define RTLD_GLOBAL 0
 
-void * dlopen( const char * sFile, int dummy ) { return LoadLibrary( sFile ); }
+void * dlopen( const char * sFile, int dummy ) { return LoadLibrary( (LPCWSTR)sFile ); }
 void dlclose( void * handle ) { FreeLibrary( (HMODULE)handle ); }
 void * dlsym( void * handle, const char * sym ) { return GetProcAddress( (HMODULE) handle, sym ); }
 
