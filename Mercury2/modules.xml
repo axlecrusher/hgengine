@@ -1,0 +1,3 @@
+<Modules>
+	<Module src="modules/BillboardNode.c" obj="modules/BillboardNode" func="InstallBillboardNode" />
+</Modules>

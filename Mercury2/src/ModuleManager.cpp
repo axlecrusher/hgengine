@@ -1,21 +1,99 @@
-#ifndef BILLBOARDNODE_H
-#define BILLBOARDNODE_H
+#include <ModuleManager.h>
+#include <XMLParser.h>
 
-#include <RenderableNode.h>
+#ifndef WIN32
+#include <dlfcn.h>
+#else
+#include <windows.h>
 
-class Billboard : public RenderableNode
-{
-	public:
-		virtual MercuryMatrix ManipulateMatrix(const MercuryMatrix& matrix);
+//These are only synonyms for the POSIX stuff.
+#define RTLD_NOW 0
+#define RTLD_GLOBAL 0
 
-	private:
-};
+void * dlopen( const char * sFile, int dummy ) { return LoadLibrary( sFile ); }
+void dlclose( void * handle ) { FreeLibrary( (HMODULE)handle ); }
+void * dlsym( void * handle, const char * sym ) { return GetProcAddress( (HMODULE) handle, sym ); }
 
 #endif
 
 
+extern "C"
+{
+typedef int (*LoaderFunction)();
+};
+
+ModuleManager::ModuleManager()
+{
+}
+
+ModuleManager & ModuleManager::GetInstance()
+{
+	static ModuleManager *instance = NULL;
+	if (!instance)
+		instance = new ModuleManager();
+	return *instance;
+}
+
+void ModuleManager::InitializeAllModules()
+{
+	XMLDocument* doc = XMLDocument::Load("modules.xml");
+	XMLNode r = doc->GetRootNode();
+	for (XMLNode child = r.Child(); child.IsValid(); child = r.NextNode())
+	{
+		if( child.Name() != "Module" )
+		{
+			fprintf( stderr, "Invalid element in modules: %s\n", child.Name().c_str() );
+		}
+#ifdef WIN32
+		MString ModuleName = child.Attribute( "obj" ) + ".dll";
+#else
+		MString ModuleName = child.Attribute( "obj" ) + ".so";
+#endif
+		MString LoadFunct = child.Attribute( "func" );
+		LoadModule( ModuleName, LoadFunct );
+	}
+}
+
+void ModuleManager::UnloadModule( const MString & ModuleName )
+{
+	if( m_hAllHandles[ModuleName] )
+		dlclose( m_hAllHandles[ModuleName] );
+}
+
+bool ModuleManager::LoadModule( const MString & ModuleName, const MString & LoadFunction )
+{
+	if( m_hAllHandles[ModuleName] ) UnloadModule( ModuleName );
+	m_hAllHandles[ModuleName] = dlopen( ModuleName.c_str(), RTLD_NOW | RTLD_GLOBAL );
+
+	if( !m_hAllHandles[ModuleName] )
+	{
+		fprintf( stderr, "Error opening: %s\n", ModuleName.c_str() );
+		return false;
+	}
+
+	//If no load funct, just exit early.
+	if( LoadFunction == "" )
+		return true;
+
+	LoaderFunction T = (LoaderFunction)dlsym( m_hAllHandles[ModuleName], LoadFunction.c_str() );
+	if( !T )
+	{
+		fprintf( stderr, "Error finding: %s() in %s\n", LoadFunction.c_str(), ModuleName.c_str() );
+		return false;
+	}
+
+	int ret = T();
+	if( ret )
+	{
+		fprintf( stderr, "Error executing (Returned error %d): %s() in %s\n", ret, LoadFunction.c_str(), ModuleName.c_str() );
+		return false;
+	}
+
+	return true;
+}
+
 /****************************************************************************
- *   Copyright (C) 2009 by Joshua Allen                                     *
+ *   Copyright (C) 2009 by Charles Lohr                                     *
  *                                                                          *
  *                                                                          *
  *   All rights reserved.                                                   *

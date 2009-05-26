@@ -85,9 +85,20 @@ template<typename T>
 ///The return value is -1 if there was an issue, otherwise it is valid.
 long FileToString( const MString & sFileName, char * & data );
 
+/*  These two functions are very different */
+/// nextPow2 will go to the NEXT power of 2 even if x is already a power of 2.
+inline int nextPow2(int x) { int num = 1; while(num <= x) num <<= 1; return num; }
+///makePow2 will make sure the number is a power of 2 at least equal to x.
+inline int makePow2(int x) { int num = 1; while(num < x) num <<= 1; return num; }
+inline bool isPow2(int x) { int num = 1; while(num < x) num<<=1; return num==x; }
+
+///Return a prime number.  Note this is NOT sequential.  The general(but not guarenteed)
+///pattern is the next prime number that's roughly two times the last.
+int GetAPrime( int ith );
+
 #endif
 
-/* Copyright (c) 2008, Joshua Allen
+/* Copyright (c) 2009, Joshua Allen and Charles Lohr
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or

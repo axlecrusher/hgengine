@@ -16,6 +16,7 @@
 #include <RenderGraph.h>
 #include <Texture.h>
 #include <GLHeaders.h>
+#include <ModuleManager.h>
 
 bool SHOWBOUNDINGVOLUME = false;
 
@@ -52,13 +53,14 @@ int main()
 	SetupOGLExtensions();
 #endif
 
+	ModuleManager::GetInstance().InitializeAllModules();
+
 	MercuryNode* root = new MercuryNode();
 	
 	XMLDocument* doc = XMLDocument::Load("scenegraph.xml");
-	
 	XMLNode r = doc->GetRootNode();
 	root->LoadFromXML( r );
-	
+
 	SAFE_DELETE(doc);
 	
 	MercuryTimer timer;

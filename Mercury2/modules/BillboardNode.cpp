@@ -1,10 +1,10 @@
-#include <BillboardNode.h>
+#include "BillboardNode.h"
 #include <MercuryVertex.h>
 #include <Viewport.h>
 
-REGISTER_NODE_TYPE(Billboard);
+REGISTER_NODE_TYPE(BillboardNode);
 
-MercuryMatrix Billboard::ManipulateMatrix(const MercuryMatrix& matrix)
+MercuryMatrix BillboardNode::ManipulateMatrix(const MercuryMatrix& matrix)
 {
 	MercuryMatrix m = RenderableNode::ManipulateMatrix( matrix );
 	
