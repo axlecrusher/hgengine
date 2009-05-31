@@ -120,6 +120,13 @@ void MercuryMatrix::RotateAngAxis( float fAngle, float ix, float iy, float iz )
 	(*this)[3][3] = 1;
 }
 
+void MercuryMatrix::Rotate(const MQuaternion& q)
+{
+	MercuryMatrix m;
+	q.normalize().toMatrix4( m );
+	*this *= m;
+}
+
 void MercuryMatrix::Transotale( float tX, float tY, float tZ, float rX, float rY, float rZ, float sX, float sY, float sZ )
 {
 	//x,y,z must be negated for some reason
