@@ -49,6 +49,12 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 		m_y += m->dy/1200.0f;
 		m_x += m->dx/1200.0f;
 
+		//keep m_y within [-PI -> PI]
+		if( m_y < -Q_PI ) m_y += Q_PI*2.;
+		if( m_y > Q_PI )  m_y -= Q_PI*2.;
+
+		//if m_y is < -PI/2 or m_y > PI/2 one must invert the axes
+
 		MQuaternion qLeftRight = MQuaternion::CreateFromAxisAngle(MercuryVector(0,1,0), m_x);
 		MercuryVector LocalLookAt = MercuryVector( 1, 0, 0 );
 		LocalLookAt = LocalLookAt.Rotate( qLeftRight );
