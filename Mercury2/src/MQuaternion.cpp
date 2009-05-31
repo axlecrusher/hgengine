@@ -3,7 +3,7 @@
 
 MQuaternion::MQuaternion()
 {
-	m_wxyz[0] = 1;
+	m_wxyz[0] = 0;
 	m_wxyz[1] = 0;
 	m_wxyz[2] = 0;
 	m_wxyz[3] = 0;
