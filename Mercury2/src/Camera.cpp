@@ -5,11 +5,9 @@
 REGISTER_NODE_TYPE(CameraNode);
 
 CameraNode::CameraNode()
-	:TransformNode()
+	:TransformNode(), m_x(0), m_y(0)
 {
 	REGISTER_FOR_MESSAGE( INPUTEVENT_MOUSE );
-
-	REGISTER_FOR_MESSAGE( INPUTEVENT_KEYBOARD );
 }
 
 void CameraNode::ComputeMatrix()
@@ -19,12 +17,11 @@ void CameraNode::ComputeMatrix()
 	MercuryMatrix local;
 	
 	MQuaternion r( GetRotation().normalize() );
-
-	m_lookAt = MercuryVector(0,0,1);
+	
+	m_lookAt = MercuryVector(0,0,-1); //by default camera looks down world Z
 	m_lookAt = m_lookAt.Rotate( r );
 	m_lookAt.NormalizeSelf();
-//	m_lookAt.Print();
-	
+		
 	r[MQuaternion::W] *= -1; //reverse angle for camera
 	r.toMatrix4( local );
 	
@@ -39,12 +36,16 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 	{
 		MouseInput* m = (MouseInput*)data;
 		
-		MQuaternion qx = MQuaternion::CreateFromAxisAngle(MercuryVector(1,0,0), m->dy/1200.0f);
-		MQuaternion qy = MQuaternion::CreateFromAxisAngle(MercuryVector(0,1,0), m->dx/1200.0f);
+		m_y += m->dy/1200.0f;
+		m_x += m->dx/1200.0f;
 		
-		MQuaternion rot = GetRotation();
-		rot = rot * qx * qy;
-		SetRotation(rot);
+		MercuryVector Xaxis = m_lookAt.CrossProduct( MercuryVector(0,1,0) );
+		Xaxis.NormalizeSelf();
+		
+		MQuaternion qx = MQuaternion::CreateFromAxisAngle(Xaxis, m_y);
+		MQuaternion qy = MQuaternion::CreateFromAxisAngle(MercuryVector(0,1,0), m_x);
+		
+		SetRotation(qx * qy);
 	}
 }
 
@@ -53,10 +54,11 @@ void CameraNode::Update(float dTime)
 	MercuryVector p = GetPosition();
 	float a = 0;
 	
-	if ( KeyboardInput::IsKeyDown(25) ) a -= dTime*2;
-	if ( KeyboardInput::IsKeyDown(39) ) a += dTime*2;
+	if ( KeyboardInput::IsKeyDown(25) ) a += dTime*2;
+	if ( KeyboardInput::IsKeyDown(39) ) a -= dTime*2;
 	
 	p += m_lookAt * a;
+//	p.SetY(0); //lock to ground
 	SetPosition( p );
 
 	TransformNode::Update( dTime );
