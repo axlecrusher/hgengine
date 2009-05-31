@@ -18,10 +18,16 @@ void CameraNode::ComputeMatrix()
 	
 	MercuryMatrix local;
 	
-//	m_lookAt = GetRotation() * MercuryVector(0,0,1);
+	MQuaternion r( GetRotation().normalize() );
+
+	m_lookAt = MercuryVector(0,0,1);
+	m_lookAt = m_lookAt.Rotate( r );
+	m_lookAt.NormalizeSelf();
 //	m_lookAt.Print();
 	
-	AngleMatrix( GetRotation().ToVector()*-1, local);
+	r[MQuaternion::W] *= -1; //reverse angle for camera
+	r.toMatrix4( local );
+	
 	local.Translate( GetPosition()*-1 );
 	
 	m_globalMatrix = GetParentMatrix() * local;
@@ -33,65 +39,25 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 	{
 		MouseInput* m = (MouseInput*)data;
 		
-//		MercuryVertex r;
-//		MQuaternion rot, d(0,0,1,0);
-		
-		MQuaternion qx = MQuaternion::CreateFromAxisAngle(MercuryVector(1,0,0), m->dy/10.0f);
-		MQuaternion qy = MQuaternion::CreateFromAxisAngle(MercuryVector(0,1,0), m->dx/10.0f);
+		MQuaternion qx = MQuaternion::CreateFromAxisAngle(MercuryVector(1,0,0), m->dy/1200.0f);
+		MQuaternion qy = MQuaternion::CreateFromAxisAngle(MercuryVector(0,1,0), m->dx/1200.0f);
 		
 		MQuaternion rot = GetRotation();
-		rot *= (qx * qy).normalize();
-//		rot[MQuaternion::W]=0;
-//		rot.CreateFromAxisAngle(r,1);
-//		rot = GetRotation() * rot;
-//		rot = rot.normalize();
-		rot.Print();
-//		MQuaternion r = GetRotation();
-//		r[MQuaternion::X] += m->dy/30.0f;
-//		r[MQuaternion::Y] += m->dx/30.0f;
-//		r = r.normalize();
-		
-//		r = r * m_lookAt * r.reciprocal();
-//		r = r.normalize();
-//		r += m_rotation;
-
-//		r.ToVertex().Print();
-//		r += m_rotation;
-//		r[3] = 1;
-//		rot.SetEuler( r );
+		rot = rot * qx * qy;
 		SetRotation(rot);
-	}
-	if (message == INPUTEVENT_KEYBOARD)
-	{
-		MQuaternion r = GetRotation();
-		
-		KeyboardInput* k = (KeyboardInput*)data;
-		switch(k->key)
-		{
-			case 25:
-				r[MQuaternion::X] += 1;
-				break;
-			case 39:
-				r[MQuaternion::X] -= 1;
-				break;
-		}
-		SetRotation(r);
 	}
 }
 
 void CameraNode::Update(float dTime)
 {
-	MercuryVector p;// = GetPosition();
-/*	
-	if ( KeyboardInput::IsKeyDown(25) ) p[2] -= dTime*2;
-	if ( KeyboardInput::IsKeyDown(38) ) p[0] -= dTime*2;
-	if ( KeyboardInput::IsKeyDown(39) ) p[2] += dTime*2;
-	if ( KeyboardInput::IsKeyDown(40) ) p[0] += dTime*2;
+	MercuryVector p = GetPosition();
+	float a = 0;
 	
-	p *= m_lookAt.ToVertex();
-	p += GetPosition();
+	if ( KeyboardInput::IsKeyDown(25) ) a -= dTime*2;
+	if ( KeyboardInput::IsKeyDown(39) ) a += dTime*2;
+	
+	p += m_lookAt * a;
 	SetPosition( p );
-	*/
 
 	TransformNode::Update( dTime );
 }
