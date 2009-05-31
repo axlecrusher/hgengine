@@ -2,6 +2,7 @@
 #define CAMERA_H
 
 #include <TransformNode.h>
+#include <MQuaternion.h>
 
 class CameraNode : public TransformNode
 {
@@ -13,6 +14,7 @@ class CameraNode : public TransformNode
 
 		GENRTTI(CameraNode);
 	private:
+		MQuaternion m_lookAt;
 };
 
 #endif

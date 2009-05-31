@@ -30,8 +30,8 @@ void Viewport::PreRender(const MercuryMatrix& matrix)
 	glMatrixMode(GL_MODELVIEW);
 	
 	//compute the position of the eye
-	EYE = MercuryVertex(0,0,0,1);
-	EYE = matrix * EYE;
+//	EYE = MercuryVertex(0,0,0,1); //wrong
+//	EYE = matrix * EYE;
 	
 	VIEWMATRIX = matrix;
 	

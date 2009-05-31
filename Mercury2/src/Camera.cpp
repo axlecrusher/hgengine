@@ -8,6 +8,8 @@ CameraNode::CameraNode()
 	:TransformNode()
 {
 	REGISTER_FOR_MESSAGE( INPUTEVENT_MOUSE );
+
+	REGISTER_FOR_MESSAGE( INPUTEVENT_KEYBOARD );
 }
 
 void CameraNode::ComputeMatrix()
@@ -16,8 +18,10 @@ void CameraNode::ComputeMatrix()
 	
 	MercuryMatrix local;
 	
-//	local.RotateXYZ( m_rotation*-1 );
-//	m_rotation.
+	m_lookAt = m_rotation * MQuaternion(0,0,0,1) * m_rotation.reciprocal();
+//	m_lookAt.
+	m_lookAt.ToVertex().Print();
+	
 	AngleMatrix( m_rotation.ToVertex()*-1, local);
 	local.Translate( m_position*-1 );
 	
@@ -30,25 +34,56 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 	{
 		MouseInput* m = (MouseInput*)data;
 		
+//		MercuryVertex r;
+//		MQuaternion rot, d(0,0,1,0);
+		
 		MQuaternion r = m_rotation;
 		r[0] += m->dy/30.0f;
 		r[1] += m->dx/30.0f;
+//		r = r.normalize();
 		
+//		r = r * m_lookAt * r.reciprocal();
+//		r = r.normalize();
+//		r += m_rotation;
+
+//		r.ToVertex().Print();
+//		r += m_rotation;
+//		r[3] = 1;
+//		rot.SetEuler( r );
+		SetRotation(r);
+	}
+	if (message == INPUTEVENT_KEYBOARD)
+	{
+		MQuaternion r = m_rotation;
+		
+		KeyboardInput* k = (KeyboardInput*)data;
+		switch(k->key)
+		{
+			case 25:
+				r[0] += 1*k->isDown;
+				break;
+			case 39:
+				r[0] -= 1*k->isDown;
+				break;
+		}
 		SetRotation(r);
 	}
 }
 
 void CameraNode::Update(float dTime)
 {
-	MercuryVector p = GetPosition();
-	
+	MercuryVector p;// = GetPosition();
+/*	
 	if ( KeyboardInput::IsKeyDown(25) ) p[2] -= dTime*2;
 	if ( KeyboardInput::IsKeyDown(38) ) p[0] -= dTime*2;
 	if ( KeyboardInput::IsKeyDown(39) ) p[2] += dTime*2;
 	if ( KeyboardInput::IsKeyDown(40) ) p[0] += dTime*2;
-
-	SetPosition( p );
 	
+	p *= m_lookAt.ToVertex();
+	p += GetPosition();
+	SetPosition( p );
+	*/
+
 	TransformNode::Update( dTime );
 }
 
