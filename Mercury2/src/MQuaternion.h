@@ -20,7 +20,8 @@ class MQuaternion {
 		void SetEuler(const MercuryVertex& angles);
 	
 		///Make the quaternion represent a given angle radians around an axis p
-		void CreateFromAxisAngle(const MercuryVertex& p, const float radians);
+		static MQuaternion CreateFromAxisAngle(const MercuryVertex& p, const float radians);
+		void FromAxisAngle(const MercuryVertex& p, const float radians);
 		void ToAxisAngle(float& angle, float& x, float& y, float& z) const;
 	
 		///Access a component of the quaternion with the [] operator

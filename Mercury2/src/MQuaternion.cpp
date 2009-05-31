@@ -52,7 +52,14 @@ void MQuaternion::SetEuler(const MercuryVertex& angles)
 	m_wxyz[3] = cx*cy*sz-sx*sy*cz;//q4
 }
 
-void MQuaternion::CreateFromAxisAngle(const MercuryVertex& p, const float radians)
+MQuaternion MQuaternion::CreateFromAxisAngle(const MercuryVertex& p, const float radians)
+{
+	MQuaternion q;
+	q.FromAxisAngle(p, radians);
+	return q;
+}
+
+void MQuaternion::FromAxisAngle(const MercuryVertex& p, const float radians)
 {
 	float sn = SIN(radians/2.0f);
 	m_wxyz[0] = COS(radians/2.0f);
