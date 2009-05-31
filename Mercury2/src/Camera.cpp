@@ -48,13 +48,12 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 		
 		m_y += m->dy/1200.0f;
 		m_x += m->dx/1200.0f;
-		
-		MercuryVector Xaxis = m_lookAt.CrossProduct( MercuryVector(0,1,0) );
-		Xaxis.NormalizeSelf();
-		
-		MQuaternion qx = MQuaternion::CreateFromAxisAngle(Xaxis, m_y);
-		MQuaternion qy = MQuaternion::CreateFromAxisAngle(MercuryVector(0,1,0), m_x);
-		SetRotation(qx * qy);
+
+		MQuaternion qLeftRight = MQuaternion::CreateFromAxisAngle(MercuryVector(0,1,0), m_x);
+		MercuryVector LocalLookAt = MercuryVector( 1, 0, 0 );
+		LocalLookAt = LocalLookAt.Rotate( qLeftRight );
+		MQuaternion qUpDown = MQuaternion::CreateFromAxisAngle(LocalLookAt, m_y);
+		SetRotation(qUpDown*qLeftRight);
 	}
 }
 
