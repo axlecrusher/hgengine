@@ -14,7 +14,7 @@ class CameraNode : public TransformNode
 
 		GENRTTI(CameraNode);
 	private:
-		MQuaternion m_lookAt;
+		MercuryVector m_lookAt;
 };
 
 #endif

@@ -18,10 +18,10 @@ void CameraNode::ComputeMatrix()
 	
 	MercuryMatrix local;
 	
-	m_lookAt = GetRotation() * MQuaternion(1, MercuryVector(0,0,1) ) * GetRotation().reciprocal();
-	m_lookAt.Print();
+//	m_lookAt = GetRotation() * MercuryVector(0,0,1);
+//	m_lookAt.Print();
 	
-	AngleMatrix( GetRotation().ToVertex()*-1, local);
+	AngleMatrix( GetRotation().ToVector()*-1, local);
 	local.Translate( GetPosition()*-1 );
 	
 	m_globalMatrix = GetParentMatrix() * local;
@@ -36,9 +36,19 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 //		MercuryVertex r;
 //		MQuaternion rot, d(0,0,1,0);
 		
-		MQuaternion r = GetRotation();
-		r[MQuaternion::X] += m->dy/30.0f;
-		r[MQuaternion::Y] += m->dx/30.0f;
+		MQuaternion qx = MQuaternion::CreateFromAxisAngle(MercuryVector(1,0,0), m->dy/10.0f);
+		MQuaternion qy = MQuaternion::CreateFromAxisAngle(MercuryVector(0,1,0), m->dx/10.0f);
+		
+		MQuaternion rot = GetRotation();
+		rot *= (qx * qy).normalize();
+//		rot[MQuaternion::W]=0;
+//		rot.CreateFromAxisAngle(r,1);
+//		rot = GetRotation() * rot;
+//		rot = rot.normalize();
+		rot.Print();
+//		MQuaternion r = GetRotation();
+//		r[MQuaternion::X] += m->dy/30.0f;
+//		r[MQuaternion::Y] += m->dx/30.0f;
 //		r = r.normalize();
 		
 //		r = r * m_lookAt * r.reciprocal();
@@ -49,7 +59,7 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 //		r += m_rotation;
 //		r[3] = 1;
 //		rot.SetEuler( r );
-		SetRotation(r);
+		SetRotation(rot);
 	}
 	if (message == INPUTEVENT_KEYBOARD)
 	{
