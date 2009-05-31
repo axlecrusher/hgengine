@@ -1,6 +1,7 @@
 #include <Camera.h>
 #include <MercuryMessageManager.h>
 #include <MercuryInput.h>
+#include <Viewport.h>
 
 REGISTER_NODE_TYPE(CameraNode);
 
@@ -14,20 +15,29 @@ void CameraNode::ComputeMatrix()
 {
 	m_tainted = false;
 	
-	MercuryMatrix local;
+	MercuryMatrix local, parent(GetParentMatrix());
 	
 	MQuaternion r( GetRotation().normalize() );
 	
+	//compute the world space look vector  (broken if camera is in transform node)
 	m_lookAt = MercuryVector(0,0,-1); //by default camera looks down world Z
 	m_lookAt = m_lookAt.Rotate( r );
 	m_lookAt.NormalizeSelf();
+	LOOKAT = m_lookAt;
 		
 	r[MQuaternion::W] *= -1; //reverse angle for camera
-	r.toMatrix4( local );
 	
+	//rotate then translate since we are a camera
+	r.toMatrix4( local );
 	local.Translate( GetPosition()*-1 );
 	
-	m_globalMatrix = GetParentMatrix() * local;
+	m_globalMatrix = local * parent; //fold in any parent transform in reverse (correct rotation)
+	
+	//compute camera position in world space (broken if camera is in transform node)
+	local = MercuryMatrix::Identity();
+	local.Translate( GetPosition() );
+	EYE = (parent * local) * MercuryVertex(0,0,0,1);
+//	EYE.Print();
 }
 
 void CameraNode::HandleMessage(const MString& message, const MessageData* data)
@@ -44,7 +54,6 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 		
 		MQuaternion qx = MQuaternion::CreateFromAxisAngle(Xaxis, m_y);
 		MQuaternion qy = MQuaternion::CreateFromAxisAngle(MercuryVector(0,1,0), m_x);
-		
 		SetRotation(qx * qy);
 	}
 }
