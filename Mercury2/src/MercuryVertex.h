@@ -10,6 +10,8 @@
 #define __inline__ inline
 #endif
 
+class MQuaternion;
+
 class MercuryVertex
 {
 	public:
@@ -79,6 +81,8 @@ class MercuryVertex
 		MercuryVertex DotProduct3(const MercuryVertex& rhs1, const MercuryVertex& rhs2, const MercuryVertex& rhs3) const;
 
 		void Print(const MString& s = "Vertex") const;
+		
+		MercuryVertex Rotate(const MQuaternion& q) const;
 
 //		float (*this)[3];
 		FloatRow m_xyzw;

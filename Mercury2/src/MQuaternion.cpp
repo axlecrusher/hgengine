@@ -245,12 +245,6 @@ void MQuaternion::Print(const MString& s) const
 	printf("%s: %f %f %f %f\n", s.c_str(), m_wxyz[0], m_wxyz[1], m_wxyz[2], m_wxyz[3]);
 }
 
-MercuryVector MQuaternion::operator * (const MercuryVector &rhs) const
-{
-	return (*this * MQuaternion(0, rhs) * reciprocal()).ToVector();
-}
-
-
 //Returns the Euclidian Inner Product of two MQuaternions (Similar to Vector Dot-Product)
 float innerProduct(const MQuaternion & a, const MQuaternion &b) 
 {

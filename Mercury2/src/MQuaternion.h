@@ -61,8 +61,6 @@ class MQuaternion {
 		MQuaternion& operator *= (const float &rhs);
 		MQuaternion& operator /= (const float &rhs);
 		
-		MercuryVector operator * (const MercuryVector &rhs) const;
-
 		bool operator==(const MQuaternion &rhs) const;
 		inline bool operator!=(const MQuaternion &rhs) const { return !(*this == rhs); }
 		

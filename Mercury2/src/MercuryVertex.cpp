@@ -1,6 +1,7 @@
 #include <MercuryVertex.h>
 #include <MercuryUtil.h>
 #include <MercuryMath.h>
+#include <MQuaternion.h>
 
 MercuryVertex::MercuryVertex()
 {
@@ -115,7 +116,10 @@ void MercuryVertex::Print(const MString& s) const
 	printf("%s: %f %f %f %f\n", s.c_str(), (*this)[0], (*this)[1], (*this)[2], (*this)[3]);
 }
 
-
+MercuryVertex MercuryVertex::Rotate(const MQuaternion& q) const
+{
+	return (q * MQuaternion(0, *this) * q.reciprocal()).ToVector();
+}
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
