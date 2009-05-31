@@ -1,5 +1,6 @@
 #include <MQuaternion.h>
 #include <MercuryMath.h>
+#include <MercuryMatrix.h>
 
 MQuaternion::MQuaternion()
 {
@@ -58,6 +59,24 @@ void MQuaternion::CreateFromAxisAngle(const MercuryVertex& p, const float radian
 	m_wxyz[1] = sn * p[0];
 	m_wxyz[2] = sn * p[1];
 	m_wxyz[3] = sn * p[2];
+}
+
+void MQuaternion::ToAxisAngle(float& angle, float& x, float& y, float& z) const
+{
+	float scale = SQRT(x*x + y*y + z*z);
+	
+	//prevent infinite axis
+	if (scale == 0)
+	{
+		x=y=0; z=1;
+		angle = 0;
+		return;
+	}
+	
+	angle = 2*acos(m_wxyz[0]);
+	x = m_wxyz[1] / scale;
+	y = m_wxyz[2] / scale;
+	z = m_wxyz[3] / scale;
 }
 
 //Returns the magnitude
@@ -215,7 +234,7 @@ bool MQuaternion::operator==(const MQuaternion &rhs) const
 	return true;
 }
 
-MercuryVertex MQuaternion::ToVertex() const
+MercuryVertex MQuaternion::ToVector() const
 {
 	MercuryVertex v(m_wxyz[1], m_wxyz[2], m_wxyz[3], m_wxyz[0]);
 	return v;
@@ -224,6 +243,11 @@ MercuryVertex MQuaternion::ToVertex() const
 void MQuaternion::Print(const MString& s) const
 {
 	printf("%s: %f %f %f %f\n", s.c_str(), m_wxyz[0], m_wxyz[1], m_wxyz[2], m_wxyz[3]);
+}
+
+MercuryVector MQuaternion::operator * (const MercuryVector &rhs) const
+{
+	return (*this * MQuaternion(0, rhs) * reciprocal()).ToVector();
 }
 
 

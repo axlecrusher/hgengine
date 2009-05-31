@@ -2,7 +2,9 @@
 #define MQUATERNION_H
 
 #include <MercuryVertex.h>
-#include <MercuryMatrix.h>
+#include <MercuryUtil.h>
+
+class MercuryMatrix;
 
 ///Mathematical Quaternion (Used for Rotation)
 class MQuaternion {
@@ -19,6 +21,7 @@ class MQuaternion {
 	
 		///Make the quaternion represent a given angle radians around an axis p
 		void CreateFromAxisAngle(const MercuryVertex& p, const float radians);
+		void ToAxisAngle(float& angle, float& x, float& y, float& z) const;
 	
 		///Access a component of the quaternion with the [] operator
 		float & operator[] ( const WXYZ rhs );
@@ -39,7 +42,7 @@ class MQuaternion {
 		///Converts Quaternion to complete 4x4 Matrix
 		void toMatrix4( MercuryMatrix & mat ) const;
 		///Convert the quaternion to a point.
-		MercuryVertex ToVertex() const;
+		MercuryVertex ToVector() const;
 		
 		/******************************************************
 		* NOTE: Quaternion multipication is not commutative  *
@@ -58,6 +61,8 @@ class MQuaternion {
 		MQuaternion& operator *= (const float &rhs);
 		MQuaternion& operator /= (const float &rhs);
 		
+		MercuryVector operator * (const MercuryVector &rhs) const;
+
 		bool operator==(const MQuaternion &rhs) const;
 		inline bool operator!=(const MQuaternion &rhs) const { return !(*this == rhs); }
 		
