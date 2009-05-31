@@ -8,21 +8,20 @@
 class MQuaternion {
 	public:
 		//Defines a Quaternion such that q = w + xi + yj + zk
-		float m_xyzw[4];
-		MQuaternion(float W = 0, float X = 0, float Y = 0, float Z = 0);
-		MQuaternion(float* wxyz);
-		MQuaternion(const MercuryVertex& p);
-
+		MQuaternion();
+		MQuaternion(float W, float X, float Y, float Z);
+		MQuaternion(float W, const MercuryVertex& p);
+	
 		///Make this quaternion represent to a set of euler angles
 		void SetEuler(const MercuryVertex& angles);
-
+	
 		///Make the quaternion represent a given angle radians around an axis p
 		void CreateFromAxisAngle(const MercuryVertex& p, const float radians);
-
+	
 		///Access a component of the quaternion with the [] operator
 		float & operator[] ( const int rhs );
 		const float & operator[] ( const int rhs ) const;
-
+	
 		///Returns the magnitude
 		float magnitude() const;
 		///Returns the normalized Quaternion
@@ -38,8 +37,8 @@ class MQuaternion {
 		///Converts Quaternion to complete 4x4 Matrix
 		void toMatrix4( MercuryMatrix & mat ) const;
 		///Convert the quaternion to a point.
-		MercuryVertex ToVertex() { return MercuryVertex( m_xyzw[0],m_xyzw[1],m_xyzw[2] ); }
-	
+		MercuryVertex ToVertex() const;
+		
 		/******************************************************
 		* NOTE: Quaternion multipication is not commutative  *
 		*       Therefore the / operator could imply for a/b *
@@ -57,9 +56,11 @@ class MQuaternion {
 		MQuaternion& operator *= (const float &rhs);
 		MQuaternion& operator /= (const float &rhs);
 		
-		bool operator==(const MQuaternion& p) const;
-		inline bool operator!=(const MQuaternion& p) const { return !(*this == p); }
-
+		bool operator==(const MQuaternion &rhs) const;
+		inline bool operator!=(const MQuaternion &rhs) const { return !(*this == rhs); }
+	
+//	private:
+		FloatRow m_wxyz;
 } M_ALIGN(32);
 
 ///Produce a matrix out of a rotation x, then y then z (how Mercury does it)

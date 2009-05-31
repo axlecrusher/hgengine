@@ -1,34 +1,36 @@
 #include <MQuaternion.h>
 #include <MercuryMath.h>
 
+MQuaternion::MQuaternion()
+{
+	m_wxyz[0] = 0;
+	m_wxyz[1] = 0;
+	m_wxyz[2] = 0;
+	m_wxyz[3] = 0;
+}
+
 MQuaternion::MQuaternion(float W, float X, float Y, float Z)
 {
-	m_xyzw[0] = X;
-	m_xyzw[1] = Y;
-	m_xyzw[2] = Z;
-	m_xyzw[3] = W;
+	m_wxyz[0] = W;
+	m_wxyz[1] = X;
+	m_wxyz[2] = Y;
+	m_wxyz[3] = Z;
 }
 
-MQuaternion::MQuaternion(float* xyzw)
+MQuaternion::MQuaternion(float W, const MercuryVertex& p)
 {
-	for (uint8_t i = 0; i < 4; ++i)
-		m_xyzw[i] = xyzw[i];
-}
-
-MQuaternion::MQuaternion(const MercuryVertex& p)
-{
-	m_xyzw[0] = p.GetX();
-	m_xyzw[1] = p.GetY();
-	m_xyzw[2] = p.GetZ();
-	m_xyzw[3] = 0;
+	m_wxyz[0] = W;
+	m_wxyz[1] = p[0];
+	m_wxyz[2] = p[1];
+	m_wxyz[3] = p[2];
 }
 
 float & MQuaternion::operator [] (int i)
 {
-	return m_xyzw[i];
+	return m_wxyz[i];	//haha we won't even get here.
 }
 
-void MQuaternion::SetEuler(const MercuryVector& angles)
+void MQuaternion::SetEuler(const MercuryVertex& angles)
 {
 	float X = angles[0]/2.0f; //roll
 	float Y = angles[1]/2.0f; //pitch
@@ -43,24 +45,24 @@ void MQuaternion::SetEuler(const MercuryVector& angles)
 
 	//Correct according to
 	//http://en.wikipedia.org/wiki/Conversion_between_MQuaternions_and_Euler_angles
-	m_xyzw[3] = cx*cy*cz+sx*sy*sz;//q1
-	m_xyzw[0] = sx*cy*cz-cx*sy*sz;//q2
-	m_xyzw[1] = cx*sy*cz+sx*cy*sz;//q3
-	m_xyzw[2] = cx*cy*sz-sx*sy*cz;//q4
+	m_wxyz[0] = cx*cy*cz+sx*sy*sz;//q1
+	m_wxyz[1] = sx*cy*cz-cx*sy*sz;//q2
+	m_wxyz[2] = cx*sy*cz+sx*cy*sz;//q3
+	m_wxyz[3] = cx*cy*sz-sx*sy*cz;//q4
 }
 
-void MQuaternion::CreateFromAxisAngle(const MercuryVector& p, const float radians)
+void MQuaternion::CreateFromAxisAngle(const MercuryVertex& p, const float radians)
 {
 	float sn = SIN(radians/2.0f);
-	m_xyzw[3] = COS(radians/2.0f);
-	m_xyzw[0] = sn * p.m_xyzw[0];
-	m_xyzw[1] = sn * p.m_xyzw[1];
-	m_xyzw[2] = sn * p.m_xyzw[2];
+	m_wxyz[0] = COS(radians/2.0f);
+	m_wxyz[1] = sn * p[0];
+	m_wxyz[2] = sn * p[1];
+	m_wxyz[3] = sn * p[2];
 }
 
 //Returns the magnitude
 float MQuaternion::magnitude() const {
-	return SQRT((m_xyzw[3]*m_xyzw[3])+(m_xyzw[0]*m_xyzw[0])+(m_xyzw[1]*m_xyzw[1])+(m_xyzw[2]*m_xyzw[2]));
+	return SQRT((m_wxyz[0]*m_wxyz[0])+(m_wxyz[1]*m_wxyz[1])+(m_wxyz[2]*m_wxyz[2])+(m_wxyz[3]*m_wxyz[3]));
 }
 
 //Returns the normalized MQuaternion
@@ -70,7 +72,7 @@ MQuaternion MQuaternion::normalize() const {
 
 //Returns the conjugate MQuaternion
 MQuaternion MQuaternion::conjugate() const {
-	MQuaternion c(m_xyzw[3],-m_xyzw[0],-m_xyzw[1],-m_xyzw[2]);
+	MQuaternion c(m_wxyz[0],-m_wxyz[1],-m_wxyz[2],-m_wxyz[3]);
 	return c;
 }
 
@@ -87,15 +89,15 @@ MQuaternion MQuaternion::rotateAbout(const MQuaternion &spinAxis) const {
 
 //Converts MQuaternion to 4x4 Matrix(3x3 Spatial)
 void MQuaternion::toMatrix( MercuryMatrix &matrix ) const {
-	float X = 2*m_xyzw[0]*m_xyzw[0]; //Reduced calulation for speed
-	float Y = 2*m_xyzw[1]*m_xyzw[1];
-	float Z = 2*m_xyzw[2]*m_xyzw[2];
-	float a = 2*m_xyzw[3]*m_xyzw[0];
-	float b = 2*m_xyzw[3]*m_xyzw[1];
-	float c = 2*m_xyzw[3]*m_xyzw[2];
-	float d = 2*m_xyzw[0]*m_xyzw[1];
-	float e = 2*m_xyzw[0]*m_xyzw[2];
-	float f = 2*m_xyzw[1]*m_xyzw[2];
+	float X = 2*m_wxyz[1]*m_wxyz[1]; //Reduced calulation for speed
+	float Y = 2*m_wxyz[2]*m_wxyz[2];
+	float Z = 2*m_wxyz[3]*m_wxyz[3];
+	float a = 2*m_wxyz[0]*m_wxyz[1];
+	float b = 2*m_wxyz[0]*m_wxyz[2];
+	float c = 2*m_wxyz[0]*m_wxyz[3];
+	float d = 2*m_wxyz[1]*m_wxyz[2];
+	float e = 2*m_wxyz[1]*m_wxyz[3];
+	float f = 2*m_wxyz[2]*m_wxyz[3];
 
 	//row major
 	matrix[0][0] = 1-Y-Z;
@@ -128,132 +130,131 @@ void MQuaternion::toMatrix4( MercuryMatrix &matrix ) const {
 MQuaternion MQuaternion::operator + (const MQuaternion &rhs) const
 {
 	MQuaternion result;
-	result.m_xyzw[3] = m_xyzw[3] + rhs.m_xyzw[3];
-	result.m_xyzw[0] = m_xyzw[0] + rhs.m_xyzw[0];
-	result.m_xyzw[1] = m_xyzw[1] + rhs.m_xyzw[1];
-	result.m_xyzw[2] = m_xyzw[2] + rhs.m_xyzw[2];
+	for (uint8_t i = 0; i < 4; ++i)
+		result.m_wxyz[i] = m_wxyz[i]+rhs.m_wxyz[i];
 	return result;
 }
 
 MQuaternion MQuaternion::operator - (const MQuaternion &rhs) const
 {
 	MQuaternion result;
-	result.m_xyzw[3] = m_xyzw[3] - rhs.m_xyzw[3];
-	result.m_xyzw[0] = m_xyzw[0] - rhs.m_xyzw[0];
-	result.m_xyzw[1] = m_xyzw[1] - rhs.m_xyzw[1];
-	result.m_xyzw[2] = m_xyzw[2] - rhs.m_xyzw[2];
+	for (uint8_t i = 0; i < 4; ++i)
+		result.m_wxyz[i] = m_wxyz[i]-rhs.m_wxyz[i];
 	return result;
 }
 
 MQuaternion MQuaternion::operator * (const MQuaternion &rhs) const 
 {
 	MQuaternion result;
-	result.m_xyzw[3] = (m_xyzw[3]*rhs.m_xyzw[3])-(m_xyzw[0]*rhs.m_xyzw[0])-(m_xyzw[1]*rhs.m_xyzw[1])-(m_xyzw[2]*rhs.m_xyzw[2]);
-	result.m_xyzw[0] = (m_xyzw[3]*rhs.m_xyzw[0])+(m_xyzw[0]*rhs.m_xyzw[3])+(m_xyzw[1]*rhs.m_xyzw[2])-(m_xyzw[2]*rhs.m_xyzw[1]);
-	result.m_xyzw[1] = (m_xyzw[3]*rhs.m_xyzw[1])-(m_xyzw[0]*rhs.m_xyzw[2])+(m_xyzw[1]*rhs.m_xyzw[3])+(m_xyzw[2]*rhs.m_xyzw[0]);
-	result.m_xyzw[2] = (m_xyzw[3]*rhs.m_xyzw[2])+(m_xyzw[0]*rhs.m_xyzw[1])-(m_xyzw[1]*rhs.m_xyzw[0])+(m_xyzw[2]*rhs.m_xyzw[3]);
+	result.m_wxyz[0] = (m_wxyz[0]*rhs.m_wxyz[0])-(m_wxyz[1]*rhs.m_wxyz[1])-(m_wxyz[2]*rhs.m_wxyz[2])-(m_wxyz[3]*rhs.m_wxyz[3]);
+	result.m_wxyz[1] = (m_wxyz[0]*rhs.m_wxyz[1])+(m_wxyz[1]*rhs.m_wxyz[0])+(m_wxyz[2]*rhs.m_wxyz[3])-(m_wxyz[3]*rhs.m_wxyz[2]);
+	result.m_wxyz[2] = (m_wxyz[0]*rhs.m_wxyz[2])-(m_wxyz[1]*rhs.m_wxyz[3])+(m_wxyz[2]*rhs.m_wxyz[0])+(m_wxyz[3]*rhs.m_wxyz[1]);
+	result.m_wxyz[3] = (m_wxyz[0]*rhs.m_wxyz[3])+(m_wxyz[1]*rhs.m_wxyz[2])-(m_wxyz[2]*rhs.m_wxyz[1])+(m_wxyz[3]*rhs.m_wxyz[0]);
 	return result;
 }
 
 MQuaternion& MQuaternion::operator = (const MQuaternion &rhs) 
 {
-	m_xyzw[3] = rhs.m_xyzw[3];
-	m_xyzw[0] = rhs.m_xyzw[0];
-	m_xyzw[1] = rhs.m_xyzw[1];
-	m_xyzw[2] = rhs.m_xyzw[2];
+	for (uint8_t i = 0; i < 4; ++i)
+		m_wxyz[i] = rhs.m_wxyz[i];
 	return (*this);
 }
 
 MQuaternion& MQuaternion::operator += (const MQuaternion &rhs) {
-	m_xyzw[3] += rhs.m_xyzw[3];
-	m_xyzw[0] += rhs.m_xyzw[0];
-	m_xyzw[1] += rhs.m_xyzw[1];
-	m_xyzw[2] += rhs.m_xyzw[2];
+	for (uint8_t i = 0; i < 4; ++i)
+		m_wxyz[i] += rhs.m_wxyz[i];
 	return (*this);
 }
 
 MQuaternion& MQuaternion::operator -= (const MQuaternion &rhs) {
-	m_xyzw[3] -= rhs.m_xyzw[3];
-	m_xyzw[0] -= rhs.m_xyzw[0];
-	m_xyzw[1] -= rhs.m_xyzw[1];
-	m_xyzw[2] -= rhs.m_xyzw[2];
+	for (uint8_t i = 0; i < 4; ++i)
+		m_wxyz[i] -= rhs.m_wxyz[i];
 	return (*this);
 }
 
 MQuaternion& MQuaternion::operator *= (const MQuaternion &rhs) {
-	m_xyzw[3] = (m_xyzw[3]*rhs.m_xyzw[3])-(m_xyzw[0]*rhs.m_xyzw[0])-(m_xyzw[1]*rhs.m_xyzw[1])-(m_xyzw[2]*rhs.m_xyzw[2]);
-	m_xyzw[0] = (m_xyzw[3]*rhs.m_xyzw[0])+(m_xyzw[0]*rhs.m_xyzw[3])+(m_xyzw[1]*rhs.m_xyzw[2])-(m_xyzw[2]*rhs.m_xyzw[1]);
-	m_xyzw[1] = (m_xyzw[3]*rhs.m_xyzw[1])-(m_xyzw[0]*rhs.m_xyzw[2])+(m_xyzw[1]*rhs.m_xyzw[3])+(m_xyzw[2]*rhs.m_xyzw[0]);
-	m_xyzw[2] = (m_xyzw[3]*rhs.m_xyzw[2])+(m_xyzw[0]*rhs.m_xyzw[1])-(m_xyzw[1]*rhs.m_xyzw[0])+(m_xyzw[2]*rhs.m_xyzw[3]);
+	m_wxyz[0] = (m_wxyz[0]*rhs.m_wxyz[0])-(m_wxyz[1]*rhs.m_wxyz[1])-(m_wxyz[2]*rhs.m_wxyz[2])-(m_wxyz[3]*rhs.m_wxyz[3]);
+	m_wxyz[1] = (m_wxyz[0]*rhs.m_wxyz[1])+(m_wxyz[1]*rhs.m_wxyz[0])+(m_wxyz[2]*rhs.m_wxyz[3])-(m_wxyz[3]*rhs.m_wxyz[2]);
+	m_wxyz[2] = (m_wxyz[0]*rhs.m_wxyz[2])-(m_wxyz[1]*rhs.m_wxyz[3])+(m_wxyz[2]*rhs.m_wxyz[0])+(m_wxyz[3]*rhs.m_wxyz[1]);
+	m_wxyz[3] = (m_wxyz[0]*rhs.m_wxyz[3])+(m_wxyz[1]*rhs.m_wxyz[2])-(m_wxyz[2]*rhs.m_wxyz[1])+(m_wxyz[3]*rhs.m_wxyz[0]);
 	return (*this);
 }
 
 MQuaternion MQuaternion::operator * (const float &rhs) const {
 	MQuaternion result;
-	result.m_xyzw[3] = m_xyzw[3]*rhs;
-	result.m_xyzw[0] = m_xyzw[0]*rhs;
-	result.m_xyzw[1] = m_xyzw[1]*rhs;
-	result.m_xyzw[2] = m_xyzw[2]*rhs;
+	for (uint8_t i = 0; i < 4; ++i)
+		result.m_wxyz[i] = m_wxyz[i]*rhs;
 	return result;
 }
 
 MQuaternion MQuaternion::operator / (const float &rhs) const {
 	MQuaternion result;
-	result.m_xyzw[3] = m_xyzw[3]/rhs;
-	result.m_xyzw[0] = m_xyzw[0]/rhs;
-	result.m_xyzw[1] = m_xyzw[1]/rhs;
-	result.m_xyzw[2] = m_xyzw[2]/rhs;
+	for (uint8_t i = 0; i < 4; ++i)
+		result.m_wxyz[i] = m_wxyz[i]/rhs;
 	return result;
 }
 
-MQuaternion& MQuaternion::operator *= (const float &rhs) {
-	m_xyzw[3] *= rhs;
-	m_xyzw[0] *= rhs;
-	m_xyzw[1] *= rhs;
-	m_xyzw[2] *= rhs;
+MQuaternion& MQuaternion::operator *= (const float &rhs)
+{
+	for (uint8_t i = 0; i < 4; ++i)
+		m_wxyz[i] *= rhs;
 	return (*this);
 }
 
-MQuaternion& MQuaternion::operator /= (const float &rhs) {
-	m_xyzw[3] /= rhs;
-	m_xyzw[0] /= rhs;
-	m_xyzw[1] /= rhs;
-	m_xyzw[2] /= rhs;
+MQuaternion& MQuaternion::operator /= (const float &rhs)
+{
+	for (uint8_t i = 0; i < 4; ++i)
+		m_wxyz[i] /= rhs;
 	return (*this);
 }
+
+bool MQuaternion::operator==(const MQuaternion &rhs) const
+{
+	for (uint8_t i = 0; i < 4; ++i)
+		if (m_wxyz[i] != rhs.m_wxyz[i]) return false;
+	return true;
+}
+
+MercuryVertex MQuaternion::ToVertex() const
+{
+	MercuryVertex v(m_wxyz[1], m_wxyz[2], m_wxyz[3], m_wxyz[0]);
+	return v;
+}
+
+
 
 //Returns the Euclidian Inner Product of two MQuaternions (Similar to Vector Dot-Product)
 float innerProduct(const MQuaternion & a, const MQuaternion &b) 
 {
-	return (a.m_xyzw[3]*b.m_xyzw[3])+(a.m_xyzw[0]*b.m_xyzw[0])+(a.m_xyzw[1]*b.m_xyzw[1])+(a.m_xyzw[2]*b.m_xyzw[2]);
+	return (a.m_wxyz[0]*b.m_wxyz[0])+(a.m_wxyz[1]*b.m_wxyz[1])+(a.m_wxyz[2]*b.m_wxyz[2])+(a.m_wxyz[3]*b.m_wxyz[3]);
 }
 
 //Returns the Euclidian Outer Product of two MQuaternions
-MercuryVector outerProduct(MQuaternion a,MQuaternion b) 
+MercuryVertex outerProduct(MQuaternion a,MQuaternion b) 
 {
-	MercuryVector result;
-	result.m_xyzw[0] = (a.m_xyzw[3]*b.m_xyzw[0])-(a.m_xyzw[0]*b.m_xyzw[3])-(a.m_xyzw[1]*b.m_xyzw[2])+(a.m_xyzw[2]*b.m_xyzw[1]);
-	result.m_xyzw[1] = (a.m_xyzw[3]*b.m_xyzw[1])+(a.m_xyzw[0]*b.m_xyzw[2])-(a.m_xyzw[1]*b.m_xyzw[3])-(a.m_xyzw[2]*b.m_xyzw[0]);
-	result.m_xyzw[2] = (a.m_xyzw[3]*b.m_xyzw[2])-(a.m_xyzw[0]*b.m_xyzw[1])+(a.m_xyzw[1]*b.m_xyzw[0])-(a.m_xyzw[2]*b.m_xyzw[3]);
+	MercuryVertex result;
+	result[0] = (a.m_wxyz[0]*b.m_wxyz[1])-(a.m_wxyz[1]*b.m_wxyz[0])-(a.m_wxyz[2]*b.m_wxyz[3])+(a.m_wxyz[3]*b.m_wxyz[2]);
+	result[1] = (a.m_wxyz[0]*b.m_wxyz[2])+(a.m_wxyz[1]*b.m_wxyz[3])-(a.m_wxyz[2]*b.m_wxyz[0])-(a.m_wxyz[3]*b.m_wxyz[1]);
+	result[2] = (a.m_wxyz[0]*b.m_wxyz[3])-(a.m_wxyz[1]*b.m_wxyz[2])+(a.m_wxyz[2]*b.m_wxyz[1])-(a.m_wxyz[3]*b.m_wxyz[0]);
 	return result;
 }
 
 //Returns the Even Product of two MQuaternions
 MQuaternion evenProduct(MQuaternion a,MQuaternion b) {
 	MQuaternion result;
-	result.m_xyzw[3] = (a.m_xyzw[3]*b.m_xyzw[3])-(a.m_xyzw[0]*b.m_xyzw[0])-(a.m_xyzw[1]*b.m_xyzw[1])-(a.m_xyzw[2]*b.m_xyzw[2]);
-	result.m_xyzw[0] = (a.m_xyzw[3]*b.m_xyzw[0])+(a.m_xyzw[0]*b.m_xyzw[3]);
-	result.m_xyzw[1] = (a.m_xyzw[3]*b.m_xyzw[1])+(a.m_xyzw[1]*b.m_xyzw[3]);
-	result.m_xyzw[2] = (a.m_xyzw[3]*b.m_xyzw[2])+(a.m_xyzw[2]*b.m_xyzw[3]);
+	result.m_wxyz[0] = (a.m_wxyz[0]*b.m_wxyz[0])-(a.m_wxyz[1]*b.m_wxyz[1])-(a.m_wxyz[2]*b.m_wxyz[2])-(a.m_wxyz[3]*b.m_wxyz[3]);
+	result.m_wxyz[1] = (a.m_wxyz[0]*b.m_wxyz[1])+(a.m_wxyz[1]*b.m_wxyz[0]);
+	result.m_wxyz[2] = (a.m_wxyz[0]*b.m_wxyz[2])+(a.m_wxyz[2]*b.m_wxyz[0]);
+	result.m_wxyz[3] = (a.m_wxyz[0]*b.m_wxyz[3])+(a.m_wxyz[3]*b.m_wxyz[0]);
 	return result;
 }
 
 //Returns the Odd Product of two MQuaternions (Similar to Vector Cross-Product)
-MercuryVector oddProduct(MQuaternion a,MQuaternion b) {
-	MercuryVector result;
-	result.m_xyzw[0] = (a.m_xyzw[1]*b.m_xyzw[2])-(a.m_xyzw[2]*b.m_xyzw[1]);
-	result.m_xyzw[1] = (a.m_xyzw[2]*b.m_xyzw[0])-(a.m_xyzw[0]*b.m_xyzw[2]);
-	result.m_xyzw[2] = (a.m_xyzw[0]*b.m_xyzw[1])-(a.m_xyzw[1]*b.m_xyzw[0]);
+MercuryVertex oddProduct(MQuaternion a,MQuaternion b) {
+	MercuryVertex result;
+	result[0] = (a.m_wxyz[2]*b.m_wxyz[3])-(a.m_wxyz[3]*b.m_wxyz[2]);
+	result[1] = (a.m_wxyz[3]*b.m_wxyz[1])-(a.m_wxyz[1]*b.m_wxyz[3]);
+	result[2] = (a.m_wxyz[1]*b.m_wxyz[2])-(a.m_wxyz[2]*b.m_wxyz[1]);
 	return result;
 }
 
@@ -277,13 +278,6 @@ MQuaternion SLERP( const MQuaternion &a, const MQuaternion &b,float t) {
 	if(fabs(sinTheta) < 0.01)
 		return (a+b)/2;
 	return ( (a*SIN((1-t)*Theta)) + (b*SIN(t*Theta)) ) / sinTheta;
-}
-
-bool MQuaternion::operator==(const MQuaternion& p) const
-{
-	for (unsigned int i = 0; i < 4; ++i)
-		if (m_xyzw[i] != p.m_xyzw[i]) return false;
-	return true;
 }
 
 void AngleMatrix (const MercuryVector & angles, MercuryMatrix & matrix )
@@ -319,6 +313,7 @@ void AngleMatrix (const MercuryVector & angles, MercuryMatrix & matrix )
 	matrix[3][2] = 0;
 	matrix[3][3] = 1;
 }
+
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen, Charles Lohr, Adam Lowman          *
