@@ -45,6 +45,14 @@ const T& MIN(const T& t1, const T& t2)
 	return t1<t2?t1:t2;
 }
 
+template<typename T>
+const T& Clamp(const T& min, const T& max, const T& value)
+{
+	if (value > max) return max;
+	if (value < min) return min;
+	return value;
+}
+
 //This counter is used with singletons to
 //ensure proper destruction order of the
 //singleton
