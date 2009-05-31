@@ -5,8 +5,7 @@
 #include "MercuryMath.h"
 #include "MercuryUtil.h"
 #include <MercuryVertex.h>
-
-class MercuryMatrix;
+#include <MQuaternion.h>
 
 ///General Purpose 4x4 row-major matrix
 class MercuryMatrix
@@ -42,7 +41,12 @@ public:
 	
 	///Rotate a given amount (fAngle) in degrees around pAxis
 	void RotateAngAxis( float fAngle, float x, float y, float z );
+	
+	void Rotate(const MQuaternion& q);
+	
 	void Scale(float x, float y, float z);
+	inline void Scale(const MercuryVertex& v) { Scale(v[0], v[1], v[2]); }
+	
 	void Transotale( float tX, float tY, float tZ, float rX, float rY, float rZ, float sX, float sY, float sZ );
 	inline void Transpose() { TransposeMatrix( m_matrix ); }
 
