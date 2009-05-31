@@ -39,12 +39,13 @@ class TransformNode : public MercuryNode
 	private:
 		void RippleTaintDown();
 		
-//		MercuryMatrix m_localMatrix;
-	protected:
+		//use of accessor required
 		MercuryVertex m_scale;
 		MercuryVertex m_position;
-//		MercuryVertex m_rotation;
 		MQuaternion m_rotation;
+		
+//		MercuryMatrix m_localMatrix;
+	protected:
 
 		MercuryMatrix m_globalMatrix;
 		

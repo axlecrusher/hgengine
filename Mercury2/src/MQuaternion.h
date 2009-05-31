@@ -7,6 +7,8 @@
 ///Mathematical Quaternion (Used for Rotation)
 class MQuaternion {
 	public:
+		enum WXYZ { W = 0, X, Y, Z };
+
 		//Defines a Quaternion such that q = w + xi + yj + zk
 		MQuaternion();
 		MQuaternion(float W, float X, float Y, float Z);
@@ -19,9 +21,9 @@ class MQuaternion {
 		void CreateFromAxisAngle(const MercuryVertex& p, const float radians);
 	
 		///Access a component of the quaternion with the [] operator
-		float & operator[] ( const int rhs );
-		const float & operator[] ( const int rhs ) const;
-	
+		float & operator[] ( const WXYZ rhs );
+		const float & operator[] ( const WXYZ rhs ) const;
+
 		///Returns the magnitude
 		float magnitude() const;
 		///Returns the normalized Quaternion
@@ -58,7 +60,9 @@ class MQuaternion {
 		
 		bool operator==(const MQuaternion &rhs) const;
 		inline bool operator!=(const MQuaternion &rhs) const { return !(*this == rhs); }
-	
+		
+		void Print(const MString& s = "MQuaternion") const;
+		
 //	private:
 		FloatRow m_wxyz;
 } M_ALIGN(32);

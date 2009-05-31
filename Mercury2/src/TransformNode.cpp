@@ -4,7 +4,7 @@ REGISTER_NODE_TYPE(TransformNode);
 REGISTER_NODE_TYPE(RotatorNode);
 
 TransformNode::TransformNode()
-	:m_scale( MercuryVertex(1,1,1) )
+	:m_scale( MercuryVertex(1,1,1) ), m_rotation(1,0,0,0)
 {
 	SetTaint( true );  //taint because of the scale set above
 }
@@ -55,7 +55,7 @@ void TransformNode::ComputeMatrix()
 //	local.Identity();
 
 	local.Transotale( m_position[0], m_position[1], m_position[2],
-			  m_rotation[0], m_rotation[1], m_rotation[2],
+			  m_rotation[MQuaternion::X], m_rotation[MQuaternion::Y], m_rotation[MQuaternion::Z],
      m_scale[0], m_scale[1], m_scale[2] );
 	
 	m_globalMatrix = GetParentMatrix() * local;
@@ -98,13 +98,13 @@ void TransformNode::LoadFromXML(const XMLNode& node)
 	
 	//only change the values that exist in the XML
 	if ( !node.Attribute("rotx").empty() )
-		rot[0] = StrToFloat( node.Attribute("rotx") );
+		rot[MQuaternion::X] = StrToFloat( node.Attribute("rotx") );
 
 	if ( !node.Attribute("roty").empty() )
-		rot[1] = StrToFloat( node.Attribute("roty") );
+		rot[MQuaternion::Y] = StrToFloat( node.Attribute("roty") );
 
 	if ( !node.Attribute("rotz").empty() )
-		rot[2] = StrToFloat( node.Attribute("rotz") );
+		rot[MQuaternion::Z] = StrToFloat( node.Attribute("rotz") );
 
 	if ( !node.Attribute("scalex").empty() )
 		scale.SetX( StrToFloat( node.Attribute("scalex") ) );
@@ -150,9 +150,9 @@ void TransformNode::OnAdded()
 
 void RotatorNode::Update(float dTime)
 {
-	MQuaternion r = m_rotation;
-	r[0] += (dTime)*25;
-	r[1] += (dTime)*75;
+	MQuaternion r = GetRotation();
+	r[MQuaternion::X] += (dTime)*25;
+	r[MQuaternion::Y] += (dTime)*75;
 	
 	SetRotation( r );
 	

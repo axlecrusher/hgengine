@@ -3,7 +3,7 @@
 
 MQuaternion::MQuaternion()
 {
-	m_wxyz[0] = 0;
+	m_wxyz[0] = 1;
 	m_wxyz[1] = 0;
 	m_wxyz[2] = 0;
 	m_wxyz[3] = 0;
@@ -25,7 +25,7 @@ MQuaternion::MQuaternion(float W, const MercuryVertex& p)
 	m_wxyz[3] = p[2];
 }
 
-float & MQuaternion::operator [] (int i)
+float & MQuaternion::operator [] (WXYZ i)
 {
 	return m_wxyz[i];	//haha we won't even get here.
 }
@@ -221,6 +221,10 @@ MercuryVertex MQuaternion::ToVertex() const
 	return v;
 }
 
+void MQuaternion::Print(const MString& s) const
+{
+	printf("%s: %f %f %f %f\n", s.c_str(), m_wxyz[0], m_wxyz[1], m_wxyz[2], m_wxyz[3]);
+}
 
 
 //Returns the Euclidian Inner Product of two MQuaternions (Similar to Vector Dot-Product)

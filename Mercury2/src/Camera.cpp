@@ -18,12 +18,11 @@ void CameraNode::ComputeMatrix()
 	
 	MercuryMatrix local;
 	
-	m_lookAt = m_rotation * MQuaternion(0,0,0,1) * m_rotation.reciprocal();
-//	m_lookAt.
-	m_lookAt.ToVertex().Print();
+	m_lookAt = GetRotation() * MQuaternion(1, MercuryVector(0,0,1) ) * GetRotation().reciprocal();
+	m_lookAt.Print();
 	
-	AngleMatrix( m_rotation.ToVertex()*-1, local);
-	local.Translate( m_position*-1 );
+	AngleMatrix( GetRotation().ToVertex()*-1, local);
+	local.Translate( GetPosition()*-1 );
 	
 	m_globalMatrix = GetParentMatrix() * local;
 }
@@ -37,9 +36,9 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 //		MercuryVertex r;
 //		MQuaternion rot, d(0,0,1,0);
 		
-		MQuaternion r = m_rotation;
-		r[0] += m->dy/30.0f;
-		r[1] += m->dx/30.0f;
+		MQuaternion r = GetRotation();
+		r[MQuaternion::X] += m->dy/30.0f;
+		r[MQuaternion::Y] += m->dx/30.0f;
 //		r = r.normalize();
 		
 //		r = r * m_lookAt * r.reciprocal();
@@ -54,16 +53,16 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 	}
 	if (message == INPUTEVENT_KEYBOARD)
 	{
-		MQuaternion r = m_rotation;
+		MQuaternion r = GetRotation();
 		
 		KeyboardInput* k = (KeyboardInput*)data;
 		switch(k->key)
 		{
 			case 25:
-				r[0] += 1*k->isDown;
+				r[MQuaternion::X] += 1;
 				break;
 			case 39:
-				r[0] -= 1*k->isDown;
+				r[MQuaternion::X] -= 1;
 				break;
 		}
 		SetRotation(r);
