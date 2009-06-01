@@ -8,6 +8,7 @@ REGISTER_NODE_TYPE(CameraNode);
 CameraNode::CameraNode()
 	:TransformNode(), m_x(0), m_y(0)
 {
+	m_lookAt = MercuryVector(0,0,-1);
 	REGISTER_FOR_MESSAGE( INPUTEVENT_MOUSE );
 }
 
@@ -64,11 +65,19 @@ void CameraNode::Update(float dTime)
 {
 	MercuryVector p = GetPosition();
 	float a = 0;
+	float b = 0;
 	
-	if ( KeyboardInput::IsKeyDown(25) ) a += dTime*2;
-	if ( KeyboardInput::IsKeyDown(39) ) a -= dTime*2;
+	if ( KeyboardInput::IsKeyDown(25) ) a += dTime*2; //W
+	if ( KeyboardInput::IsKeyDown(39) ) a -= dTime*2; //S
+	
+	if ( KeyboardInput::IsKeyDown(38) ) b -= dTime*2; //A
+	if ( KeyboardInput::IsKeyDown(40) ) b += dTime*2; //D
+
+	MercuryVector Xaxis = m_lookAt.CrossProduct( MercuryVector(0,1,0) );
+	Xaxis.NormalizeSelf();
 	
 	p += m_lookAt * a;
+	p += Xaxis * b;
 //	p.SetY(0); //lock to ground
 	SetPosition( p );
 
