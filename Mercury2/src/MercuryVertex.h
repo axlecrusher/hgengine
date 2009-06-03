@@ -83,6 +83,8 @@ class MercuryVertex
 		void Print(const MString& s = "Vertex") const;
 		
 		MercuryVertex Rotate(const MQuaternion& q) const;
+		
+		static MercuryVertex CreateFromString(const MString& s);
 
 //		float (*this)[3];
 		FloatRow m_xyzw;

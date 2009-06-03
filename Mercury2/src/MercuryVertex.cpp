@@ -121,6 +121,14 @@ MercuryVertex MercuryVertex::Rotate(const MQuaternion& q) const
 	return (q * MQuaternion(0, *this) * q.reciprocal()).ToVector();
 }
 
+MercuryVertex MercuryVertex::CreateFromString(const MString& s)
+{
+	float x,y,z;
+	sscanf(s.c_str(), "%f,%f,%f", &x, &y, &z);
+	return MercuryVertex(x,y,z);
+}
+
+
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
  *                                                                          *
