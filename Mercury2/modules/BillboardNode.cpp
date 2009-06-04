@@ -6,8 +6,6 @@ REGISTER_NODE_TYPE(BillboardNode);
 
 MercuryMatrix BillboardNode::ManipulateMatrix(const MercuryMatrix& matrix)
 {
-	MercuryMatrix m = RenderableNode::ManipulateMatrix( matrix );
-	
 	//Compute the object's center point (position?) in world space
 	MercuryVertex center(0,0,0,1);
 	center = matrix * center;
@@ -18,29 +16,22 @@ MercuryMatrix BillboardNode::ManipulateMatrix(const MercuryMatrix& matrix)
 	//vector from object to eye projected on XZ
 	objToEyeProj[1] = 0; objToEyeProj.NormalizeSelf();
 	
-//	MercuryVector objLookAt(0,0,1); //origional look vector of object
-//	objLookAt = matrix * objLookAt; //convert to world space
-//	objLookAt.NormalizeSelf();
+	MercuryVector objLookAt(0,0,-1); //origional look vector of object
 	
-//	objLookAt.Print();
-	
-//	MercuryVector up = (objLookAt.CrossProduct( objToEyeProj )).Normalize();
-//	up = objLookAt;
-//	up.Print();
-	
-	MercuryVector up(0,0,1);  //we wan't the camera's up
-	
-	float angleCos = LOOKAT.DotProduct(objToEyeProj);
+	MercuryVector up = objLookAt.CrossProduct(objToEyeProj);
+	float angleCos = objLookAt.DotProduct(objToEyeProj);
 
-	if ((angleCos < 0.99990) && (angleCos > -0.9999))
-	{
-		float f = ACOS(angleCos)*RADDEG;
-		MercuryMatrix mtmp;
-		mtmp.RotateAngAxis(f, up[0], up[1], up[2]);
-		m = m * mtmp;
-	}
+	float f = ACOS(angleCos);//*RADDEG;
+	if (up[1] < 0) f *= -1;
 	
-	//spherical below
+	//needs to be the local axis to rotate around
+	MercuryMatrix global(matrix);
+	MQuaternion mtmp = MQuaternion::CreateFromAxisAngle(MercuryVector(0,0,1), f);
+	global.Rotate( mtmp );
+
+	MercuryMatrix m = RenderableNode::ManipulateMatrix( global );
+
+/*	//spherical below
 	objToEye.NormalizeSelf();
 	angleCos = objToEyeProj.DotProduct( objToEye );
 	if ((angleCos < 0.99990) && (angleCos > -0.9999))
@@ -53,13 +44,21 @@ MercuryMatrix BillboardNode::ManipulateMatrix(const MercuryMatrix& matrix)
 		else
 			mtmp.RotateAngAxis(f, -1, 0, 0);
 //		m.Print();
-		m = m * mtmp;
+//		m = m * mtmp;
 //		m.Print();
 		printf("********************\n");
 //		mtmp.Print();
 	}
-	
+*/	
 	return m;
+}
+
+void BillboardNode::LoadFromXML(const XMLNode& node)
+{
+	RenderableNode::LoadFromXML(node);
+	
+	if ( !node.Attribute("billboardaxis").empty() )
+		m_billboardAxis = MercuryVector::CreateFromString( node.Attribute("billboardaxis") );
 }
 
 /****************************************************************************

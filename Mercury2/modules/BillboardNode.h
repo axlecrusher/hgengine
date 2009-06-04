@@ -2,13 +2,16 @@
 #define BILLBOARDNODE_H
 
 #include <RenderableNode.h>
+#include <MercuryVertex.h>
 
 class BillboardNode : public RenderableNode
 {
 	public:
 		virtual MercuryMatrix ManipulateMatrix(const MercuryMatrix& matrix);
+		virtual void LoadFromXML(const XMLNode& node);
 
 	private:
+		MercuryVector m_billboardAxis;
 };
 
 #endif
