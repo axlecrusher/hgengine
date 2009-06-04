@@ -1,6 +1,8 @@
 #include <MercuryAsset.h>
 #include <RenderableNode.h>
 
+#include <GLHeaders.h>
+
 MercuryAsset::MercuryAsset()
 	:m_isInstanced(false), m_boundingVolume(NULL), m_loadState(NONE)
 {
@@ -33,6 +35,22 @@ LoadState MercuryAsset::GetLoadState()
 void MercuryAsset::LoadedCallback()
 {
 	SetLoadState( LOADED );
+}
+
+void MercuryAsset::DrawAxes()
+{
+	glBegin(GL_LINES);
+	glColor3f(1,0,0);
+	glVertex3f(0,0,0);
+	glVertex3f(0.5,0,0);
+	glColor3f(0,1,0);
+	glVertex3f(0,0,0);
+	glVertex3f(0,0.5,0);
+	glColor3f(0,0,1);
+	glVertex3f(0,0,0);
+	glVertex3f(0,0,0.5);
+	glColor3f(1,1,1);
+	glEnd();
 }
 
 AssetFactory& AssetFactory::GetInstance()

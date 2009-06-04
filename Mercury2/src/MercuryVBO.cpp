@@ -57,6 +57,7 @@ void MercuryVBO::Render(const MercuryNode* node)
 	m_lastVBOrendered = this;
 	
 	if (m_boundingVolume && SHOWBOUNDINGVOLUME) m_boundingVolume->Render();
+	DrawAxes();
 }
 
 void MercuryVBO::InitVBO()

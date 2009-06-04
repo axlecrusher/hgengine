@@ -40,6 +40,8 @@ class MercuryAsset : public RefBase, MessageHandler
 
 		inline const BoundingVolume* GetBoundingVolume() const { return m_boundingVolume; }
 		inline const MString& Path() const { return m_path; }
+		
+		void DrawAxes();
 	protected:
 		void SetLoadState(LoadState ls); //thread safe
 		LoadState GetLoadState(); //thread safe
