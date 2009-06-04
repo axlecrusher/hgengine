@@ -26,7 +26,7 @@ MercuryMatrix BillboardNode::ManipulateMatrix(const MercuryMatrix& matrix)
 	
 	//needs to be the local axis to rotate around
 	MercuryMatrix global(matrix);
-	MQuaternion mtmp = MQuaternion::CreateFromAxisAngle(MercuryVector(0,0,1), f);
+	MQuaternion mtmp = MQuaternion::CreateFromAxisAngle(m_billboardAxis, f);
 	global.Rotate( mtmp );
 
 	MercuryMatrix m = RenderableNode::ManipulateMatrix( global );
