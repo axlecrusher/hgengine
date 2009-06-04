@@ -180,11 +180,14 @@ MQuaternion MQuaternion::operator - (const MQuaternion &rhs) const
 
 MQuaternion MQuaternion::operator * (const MQuaternion &rhs) const 
 {
+	MQuaternion q1( this->normalize() );
+	MQuaternion q2( rhs.normalize() );
+	
 	MQuaternion result;
-	result.m_wxyz[0] = (m_wxyz[0]*rhs.m_wxyz[0])-(m_wxyz[1]*rhs.m_wxyz[1])-(m_wxyz[2]*rhs.m_wxyz[2])-(m_wxyz[3]*rhs.m_wxyz[3]);
-	result.m_wxyz[1] = (m_wxyz[0]*rhs.m_wxyz[1])+(m_wxyz[1]*rhs.m_wxyz[0])+(m_wxyz[2]*rhs.m_wxyz[3])-(m_wxyz[3]*rhs.m_wxyz[2]);
-	result.m_wxyz[2] = (m_wxyz[0]*rhs.m_wxyz[2])-(m_wxyz[1]*rhs.m_wxyz[3])+(m_wxyz[2]*rhs.m_wxyz[0])+(m_wxyz[3]*rhs.m_wxyz[1]);
-	result.m_wxyz[3] = (m_wxyz[0]*rhs.m_wxyz[3])+(m_wxyz[1]*rhs.m_wxyz[2])-(m_wxyz[2]*rhs.m_wxyz[1])+(m_wxyz[3]*rhs.m_wxyz[0]);
+	result.W() = (q1.W()*q2.W())-(q1.X()*q2.X())-(q1.Y()*q2.Y())-(q1.Z()*q2.Z());
+	result.X() = (q1.W()*q2.X())+(q1.X()*q2.W())+(q1.Y()*q2.Z())-(q1.Z()*q2.Y());
+	result.Y() = (q1.W()*q2.Y())-(q1.X()*q2.Z())+(q1.Y()*q2.W())+(q1.Z()*q2.X());
+	result.Z() = (q1.W()*q2.Z())+(q1.X()*q2.Y())-(q1.Y()*q2.X())+(q1.Z()*q2.W());
 	return result;
 }
 
@@ -208,10 +211,7 @@ MQuaternion& MQuaternion::operator -= (const MQuaternion &rhs) {
 }
 
 MQuaternion& MQuaternion::operator *= (const MQuaternion &rhs) {
-	m_wxyz[0] = (m_wxyz[0]*rhs.m_wxyz[0])-(m_wxyz[1]*rhs.m_wxyz[1])-(m_wxyz[2]*rhs.m_wxyz[2])-(m_wxyz[3]*rhs.m_wxyz[3]);
-	m_wxyz[1] = (m_wxyz[0]*rhs.m_wxyz[1])+(m_wxyz[1]*rhs.m_wxyz[0])+(m_wxyz[2]*rhs.m_wxyz[3])-(m_wxyz[3]*rhs.m_wxyz[2]);
-	m_wxyz[2] = (m_wxyz[0]*rhs.m_wxyz[2])-(m_wxyz[1]*rhs.m_wxyz[3])+(m_wxyz[2]*rhs.m_wxyz[0])+(m_wxyz[3]*rhs.m_wxyz[1]);
-	m_wxyz[3] = (m_wxyz[0]*rhs.m_wxyz[3])+(m_wxyz[1]*rhs.m_wxyz[2])-(m_wxyz[2]*rhs.m_wxyz[1])+(m_wxyz[3]*rhs.m_wxyz[0]);
+	*this = *this * rhs;
 	return (*this);
 }
 
