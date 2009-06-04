@@ -26,7 +26,7 @@ void CameraNode::ComputeMatrix()
 	m_lookAt.NormalizeSelf();
 	LOOKAT = m_lookAt;
 		
-	r[MQuaternion::W] *= -1; //reverse angle for camera
+	r.W() *= -1; //reverse angle for camera
 	
 	//rotate then translate since we are a camera
 	r.toMatrix4( local );

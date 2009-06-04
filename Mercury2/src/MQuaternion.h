@@ -9,7 +9,7 @@ class MercuryMatrix;
 ///Mathematical Quaternion (Used for Rotation)
 class MQuaternion {
 	public:
-		enum WXYZ { W = 0, X, Y, Z };
+		enum WXYZ { QW = 0, QX, QY, QZ };
 
 		//Defines a Quaternion such that q = w + xi + yj + zk
 		MQuaternion();
@@ -66,6 +66,11 @@ class MQuaternion {
 		inline bool operator!=(const MQuaternion &rhs) const { return !(*this == rhs); }
 		
 		void Print(const MString& s = "MQuaternion") const;
+		
+		inline float& W() { return m_wxyz[0]; }
+		inline float& X() { return m_wxyz[1]; }
+		inline float& Y() { return m_wxyz[2]; }
+		inline float& Z() { return m_wxyz[3]; }
 		
 //	private:
 		FloatRow m_wxyz;

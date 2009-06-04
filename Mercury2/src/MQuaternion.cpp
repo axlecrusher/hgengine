@@ -61,11 +61,15 @@ MQuaternion MQuaternion::CreateFromAxisAngle(const MercuryVertex& p, const float
 
 void MQuaternion::FromAxisAngle(const MercuryVertex& p, const float radians)
 {
+	MercuryVertex v( p.Normalize() );
+	
 	float sn = SIN(radians/2.0f);
 	m_wxyz[0] = COS(radians/2.0f);
 	m_wxyz[1] = sn * p[0];
 	m_wxyz[2] = sn * p[1];
 	m_wxyz[3] = sn * p[2];
+	
+	*this = this->normalize();
 }
 
 void MQuaternion::ToAxisAngle(float& angle, float& x, float& y, float& z) const
@@ -115,28 +119,33 @@ MQuaternion MQuaternion::rotateAbout(const MQuaternion &spinAxis) const {
 
 //Converts MQuaternion to 4x4 Matrix(3x3 Spatial)
 void MQuaternion::toMatrix( MercuryMatrix &matrix ) const {
-	float X = 2*m_wxyz[1]*m_wxyz[1]; //Reduced calulation for speed
-	float Y = 2*m_wxyz[2]*m_wxyz[2];
-	float Z = 2*m_wxyz[3]*m_wxyz[3];
-	float a = 2*m_wxyz[0]*m_wxyz[1];
-	float b = 2*m_wxyz[0]*m_wxyz[2];
-	float c = 2*m_wxyz[0]*m_wxyz[3];
-	float d = 2*m_wxyz[1]*m_wxyz[2];
-	float e = 2*m_wxyz[1]*m_wxyz[3];
-	float f = 2*m_wxyz[2]*m_wxyz[3];
+	MQuaternion q( this->normalize() );
+	
+	//Reduced calulation for speed
+	float xx = 2*q.X()*q.X();
+	float xy = 2*q.X()*q.Y();
+	float xz = 2*q.X()*q.Z();
+	float xw = 2*q.X()*q.W();
+	
+	float yy = 2*q.Y()*q.Y();
+	float yz = 2*q.Y()*q.Z();
+	float yw = 2*q.Y()*q.W();
+	
+	float zz = 2*q.Z()*q.Z();
+	float zw = 2*q.Z()*q.W();
 
 	//row major
-	matrix[0][0] = 1-Y-Z;
-	matrix[0][1] = d-c;
-	matrix[0][2] = e+b;  
+	matrix[0][0] = 1-yy-zz;
+	matrix[0][1] = xy-zw;
+	matrix[0][2] = xz+yw;
 
-	matrix[1][0] = d+c;
-	matrix[1][1] = 1-X-Z;
-	matrix[1][2] = f-a;
+	matrix[1][0] = xy+zw;
+	matrix[1][1] = 1-xx-zz;
+	matrix[1][2] = yz-xw;
 
-	matrix[2][0] = e-b;
-	matrix[2][1] = f+a;
-	matrix[2][2] = 1-X-Y;
+	matrix[2][0] = xz-yw;
+	matrix[2][1] = yz+xw;
+	matrix[2][2] = 1-xx-yy;
 }
 
 void MQuaternion::toMatrix4( MercuryMatrix &matrix ) const {

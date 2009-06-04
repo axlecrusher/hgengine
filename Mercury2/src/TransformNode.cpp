@@ -104,13 +104,13 @@ void TransformNode::LoadFromXML(const XMLNode& node)
 	
 	//only change the values that exist in the XML
 	if ( !node.Attribute("rotx").empty() )
-		rot *= MQuaternion::CreateFromAxisAngle(MercuryVector(1,0,0), StrToFloat( node.Attribute("rotx") ));
+		rot *= MQuaternion::CreateFromAxisAngle(MercuryVector(1,0,0), StrToFloat( node.Attribute("rotx") )*DEGRAD );
 
 	if ( !node.Attribute("roty").empty() )
-		rot *= MQuaternion::CreateFromAxisAngle(MercuryVector(0,1,0), StrToFloat( node.Attribute("roty") ));
+		rot *= MQuaternion::CreateFromAxisAngle(MercuryVector(0,1,0), StrToFloat( node.Attribute("roty") )*DEGRAD );
 
 	if ( !node.Attribute("rotz").empty() )
-		rot *= MQuaternion::CreateFromAxisAngle(MercuryVector(0,0,1), StrToFloat( node.Attribute("rotz") ));
+		rot *= MQuaternion::CreateFromAxisAngle(MercuryVector(0,0,1), StrToFloat( node.Attribute("rotz") )*DEGRAD );
 	
 	if ( !node.Attribute("scalex").empty() )
 		scale.SetX( StrToFloat( node.Attribute("scalex") ) );
@@ -157,8 +157,8 @@ void TransformNode::OnAdded()
 void RotatorNode::Update(float dTime)
 {
 	MQuaternion r = GetRotation();
-	r[MQuaternion::X] += (dTime)*25;
-	r[MQuaternion::Y] += (dTime)*75;
+	r.X() += (dTime)*25;
+	r.Y() += (dTime)*75;
 	
 	SetRotation( r );
 	

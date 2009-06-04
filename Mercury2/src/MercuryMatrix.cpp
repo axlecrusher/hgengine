@@ -123,7 +123,7 @@ void MercuryMatrix::RotateAngAxis( float fAngle, float ix, float iy, float iz )
 void MercuryMatrix::Rotate(const MQuaternion& q)
 {
 	MercuryMatrix m;
-	q.normalize().toMatrix4( m );
+	q.toMatrix4( m );
 	*this *= m;
 }
 
