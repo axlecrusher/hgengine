@@ -25,8 +25,8 @@ class MQuaternion {
 		void ToAxisAngle(float& angle, float& x, float& y, float& z) const;
 	
 		///Access a component of the quaternion with the [] operator
-		float & operator[] ( const WXYZ rhs );
-		const float & operator[] ( const WXYZ rhs ) const;
+		inline float & operator[] ( const WXYZ i ) { return m_wxyz[i]; }
+		inline const float & operator[] ( const WXYZ i ) const  { return m_wxyz[i]; }
 
 		///Returns the magnitude
 		float magnitude() const;

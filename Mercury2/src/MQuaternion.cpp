@@ -16,6 +16,7 @@ MQuaternion::MQuaternion(float W, float X, float Y, float Z)
 	m_wxyz[1] = X;
 	m_wxyz[2] = Y;
 	m_wxyz[3] = Z;
+	*this = this->normalize();
 }
 
 MQuaternion::MQuaternion(float W, const MercuryVertex& p)
@@ -24,11 +25,7 @@ MQuaternion::MQuaternion(float W, const MercuryVertex& p)
 	m_wxyz[1] = p[0];
 	m_wxyz[2] = p[1];
 	m_wxyz[3] = p[2];
-}
-
-float & MQuaternion::operator [] (WXYZ i)
-{
-	return m_wxyz[i];	//haha we won't even get here.
+	*this = this->normalize();
 }
 
 void MQuaternion::SetEuler(const MercuryVertex& angles)
@@ -50,6 +47,8 @@ void MQuaternion::SetEuler(const MercuryVertex& angles)
 	m_wxyz[1] = sx*cy*cz-cx*sy*sz;//q2
 	m_wxyz[2] = cx*sy*cz+sx*cy*sz;//q3
 	m_wxyz[3] = cx*cy*sz-sx*sy*cz;//q4
+	
+	*this = this->normalize();
 }
 
 MQuaternion MQuaternion::CreateFromAxisAngle(const MercuryVertex& p, const float radians)
@@ -65,9 +64,9 @@ void MQuaternion::FromAxisAngle(const MercuryVertex& p, const float radians)
 	
 	float sn = SIN(radians/2.0f);
 	m_wxyz[0] = COS(radians/2.0f);
-	m_wxyz[1] = sn * p[0];
-	m_wxyz[2] = sn * p[1];
-	m_wxyz[3] = sn * p[2];
+	m_wxyz[1] = sn * v[0];
+	m_wxyz[2] = sn * v[1];
+	m_wxyz[3] = sn * v[2];
 	
 	*this = this->normalize();
 }
