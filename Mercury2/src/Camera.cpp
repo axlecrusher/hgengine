@@ -18,7 +18,7 @@ void CameraNode::ComputeMatrix()
 	
 	MercuryMatrix local, parent(GetParentMatrix());
 	
-	MQuaternion r( GetRotation().normalize() );
+	MQuaternion r( GetRotation() );
 	
 	//compute the world space look vector  (broken if camera is in transform node)
 	m_lookAt = MercuryVector(0,0,-1); //by default camera looks down world Z
@@ -50,14 +50,18 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 		m_y += m->dy/1200.0f;
 		m_x += m->dx/1200.0f;
 		
-		m_y = Clamp(-Q_PI/2, Q_PI/2, m_y);
+		m_y = Clamp((-Q_PI/2.0f)+0.00001f, (Q_PI/2.0f)-0.00001f, m_y);
 
 		MQuaternion qLeftRight = MQuaternion::CreateFromAxisAngle(MercuryVector(0,1,0), m_x);
 		MercuryVector LocalX = MercuryVector( 1, 0, 0 );
 		LocalX = LocalX.Rotate( qLeftRight );
 		
 		MQuaternion qUpDown = MQuaternion::CreateFromAxisAngle(LocalX, m_y);
+		
+//		qLeftRight.Print();
+		
 		SetRotation(qUpDown*qLeftRight);
+//		GetRotation().Print();
 	}
 }
 
