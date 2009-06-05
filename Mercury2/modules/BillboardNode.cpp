@@ -4,6 +4,11 @@
 
 REGISTER_NODE_TYPE(BillboardNode);
 
+BillboardNode::BillboardNode()
+	:m_sphere(false)
+{
+}
+
 MercuryMatrix BillboardNode::ManipulateMatrix(const MercuryMatrix& matrix)
 {
 	//Compute the object's center point (position?) in world space
@@ -27,30 +32,21 @@ MercuryMatrix BillboardNode::ManipulateMatrix(const MercuryMatrix& matrix)
 	//needs to be the local axis to rotate around
 	MercuryMatrix global(matrix);
 	MQuaternion mtmp = MQuaternion::CreateFromAxisAngle(m_billboardAxis, f);
-	global.Rotate( mtmp );
-
-	MercuryMatrix m = RenderableNode::ManipulateMatrix( global );
-
-/*	//spherical below
-	objToEye.NormalizeSelf();
-	angleCos = objToEyeProj.DotProduct( objToEye );
-	if ((angleCos < 0.99990) && (angleCos > -0.9999))
+	
+	//spherical below
+	if ( m_sphere )
 	{
-		printf("%f\n", angleCos);
-		float f = ACOS(angleCos)*RADDEG;
-		MercuryMatrix mtmp;
-		if (objToEye[1] < 0)
-			mtmp.RotateAngAxis(f, 1, 0, 0);
-		else
-			mtmp.RotateAngAxis(f, -1, 0, 0);
-//		m.Print();
-//		m = m * mtmp;
-//		m.Print();
-		printf("********************\n");
-//		mtmp.Print();
+		objToEye.NormalizeSelf();
+		angleCos = objToEyeProj.DotProduct( objToEye );
+		f = ACOS(angleCos);
+		printf("%f %f\n", angleCos, f);
+		if (objToEye[1] < 0) f *= -1;
+		if (angleCos < 0.99999) mtmp *= MQuaternion::CreateFromAxisAngle(MercuryVector(1,0,0), f);
 	}
-*/	
-	return m;
+		
+	global.Rotate( mtmp );
+	
+	return RenderableNode::ManipulateMatrix( global );
 }
 
 void BillboardNode::LoadFromXML(const XMLNode& node)
@@ -59,6 +55,9 @@ void BillboardNode::LoadFromXML(const XMLNode& node)
 	
 	if ( !node.Attribute("billboardaxis").empty() )
 		m_billboardAxis = MercuryVector::CreateFromString( node.Attribute("billboardaxis") );
+	
+	if ( !node.Attribute("spheremode").empty() )
+		m_sphere = node.Attribute("spheremode") == "true"?true:false;
 }
 
 /****************************************************************************

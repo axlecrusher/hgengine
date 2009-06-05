@@ -7,11 +7,14 @@
 class BillboardNode : public RenderableNode
 {
 	public:
+		BillboardNode();
+		
 		virtual MercuryMatrix ManipulateMatrix(const MercuryMatrix& matrix);
 		virtual void LoadFromXML(const XMLNode& node);
 
 	private:
 		MercuryVector m_billboardAxis;
+		bool m_sphere;
 };
 
 #endif
