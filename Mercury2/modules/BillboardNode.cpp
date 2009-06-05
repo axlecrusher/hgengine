@@ -39,7 +39,6 @@ MercuryMatrix BillboardNode::ManipulateMatrix(const MercuryMatrix& matrix)
 		objToEye.NormalizeSelf();
 		angleCos = objToEyeProj.DotProduct( objToEye );
 		f = ACOS(angleCos);
-		printf("%f %f\n", angleCos, f);
 		if (objToEye[1] < 0) f *= -1;
 		if (angleCos < 0.99999) mtmp *= MQuaternion::CreateFromAxisAngle(MercuryVector(1,0,0), f);
 	}
