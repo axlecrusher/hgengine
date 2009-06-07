@@ -5,15 +5,17 @@
 REGISTER_NODE_TYPE(BillboardNode);
 
 BillboardNode::BillboardNode()
-	:m_sphere(false)
+	:TransformNode(), m_sphere(false)
 {
 }
 
-MercuryMatrix BillboardNode::ManipulateMatrix(const MercuryMatrix& matrix)
+void BillboardNode::Update(float dTime)
 {
+	TransformNode::Update( dTime );
+	
 	//Compute the object's center point (position?) in world space
 	MercuryVertex center(0,0,0,1);
-	center = matrix * center;
+	center = TransformNode::GetGlobalMatrix() * center;
 
 	MercuryVector objToEye = (EYE - center);
 	MercuryVector objToEyeProj( objToEye );
@@ -30,7 +32,7 @@ MercuryMatrix BillboardNode::ManipulateMatrix(const MercuryMatrix& matrix)
 	if (up[1] < 0) f *= -1;
 	
 	//needs to be the local axis to rotate around
-	MercuryMatrix global(matrix);
+	MercuryMatrix global( TransformNode::GetGlobalMatrix() );
 	MQuaternion mtmp = MQuaternion::CreateFromAxisAngle(m_billboardAxis, f);
 	
 	//spherical below
@@ -45,12 +47,20 @@ MercuryMatrix BillboardNode::ManipulateMatrix(const MercuryMatrix& matrix)
 		
 	global.Rotate( mtmp );
 	
-	return RenderableNode::ManipulateMatrix( global );
+	m_billboardMatrix = global;
+	
+	//notify children that our global matrix has changed
+	SetTaint(true);
+}
+
+const MercuryMatrix& BillboardNode::GetGlobalMatrix() const
+{
+	return m_billboardMatrix;
 }
 
 void BillboardNode::LoadFromXML(const XMLNode& node)
 {
-	RenderableNode::LoadFromXML(node);
+	TransformNode::LoadFromXML(node);
 	
 	if ( !node.Attribute("billboardaxis").empty() )
 		m_billboardAxis = MercuryVector::CreateFromString( node.Attribute("billboardaxis") );

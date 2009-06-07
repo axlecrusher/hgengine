@@ -23,7 +23,8 @@ class TransformNode : public MercuryNode
 		inline const MercuryVertex& GetPosition() const { return m_position; }
 		inline const MQuaternion& GetRotation() const { return m_rotation; }
 		
-		inline const MercuryMatrix& GetGlobalMatrix() const { return m_globalMatrix; }
+//		inline const MercuryMatrix& GetGlobalMatrix() const { return m_globalMatrix; }
+		virtual const MercuryMatrix& GetGlobalMatrix() const;
 		const MercuryMatrix& GetParentMatrix() const;
 		
 		void SetTaint(bool taint);

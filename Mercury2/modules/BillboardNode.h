@@ -1,20 +1,27 @@
 #ifndef BILLBOARDNODE_H
 #define BILLBOARDNODE_H
 
-#include <RenderableNode.h>
+#include <TransformNode.h>
 #include <MercuryVertex.h>
 
-class BillboardNode : public RenderableNode
+class BillboardNode : public TransformNode
 {
 	public:
 		BillboardNode();
 		
-		virtual MercuryMatrix ManipulateMatrix(const MercuryMatrix& matrix);
+		virtual void Update(float dTime);
+		
+//		virtual MercuryMatrix ManipulateMatrix(const MercuryMatrix& matrix);
+		virtual const MercuryMatrix& GetGlobalMatrix() const;
+		
 		virtual void LoadFromXML(const XMLNode& node);
+
+		GENRTTI(BillboardNode);
 
 	private:
 		MercuryVector m_billboardAxis;
 		bool m_sphere;
+		MercuryMatrix m_billboardMatrix;
 };
 
 #endif

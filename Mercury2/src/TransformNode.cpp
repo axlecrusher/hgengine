@@ -154,6 +154,11 @@ void TransformNode::OnAdded()
 	}	
 }
 
+const MercuryMatrix&  TransformNode::GetGlobalMatrix() const
+{
+	return m_globalMatrix;
+}
+
 void RotatorNode::Update(float dTime)
 {
 	MQuaternion r = GetRotation();
