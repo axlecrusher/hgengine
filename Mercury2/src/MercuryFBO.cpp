@@ -80,7 +80,7 @@ void MercuryFBO::Render(const MercuryMatrix& matrix)
 //		m_lastInStask = m_lastRendered;
 	}
 	
-	glClear(GL_COLOR_BUFFER_BIT );
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glPushAttrib(GL_VIEWPORT_BIT);
 	glViewport(0,0,m_width, m_width);
@@ -107,7 +107,6 @@ void MercuryFBO::PostRender(const MercuryMatrix& matrix)
 
 void MercuryFBO::LoadFromXML(const XMLNode& node)
 {
-	printf("load\n");
 	if ( !node.Attribute("width").empty() )
 		SetWidth( StrToInt(node.Attribute("width")) );
 
@@ -119,8 +118,6 @@ void MercuryFBO::LoadFromXML(const XMLNode& node)
 
 	if ( !node.Attribute("tnum").empty() )
 		SetNumTextures( StrToInt(node.Attribute("tnum")) );
-	
-	printf("%d %d %d %d\n", m_width, m_height, m_useDepth, m_numTextures);
 	
 	RenderableNode::LoadFromXML(node);
 }
