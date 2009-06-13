@@ -21,10 +21,15 @@ Texture::~Texture()
 {
 	REMOVE_ASSET_INSTANCE(TEXTURE, m_path);
 	
-	if (m_textureID) glDeleteTextures(1, &m_textureID);
-	m_textureID = 0;
+	Clean();
 	
 	SAFE_DELETE(m_raw);
+}
+
+void Texture::Clean()
+{
+	if (m_textureID) glDeleteTextures(1, &m_textureID);
+	m_textureID = 0;
 }
 
 void Texture::Init(MercuryNode* node)
@@ -101,7 +106,16 @@ void Texture::PostRender(const MercuryNode* node)
 
 void Texture::LoadFromXML(const XMLNode& node)
 {
-	LoadImagePath( node.Attribute("file") );
+	bool dynamic = false;
+	if ( !node.Attribute("dynamic").empty() )
+		dynamic = node.Attribute("dynamic")=="true"?true:false;
+	
+	MString file = node.Attribute("file");
+	
+	if ( dynamic )
+		MakeDynamic( 0, 0, file );
+	else
+		LoadImagePath( file );
 }
 
 void Texture::BindTexture()
@@ -151,6 +165,27 @@ void Texture::SetRawData(RawImageData* raw)
 	m_raw = raw;
 }
 
+void Texture::MakeDynamic(uint16_t width, uint16_t height, const MString& name)
+{
+	Clean();
+
+	SetLoadState(LOADED);
+	
+	REMOVE_ASSET_INSTANCE(TEXTURE, m_path);
+	m_path = "DYNATEXT"+name;
+	ADD_ASSET_INSTANCE(Texture, m_path, this);
+
+	glGenTextures( 1, &m_textureID );
+	printf("booo %d\n", m_textureID);
+	glBindTexture( GL_TEXTURE_2D, m_textureID );
+	glCopyTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, width, height, 0 );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glBindTexture( GL_TEXTURE_2D, 0 );
+
+	GLERRORCHECK;
+}
+
 Texture* Texture::Generate()
 {
 	return new Texture();
@@ -161,6 +196,14 @@ MAutoPtr< Texture > Texture::LoadFromFile(const MString& path)
 	MAutoPtr< MercuryAsset > t( AssetFactory::GetInstance().Generate("Texture", path) );
 	Texture *a = (Texture*)t.Ptr();
 	a->LoadImagePath( path );
+	return a;
+}
+
+MAutoPtr< Texture > Texture::LoadDynamicTexture(const MString& name)
+{
+	MAutoPtr< MercuryAsset > t( AssetFactory::GetInstance().Generate("Texture", "DYNATEXT"+name) );
+	Texture *a = (Texture*)t.Ptr();
+//	a->LoadImagePath( path );
 	return a;
 }
 

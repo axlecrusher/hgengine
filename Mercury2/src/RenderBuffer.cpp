@@ -37,24 +37,20 @@ void RenderBuffer::PreRender(const MercuryNode* node)
 void RenderBuffer::Render(const MercuryNode* node)
 {
 	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_bufferID);
-//	CHECKFBO; //missing attachment
-	GLERRORCHECK;
 	
 	if ( NeedResize() ) AllocateSpace();
-	
-	//attach to FBO
-//	if ( !m_bound )
+
+	if ( m_type == TEXTURE )
 	{
-		m_bound = true;
-		if ( m_type == TEXTURE )
-			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GLAttachPoint(), GL_TEXTURE_2D, m_textureID, 0);
-		else
-			glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GLAttachPoint(), GL_RENDERBUFFER_EXT, m_bufferID);
-		CHECKFBO;
-		GLERRORCHECK;
+		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GLAttachPoint(), GL_TEXTURE_2D, m_textureID, 0);
 	}
-	
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	else
+	{
+		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GLAttachPoint(), GL_RENDERBUFFER_EXT, m_bufferID);
+	}
+	CHECKFBO;
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClear(GL_COLOR_BUFFER_BIT );
 	GLERRORCHECK;
 }
 
@@ -134,6 +130,8 @@ void RenderBuffer::AllocateSpace()
 {
 	m_width = MercuryWindow::GetCurrentWindow()->Width();
 	m_height = MercuryWindow::GetCurrentWindow()->Height();	
+	m_width = 512;
+	m_height = 512;
 
 	if (m_type == TEXTURE)
 	{

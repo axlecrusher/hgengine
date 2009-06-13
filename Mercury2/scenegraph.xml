@@ -11,9 +11,13 @@
 			<asset type="texture" file="map.png"/>
 			<asset type="hgmdlmodel" file="map.hgmdl" />
 		</node>
+		<node type="renderablenode">
+			<asset type="texture" file="screenFBO" dynamic="true"/>
+			<asset type="quad"/>
+		</node>
 	</node>
-	<node type="mercuryfbo" >
-		<asset type="renderbuffer" buffertype="texture" />
+	<node type="mercuryfbo" width="512" height="512" depth="false" tnum="1" name="screenFBO">
+<!--		<asset type="renderbuffer" buffertype="texture" /> -->
 		<node type="renderablenode" name="lampForest">
 			<asset type="texture" file="lamp.png"/>
 			<node type="transformnode" movz="-5" movx="0" movy="0" name="lamprow" >

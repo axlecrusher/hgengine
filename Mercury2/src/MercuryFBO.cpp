@@ -4,15 +4,57 @@
 REGISTER_NODE_TYPE(MercuryFBO);
 
 MercuryFBO::MercuryFBO()
-	:m_fboID(0), m_initiated(false)
+	:m_fboID(0), m_depthBufferID(0), m_initiated(false), m_useDepth(false), m_numTextures(0)
 {
+	for (uint8_t i = 0; i < 4; ++i) m_textures[i] = NULL;
 }
 
 MercuryFBO::~MercuryFBO()
 {
-	if (m_fboID != 0) glDeleteFramebuffersEXT(1, &m_fboID);
+	Clean();
 }
 
+void MercuryFBO::Clean()
+{
+	if (m_fboID != 0) glDeleteFramebuffersEXT(1, &m_fboID);
+	if (m_depthBufferID != 0) glDeleteRenderbuffersEXT( 1, &m_depthBufferID );
+	m_fboID = m_depthBufferID = 0;
+	m_initiated = false;
+	for (uint8_t i = 0; i < 4; ++i) m_textures[i] = NULL;
+}
+
+void MercuryFBO::Setup()
+{
+	Clean();
+	
+	m_initiated = true;
+
+	if( m_useDepth ) glGenRenderbuffersEXT( 1, &m_depthBufferID );
+	glGenFramebuffersEXT( 1, &m_fboID );
+	
+	for (uint8_t i = 0; i < m_numTextures; ++i)
+	{
+		m_textures[i] = Texture::LoadDynamicTexture(m_name);
+		m_textures[i]->MakeDynamic(m_width, m_height,m_name);
+	}
+	
+	if( m_useDepth )
+	{
+		glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, m_fboID );
+		glRenderbufferStorageEXT( GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24, m_width, m_height );
+	}
+	glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, m_fboID );
+	
+	for (uint8_t i = 0; i < m_numTextures; ++i)
+		glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, GL_TEXTURE_2D, m_textures[i]->TextureID(), 0 );
+
+	
+	if( m_useDepth )
+		glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthBufferID );
+
+	CHECKFBO; //Incomplete FBO
+}
+/*
 void MercuryFBO::InitFBOBeforeRender()
 {
 	m_initiated = true;
@@ -20,10 +62,10 @@ void MercuryFBO::InitFBOBeforeRender()
 	CHECKFBO;
 	GLERRORCHECK;
 }
-
+*/
 void MercuryFBO::PreRender(const MercuryMatrix& matrix)
 {
-	if ( !m_initiated ) InitFBOBeforeRender();
+	if ( !m_initiated ) Setup();
 	RenderableNode::PreRender(matrix);
 }
 
@@ -38,15 +80,17 @@ void MercuryFBO::Render(const MercuryMatrix& matrix)
 //		m_lastInStask = m_lastRendered;
 	}
 	
-//	glPushAttrib(GL_VIEWPORT_BIT);
-	//	glViewport(0,0,width, height);
+	glClear(GL_COLOR_BUFFER_BIT );
+
+	glPushAttrib(GL_VIEWPORT_BIT);
+	glViewport(0,0,m_width, m_width);
 	
 	RenderableNode::Render(matrix);
 }
 
 void MercuryFBO::PostRender(const MercuryMatrix& matrix)
 {
-//	glPopAttrib();
+	glPopAttrib();
 
 //	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_lastInStask);
 //	m_lastRendered = m_lastInStask;
@@ -59,6 +103,26 @@ void MercuryFBO::PostRender(const MercuryMatrix& matrix)
 	GLERRORCHECK;
 	
 	m_lastRendered = 0;	
+}
+
+void MercuryFBO::LoadFromXML(const XMLNode& node)
+{
+	printf("load\n");
+	if ( !node.Attribute("width").empty() )
+		SetWidth( StrToInt(node.Attribute("width")) );
+
+	if ( !node.Attribute("height").empty() )
+		SetHeight( StrToInt(node.Attribute("height")) );
+
+	if ( !node.Attribute("depth").empty() )
+		SetUseDepth( node.Attribute("depth") == "true"?true:false );
+
+	if ( !node.Attribute("tnum").empty() )
+		SetNumTextures( StrToInt(node.Attribute("tnum")) );
+	
+	printf("%d %d %d %d\n", m_width, m_height, m_useDepth, m_numTextures);
+	
+	RenderableNode::LoadFromXML(node);
 }
 
 uint32_t MercuryFBO::m_lastRendered = NULL;

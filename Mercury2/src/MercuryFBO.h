@@ -2,6 +2,7 @@
 #define MERCURYFBO_H
 
 #include <RenderableNode.h>
+#include <Texture.h>
 
 class MercuryFBO : public RenderableNode
 {
@@ -13,16 +14,31 @@ class MercuryFBO : public RenderableNode
 		virtual void Render(const MercuryMatrix& matrix);
 		virtual void PostRender(const MercuryMatrix& matrix);
 	
+		virtual void LoadFromXML(const XMLNode& node);
+		
+		inline void SetWidth(uint16_t width) { m_width = width; }
+		inline void SetHeight(uint16_t height) { m_height = height; }
+		inline void SetUseDepth(bool toggle) { m_useDepth = toggle; }
+		inline void SetNumTextures(uint8_t x) { m_numTextures = x; }
+		
+
 		GENRTTI(MercuryFBO);
 
 	private:
-		void InitFBOBeforeRender();
+		void Setup();
+		void Clean();
+//		void InitFBOBeforeRender();
 	
-		uint32_t m_fboID;
-		bool m_initiated;
+		uint32_t m_fboID, m_depthBufferID;
+		bool m_initiated, m_useDepth;
+		uint16_t m_width, m_height;
+//		uint32_t m_textureID[4];
+		Texture *m_textures[4];
+		uint8_t m_numTextures;
+		
 		static uint32_t m_lastRendered;
 		
-		uint32_t m_lastInStask;
+//		uint32_t m_lastInStask;
 
 	protected:
 //		AlignedBuffer<float> m_vertexData;

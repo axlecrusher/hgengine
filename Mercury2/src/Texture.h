@@ -10,6 +10,8 @@ class Texture : public MercuryAsset
 		Texture();
 		virtual ~Texture();
 		
+		void Clean();
+		
 		virtual void Init(MercuryNode* node);
 			
 		virtual void Render(const MercuryNode* node);
@@ -21,9 +23,14 @@ class Texture : public MercuryAsset
 		
 		inline static uint8_t NumberActiveTextures() { return m_activeTextures; }
 		inline static uint32_t ReadAndResetBindCount() { uint32_t t = m_textureBinds; m_textureBinds = 0; return t; }
+		inline uint32_t TextureID() const { return m_textureID; }
 		
+		void MakeDynamic(uint16_t width, uint16_t height, const MString& name);
+
+				
 		static Texture* Generate();
 		static MAutoPtr< Texture > LoadFromFile(const MString& path);
+		static MAutoPtr< Texture > LoadDynamicTexture(const MString& name);
 		
 		void SetRawData(RawImageData* raw);
 	private:
@@ -33,8 +40,8 @@ class Texture : public MercuryAsset
 		void UnbindTexture();
 		
 		const RawImageData* m_raw;
-		unsigned int m_textureID;
-		unsigned int m_textureResource;
+		uint32_t m_textureID;
+		uint32_t m_textureResource;
 		
 		static bool m_initTextureSuccess;
 		static uint8_t m_activeTextures;
