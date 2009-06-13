@@ -1,67 +1,7 @@
-#include <MercuryFBO.h>
-#include <GLHeaders.h>
+#include <global.h>
+#include <MercuryUtil.h>
 
-REGISTER_NODE_TYPE(MercuryFBO);
-
-MercuryFBO::MercuryFBO()
-	:m_fboID(0), m_initiated(false)
-{
-}
-
-MercuryFBO::~MercuryFBO()
-{
-	if (m_fboID != 0) glDeleteFramebuffersEXT(1, &m_fboID);
-}
-
-void MercuryFBO::InitFBOBeforeRender()
-{
-	m_initiated = true;
-	glGenFramebuffersEXT(1, &m_fboID);
-	CHECKFBO;
-	GLERRORCHECK;
-}
-
-void MercuryFBO::PreRender(const MercuryMatrix& matrix)
-{
-	if ( !m_initiated ) InitFBOBeforeRender();
-	RenderableNode::PreRender(matrix);
-}
-
-void MercuryFBO::Render(const MercuryMatrix& matrix)
-{
-	if (m_lastRendered != m_fboID)
-	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboID);
-//		CHECKFBO; //Incomplete FBO
-		GLERRORCHECK;
-		m_lastRendered = m_fboID;
-//		m_lastInStask = m_lastRendered;
-	}
-	
-//	glPushAttrib(GL_VIEWPORT_BIT);
-	//	glViewport(0,0,width, height);
-	
-	RenderableNode::Render(matrix);
-}
-
-void MercuryFBO::PostRender(const MercuryMatrix& matrix)
-{
-//	glPopAttrib();
-
-//	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_lastInStask);
-//	m_lastRendered = m_lastInStask;
-	
-	RenderableNode::PostRender(matrix);
-	GLERRORCHECK;
-	
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0); //unbind
-	CHECKFBO;
-	GLERRORCHECK;
-	
-	m_lastRendered = 0;	
-}
-
-uint32_t MercuryFBO::m_lastRendered = NULL;
+MString GlError2String(uint32_t e);
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *

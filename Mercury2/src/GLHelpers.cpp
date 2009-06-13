@@ -1,67 +1,43 @@
-#include <MercuryFBO.h>
 #include <GLHeaders.h>
+#include <GLHelpers.h>
 
-REGISTER_NODE_TYPE(MercuryFBO);
-
-MercuryFBO::MercuryFBO()
-	:m_fboID(0), m_initiated(false)
+MString GlError2String(uint32_t e)
 {
-}
-
-MercuryFBO::~MercuryFBO()
-{
-	if (m_fboID != 0) glDeleteFramebuffersEXT(1, &m_fboID);
-}
-
-void MercuryFBO::InitFBOBeforeRender()
-{
-	m_initiated = true;
-	glGenFramebuffersEXT(1, &m_fboID);
-	CHECKFBO;
-	GLERRORCHECK;
-}
-
-void MercuryFBO::PreRender(const MercuryMatrix& matrix)
-{
-	if ( !m_initiated ) InitFBOBeforeRender();
-	RenderableNode::PreRender(matrix);
-}
-
-void MercuryFBO::Render(const MercuryMatrix& matrix)
-{
-	if (m_lastRendered != m_fboID)
+	switch (e)
 	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboID);
-//		CHECKFBO; //Incomplete FBO
-		GLERRORCHECK;
-		m_lastRendered = m_fboID;
-//		m_lastInStask = m_lastRendered;
+		case GL_INVALID_ENUM:
+			return "Invalid Enum";
+		case GL_INVALID_VALUE:
+			return "Invalid Value";
+		case GL_INVALID_OPERATION:
+			return "Invalid Operation";
+		case GL_STACK_OVERFLOW:
+			return "Stack Overflow";
+		case GL_STACK_UNDERFLOW:
+			return "Stack Underflow";
+		case GL_OUT_OF_MEMORY:
+			return "Out of Memory";
+		case GL_INVALID_FRAMEBUFFER_OPERATION:
+			return "Invalid FBO Operation";
+		case GL_FRAMEBUFFER_UNSUPPORTED:
+			return "FBO Unsupported";
+		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+			return "FBO Incomplete Attachment";
+		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+			return "FBO Incomplete Missing Attachment";
+//		case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+//			return "FBO Incomplete Dimensions";
+//		case GL_FRAMEBUFFER_INCOMPLETE_FORMATS:
+//			return "FBO Incomplete Formats";
+		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+			return "FBO Incomplete Draw Buffer";
+		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+			return "FBO Incomplete Read Buffer";
+		case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+			return "FBO Incomplete Multisample";
 	}
-	
-//	glPushAttrib(GL_VIEWPORT_BIT);
-	//	glViewport(0,0,width, height);
-	
-	RenderableNode::Render(matrix);
+	return "Unknown Error";
 }
-
-void MercuryFBO::PostRender(const MercuryMatrix& matrix)
-{
-//	glPopAttrib();
-
-//	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_lastInStask);
-//	m_lastRendered = m_lastInStask;
-	
-	RenderableNode::PostRender(matrix);
-	GLERRORCHECK;
-	
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0); //unbind
-	CHECKFBO;
-	GLERRORCHECK;
-	
-	m_lastRendered = 0;	
-}
-
-uint32_t MercuryFBO::m_lastRendered = NULL;
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *

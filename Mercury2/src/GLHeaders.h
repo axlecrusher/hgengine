@@ -18,4 +18,19 @@
 #include <GL/freeglut.h>
 #endif
 
+#include <GLHelpers.h>
+
+#define GLERRORCHECK { \
+uint32_t e = glGetError(); \
+if ( e != GL_NO_ERROR ) { \
+printf("GL Error:%s\n", GlError2String(e).c_str()); \
+assert(0); } }
+
+#define CHECKFBO { \
+uint32_t e = glCheckFramebufferStatus(GL_FRAMEBUFFER); \
+if ( e != GL_FRAMEBUFFER_COMPLETE ) { \
+printf("GL FBO Error:%s\n", GlError2String(e).c_str()); \
+assert(0); } }
+
+
 #endif

@@ -37,6 +37,9 @@ void RenderBuffer::PreRender(const MercuryNode* node)
 void RenderBuffer::Render(const MercuryNode* node)
 {
 	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_bufferID);
+//	CHECKFBO; //missing attachment
+	GLERRORCHECK;
+	
 	if ( NeedResize() ) AllocateSpace();
 	
 	//attach to FBO
@@ -47,25 +50,31 @@ void RenderBuffer::Render(const MercuryNode* node)
 			glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GLAttachPoint(), GL_TEXTURE_2D, m_textureID, 0);
 		else
 			glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GLAttachPoint(), GL_RENDERBUFFER_EXT, m_bufferID);
+		CHECKFBO;
+		GLERRORCHECK;
 	}
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GLERRORCHECK;
 }
 
 void RenderBuffer::PostRender(const MercuryNode* node)
 {
-	static uint32_t t = time(NULL);
-	if ( (m_type == TEXTURE) && (time(NULL) > (t+3)))
-//	if (false)
+	GLERRORCHECK;
+	if ( m_type == TEXTURE )
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 		glLoadIdentity();
 			
+		GLERRORCHECK;
+
 		glMatrixMode(GL_PROJECTION);
 		glPushMatrix();
 		glLoadIdentity();
 		
+		GLERRORCHECK;
+
 //		printf("active %d\n", Texture::NumberActiveTextures() );
 		
 		//this works with a "normal" texture, FBO texture is still white
@@ -75,6 +84,7 @@ void RenderBuffer::PostRender(const MercuryNode* node)
 		glBindTexture(GL_TEXTURE_2D, m_textureID);
 		glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
 
+		GLERRORCHECK;
 
 		glBegin(GL_QUADS);
 		glTexCoord2d(0,1);
@@ -88,8 +98,10 @@ void RenderBuffer::PostRender(const MercuryNode* node)
 		
 		glTexCoord2d(0,0);
 		glVertex3i(-1, 1, -1);
+		
 		glEnd();
 		
+		GLERRORCHECK;
 		
 		glBindTexture(GL_TEXTURE_2D, 0);
 //		glActiveTexture( GL_TEXTURE0 );
@@ -97,9 +109,13 @@ void RenderBuffer::PostRender(const MercuryNode* node)
 //		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		glDisable( GL_TEXTURE_2D );
 
+		GLERRORCHECK;
+
 		glPopMatrix();
 		glMatrixMode(GL_MODELVIEW);
 		glPopMatrix();
+	
+		GLERRORCHECK;
 	}
 }
 
@@ -107,12 +123,11 @@ void RenderBuffer::InitRenderBuffer()
 {
 	m_initiated = true;
 	glGenRenderbuffersEXT(1, &m_bufferID);
-	
-	if (m_type == TEXTURE)
-	{
-		glGenTextures(1, &m_textureID);
-		printf("texture rb %d\n", m_textureID);
-	}
+	CHECKFBO;
+	GLERRORCHECK;
+	if (m_type == TEXTURE) glGenTextures(1, &m_textureID);
+	CHECKFBO;
+	GLERRORCHECK;
 }
 
 void RenderBuffer::AllocateSpace()
@@ -127,6 +142,7 @@ void RenderBuffer::AllocateSpace()
 	}
 	else
 		glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GLType(), m_width, m_height);
+	GLERRORCHECK;
 }
 
 bool RenderBuffer::NeedResize()
