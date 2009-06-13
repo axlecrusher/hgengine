@@ -9,14 +9,15 @@ void RenderGraphEntry::Render()
 		
 	if (m_node)
 	{	
-		m_node->PreRender( *m_matrix );
+		m_node->PreRender( *m_matrix ); //calls on children assets
 		m = m_node->ManipulateMatrix( *m_matrix );
 		if ( m_node->IsHidden() || m_node->IsCulled(m) ) return;
 		m.Transpose();
 		glLoadMatrixf( m.Ptr() );
-		m_node->Render( m );
+		m_node->Render( m ); //calls on children assets
 	}
 	
+	//call render on other render graph entries under me
 	std::list< RenderGraphEntry >::iterator i;
 	for (i = m_children.begin(); i != m_children.end(); ++i )
 		i->Render();
@@ -24,8 +25,8 @@ void RenderGraphEntry::Render()
 	if (m_node)
 	{
 		glLoadMatrixf( m.Ptr() );
-		m_node->PostRender( m );
-	}
+		m_node->PostRender( m );  //calls on children assets
+	}	
 }
 
 void RenderGraph::Build( MercuryNode* node )
