@@ -12,28 +12,31 @@
 			<asset type="hgmdlmodel" file="map.hgmdl" />
 		</node>
 	</node>
-	<node type="renderablenode" name="lampForest">
-		<asset type="texture" file="lamp.png"/>
-		<node type="transformnode" movz="-5" movx="0" movy="0" name="lamprow" >
-			<node type="transformnode" rotx="-90" name="lamp">
-				<node type="billboardnode" billboardaxis="0,0,1" spheremode="true" >
-					<node type="renderablenode">
-						<asset type="hgmdlmodel" file="lamp.hgmdl" />
+	<node type="mercuryfbo" >
+		<asset type="renderbuffer" buffertype="texture" />
+		<node type="renderablenode" name="lampForest">
+			<asset type="texture" file="lamp.png"/>
+			<node type="transformnode" movz="-5" movx="0" movy="0" name="lamprow" >
+				<node type="transformnode" rotx="-90" name="lamp">
+					<node type="billboardnode" billboardaxis="0,0,1" spheremode="true" >
+						<node type="renderablenode">
+							<asset type="hgmdlmodel" file="lamp.hgmdl" />
+						</node>
 					</node>
 				</node>
+				<node type="transformnode" movx="1" fallback="lampForest.lamprow.lamp" />
+				<node type="transformnode" movx="2" fallback="lampForest.lamprow.lamp" />
+				<node type="transformnode" movx="3" fallback="lampForest.lamprow.lamp" />
+				<node type="transformnode" movx="-1" fallback="lampForest.lamprow.lamp" />
+				<node type="transformnode" movx="-2" fallback="lampForest.lamprow.lamp" />
+				<node type="transformnode" movx="-3" fallback="lampForest.lamprow.lamp" />
 			</node>
-			<node type="transformnode" movx="1" fallback="lampForest.lamprow.lamp" />
-			<node type="transformnode" movx="2" fallback="lampForest.lamprow.lamp" />
-			<node type="transformnode" movx="3" fallback="lampForest.lamprow.lamp" />
-			<node type="transformnode" movx="-1" fallback="lampForest.lamprow.lamp" />
-			<node type="transformnode" movx="-2" fallback="lampForest.lamprow.lamp" />
-			<node type="transformnode" movx="-3" fallback="lampForest.lamprow.lamp" />
+			<node type="transformnode" movz="-6" fallback="lampForest.lamprow"/>
+			<node type="transformnode" movz="-7" fallback="lampForest.lamprow"/>
+			<node type="transformnode" movz="-8" fallback="lampForest.lamprow"/>
+			<node type="transformnode" movz="-9" fallback="lampForest.lamprow"/>
+			<node type="transformnode" movz="-4" fallback="lampForest.lamprow"/>
+			<node type="transformnode" movz="-3" fallback="lampForest.lamprow"/>
 		</node>
-		<node type="transformnode" movz="-6" fallback="lampForest.lamprow"/>
-		<node type="transformnode" movz="-7" fallback="lampForest.lamprow"/>
-		<node type="transformnode" movz="-8" fallback="lampForest.lamprow"/>
-		<node type="transformnode" movz="-9" fallback="lampForest.lamprow"/>
-		<node type="transformnode" movz="-4" fallback="lampForest.lamprow"/>
-		<node type="transformnode" movz="-3" fallback="lampForest.lamprow"/>
 	</node>
 </SceneGraph>
