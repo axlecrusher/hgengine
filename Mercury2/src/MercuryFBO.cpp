@@ -83,7 +83,7 @@ void MercuryFBO::Render(const MercuryMatrix& matrix)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glPushAttrib(GL_VIEWPORT_BIT);
-	glViewport(0,0,m_width, m_width);
+//	glViewport(0,0,m_width, m_width);
 	
 	RenderableNode::Render(matrix);
 }

@@ -10,7 +10,7 @@
 		<asset type="texture" file="screenFBO" dynamic="true"/>
 		<asset type="fullscreenquad"/>
 	</node>
-	<node type="mercuryfbo" width="640" height="480" depth="false" tnum="1" name="screenFBO">
+	<node type="mercuryfbo" width="640" height="480" depth="true" tnum="1" name="screenFBO">
 		<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
 			<node type="renderablenode">
 				<asset type="texture" file="map.png"/>
