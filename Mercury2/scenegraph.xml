@@ -24,7 +24,7 @@
 				<node type="transformnode" rotx="-90" name="lamp">
 					<node type="billboardnode" billboardaxis="0,0,1" spheremode="true" >
 						<node type="renderablenode">
-							<asset type="hgmdlmodel" file="lamp.hgmdl" />
+							<asset type="hgmdlmodel" file="lampN.hgmdl" />
 						</node>
 					</node>
 				</node>
