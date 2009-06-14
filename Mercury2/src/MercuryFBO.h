@@ -27,10 +27,12 @@ class MercuryFBO : public RenderableNode
 	private:
 		void Setup();
 		void Clean();
+		void GenerateFBO();
+		void Bind();
 //		void InitFBOBeforeRender();
 	
 		uint32_t m_fboID, m_depthBufferID;
-		bool m_initiated, m_useDepth;
+		bool m_initiated, m_useDepth, m_useScreenSize;
 		uint16_t m_width, m_height;
 //		uint32_t m_textureID[4];
 		Texture *m_textures[4];

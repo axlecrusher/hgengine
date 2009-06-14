@@ -1,10 +1,11 @@
 #include <MercuryFBO.h>
 #include <GLHeaders.h>
+#include <MercuryWindow.h>
 
 REGISTER_NODE_TYPE(MercuryFBO);
 
 MercuryFBO::MercuryFBO()
-	:m_fboID(0), m_depthBufferID(0), m_initiated(false), m_useDepth(false), m_numTextures(0)
+	:m_fboID(0), m_depthBufferID(0), m_initiated(false), m_useDepth(false),m_useScreenSize(false), m_width(0),m_height(0), m_numTextures(0)
 {
 	for (uint8_t i = 0; i < 4; ++i) m_textures[i] = NULL;
 }
@@ -29,15 +30,27 @@ void MercuryFBO::Setup()
 	
 	m_initiated = true;
 
+	GenerateFBO();
+	Bind();
+
+//	CHECKFBO; //Incomplete FBO
+}
+
+void MercuryFBO::GenerateFBO()
+{
 	if( m_useDepth ) glGenRenderbuffersEXT( 1, &m_depthBufferID );
 	glGenFramebuffersEXT( 1, &m_fboID );
 	
 	for (uint8_t i = 0; i < m_numTextures; ++i)
 	{
-		m_textures[i] = Texture::LoadDynamicTexture(m_name);
-		m_textures[i]->MakeDynamic(m_width, m_height,m_name);
+		MString n = ssprintf("%s_%d", m_name.c_str(), i);
+		m_textures[i] = Texture::LoadDynamicTexture(n);
+		m_textures[i]->MakeDynamic(m_width, m_height,n);
 	}
-	
+}
+
+void MercuryFBO::Bind()
+{
 	if( m_useDepth )
 	{
 		glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, m_fboID );
@@ -51,9 +64,9 @@ void MercuryFBO::Setup()
 	
 	if( m_useDepth )
 		glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthBufferID );
-
-	CHECKFBO; //Incomplete FBO
 }
+
+
 /*
 void MercuryFBO::InitFBOBeforeRender()
 {
@@ -66,6 +79,24 @@ void MercuryFBO::InitFBOBeforeRender()
 void MercuryFBO::PreRender(const MercuryMatrix& matrix)
 {
 	if ( !m_initiated ) Setup();
+	
+	if ( m_useScreenSize )
+	{
+		int w = MercuryWindow::GetCurrentWindow()->Width();
+		int h = MercuryWindow::GetCurrentWindow()->Height();
+		if ((m_width != w) || (m_height != h))
+		{	
+			m_width = w; m_height = h;
+			for (uint8_t i = 0; i < m_numTextures; ++i)
+			{
+				MString n = ssprintf("%s_%d", m_name.c_str(), i);
+				m_textures[i]->MakeDynamic(m_width, m_height,n);
+			}
+			Bind();
+		}
+	}
+	GLERRORCHECK;
+
 	RenderableNode::PreRender(matrix);
 }
 
@@ -80,16 +111,22 @@ void MercuryFBO::Render(const MercuryMatrix& matrix)
 //		m_lastInStask = m_lastRendered;
 	}
 	
+	GLERRORCHECK;
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GLERRORCHECK;
 
 	glPushAttrib(GL_VIEWPORT_BIT);
-//	glViewport(0,0,m_width, m_width);
 	
+	if ( !m_useScreenSize ) glViewport(0,0,m_width, m_height);
+	
+	GLERRORCHECK;
 	RenderableNode::Render(matrix);
+	GLERRORCHECK;
 }
 
 void MercuryFBO::PostRender(const MercuryMatrix& matrix)
 {
+	GLERRORCHECK;
 	glPopAttrib();
 
 //	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_lastInStask);
@@ -99,6 +136,7 @@ void MercuryFBO::PostRender(const MercuryMatrix& matrix)
 	GLERRORCHECK;
 	
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0); //unbind
+
 	CHECKFBO;
 	GLERRORCHECK;
 	
@@ -118,6 +156,9 @@ void MercuryFBO::LoadFromXML(const XMLNode& node)
 
 	if ( !node.Attribute("tnum").empty() )
 		SetNumTextures( StrToInt(node.Attribute("tnum")) );
+	
+	if ( !node.Attribute("usescreensize").empty() )
+		m_useScreenSize = node.Attribute("usescreensize") == "true"?true:false;
 	
 	RenderableNode::LoadFromXML(node);
 }
