@@ -34,7 +34,6 @@ Shader::Shader()
 	iTimeCode[0] = 0;
 	iTimeCode[1] = 0;
 	iTimeCode[2] = 0;
-
 }
 
 Shader::~Shader()
@@ -358,6 +357,8 @@ void Shader::DestroyShader()
 	}
 
 	glDeleteObjectARB(iProgramID);
+	
+	iProgramID = 0;
 	free( objects );
 	return;
 }
@@ -403,6 +404,8 @@ void Shader::GetTimeCodes( unsigned long * iOut )
 
 void Shader::ActivateShader()
 {
+	if (iProgramID == 0) return;
+	
 	glUseProgramObjectARB( iProgramID );
 	GLERRORCHECK;
 
