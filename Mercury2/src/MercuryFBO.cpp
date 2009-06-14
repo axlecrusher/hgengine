@@ -61,7 +61,6 @@ void MercuryFBO::Bind()
 	for (uint8_t i = 0; i < m_numTextures; ++i)
 		glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, GL_TEXTURE_2D, m_textures[i]->TextureID(), 0 );
 
-	
 	if( m_useDepth )
 		glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthBufferID );
 }
@@ -92,28 +91,26 @@ void MercuryFBO::PreRender(const MercuryMatrix& matrix)
 				MString n = ssprintf("%s_%d", m_name.c_str(), i);
 				m_textures[i]->MakeDynamic(m_width, m_height,n);
 			}
-			Bind();
 		}
+		Bind();
+		CHECKFBO; //Incomplete FBO
+		GLERRORCHECK;
 	}
-	GLERRORCHECK;
 
 	RenderableNode::PreRender(matrix);
 }
 
 void MercuryFBO::Render(const MercuryMatrix& matrix)
 {
-	if (m_lastRendered != m_fboID)
-	{
-		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboID);
-//		CHECKFBO; //Incomplete FBO
-		GLERRORCHECK;
-		m_lastRendered = m_fboID;
-//		m_lastInStask = m_lastRendered;
-	}
-	
-	GLERRORCHECK;
+	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboID);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	GLERRORCHECK;
+
+	const GLenum buffers[8] = {   GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_COLOR_ATTACHMENT2_EXT,
+		GL_COLOR_ATTACHMENT3_EXT, GL_COLOR_ATTACHMENT4_EXT, GL_COLOR_ATTACHMENT5_EXT,
+		GL_COLOR_ATTACHMENT6_EXT, GL_COLOR_ATTACHMENT7_EXT };
+
+	glDrawBuffersARB( m_numTextures, buffers );
 
 	glPushAttrib(GL_VIEWPORT_BIT);
 	
@@ -126,21 +123,23 @@ void MercuryFBO::Render(const MercuryMatrix& matrix)
 
 void MercuryFBO::PostRender(const MercuryMatrix& matrix)
 {
-	GLERRORCHECK;
 	glPopAttrib();
-
-//	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_lastInStask);
-//	m_lastRendered = m_lastInStask;
 	
 	RenderableNode::PostRender(matrix);
-	GLERRORCHECK;
 	
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0); //unbind
+//	for( uint8_t i = 0; i < m_numTextures; i++ )
+//	{
+//		glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, GL_TEXTURE_2D, 0, 0 );
+//		glActiveTextureARB( GL_TEXTURE0_ARB + i );
+//		glDisable( GL_TEXTURE_2D );
+//	}
+	glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 );
+//	glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, 0 );
 
 	CHECKFBO;
 	GLERRORCHECK;
 	
-	m_lastRendered = 0;	
+//	m_lastRendered = 0;	
 }
 
 void MercuryFBO::LoadFromXML(const XMLNode& node)
@@ -163,7 +162,7 @@ void MercuryFBO::LoadFromXML(const XMLNode& node)
 	RenderableNode::LoadFromXML(node);
 }
 
-uint32_t MercuryFBO::m_lastRendered = NULL;
+//uint32_t MercuryFBO::m_lastRendered = NULL;
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *

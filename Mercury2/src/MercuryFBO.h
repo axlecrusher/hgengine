@@ -38,7 +38,7 @@ class MercuryFBO : public RenderableNode
 		MAutoPtr< Texture > m_textures[4];
 		uint8_t m_numTextures;
 		
-		static uint32_t m_lastRendered;
+//		static uint32_t m_lastRendered;
 		
 //		uint32_t m_lastInStask;
 
