@@ -6,18 +6,17 @@
 	<node type="cameranode" movx="0" movz="0" movy="0" rotx="0" roty="0" rotz="0">
 		<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100"/>
 	</node>
-	<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
-		<node type="renderablenode">
-			<asset type="texture" file="map.png"/>
-			<asset type="hgmdlmodel" file="map.hgmdl" />
-		</node>
-		<node type="renderablenode">
-			<asset type="texture" file="screenFBO" dynamic="true"/>
-			<asset type="quad"/>
-		</node>
+	<node type="renderablenode">
+		<asset type="texture" file="screenFBO" dynamic="true"/>
+		<asset type="fullscreenquad"/>
 	</node>
-	<node type="mercuryfbo" width="512" height="512" depth="false" tnum="1" name="screenFBO">
-<!--		<asset type="renderbuffer" buffertype="texture" /> -->
+	<node type="mercuryfbo" width="640" height="480" depth="false" tnum="1" name="screenFBO">
+		<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
+			<node type="renderablenode">
+				<asset type="texture" file="map.png"/>
+				<asset type="hgmdlmodel" file="map.hgmdl" />
+			</node>
+		</node>
 		<node type="renderablenode" name="lampForest">
 			<asset type="texture" file="lamp.png"/>
 			<node type="transformnode" movz="-5" movx="0" movy="0" name="lamprow" >
