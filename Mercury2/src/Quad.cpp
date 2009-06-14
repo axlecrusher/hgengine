@@ -14,19 +14,21 @@ Quad::Quad()
 //	float* buffer = m_vertexData.m_vertexData();
 	int i = 0;
 	
-	m_vertexData[i++] = 0; m_vertexData[i++] = 1;
+	//UV oriented so 0,0 is lower left and 1,0 upper right.
+	//this makes it so FBO images render correctly right out of the buffer, no flip needed
+	m_vertexData[i++] = 0; m_vertexData[i++] = 0;
 	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
 	m_vertexData[i++] = -0.5; m_vertexData[i++] = -0.5; m_vertexData[i++] = 0.0;
 	
-	m_vertexData[i++] = 1; m_vertexData[i++] = 1;
+	m_vertexData[i++] = 1; m_vertexData[i++] = 0;
 	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
 	m_vertexData[i++] = 0.5; m_vertexData[i++] = -0.5; m_vertexData[i++] = 0.0;
 	
-	m_vertexData[i++] = 1; m_vertexData[i++] = 0;
+	m_vertexData[i++] = 1; m_vertexData[i++] = 1;
 	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
 	m_vertexData[i++] = 0.5; m_vertexData[i++] = 0.5; m_vertexData[i++] = 0.0;
 	
-	m_vertexData[i++] = 0; m_vertexData[i++] = 0;
+	m_vertexData[i++] = 0; m_vertexData[i++] = 1;
 	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
 	m_vertexData[i++] = -0.5; m_vertexData[i++] = 0.5; m_vertexData[i++] = 0.0;
 	

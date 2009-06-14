@@ -12,12 +12,6 @@ FullscreenQuad::FullscreenQuad()
 
 void FullscreenQuad::Render(const MercuryNode* node)
 {
-	//reverse texture mapping for 
-	glMatrixMode(GL_TEXTURE);
-	glPushMatrix();
-	glLoadIdentity();
-	glRotatef(180,1,0,0);
-	
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadMatrixf( m_matrix.Ptr() );
@@ -29,7 +23,6 @@ void FullscreenQuad::Render(const MercuryNode* node)
 	Quad::Render( node );
 	
 	glPopMatrix();
-	glMatrixMode(GL_TEXTURE); glPopMatrix();
 	glMatrixMode(GL_MODELVIEW); glPopMatrix();
 }
 
