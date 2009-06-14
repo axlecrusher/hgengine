@@ -403,6 +403,7 @@ void Shader::GetTimeCodes( unsigned long * iOut )
 void Shader::ActivateShader()
 {
 	glUseProgramObjectARB( iProgramID );
+	GLERRORCHECK;
 
 	for( unsigned i = 0; i < m_vShaderTabs.size(); ++i )
 	{
@@ -412,10 +413,13 @@ void Shader::ActivateShader()
 		case ShaderAttribute::TYPE_INT:
 		case ShaderAttribute::TYPE_SAMPLER:
 			glUniform1iARB( i, sa->sau.iInt );
+			GLERRORCHECK;
 			break;
 		case ShaderAttribute::TYPE_FLOAT:
 		case ShaderAttribute::TYPE_FLOATV4:
 			glUniform4fvARB( i, 4, &sa->sau.fFloatV4[0] );
+			GLERRORCHECK;
+			break;
 		};
 	}
 }
@@ -423,6 +427,7 @@ void Shader::ActivateShader()
 void Shader::DeactivateShader()
 {
 	glUseProgramObjectARB( 0 );
+	GLERRORCHECK;
 }
 
 
