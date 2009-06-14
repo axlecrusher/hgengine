@@ -3,6 +3,8 @@
 #include <ImageLoader.h>
 
 #include <GLHeaders.h>
+#include <Shader.h>
+
 using namespace std;
 
 REGISTER_ASSET_TYPE(Texture);
@@ -127,6 +129,21 @@ void Texture::BindTexture()
 	glEnable( GL_TEXTURE_2D );
 	glBindTexture(GL_TEXTURE_2D, m_textureID);
 	glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+	
+	GLERRORCHECK;
+	
+	Shader* currentShader = Shader::GetCurrentShader();
+	if ( currentShader )
+	{
+		MString uname = ssprintf("HG_Texture%d", m_activeTextures);
+		int location = currentShader->GetUniformLocation( uname );
+		if ( location != -1 )
+		{
+			glUniform1i(location,m_activeTextures);
+			GLERRORCHECK;
+		}
+	}
+
 	++m_activeTextures;
 	++m_textureBinds;
 }
@@ -137,6 +154,7 @@ void Texture::UnbindTexture()
 	glClientActiveTextureARB(m_textureResource);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisable( GL_TEXTURE_2D );
+	GLERRORCHECK;
 	--m_activeTextures;
 }
 
