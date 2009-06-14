@@ -175,7 +175,6 @@ void Texture::MakeDynamic(uint16_t width, uint16_t height, const MString& name)
 	m_path = "DYNATEXT"+name;
 	ADD_ASSET_INSTANCE(Texture, m_path, this);
 	
-	if (m_textureID == 0) printf("booo %d\n", m_textureID);
 	if (m_textureID == 0) glGenTextures( 1, &m_textureID );
 	glBindTexture( GL_TEXTURE_2D, m_textureID );
 	glCopyTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, width, height, 0 );
