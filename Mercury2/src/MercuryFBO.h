@@ -35,7 +35,7 @@ class MercuryFBO : public RenderableNode
 		bool m_initiated, m_useDepth, m_useScreenSize;
 		uint16_t m_width, m_height;
 //		uint32_t m_textureID[4];
-		Texture *m_textures[4];
+		MAutoPtr< Texture > m_textures[4];
 		uint8_t m_numTextures;
 		
 		static uint32_t m_lastRendered;
