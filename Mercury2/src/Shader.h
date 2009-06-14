@@ -9,7 +9,7 @@
 class ShaderAttribute
 {
 public:
-	ShaderAttribute() : type( TYPE_INT ) { value.iInt = 0; }
+	ShaderAttribute() : type( TYPE_INT ) { value.iInt = 0; ShaderControlled=0;}
 
 	///Type of ShaderAttribute for shader
 	enum ShaderAttributeTyp
@@ -30,6 +30,7 @@ public:
 	} value;
 	
 	MString name;
+	bool ShaderControlled;
 };
 
 ///Shader Attribute Retainer
@@ -70,9 +71,11 @@ public:
 	virtual void PostRender(const MercuryNode* node);
 	static Shader* Generate() { return new Shader; }
 	virtual void LoadFromXML(const XMLNode& node);
+	int32_t GetUniformLocation(const MString& n);
 
 	///Explicitly get the OpenGL ProgramID in the event you need it for advanced techniques
 	unsigned int	GetProgramID() { return iProgramID; }
+	inline static Shader* GetCurrentShader() { return CurrentShader; }
 private:
 	void LoadShader( const MString& path, float priority );
 	
@@ -143,7 +146,7 @@ private:
 	    through all attributes currently set up by dereferencing
 	    the pointers in the attributes repository.
 	*/
-	std::vector< ShaderAttribute * >  m_vShaderTabs;
+//	std::vector< ShaderAttribute * >  m_vShaderTabs;
 
 	///Name of the shader
 	MString sShaderName;

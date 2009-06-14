@@ -72,8 +72,8 @@ void Shader::Render(const MercuryNode* node)
 void Shader::PostRender(const MercuryNode* node)
 {
 	CurrentShader = OriginalShader;
-	if( OriginalShader )
-		OriginalShader->ActivateShader();
+	if( CurrentShader )
+		CurrentShader->ActivateShader();
 	else
 		DeactivateShader();
 }
@@ -314,7 +314,7 @@ bool Shader::LinkShaders()
 	}
 
 	//Build the list of uniform tabs.
-	int iNumUniforms;
+/*	int iNumUniforms;
 	glGetObjectParameterivARB( iProgramID, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &iNumUniforms );
 	m_vShaderTabs.resize( iNumUniforms );
 	for( int i = 0; i < iNumUniforms; ++i )
@@ -328,7 +328,7 @@ bool Shader::LinkShaders()
 		m_vShaderTabs[i] = SHADERATTRIBUTES.GetHandle( buffer );
 		m_vShaderTabs[i]->name = buffer;
 	}
-	return true;
+*/	return true;
 }
 
 void Shader::DestroyShader()
@@ -404,30 +404,33 @@ void Shader::GetTimeCodes( unsigned long * iOut )
 
 void Shader::ActivateShader()
 {
-	if (iProgramID == 0) return;
+	if ( !iProgramID ) return;
 	
 	glUseProgramObjectARB( iProgramID );
 	GLERRORCHECK;
-
+/*
 	for( unsigned i = 0; i < m_vShaderTabs.size(); ++i )
 	{
 		int location = glGetUniformLocationARB( iProgramID, m_vShaderTabs[i]->name.c_str() );
-
+		
 		ShaderAttribute * sa = m_vShaderTabs[i];
-		switch( sa->type )
+		if ( sa->ShaderControlled )
 		{
-		case ShaderAttribute::TYPE_INT:
-		case ShaderAttribute::TYPE_SAMPLER:
-			glUniform1iARB( location, sa->value.iInt );
-			GLERRORCHECK;
-			break;
-		case ShaderAttribute::TYPE_FLOAT:
-		case ShaderAttribute::TYPE_FLOATV4:
-			glUniform4fvARB( location, 4, &sa->value.fFloatV4[0] );
-			GLERRORCHECK;
-			break;
-		};
-	}
+			switch( sa->type )
+			{
+			case ShaderAttribute::TYPE_INT:
+			case ShaderAttribute::TYPE_SAMPLER:
+				glUniform1iARB( location, sa->value.iInt );
+				GLERRORCHECK;
+				break;
+			case ShaderAttribute::TYPE_FLOAT:
+			case ShaderAttribute::TYPE_FLOATV4:
+				glUniform4fvARB( location, 4, &sa->value.fFloatV4[0] );
+				GLERRORCHECK;
+				break;
+			};
+		}
+	}*/
 }
 
 void Shader::DeactivateShader()
@@ -436,6 +439,12 @@ void Shader::DeactivateShader()
 	GLERRORCHECK;
 }
 
+int32_t Shader::GetUniformLocation(const MString& n)
+{
+	if ( !iProgramID ) return -1;
+	return glGetUniformLocationARB( iProgramID, n.c_str() );
+
+}
 
 /* 
  * Copyright (c) 2009 Charles Lohr
