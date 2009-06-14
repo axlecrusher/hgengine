@@ -314,9 +314,9 @@ bool Shader::LinkShaders()
 	}
 
 	//Build the list of uniform tabs.
-/*	int iNumUniforms;
+	int iNumUniforms;
 	glGetObjectParameterivARB( iProgramID, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &iNumUniforms );
-	m_vShaderTabs.resize( iNumUniforms );
+	m_uniforms.clear();
 	for( int i = 0; i < iNumUniforms; ++i )
 	{
 		char buffer[1024];
@@ -325,10 +325,9 @@ bool Shader::LinkShaders()
 		GLenum type;
 		glGetActiveUniformARB( iProgramID, i, 1024, &bufflen, &size, &type, buffer );
 		buffer[bufflen] = 0;
-		m_vShaderTabs[i] = SHADERATTRIBUTES.GetHandle( buffer );
-		m_vShaderTabs[i]->name = buffer;
+		m_uniforms[buffer] = glGetUniformLocationARB( iProgramID, buffer );
 	}
-*/	return true;
+	return true;
 }
 
 void Shader::DestroyShader()
@@ -442,8 +441,9 @@ void Shader::DeactivateShader()
 int32_t Shader::GetUniformLocation(const MString& n)
 {
 	if ( !iProgramID ) return -1;
-	return glGetUniformLocationARB( iProgramID, n.c_str() );
-
+	std::map< MString, int >::iterator i = m_uniforms.find(n);
+	if ( i == m_uniforms.end() ) return -1;
+	return i->second;
 }
 
 /* 

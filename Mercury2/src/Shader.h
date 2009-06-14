@@ -147,6 +147,7 @@ private:
 	    the pointers in the attributes repository.
 	*/
 //	std::vector< ShaderAttribute * >  m_vShaderTabs;
+	std::map< MString, int > m_uniforms;
 
 	///Name of the shader
 	MString sShaderName;
