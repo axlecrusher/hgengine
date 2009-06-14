@@ -3,18 +3,33 @@
 
 #include <GLHeaders.h>
 
+#include <Shader.h>
+
 void RenderGraphEntry::Render()
 {
-	MercuryMatrix m;
+	MercuryMatrix modelView;
 		
 	if (m_node)
 	{	
 		m_node->PreRender( *m_matrix ); //calls on children assets
-		m = m_node->ManipulateMatrix( *m_matrix );
-		if ( m_node->IsHidden() || m_node->IsCulled(m) ) return;
-		m.Transpose();
-		glLoadMatrixf( m.Ptr() );
-		m_node->Render( m ); //calls on children assets
+		modelView = m_node->ManipulateMatrix( *m_matrix );
+		if ( m_node->IsHidden() || m_node->IsCulled(modelView) ) return;
+		modelView.Transpose();
+		
+		glLoadMatrixf( modelView.Ptr() );
+
+		Shader* currentShader = Shader::GetCurrentShader();
+		if ( currentShader )
+		{
+			int location = currentShader->GetUniformLocation("HG_ModelMatrix");
+			if ( location != -1 )
+			{
+				glUniformMatrix4fv(location, 1, 1,m_matrix->Ptr());
+				GLERRORCHECK;
+			}
+		}
+		
+		m_node->Render( modelView ); //calls on children assets
 	}
 	
 	//call render on other render graph entries under me
@@ -24,8 +39,8 @@ void RenderGraphEntry::Render()
 
 	if (m_node)
 	{
-		glLoadMatrixf( m.Ptr() );
-		m_node->PostRender( m );  //calls on children assets
+		glLoadMatrixf( modelView.Ptr() );
+		m_node->PostRender( modelView );  //calls on children assets
 	}	
 }
 
