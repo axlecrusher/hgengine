@@ -327,6 +327,7 @@ bool Shader::LinkShaders()
 		glGetActiveUniformARB( iProgramID, i, 1024, &bufflen, &size, &type, buffer );
 		buffer[bufflen] = 0;
 		m_vShaderTabs[i] = SHADERATTRIBUTES.GetHandle( buffer );
+		m_vShaderTabs[i]->name = buffer;
 	}
 	return true;
 }
@@ -407,17 +408,19 @@ void Shader::ActivateShader()
 
 	for( unsigned i = 0; i < m_vShaderTabs.size(); ++i )
 	{
+		int location = glGetUniformLocationARB( iProgramID, m_vShaderTabs[i]->name.c_str() );
+
 		ShaderAttribute * sa = m_vShaderTabs[i];
-		switch( sa->typ )
+		switch( sa->type )
 		{
 		case ShaderAttribute::TYPE_INT:
 		case ShaderAttribute::TYPE_SAMPLER:
-			glUniform1iARB( i, sa->sau.iInt );
+			glUniform1iARB( location, sa->value.iInt );
 			GLERRORCHECK;
 			break;
 		case ShaderAttribute::TYPE_FLOAT:
 		case ShaderAttribute::TYPE_FLOATV4:
-			glUniform4fvARB( i, 4, &sa->sau.fFloatV4[0] );
+			glUniform4fvARB( location, 4, &sa->value.fFloatV4[0] );
 			GLERRORCHECK;
 			break;
 		};

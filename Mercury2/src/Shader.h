@@ -9,7 +9,7 @@
 class ShaderAttribute
 {
 public:
-	ShaderAttribute() : typ( TYPE_INT ) { sau.iInt = 0; }
+	ShaderAttribute() : type( TYPE_INT ) { value.iInt = 0; }
 
 	///Type of ShaderAttribute for shader
 	enum ShaderAttributeTyp
@@ -18,7 +18,7 @@ public:
 		TYPE_SAMPLER,		///Synonomous to 'sampler2D' when passing into a shader
 		TYPE_FLOAT,		///Synonomous to 'float' when passing into a shader
 		TYPE_FLOATV4		///Synonomous to 'vec4' when passing into a shader
-	} typ;
+	} type;
 
 	///Actual data for value.
 	union ShaderAttributeVal
@@ -27,7 +27,9 @@ public:
 		unsigned int	iSampler;	///Synonomous to 'sampler2D'
 		float 		fFloat;		///Synonomous to 'float'
 		float		fFloatV4[4]; 	///Synonomous to 'vec4'
-	} sau;
+	} value;
+	
+	MString name;
 };
 
 ///Shader Attribute Retainer
