@@ -50,6 +50,8 @@ void MercuryVBO::Render(const MercuryNode* node)
 		glClientActiveTextureARB(GL_TEXTURE0+i);
 		glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*0));
 	}
+	
+	glNormalPointer(GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*2));
 
 	glDrawRangeElements(GL_TRIANGLES, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL);
 	m_vboBatches++;
