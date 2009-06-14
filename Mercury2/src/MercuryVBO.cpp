@@ -51,6 +51,7 @@ void MercuryVBO::Render(const MercuryNode* node)
 		glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*0));
 	}
 	
+	glEnableClientState( GL_NORMAL_ARRAY );
 	glNormalPointer(GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*2));
 
 	glDrawRangeElements(GL_TRIANGLES, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL);
