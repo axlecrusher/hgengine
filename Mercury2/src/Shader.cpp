@@ -310,6 +310,7 @@ bool Shader::LinkShaders()
 		puts( "Linking shaders. response follows:" );
 		puts( tmpstr );
 		free( tmpstr );
+		DestroyShader();
 		return bLinked!=0;
 	}
 
