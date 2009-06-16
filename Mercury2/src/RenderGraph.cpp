@@ -8,6 +8,7 @@
 void RenderGraphEntry::Render()
 {
 	MercuryMatrix modelView;
+	ShaderAttribute sa;
 		
 	if (m_node)
 	{	
@@ -17,17 +18,10 @@ void RenderGraphEntry::Render()
 		modelView.Transpose();
 		
 		glLoadMatrixf( modelView.Ptr() );
-
-		Shader* currentShader = Shader::GetCurrentShader();
-		if ( currentShader )
-		{
-			int location = currentShader->GetUniformLocation("HG_ModelMatrix");
-			if ( location != -1 )
-			{
-				glUniformMatrix4fv(location, 1, 1,m_matrix->Ptr());
-				GLERRORCHECK;
-			}
-		}
+		
+		sa.type = ShaderAttribute::TYPE_MATRIX;
+		sa.value.matrix = m_matrix->Ptr();
+		Shader::SetAttribute("HG_ModelMatrix", sa);
 		
 		m_node->Render( modelView ); //calls on children assets
 	}
@@ -40,6 +34,7 @@ void RenderGraphEntry::Render()
 	if (m_node)
 	{
 		glLoadMatrixf( modelView.Ptr() );
+		Shader::SetAttribute("HG_ModelMatrix", sa);
 		m_node->PostRender( modelView );  //calls on children assets
 	}	
 }

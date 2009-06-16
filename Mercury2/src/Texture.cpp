@@ -132,17 +132,10 @@ void Texture::BindTexture()
 	
 	GLERRORCHECK;
 	
-	Shader* currentShader = Shader::GetCurrentShader();
-	if ( currentShader )
-	{
-		MString uname = ssprintf("HG_Texture%d", m_activeTextures);
-		int location = currentShader->GetUniformLocation( uname );
-		if ( location != -1 )
-		{
-			glUniform1i(location,m_activeTextures);
-			GLERRORCHECK;
-		}
-	}
+	ShaderAttribute sa;
+	sa.type = ShaderAttribute::TYPE_SAMPLER;
+	sa.value.iSampler = m_textureResource;
+	Shader::SetAttribute( ssprintf("HG_Texture%d", m_activeTextures), sa);
 
 	++m_activeTextures;
 	++m_textureBinds;
@@ -155,6 +148,9 @@ void Texture::UnbindTexture()
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glDisable( GL_TEXTURE_2D );
 	GLERRORCHECK;
+	
+	Shader::RemoveAttribute( ssprintf("HG_Texture%d", m_activeTextures) );
+	
 	--m_activeTextures;
 }
 

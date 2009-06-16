@@ -5,11 +5,13 @@
 #include <map>
 #include <vector>
 
+#include <MercuryMatrix.h>
+
 ///Basic Attribute for all shaders
 class ShaderAttribute
 {
 public:
-	ShaderAttribute() : type( TYPE_INT ) { value.iInt = 0; ShaderControlled=0;}
+	ShaderAttribute() : type( TYPE_INT ) { value.iInt = 0; }
 
 	///Type of ShaderAttribute for shader
 	enum ShaderAttributeTyp
@@ -17,7 +19,8 @@ public:
 		TYPE_INT,		///Synonomous to 'int' when passing into a shader
 		TYPE_SAMPLER,		///Synonomous to 'sampler2D' when passing into a shader
 		TYPE_FLOAT,		///Synonomous to 'float' when passing into a shader
-		TYPE_FLOATV4		///Synonomous to 'vec4' when passing into a shader
+		TYPE_FLOATV4,		///Synonomous to 'vec4' when passing into a shader
+		TYPE_MATRIX		///Synonomous to 'mat4' when passing into a shader
 	} type;
 
 	///Actual data for value.
@@ -27,10 +30,8 @@ public:
 		unsigned int	iSampler;	///Synonomous to 'sampler2D'
 		float 		fFloat;		///Synonomous to 'float'
 		float		fFloatV4[4]; 	///Synonomous to 'vec4'
+		const float*	matrix;		///Synonomous to 'mat4'
 	} value;
-	
-	MString name;
-	bool ShaderControlled;
 };
 
 ///Shader Attribute Retainer
@@ -71,13 +72,19 @@ public:
 	virtual void PostRender(const MercuryNode* node);
 	static Shader* Generate() { return new Shader; }
 	virtual void LoadFromXML(const XMLNode& node);
-	int32_t GetUniformLocation(const MString& n);
+	
+	static void SetAttribute(const MString& name, const ShaderAttribute& x);
+	static void RemoveAttribute(const MString& name);
 
 	///Explicitly get the OpenGL ProgramID in the event you need it for advanced techniques
 	unsigned int	GetProgramID() { return iProgramID; }
 	inline static Shader* GetCurrentShader() { return CurrentShader; }
 private:
 	void LoadShader( const MString& path, float priority );
+	
+	int32_t GetUniformLocation(const MString& n);
+
+	void SetAttributeInternal(const MString& name, const ShaderAttribute& x);
 	
 	///Suggested function for loading shaders.
 	/** This function looks for {sShaderName}.vert and {sShaderName}.frag.  It will
@@ -142,11 +149,7 @@ private:
 	unsigned int	fragmentShader;
 
 	///Shader attributes
-	/** This is the system that helps make it possible to blast
-	    through all attributes currently set up by dereferencing
-	    the pointers in the attributes repository.
-	*/
-//	std::vector< ShaderAttribute * >  m_vShaderTabs;
+	/** These are the attributes linked into the shader */
 	std::map< MString, int > m_uniforms;
 
 	///Name of the shader
@@ -160,6 +163,9 @@ private:
 
 	///Original Shader (to re-enable when leaving)
 	Shader * OriginalShader;
+	
+	//global uniform that should be applied to all shaders
+	static std::map< MString, ShaderAttribute > m_globalAttributes;
 };
 
 #endif

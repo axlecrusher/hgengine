@@ -173,6 +173,7 @@ bool Shader::LoadShader( )
 		}
 		free( Buffer );
 	}
+	
 	return LinkShaders();
 }
 
@@ -327,6 +328,13 @@ bool Shader::LinkShaders()
 		glGetActiveUniformARB( iProgramID, i, 1024, &bufflen, &size, &type, buffer );
 		buffer[bufflen] = 0;
 		m_uniforms[buffer] = glGetUniformLocationARB( iProgramID, buffer );
+		
+		//load in global data if it exists
+		std::map< MString, ShaderAttribute >::iterator sai = m_globalAttributes.find( buffer );
+		if (sai != m_globalAttributes.end())
+		{
+			SetAttributeInternal(sai->first, sai->second);
+		}
 	}
 	return true;
 }
@@ -408,29 +416,8 @@ void Shader::ActivateShader()
 	
 	glUseProgramObjectARB( iProgramID );
 	GLERRORCHECK;
-/*
-	for( unsigned i = 0; i < m_vShaderTabs.size(); ++i )
-	{
-		int location = glGetUniformLocationARB( iProgramID, m_vShaderTabs[i]->name.c_str() );
-		
-		ShaderAttribute * sa = m_vShaderTabs[i];
-		if ( sa->ShaderControlled )
-		{
-			switch( sa->type )
-			{
-			case ShaderAttribute::TYPE_INT:
-			case ShaderAttribute::TYPE_SAMPLER:
-				glUniform1iARB( location, sa->value.iInt );
-				GLERRORCHECK;
-				break;
-			case ShaderAttribute::TYPE_FLOAT:
-			case ShaderAttribute::TYPE_FLOATV4:
-				glUniform4fvARB( location, 4, &sa->value.fFloatV4[0] );
-				GLERRORCHECK;
-				break;
-			};
-		}
-	}*/
+	
+	//set global attributes here
 }
 
 void Shader::DeactivateShader()
@@ -446,6 +433,46 @@ int32_t Shader::GetUniformLocation(const MString& n)
 	if ( i == m_uniforms.end() ) return -1;
 	return i->second;
 }
+
+void Shader::SetAttribute(const MString& name, const ShaderAttribute& x)
+{
+	m_globalAttributes[name] = x;
+
+	Shader *current = GetCurrentShader();
+	if (current) current->SetAttributeInternal( name, x );
+}
+
+void Shader::RemoveAttribute(const MString& name)
+{
+	std::map< MString, ShaderAttribute>::iterator i = m_globalAttributes.find( name );
+	if ( i != m_globalAttributes.end() ) m_globalAttributes.erase( i );
+	//no sense in unsetting it in the current shader, what would we set it to?
+}
+
+void Shader::SetAttributeInternal(const MString& name, const ShaderAttribute& x)
+{
+	int location = GetUniformLocation( name );
+
+	if ( location != -1 )
+	{
+		switch( x.type )
+		{
+			case ShaderAttribute::TYPE_INT:
+			case ShaderAttribute::TYPE_SAMPLER:
+				glUniform1iARB( location, x.value.iInt );
+				break;
+			case ShaderAttribute::TYPE_FLOAT:
+			case ShaderAttribute::TYPE_FLOATV4:
+				glUniform4fvARB( location, 4, &x.value.fFloatV4[0] );
+				break;
+			case ShaderAttribute::TYPE_MATRIX:
+				glUniformMatrix4fv(location, 1, 1, x.value.matrix); //transpase too
+		};
+		GLERRORCHECK;
+	}
+}
+
+std::map< MString, ShaderAttribute> Shader::m_globalAttributes;
 
 /* 
  * Copyright (c) 2009 Charles Lohr
