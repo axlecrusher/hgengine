@@ -328,13 +328,6 @@ bool Shader::LinkShaders()
 		glGetActiveUniformARB( iProgramID, i, 1024, &bufflen, &size, &type, buffer );
 		buffer[bufflen] = 0;
 		m_uniforms[buffer] = glGetUniformLocationARB( iProgramID, buffer );
-		
-		//load in global data if it exists
-		std::map< MString, ShaderAttribute >::iterator sai = m_globalAttributes.find( buffer );
-		if (sai != m_globalAttributes.end())
-		{
-			SetAttributeInternal(sai->first, sai->second);
-		}
 	}
 	return true;
 }
@@ -417,7 +410,16 @@ void Shader::ActivateShader()
 	glUseProgramObjectARB( iProgramID );
 	GLERRORCHECK;
 	
-	//set global attributes here
+	//set attributes here
+	std::map< MString, int >::iterator ui = m_uniforms.begin();
+	for (;ui != m_uniforms.end(); ++ui)
+	{
+		std::map< MString, ShaderAttribute >::iterator sai = m_globalAttributes.find( ui->first );
+		if (sai != m_globalAttributes.end())
+		{
+			SetAttributeInternal(sai->first, sai->second);
+		}
+	}
 }
 
 void Shader::DeactivateShader()
