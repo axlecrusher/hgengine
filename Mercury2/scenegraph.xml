@@ -28,12 +28,12 @@
 						</node>
 					</node>
 				</node>
-				<node type="transformnode" movx="1" fallback="lampForest.lamprow.lamp" />
-				<node type="transformnode" movx="2" fallback="lampForest.lamprow.lamp" />
-				<node type="transformnode" movx="3" fallback="lampForest.lamprow.lamp" />
-				<node type="transformnode" movx="-1" fallback="lampForest.lamprow.lamp" />
-				<node type="transformnode" movx="-2" fallback="lampForest.lamprow.lamp" />
-				<node type="transformnode" movx="-3" fallback="lampForest.lamprow.lamp" />
+				<node type="transformnode" movx="1" fallback="lamprow.lamp" />
+				<node type="transformnode" movx="2" fallback="lamprow.lamp" />
+				<node type="transformnode" movx="3" fallback="lamprow.lamp" />
+				<node type="transformnode" movx="-1" fallback="lamprow.lamp" />
+				<node type="transformnode" movx="-2" fallback="lamprow.lamp" />
+				<node type="transformnode" movx="-3" fallback="lamprow.lamp" />
 			</node>
 			<node type="transformnode" movz="-6" fallback="lampForest.lamprow"/>
 			<node type="transformnode" movz="-7" fallback="lampForest.lamprow"/>
