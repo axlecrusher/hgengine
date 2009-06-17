@@ -149,8 +149,10 @@ private:
 	unsigned int	fragmentShader;
 
 	///Shader attributes
-	/** These are the attributes linked into the shader */
-	std::map< MString, int > m_uniforms;
+	/** These are the attributes linked into the shader.
+	There are so few uniforms in a shader that a list with
+	a linear search should be faster than a tree*/
+	std::list< std::pair< MString, int > > m_uniforms;
 
 	///Name of the shader
 	MString sShaderName;
