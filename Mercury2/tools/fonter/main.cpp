@@ -35,7 +35,7 @@ int main( int argc, char ** argv )
 //			imagedata[(x+y*1024)*4+3] = 255;	//alpha
 		}
 
-	my_read_font( argv[1], imagedata, 64, 64, 16, 16 );
+	my_read_font( argv[1], imagedata, 64, 64, 16, 8 );
 	my_write_png( argv[2], imagedata, 1024, 1024 );
 }
 
@@ -68,41 +68,65 @@ int my_read_font( const char * fname, unsigned char * imagedata, int xpp, int yp
 		exit( -1 );
 	}
 
-	error = FT_Set_Pixel_Sizes( face, 0, 64 );
+	error = FT_Set_Pixel_Sizes( face, 0, 54 );
 	if( error )
 	{
 		fprintf( stderr, "Error with FT_Set_Pixel_Sizes\n" );
 		exit( -3 );
 	}
 
-	glyph_index = FT_Get_Char_Index( face, 65 );
-
-	error = FT_Load_Glyph( face,
-		glyph_index, 0 ); //FT_LOAD_NO_BITMAP (try as last thing)
-
-	if( error )
+	for( int ch = 0; ch < xq * yq; ch++ )
 	{
-		fprintf( stderr, "FT_Load_Glyph had a problem.\n" );
-		exit( -4 );
-	}
-
-	error = FT_Render_Glyph( face->glyph, FT_RENDER_MODE_NORMAL );
-	if( error )
-	{
-		fprintf( stderr, "FT_Render_Glyph had a problem.\n" );
-		exit( -4 );
-	}
-
-	FT_Bitmap l_bitmap = face->glyph->bitmap;
-
-	for( int x = 0; x < 1024; x++ )
-		for( int y = 0; y < 1024; y++ )
+		glyph_index = FT_Get_Char_Index( face, ch );
+	
+		error = FT_Load_Glyph( face, glyph_index, 0 ); //FT_LOAD_NO_BITMAP (try as last parameter)
+	
+		if( error )
 		{
-			if( x > l_bitmap.width  ) continue;
-			if( y > l_bitmap.rows ) continue;
-			imagedata[(x+y*1024)*2+1] = face->glyph->bitmap.buffer[x+y*l_bitmap.width ];
+			fprintf( stderr, "FT_Load_Glyph had a problem.\n" );
+			exit( -4 );
+		}
+	
+		error = FT_Render_Glyph( face->glyph, FT_RENDER_MODE_NORMAL ); //try FT_LOAD_NO_HINTING 
+		if( error )
+		{
+			fprintf( stderr, "FT_Render_Glyph had a problem.\n" );
+			exit( -4 );
 		}
 
+		FT_Bitmap l_bitmap = face->glyph->bitmap;
+
+		printf( "%d (%c) %d %d\n", ch, ch, face->glyph->bitmap_left, face->glyph->bitmap_top );
+
+		for( int x = 0; x < xpp; x++ )
+			for( int y = 0; y < ypp; y++ )
+			{
+				int offx = x+(xpp*(ch%xq)) + face->glyph->bitmap_left+0;
+				int offy = y+(ypp*(ch/xq)) - face->glyph->bitmap_top+64;
+
+				if( x >= l_bitmap.width  ) continue;
+				if( y >= l_bitmap.rows ) continue;
+
+				if( offx < 0 || offx >= xq*xpp ) continue;
+				if( offy < 0 || offy >= yq*ypp ) continue;
+
+				imagedata[(offx + offy*(xq*xpp))*2+1] = l_bitmap.buffer[x+y*l_bitmap.pitch ];
+				imagedata[(offx + offy*(xq*xpp))*2+0] = 0;
+			}
+	}
+
+	for( int x = 0; x < 1024; x+=64 )
+	for( int y = 0; y < 1024; y++ )
+	{
+		imagedata[(x+y*(xq*xpp))*2+0] = 0;
+		imagedata[(x+y*(xq*xpp))*2+1] = 255;
+	}
+	for( int x = 0; x < 1024; x++ )
+	for( int y = 0; y < 1024; y+=64 )
+	{
+		imagedata[(x+y*(xq*xpp))*2+0] = 0;
+		imagedata[(x+y*(xq*xpp))*2+1] = 255;
+	}
 }
 
 int my_write_png( const char * fname, unsigned char * imagedata, int width, int height )
