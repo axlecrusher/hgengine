@@ -327,7 +327,7 @@ bool Shader::LinkShaders()
 		buffer[bufflen] = 0;
 //		m_uniforms[buffer] = glGetUniformLocationARB( iProgramID, buffer );
 		int location = glGetUniformLocationARB( iProgramID, buffer );
-		m_uniforms.push_back( std::pair<MString,int> (buffer, location) );
+		m_uniforms.push_back( UniformMap(buffer, location) );
 	}
 	return true;
 }
@@ -411,10 +411,10 @@ void Shader::ActivateShader()
 	GLERRORCHECK;
 	
 	//set attributes here
-	std::list< std::pair< MString, int > >::iterator ui = m_uniforms.begin();
+	std::list< UniformMap >::iterator ui = m_uniforms.begin();
 	for (;ui != m_uniforms.end(); ++ui)
 	{
-		std::map< MString, ShaderAttribute >::iterator sai = m_globalAttributes.find( ui->first );
+		std::map< MString, ShaderAttribute >::iterator sai = m_globalAttributes.find( ui->name );
 		if (sai != m_globalAttributes.end())
 		{
 			SetAttributeInternal(sai->first, sai->second);
@@ -432,9 +432,9 @@ int32_t Shader::GetUniformLocation(const MString& n)
 {
 	if ( !iProgramID ) return -1;
 	
-	std::list< std::pair< MString, int > >::iterator i = m_uniforms.begin();
+	std::list< UniformMap >::iterator i = m_uniforms.begin();
 	for (;i != m_uniforms.end(); ++i)
-		if (i->first == n) return i->second;
+		if (i->name == n) return i->id;
 	return -1;
 }
 

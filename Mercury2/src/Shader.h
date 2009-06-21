@@ -50,6 +50,16 @@ private:
 	std::map< MString, ShaderAttribute * > m_AllShaderAttributes;
 };
 
+class UniformMap
+{
+	public:
+		UniformMap(MString n, int i)
+			:name(n), id(i)
+		{}
+		MString name;
+		int id;
+};
+
 ///Basic element for turning shaders on and off
 /** This class helps aide in the loading and use of shaders.  It allows loading of files
     through the LoadShader() function that actively looks for .frag and .vert files.  By use
@@ -150,7 +160,7 @@ private:
 	/** These are the attributes linked into the shader.
 	There are so few uniforms in a shader that a list with
 	a linear search should be faster than a tree*/
-	std::list< std::pair< MString, int > > m_uniforms;
+	std::list< UniformMap > m_uniforms;
 
 	///Name of the shader
 	MString sShaderName;
