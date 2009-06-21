@@ -49,12 +49,12 @@ void RenderGraph::Build( MercuryNode* node )
 void RenderGraph::Build( MercuryNode* node, RenderGraphEntry& entry)
 {
 	RenderGraphEntry* lastEntry = &entry;
-	RenderableNode* rn = RenderableNode::Cast(node);
+//	MercuryNode* rn = MercuryNode::Cast(node);
 	
-	if ( rn )
+	if ( node )
 	{
 		//found a new renderable
-		entry.m_children.push_back( RenderGraphEntry(&rn->FindGlobalMatrix(), rn) );
+		entry.m_children.push_back( RenderGraphEntry(&(node->FindGlobalMatrix()), node) );
 		lastEntry = &(entry.m_children.back());
 	}
 	

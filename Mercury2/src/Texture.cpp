@@ -1,7 +1,7 @@
 #include <Texture.h>
-#include <RenderableNode.h>
+//#include <RenderableNode.h>
 #include <ImageLoader.h>
-
+#include <MercuryNode.h>
 #include <GLHeaders.h>
 #include <Shader.h>
 
@@ -38,9 +38,8 @@ void Texture::Init(MercuryNode* node)
 {
 	MercuryAsset::Init( node );
 	
-	RenderableNode* rn = RenderableNode::Cast( node );
-	if ( rn )
-		rn->AddPostRender( this );
+//	RenderableNode* rn = RenderableNode::Cast( node );
+	if ( node ) node->AddPostRender( this );
 }
 
 void Texture::LoadFromRaw()

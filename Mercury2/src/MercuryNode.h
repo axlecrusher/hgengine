@@ -8,6 +8,8 @@
 #include <MercuryUtil.h>
 #include <MessageHandler.h>
 
+#include <MercuryAsset.h>
+
 /** This is the basic node of the scene graph.  It is not intended to be instanced.
 	Each node exists as a single entity in the scene graph.
 **/
@@ -44,6 +46,9 @@ class MercuryNode : public MessageHandler
 		virtual void RecursiveUpdate(float dTime);
 		void ThreadedUpdate(float dTime);
 		
+		
+		void RecursiveRender();
+
 		///Run on parent when a child is added
 		virtual void OnAddChild() {};
 		
@@ -65,6 +70,25 @@ class MercuryNode : public MessageHandler
 		inline void SetName(const MString& name) { m_name = name; }
 		inline MString GetName() const { return m_name; }
 		
+		inline void AddAsset(MAutoPtr< MercuryAsset > asset) { m_assets.push_back(asset); }
+		
+		void AddPreRender(MercuryAsset* asset);
+		void AddRender(MercuryAsset* asset);
+		void AddPostRender(MercuryAsset* asset);
+		
+		virtual void PreRender(const MercuryMatrix& matrix);
+		virtual void Render(const MercuryMatrix& matrix);
+		virtual void PostRender(const MercuryMatrix& matrix);
+		
+		///This will get the world space matrix
+		const MercuryMatrix& FindGlobalMatrix() const;
+		
+		virtual bool IsCulled(const MercuryMatrix& matrix);
+		bool IsHidden() { return m_hidden; }
+		
+		virtual MercuryMatrix ManipulateMatrix(const MercuryMatrix& matrix);
+
+		
 	protected:
 		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
 		MercuryNode* m_parent;
@@ -73,7 +97,19 @@ class MercuryNode : public MessageHandler
 
 		static bool m_rebuildRenderGraph;
 		MString m_name;
-
+		bool m_hidden;
+	private:
+		bool IsInAssetList(MercuryAsset* asset) const;
+		
+		//The asset is actually stored here
+		std::list< MAutoPtr< MercuryAsset > > m_assets;
+		
+		//we will just use normal pointers here because we don't want to waste too much time
+		//dereferencing the autopointer. As a precaution when assets are added to these lists,
+		//they must exist in m_assets.
+		std::list< MercuryAsset* > m_prerender;
+		std::list< MercuryAsset* > m_render;
+		std::list< MercuryAsset* > m_postrender;
 };
 
 class NodeFactory

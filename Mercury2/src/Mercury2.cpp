@@ -1,12 +1,12 @@
 #include <MercuryWindow.h>
 #include <Quad.h>
-#include <RenderableNode.h>
+//#include <RenderableNode.h>
 #include <Viewport.h>
 #include <TransformNode.h>
 
 #include <XMLParser.h>
 
-#include <RenderableNode.h>
+//#include <RenderableNode.h>
 
 #include <MercuryCrash.h>
 #include <MercuryBacktrace.h>
@@ -82,8 +82,10 @@ int main()
 		}
 		
 		w->Clear();
-		renderGraph.Render();
+//		renderGraph.Render();
 //		RenderableNode::RecursiveRender(root);
+//		printf("\n");
+		root->RecursiveRender();
 		w->SwapBuffers();
 		++m_count;
 		

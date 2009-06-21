@@ -1,7 +1,7 @@
 #ifndef VIEWPORT_H
 #define VIEWPORT_H
 
-#include <RenderableNode.h>
+#include <MercuryNode.h>
 #include <MercuryMatrix.h>
 #include <MercuryVertex.h>
 #include <MercuryPlane.h>
@@ -12,7 +12,7 @@ extern MercuryMatrix VIEWMATRIX;
 extern MercuryVertex EYE;
 extern MercuryVector LOOKAT;
 
-class Viewport : public RenderableNode
+class Viewport : public MercuryNode
 {
 	public:
 		Viewport();

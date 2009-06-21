@@ -65,7 +65,7 @@ void Viewport::LoadFromXML(const XMLNode& node)
 							  StrToFloat(node.Attribute("near")),
 							  StrToFloat(node.Attribute("far")));
 	
-	RenderableNode::LoadFromXML(node);
+	MercuryNode::LoadFromXML(node);
 }
 
 

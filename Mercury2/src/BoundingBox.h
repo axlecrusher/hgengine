@@ -1,7 +1,7 @@
 #ifndef BOUNDINGBOX_H
 #define BOUNDINGBOX_H
 
-#include <MercuryNode.h>
+//#include <MercuryNode.h>
 #include <MercuryVertex.h>
 #include <MercuryMatrix.h>
 #include <Frustum.h>

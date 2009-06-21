@@ -2,12 +2,15 @@
 #define MERCURYASSET_H
 
 #include <MAutoPtr.h>
-#include <MercuryNode.h>
 #include <MessageHandler.h>
-#include <map>
 #include <MercuryMatrix.h>
 #include <BoundingBox.h>
 #include <MSemaphore.h>
+#include <XMLParser.h>
+#include <Callback.h>
+
+#include <map>
+#include <list>
 
 enum LoadState
 {
@@ -15,6 +18,8 @@ enum LoadState
 	LOADED,
 	NONE
 };
+
+class MercuryNode;
 
 /* Assets are stored in renderable nodes with MAuto pointers.
 The renderable nodes handle the memory management

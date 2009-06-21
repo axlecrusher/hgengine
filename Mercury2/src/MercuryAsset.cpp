@@ -1,6 +1,6 @@
 #include <MercuryAsset.h>
-#include <RenderableNode.h>
-
+//#include <RenderableNode.h>
+#include <MercuryNode.h>
 #include <GLHeaders.h>
 
 MercuryAsset::MercuryAsset()
@@ -15,9 +15,8 @@ MercuryAsset::~MercuryAsset()
 
 void MercuryAsset::Init(MercuryNode* node)
 {
-	RenderableNode* rn;
-	if ( (rn=RenderableNode::Cast( node )) )
-		rn->AddRender(this);
+//	RenderableNode* rn;
+	if ( node ) node->AddRender(this);
 }
 
 void MercuryAsset::SetLoadState(LoadState ls)

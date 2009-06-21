@@ -1,10 +1,10 @@
 #ifndef MERCURYFBO_H
 #define MERCURYFBO_H
 
-#include <RenderableNode.h>
+#include <MercuryNode.h>
 #include <Texture.h>
 
-class MercuryFBO : public RenderableNode
+class MercuryFBO : public MercuryNode
 {
 	public:
 		MercuryFBO();

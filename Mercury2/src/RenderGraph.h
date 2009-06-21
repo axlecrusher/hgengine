@@ -2,7 +2,7 @@
 #define RENDERGRAPH_H
 
 #include <MercuryNode.h>
-#include <RenderableNode.h>
+//#include <RenderableNode.h>
 
 class RenderGraphEntry
 {
@@ -14,14 +14,14 @@ class RenderGraphEntry
 			m_matrix = &MercuryMatrix::Identity();
 		}
 		
-		RenderGraphEntry(const MercuryMatrix* matrix, RenderableNode* node)
+		RenderGraphEntry(const MercuryMatrix* matrix, MercuryNode* node)
 			:m_node(node), m_matrix(matrix)
 		{}
 		
 		void AddChild(RenderGraphEntry entry);
 		void Render();
 	private:
-		RenderableNode* m_node; //we don't own this, no new or free
+		MercuryNode* m_node; //we don't own this, no new or free
 		std::list< RenderGraphEntry > m_children;
 		const MercuryMatrix* m_matrix;
 };

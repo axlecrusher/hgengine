@@ -97,7 +97,7 @@ void MercuryFBO::PreRender(const MercuryMatrix& matrix)
 		GLERRORCHECK;
 	}
 
-	RenderableNode::PreRender(matrix);
+	MercuryNode::PreRender(matrix);
 }
 
 void MercuryFBO::Render(const MercuryMatrix& matrix)
@@ -117,7 +117,7 @@ void MercuryFBO::Render(const MercuryMatrix& matrix)
 	if ( !m_useScreenSize ) glViewport(0,0,m_width, m_height);
 	
 	GLERRORCHECK;
-	RenderableNode::Render(matrix);
+	MercuryNode::Render(matrix);
 	GLERRORCHECK;
 }
 
@@ -125,7 +125,7 @@ void MercuryFBO::PostRender(const MercuryMatrix& matrix)
 {
 	glPopAttrib();
 	
-	RenderableNode::PostRender(matrix);
+	MercuryNode::PostRender(matrix);
 	
 //	for( uint8_t i = 0; i < m_numTextures; i++ )
 //	{
@@ -159,7 +159,7 @@ void MercuryFBO::LoadFromXML(const XMLNode& node)
 	if ( !node.Attribute("usescreensize").empty() )
 		m_useScreenSize = node.Attribute("usescreensize") == "true"?true:false;
 	
-	RenderableNode::LoadFromXML(node);
+	MercuryNode::LoadFromXML(node);
 }
 
 //uint32_t MercuryFBO::m_lastRendered = NULL;

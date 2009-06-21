@@ -1,5 +1,5 @@
 #include <Shader.h>
-#include <RenderableNode.h>
+#include <MercuryNode.h>
 #include <MercuryFile.h>
 
 #include <GLHeaders.h>
@@ -44,9 +44,8 @@ Shader::~Shader()
 void Shader::Init(MercuryNode* node)
 {
 	MercuryAsset::Init( node );
-	RenderableNode* rn = RenderableNode::Cast( node );
-	if ( rn )
-		rn->AddPostRender( this );
+//	RenderableNode* rn = RenderableNode::Cast( node );
+	if ( node ) node->AddPostRender( this );
 }
 
 void Shader::Render(const MercuryNode* node)
