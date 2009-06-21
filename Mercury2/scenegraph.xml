@@ -1,46 +1,40 @@
-<SceneGraph>
+<SceneGraph name="root">
 <!--	<node type="cameranode" movx="6" movz="-5.5" movy="3" rotx="-45" roty="90">
 		<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100"/>
 	</node>
 -->
-	<node type="cameranode" movx="0" movz="0" movy="0" rotx="0" roty="0" rotz="0">
-		<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100"/>
+	<node type="cameranode" movx="0" movz="0" movy="0" rotx="0" roty="0" rotz="0" name="camera">
+		<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100" name="vp"/>
 	</node>
-	<node type="renderablenode">
-		<asset type="texture" file="screenFBO_0" dynamic="true"/>
-		<asset type="fullscreenquad"/>
-	</node>
-	<node type="mercuryfbo" width="640" height="480" depth="true" tnum="2" name="screenFBO" usescreensize="true">
-		<asset type="shader" file="testShader"/>
+<!--	<asset type="texture" file="screenFBO_0" dynamic="true"/> -->
+<!--	<asset type="fullscreenquad"/> -->
+<!--	<node type="mercuryfbo" width="640" height="480" depth="true" tnum="2" name="screenFBO" usescreensize="true"> -->
+<!--		<asset type="shader" file="testShader"/> -->
 		<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
-			<node type="renderablenode">
-				<asset type="texture" file="map.png"/>
-				<asset type="hgmdlmodel" file="map.hgmdl" />
-			</node>
+			<asset type="texture" file="map.png"/>
+			<asset type="hgmdlmodel" file="map.hgmdl" />
 		</node>
-		<node type="renderablenode" name="lampForest">
-			<asset type="texture" file="lamp.png"/>
-			<node type="transformnode" movz="-5" movx="0" movy="0" name="lamprow" >
-				<node type="transformnode" rotx="-90" name="lamp">
-					<node type="billboardnode" billboardaxis="0,0,1" spheremode="true" >
-						<node type="renderablenode">
+		<node type="mercurynode" name="lampForest" >
+				<asset type="texture" file="lamp.png"/>
+				<node type="transformnode" movz="-5" movx="0" movy="0" name="lamprow" >
+					<node type="transformnode" rotx="-90" name="lamp">
+						<node type="billboardnode" billboardaxis="0,0,1" spheremode="true" >
 							<asset type="hgmdlmodel" file="lampN.hgmdl" />
 						</node>
 					</node>
+					<node type="transformnode" movx="1" fallback="lamprow.lamp" />
+					<node type="transformnode" movx="2" fallback="lamprow.lamp" />
+					<node type="transformnode" movx="3" fallback="lamprow.lamp" />
+					<node type="transformnode" movx="-1" fallback="lamprow.lamp" />
+					<node type="transformnode" movx="-2" fallback="lamprow.lamp" />
+					<node type="transformnode" movx="-3" fallback="lamprow.lamp" />
 				</node>
-				<node type="transformnode" movx="1" fallback="lamprow.lamp" />
-				<node type="transformnode" movx="2" fallback="lamprow.lamp" />
-				<node type="transformnode" movx="3" fallback="lamprow.lamp" />
-				<node type="transformnode" movx="-1" fallback="lamprow.lamp" />
-				<node type="transformnode" movx="-2" fallback="lamprow.lamp" />
-				<node type="transformnode" movx="-3" fallback="lamprow.lamp" />
-			</node>
 			<node type="transformnode" movz="-6" fallback="lampForest.lamprow"/>
 			<node type="transformnode" movz="-7" fallback="lampForest.lamprow"/>
 			<node type="transformnode" movz="-8" fallback="lampForest.lamprow"/>
 			<node type="transformnode" movz="-9" fallback="lampForest.lamprow"/>
 			<node type="transformnode" movz="-4" fallback="lampForest.lamprow"/>
 			<node type="transformnode" movz="-3" fallback="lampForest.lamprow"/>
-		</node>
-	</node>
+		</node>-->
+<!--	</node> -->
 </SceneGraph>

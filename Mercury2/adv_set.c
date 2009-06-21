@@ -4,7 +4,7 @@ FOLDERS="src"
 
 
 SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp src/MercuryNode.cpp \
-	src/MercuryThreads.cpp  src/MercuryMath.cpp src/MercuryWindow.cpp src/RenderableNode.cpp \
+	src/MercuryThreads.cpp  src/MercuryMath.cpp src/MercuryWindow.cpp\
 	src/TransformNode.cpp src/MercuryMatrix.cpp src/Viewport.cpp src/Quad.cpp src/MercuryUtil.cpp \
 	src/Texture.cpp src/RawImageData.cpp src/BMPLoader.cpp src/PNGLoader.cpp src/ImageLoader.cpp \
 	src/MercuryVBO.cpp src/MSemaphore.cpp src/UpdateThreader.cpp src/HGMDLMesh.cpp \
