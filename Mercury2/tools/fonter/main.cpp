@@ -29,7 +29,7 @@ int main( int argc, char ** argv )
 		for( int y = 0; y < 1024; y++ )
 		{
 			imagedata[(x+y*1024)*2+0] = 255;	//red
-			imagedata[(x+y*1024)*2+1] = 255;	//alpha
+			imagedata[(x+y*1024)*2+1] = 0;	//alpha
 //			imagedata[(x+y*1024)*4+2] = 255;	//blue
 //			imagedata[(x+y*1024)*4+3] = 255;	//alpha
 		}
@@ -125,7 +125,7 @@ int my_read_font( const char * fname, unsigned char * imagedata, int xpp, int yp
 				if( offy < 0 || offy >= yq*ypp ) continue;
 
 				imagedata[(offx + offy*(xq*xpp))*2+1] = l_bitmap.buffer[x+y*l_bitmap.pitch ];
-				imagedata[(offx + offy*(xq*xpp))*2+0] = 0;
+				imagedata[(offx + offy*(xq*xpp))*2+0] = 255;
 
 			}
 
@@ -140,6 +140,8 @@ int my_read_font( const char * fname, unsigned char * imagedata, int xpp, int yp
 		actualchar++;
 	}
 
+
+/* Draw grid
 	for( int x = 0; x < 1024; x+=64 )
 	for( int y = 0; y < 1024; y++ )
 	{
@@ -152,6 +154,7 @@ int my_read_font( const char * fname, unsigned char * imagedata, int xpp, int yp
 		imagedata[(x+y*(xq*xpp))*2+0] = 0;
 		imagedata[(x+y*(xq*xpp))*2+1] = 255;
 	}
+*/
 }
 
 int my_write_png( const char * fname, unsigned char * imagedata, int width, int height )
