@@ -8,8 +8,7 @@
 #  define png_jmpbuf(png_ptr) ((png_ptr)->jmpbuf)
 #endif
 
-
-FILE * fout;
+FILE * fontfile;
 
 int my_write_png( const char * fname, unsigned char * imagedata, int x, int y );
 int my_read_font( const char * fname, unsigned char * imagedata, int xpp, int ypp, int xq, int yq );
@@ -22,7 +21,7 @@ int main( int argc, char ** argv )
 	if( argc != 3 )
 	{
 		fprintf( stderr, "Mercury Fonter\n" );
-		fprintf( stderr, "Usage: %s [font file] [output png]\n", argv[0] );
+		fprintf( stderr, "Usage: %s [font file] [font name]\n", argv[0] );
 		exit( -1 );
 	}
 
@@ -35,8 +34,22 @@ int main( int argc, char ** argv )
 //			imagedata[(x+y*1024)*4+3] = 255;	//alpha
 		}
 
-	my_read_font( argv[1], imagedata, 64, 64, 16, 8 );
-	my_write_png( argv[2], imagedata, 1024, 1024 );
+	char fname[1024];
+	char pngname[1024];
+
+	sprintf( fname, "%s.%s", argv[2], "hgfont" );
+	sprintf( pngname, "%s.%s", argv[2], "png" );
+
+	fontfile = fopen( fname, "w" );
+	if( !fontfile )
+	{
+		fprintf( stderr, "Could not open font output file: %s\n", fname );
+		exit( -1 );
+	}
+	fprintf( fontfile, "%s\n", pngname );
+
+	my_read_font( argv[1], imagedata, 64, 64, 16, 16 );
+	my_write_png( pngname, imagedata, 1024, 1024 );
 }
 
 int my_read_font( const char * fname, unsigned char * imagedata, int xpp, int ypp, int xq, int yq )
@@ -68,16 +81,17 @@ int my_read_font( const char * fname, unsigned char * imagedata, int xpp, int yp
 		exit( -1 );
 	}
 
-	error = FT_Set_Pixel_Sizes( face, 0, 54 );
+	error = FT_Set_Pixel_Sizes( face, 0, 64 );
 	if( error )
 	{
 		fprintf( stderr, "Error with FT_Set_Pixel_Sizes\n" );
 		exit( -3 );
 	}
 
+	int actualchar = 0;
 	for( int ch = 0; ch < xq * yq; ch++ )
 	{
-		glyph_index = FT_Get_Char_Index( face, ch );
+		glyph_index = FT_Get_Char_Index( face, actualchar );
 	
 		error = FT_Load_Glyph( face, glyph_index, 0 ); //FT_LOAD_NO_BITMAP (try as last parameter)
 	
@@ -96,13 +110,13 @@ int my_read_font( const char * fname, unsigned char * imagedata, int xpp, int yp
 
 		FT_Bitmap l_bitmap = face->glyph->bitmap;
 
-		printf( "%d (%c) %d %d\n", ch, ch, face->glyph->bitmap_left, face->glyph->bitmap_top );
-
+		int goffx = (xpp*(ch%xq));
+		int goffy = (ypp*(ch/xq));
 		for( int x = 0; x < xpp; x++ )
 			for( int y = 0; y < ypp; y++ )
 			{
-				int offx = x+(xpp*(ch%xq)) + face->glyph->bitmap_left+0;
-				int offy = y+(ypp*(ch/xq)) - face->glyph->bitmap_top+64;
+				int offx = x+goffx;
+				int offy = y+goffy;
 
 				if( x >= l_bitmap.width  ) continue;
 				if( y >= l_bitmap.rows ) continue;
@@ -112,7 +126,18 @@ int my_read_font( const char * fname, unsigned char * imagedata, int xpp, int yp
 
 				imagedata[(offx + offy*(xq*xpp))*2+1] = l_bitmap.buffer[x+y*l_bitmap.pitch ];
 				imagedata[(offx + offy*(xq*xpp))*2+0] = 0;
+
 			}
+
+		float loffx = float(goffx)/float(xpp*xq);
+		float loffy = float(goffy)/float(ypp*yq);
+		float loffxe = float(goffx+l_bitmap.width)/float(xpp*xq);
+		float loffye = float(goffy+l_bitmap.rows)/float(ypp*yq);
+
+		fprintf( fontfile, "%d %f %f %f %f  %d %d %d %d\n", actualchar, loffx, loffy, loffxe, loffye,
+			l_bitmap.width, l_bitmap.rows, face->glyph->bitmap_left, face->glyph->bitmap_top );
+
+		actualchar++;
 	}
 
 	for( int x = 0; x < 1024; x+=64 )
@@ -131,6 +156,7 @@ int my_read_font( const char * fname, unsigned char * imagedata, int xpp, int yp
 
 int my_write_png( const char * fname, unsigned char * imagedata, int width, int height )
 {
+	FILE * fout;
 	png_structp png_ptr;
 	png_infop info_ptr;
 	png_uint_32 k;
