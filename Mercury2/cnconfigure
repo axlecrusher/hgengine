@@ -184,8 +184,8 @@ done
 
 LDFLAGS="$LDFLAGS $LD_BASE"
 
-echo "Final compile line: cc \$(CC_BASE) \$(CFLAGS) -c -o \$@ \$<"
-echo "Final link line: g++ -o \$@ \$^ \$(LDFLAGS)"
+echo "Final compile line: cc ${CC_BASE} ${CFLAGS} -c -o \$@ \$<"
+echo "Final link line: g++ -o \$@ \$^ ${LDFLAGS}"
 
 echo "PROJ=$PROJ" >> Makefile
 echo "CFLAGS=$CC_BASE $CFLAGS" >> Makefile
