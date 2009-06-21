@@ -125,9 +125,8 @@ void MercuryNode::RecursiveRender()
 	Render( modelView ); //calls on children assets
 	
 	//call render on other render graph entries under me
-	std::list< MercuryNode* >::iterator i;
-	for (i = m_children.begin(); i != m_children.end(); ++i )
-		(*i)->RecursiveRender();
+	for (MercuryNode* child = FirstChild(); child != NULL; child = NextChild(child))
+		child->RecursiveRender();
 
 	glLoadMatrixf( modelView.Ptr() );
 	Shader::SetAttribute("HG_ModelMatrix", sa);
