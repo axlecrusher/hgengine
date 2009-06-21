@@ -50,8 +50,6 @@ private:
 	std::map< MString, ShaderAttribute * > m_AllShaderAttributes;
 };
 
-extern ShaderAttributesSet SHADERATTRIBUTES;
-
 ///Basic element for turning shaders on and off
 /** This class helps aide in the loading and use of shaders.  It allows loading of files
     through the LoadShader() function that actively looks for .frag and .vert files.  By use
@@ -161,7 +159,7 @@ private:
 	float fPriority;
 
 	///Global static shader (so shaders can recursively activate and deactivate shaders)
-	static Shader * CurrentShader;
+	static Shader* CurrentShader;
 
 	///Original Shader (to re-enable when leaving)
 	Shader * OriginalShader;

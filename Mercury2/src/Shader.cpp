@@ -11,8 +11,7 @@ using namespace std;
 
 REGISTER_ASSET_TYPE( Shader );
 
-ShaderAttributesSet SHADERATTRIBUTES;
-Shader * Shader::CurrentShader;
+Shader * Shader::CurrentShader = NULL;
 
 ShaderAttribute * ShaderAttributesSet::GetHandle( const MString & sName )
 {
