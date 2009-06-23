@@ -8,6 +8,8 @@
 #  define png_jmpbuf(png_ptr) ((png_ptr)->jmpbuf)
 #endif
 
+#define FONTSIZE 64
+
 FILE * fontfile;
 
 int my_write_png( const char * fname, unsigned char * imagedata, int x, int y );
@@ -46,7 +48,7 @@ int main( int argc, char ** argv )
 		fprintf( stderr, "Could not open font output file: %s\n", fname );
 		exit( -1 );
 	}
-	fprintf( fontfile, "%s\n", pngname );
+	fprintf( fontfile, "%s\n%d\n", pngname, FONTSIZE );
 
 	my_read_font( argv[1], imagedata, 64, 64, 16, 16 );
 	my_write_png( pngname, imagedata, 1024, 1024 );
@@ -81,7 +83,7 @@ int my_read_font( const char * fname, unsigned char * imagedata, int xpp, int yp
 		exit( -1 );
 	}
 
-	error = FT_Set_Pixel_Sizes( face, 0, 64 );
+	error = FT_Set_Pixel_Sizes( face, 0, FONTSIZE );
 	if( error )
 	{
 		fprintf( stderr, "Error with FT_Set_Pixel_Sizes\n" );
