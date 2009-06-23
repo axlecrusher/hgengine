@@ -38,12 +38,13 @@ void ModuleManager::InitializeAllModules()
 {
 	XMLDocument* doc = XMLDocument::Load("modules.xml");
 	XMLNode r = doc->GetRootNode();
-	for (XMLNode child = r.Child(); child.IsValid(); child = r.NextNode())
+	for (XMLNode child = r.Child(); child.IsValid(); child = child.NextNode())
 	{
 		if( child.Name() != "Module" )
 		{
 			fprintf( stderr, "Invalid element in modules: %s\n", child.Name().c_str() );
 		}
+		printf( "Loading: %s\n", child.Attribute( "obj" ).c_str() );
 #ifdef WIN32
 		MString ModuleName = child.Attribute( "obj" ) + ".dll";
 #else
@@ -63,11 +64,13 @@ void ModuleManager::UnloadModule( const MString & ModuleName )
 bool ModuleManager::LoadModule( const MString & ModuleName, const MString & LoadFunction )
 {
 	if( m_hAllHandles[ModuleName] ) UnloadModule( ModuleName );
-	m_hAllHandles[ModuleName] = dlopen( ModuleName.c_str(), RTLD_NOW | RTLD_GLOBAL );
+
+	void * v = dlopen( ModuleName.c_str(), RTLD_NOW | RTLD_GLOBAL );
+	m_hAllHandles[ModuleName] = v;
 
 	if( !m_hAllHandles[ModuleName] )
 	{
-		fprintf( stderr, "Error opening: %s\n", ModuleName.c_str() );
+		fprintf( stderr, "Error opening: %s (%s)\n", ModuleName.c_str(), dlerror() );
 		return false;
 	}
 
