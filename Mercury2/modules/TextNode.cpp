@@ -9,7 +9,7 @@
 REGISTER_NODE_TYPE(TextNode);
 
 TextNode::TextNode()
-	:MercuryNode(),m_fSize(1.),m_bDirty(0), m_kVBO(0), m_kTEX(0)
+	:MercuryNode(),m_fSize(1.),m_bDirty(false),m_pThisFont(NULL),m_kVBO(0), m_kTEX(0)
 {
 }
 
@@ -168,13 +168,13 @@ bool TextNode::LoadFont( const MString & sFont )
 {
 	if( g_AllFonts.get( sFont ) == 0 )
 	{
-		m_pThisFont = &g_AllFonts[sFont];
 		if( !m_pThisFont->LoadFromFile( sFont ) )
 		{
 			fprintf( stderr, "Error: Could not load font: \"%s\".", sFont.c_str() );
 			g_AllFonts.remove( sFont );
 			return false;
 		}
+		m_pThisFont = &g_AllFonts[sFont];
 	} else
 		m_pThisFont = &g_AllFonts[sFont];
 	SetDirtyText();
