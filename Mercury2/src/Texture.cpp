@@ -15,7 +15,7 @@ Texture::Texture()
 	if (!m_initTextureSuccess)
 	{
 		m_initTextureSuccess = true;
-		m_activeTextures = 0;
+		m_numActiveTextures = 0;
 	}
 }
 
@@ -76,7 +76,7 @@ void Texture::LoadFromRaw()
 				GL_UNSIGNED_BYTE,
 				m_raw->m_data);
 */
-	gluBuild2DMipmaps( GL_TEXTURE_2D, 3, m_raw->m_width, m_raw->m_height, ByteType, GL_UNSIGNED_BYTE, m_raw->m_data );
+	gluBuild2DMipmaps( GL_TEXTURE_2D, ByteType, m_raw->m_width, m_raw->m_height, ByteType, GL_UNSIGNED_BYTE, m_raw->m_data );
 	
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
@@ -121,7 +121,7 @@ void Texture::LoadFromXML(const XMLNode& node)
 
 void Texture::BindTexture()
 {
-	m_textureResource = GL_TEXTURE0+m_activeTextures;
+	m_textureResource = GL_TEXTURE0+m_numActiveTextures;
 	glActiveTexture( m_textureResource );
 	glClientActiveTextureARB(m_textureResource);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -134,9 +134,11 @@ void Texture::BindTexture()
 	ShaderAttribute sa;
 	sa.type = ShaderAttribute::TYPE_SAMPLER;
 	sa.value.iSampler = m_textureResource;
-	Shader::SetAttribute( ssprintf("HG_Texture%d", m_activeTextures), sa);
+	Shader::SetAttribute( ssprintf("HG_Texture%d", m_numActiveTextures), sa);
 
-	++m_activeTextures;
+	m_activeTextures.push_back(this);
+	
+	++m_numActiveTextures;
 	++m_textureBinds;
 }
 
@@ -148,9 +150,10 @@ void Texture::UnbindTexture()
 	glDisable( GL_TEXTURE_2D );
 	GLERRORCHECK;
 	
-	Shader::RemoveAttribute( ssprintf("HG_Texture%d", m_activeTextures) );
+	Shader::RemoveAttribute( ssprintf("HG_Texture%d", m_numActiveTextures) );
+	m_activeTextures.pop_back();
 	
-	--m_activeTextures;
+	--m_numActiveTextures;
 }
 
 void Texture::LoadImagePath(const MString& path)
@@ -220,8 +223,9 @@ MAutoPtr< Texture > Texture::LoadDynamicTexture(const MString& name)
 }
 
 bool Texture::m_initTextureSuccess = false;
-uint8_t Texture::m_activeTextures = 0;
+uint8_t Texture::m_numActiveTextures = 0;
 uint32_t Texture::m_textureBinds = 0;
+std::list< Texture* > Texture::m_activeTextures;
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *

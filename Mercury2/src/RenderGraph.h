@@ -3,6 +3,7 @@
 
 #include <MercuryNode.h>
 //#include <RenderableNode.h>
+#include <PriorityQueue.h>
 
 class RenderGraphEntry
 {
@@ -26,15 +27,37 @@ class RenderGraphEntry
 		const MercuryMatrix* m_matrix;
 };
 
+/** Tries to get pointers to all assets needed to rebuild an accurate render state.
+This will only work for restoring the render state within the same render loop.
+**/
+class StoreRenderState
+{
+	public:
+		StoreRenderState();
+		void Save();
+		MercuryNode* Node;
+		MercuryMatrix Matrix;
+//	private:
+		std::list< MercuryAsset* > Assets;
+};
+
 class RenderGraph
 {
 	public:
 		void Build( MercuryNode* node );
 		inline void Render() { m_root.Render(); }
+		
+		void AddAlphaNode( MercuryNode* node );
+		void RenderAlpha();
 	private:
 		void Build( MercuryNode* node, RenderGraphEntry& entry );
 		RenderGraphEntry m_root;
+		
+		//nodes that use alpha, ordered from farthest to nearest from the camera
+		PriorityQueue<float, StoreRenderState > m_alphaNodesQueue;
 };
+
+extern RenderGraph* CURRENTRENDERGRAPH;
 
 #endif
 

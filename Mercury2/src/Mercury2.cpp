@@ -6,7 +6,7 @@
 
 #include <XMLParser.h>
 
-//#include <RenderableNode.h>
+#include <RenderGraph.h>
 
 #include <MercuryCrash.h>
 #include <MercuryBacktrace.h>
@@ -76,6 +76,7 @@ int main()
 		MESSAGEMAN::GetInstance().PumpMessages( timer.MicrosecondsSinceInit() );
 		root->RecursiveUpdate( timer.Age() ); //comment to use threads
 		
+		CURRENTRENDERGRAPH = &renderGraph;
 		if ( MercuryNode::NeedsRebuild() )
 		{
 			renderGraph.Build(root);
@@ -86,6 +87,7 @@ int main()
 //		RenderableNode::RecursiveRender(root);
 //		printf("\n");
 		root->RecursiveRender();
+		renderGraph.RenderAlpha();
 		w->SwapBuffers();
 		++m_count;
 		

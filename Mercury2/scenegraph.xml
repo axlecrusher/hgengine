@@ -6,20 +6,26 @@
 	<node type="cameranode" movx="0" movz="0" movy="0" rotx="0" roty="0" rotz="0" name="camera">
 		<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100" name="vp"/>
 	</node>
-	<asset type="texture" file="screenFBO_0" dynamic="true"/>
+<!--	<asset type="texture" file="screenFBO_0" dynamic="true"/>
 	<asset type="fullscreenquad"/>
 	<node type="mercuryfbo" width="640" height="480" depth="true" tnum="2" name="screenFBO" usescreensize="true">
 		<asset type="shader" file="testShader"/>
-		<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
+-->		<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
 			<asset type="texture" file="map.png"/>
 			<asset type="hgmdlmodel" file="map.hgmdl" />
 		</node>
 		<node type="mercurynode" name="lampForest" >
-			<asset type="texture" file="lamp.png"/>
 			<node type="transformnode" movz="-5" movx="0" movy="0" name="lamprow" >
-				<node type="transformnode" rotx="-90" name="lamp">
-					<node type="billboardnode" billboardaxis="0,0,1" spheremode="true" >
+				<node type="mercurynode" name="lamp">
+					<node type="transformnode" rotx="-90" >
+						<asset type="texture" file="lamp.png"/>
 						<asset type="hgmdlmodel" file="lampN.hgmdl" />
+					</node>
+					<node type="billboardnode" billboardaxis="0,1,0" spheremode="true" >
+						<node type="transformnode" roty="180" scalex="0.1" scaley="0.1" alphaPath="true">
+							<asset type="texture" file="flame.png"/>
+							<asset type="quad"/>
+						</node>
 					</node>
 				</node>
 				<node type="transformnode" movx="1" fallback="lamprow.lamp" />
@@ -36,5 +42,5 @@
 			<node type="transformnode" movz="-4" fallback="lampForest.lamprow"/>
 			<node type="transformnode" movz="-3" fallback="lampForest.lamprow"/>
 		</node>
-	</node>
+<!--	</node> -->
 </SceneGraph>

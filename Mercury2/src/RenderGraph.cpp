@@ -4,6 +4,10 @@
 #include <GLHeaders.h>
 
 #include <Shader.h>
+#include <Viewport.h>
+#include <Texture.h>
+
+RenderGraph* CURRENTRENDERGRAPH = NULL;
 
 void RenderGraphEntry::Render()
 {
@@ -63,6 +67,60 @@ void RenderGraph::Build( MercuryNode* node, RenderGraphEntry& entry)
 	
 	//coming back up the tree
 //	entry = lastEntry;
+}
+
+void RenderGraph::AddAlphaNode( MercuryNode* node )
+{
+	StoreRenderState srs;
+	srs.Save();
+	srs.Matrix = node->FindGlobalMatrix();
+	srs.Node = node;
+	
+	MercuryVertex p = srs.Matrix * MercuryVertex(0,0,0,1);
+
+	//order from back to front (ensure furthest has lowest number and is first)
+	float length = (p - EYE).Length() * -1;
+	m_alphaNodesQueue.Insert(length, srs);
+}
+
+void RenderGraph::RenderAlpha()
+{
+	while ( !m_alphaNodesQueue.empty() )
+	{
+		StoreRenderState& srs = m_alphaNodesQueue.GetNext();
+		
+		std::list< MercuryAsset* >::iterator i = srs.Assets.begin();
+		for (;i != srs.Assets.end(); ++i)
+		{
+			(*i)->PreRender(srs.Node);
+			(*i)->Render(srs.Node);
+		}
+		
+		srs.Node->RecursiveRender(true);
+	
+		for (i = srs.Assets.begin();i != srs.Assets.end(); ++i)
+			(*i)->PostRender(srs.Node);
+		
+		m_alphaNodesQueue.PopNext();
+	}
+}
+
+StoreRenderState::StoreRenderState()
+	:Node(NULL)
+{
+}
+
+void StoreRenderState::Save()
+{
+	//get assets for current textures
+	const std::list< Texture* >& textures = Texture::GetActiveTextures();
+	std::list< Texture* >::const_iterator i = textures.begin();
+	for (;i != textures.end(); ++i)
+		Assets.push_back( *i );
+
+	//save the active shader
+	Shader* s = Shader::GetCurrentShader();
+	if (s) Assets.push_back(s);
 }
 
 /****************************************************************************

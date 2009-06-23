@@ -77,6 +77,8 @@ X11Window::X11Window(const MString& title, int width, int height, int bits, int 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_NORMALIZE);
+	
+	glEnable (GL_BLEND); glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 X11Window::~X11Window()

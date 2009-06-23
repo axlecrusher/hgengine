@@ -47,7 +47,7 @@ class MercuryNode : public MessageHandler
 		void ThreadedUpdate(float dTime);
 		
 		
-		void RecursiveRender();
+		void RecursiveRender(bool doAlpha = false);
 
 		///Run on parent when a child is added
 		virtual void OnAddChild() {};
@@ -98,6 +98,7 @@ class MercuryNode : public MessageHandler
 		static bool m_rebuildRenderGraph;
 		MString m_name;
 		bool m_hidden;
+		bool m_useAlphaPath;
 	private:
 		bool IsInAssetList(MercuryAsset* asset) const;
 		

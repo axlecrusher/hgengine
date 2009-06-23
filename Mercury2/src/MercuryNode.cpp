@@ -7,13 +7,14 @@
 
 #include <GLHeaders.h>
 #include <Shader.h>
+#include <RenderGraph.h>
 
 using namespace std;
 
 REGISTER_NODE_TYPE(MercuryNode);
 
 MercuryNode::MercuryNode()
-	:m_parent(NULL), m_prevSibling(NULL), m_nextSibling(NULL), m_hidden(false)
+	:m_parent(NULL), m_prevSibling(NULL), m_nextSibling(NULL), m_hidden(false), m_useAlphaPath(false)
 {
 }
 
@@ -104,7 +105,7 @@ void MercuryNode::RecursiveUpdate(float dTime)
 		child->RecursiveUpdate(dTime);
 }
 
-void MercuryNode::RecursiveRender()
+void MercuryNode::RecursiveRender(bool doAlpha)
 {
 	MercuryMatrix modelView;
 	ShaderAttribute sa;
@@ -126,7 +127,12 @@ void MercuryNode::RecursiveRender()
 	
 	//call render on other render graph entries under me
 	for (MercuryNode* child = FirstChild(); child != NULL; child = NextChild(child))
-		child->RecursiveRender();
+	{
+		if (child->m_useAlphaPath && !doAlpha)
+			CURRENTRENDERGRAPH->AddAlphaNode(child);
+		else
+			child->RecursiveRender();
+	}
 
 	glLoadMatrixf( modelView.Ptr() );
 	Shader::SetAttribute("HG_ModelMatrix", sa);
@@ -149,6 +155,9 @@ void MercuryNode::LoadFromXML(const XMLNode& node)
 	
 	if ( !node.Attribute("hidden").empty() )
 		m_hidden = node.Attribute("hidden")=="true"?true:false;
+
+	if ( !node.Attribute("alphaPath").empty() )
+		m_useAlphaPath = node.Attribute("alphaPath")=="true"?true:false;
 
 	//Not much to do here except run through all the children nodes
 	for (XMLNode child = node.Child(); child.IsValid(); child = child.NextNode())
