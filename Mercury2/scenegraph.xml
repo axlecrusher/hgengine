@@ -6,6 +6,10 @@
 	<node type="cameranode" movx="0" movz="0" movy="0" rotx="0" roty="0" rotz="0" name="camera">
 		<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100" name="vp"/>
 	</node>
+
+	<node type="transformnode" movz="-5" >
+		<node type="TextNode" text="test font 123" font="testfont.hgfont" size=".01" />
+	</node>
 <!--	<asset type="texture" file="screenFBO_0" dynamic="true"/>
 	<asset type="fullscreenquad"/>
 	<node type="mercuryfbo" width="640" height="480" depth="true" tnum="2" name="screenFBO" usescreensize="true">
