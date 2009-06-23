@@ -1,3 +1,4 @@
 <Modules>
-	<Module src="modules/BillboardNode.c" obj="modules/BillboardNode" func="InstallBillboardNode" />
+	<Module src="modules/TextNode.cpp" obj="modules/TextNode" func="InstallTextNode" />
+	<Module src="modules/BillboardNode.cpp" obj="modules/BillboardNode" func="InstallBillboardNode"/>
 </Modules>
