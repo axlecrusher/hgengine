@@ -17,7 +17,8 @@
 #define GENRTTI(x) static const x* Cast(const MercuryNode* n) \
 { if (n==NULL) return NULL; return dynamic_cast<const x*>(n); } \
 static x* Cast(MercuryNode* n) \
-{ if (n==NULL) return NULL; return dynamic_cast<x*>(n); }
+{ if (n==NULL) return NULL; return dynamic_cast<x*>(n); } \
+static const  char * GetType() { return #x; }
 
 /*
 #define GENRTTI(x) static bool IsMyType(const MercuryNode* n) \
