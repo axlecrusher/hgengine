@@ -8,7 +8,7 @@
 	</node>
 
 	<node type="transformnode" movz="-5" >
-		<node type="TextNode" text="test font 123" font="testfont.hgfont" size=".01" />
+		<node type="TextNode" text="test font 123" font="testfont.hgfont" size=".01"  alphaPath="true" />
 	</node>
 <!--	<asset type="texture" file="screenFBO_0" dynamic="true"/>
 	<asset type="fullscreenquad"/>

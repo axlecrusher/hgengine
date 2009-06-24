@@ -168,6 +168,7 @@ bool TextNode::LoadFont( const MString & sFont )
 {
 	if( g_AllFonts.get( sFont ) == 0 )
 	{
+		m_pThisFont = &g_AllFonts[sFont];
 		if( !m_pThisFont->LoadFromFile( sFont ) )
 		{
 			fprintf( stderr, "Error: Could not load font: \"%s\".", sFont.c_str() );
