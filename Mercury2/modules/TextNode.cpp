@@ -173,9 +173,10 @@ bool TextNode::LoadFont( const MString & sFont )
 		{
 			fprintf( stderr, "Error: Could not load font: \"%s\".", sFont.c_str() );
 			g_AllFonts.remove( sFont );
+			//This has to be set to null if there is a failure because this is what RenderText uses as a check
+			m_pThisFont = NULL;
 			return false;
 		}
-		m_pThisFont = &g_AllFonts[sFont];
 	} else
 		m_pThisFont = &g_AllFonts[sFont];
 	SetDirtyText();
