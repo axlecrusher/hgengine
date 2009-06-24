@@ -115,6 +115,7 @@ bool X11Window::PumpMessages()
 				if ( unsigned(event.xclient.data.l[0]) == m_wmDeleteMessage )
 				{
 					XDestroyWindow(m_display,m_window);
+					return false;
 				}
 				break;
 			}
