@@ -96,7 +96,7 @@ void RenderGraph::RenderAlpha()
 			(*i)->Render(srs.Node);
 		}
 		
-		srs.Node->RecursiveRender(true);
+		srs.Node->RecursiveRender();
 	
 		for (i = srs.Assets.begin();i != srs.Assets.end(); ++i)
 			(*i)->PostRender(srs.Node);

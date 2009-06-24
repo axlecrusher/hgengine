@@ -48,7 +48,7 @@ class MercuryNode : public MessageHandler
 		void ThreadedUpdate(float dTime);
 		
 		
-		void RecursiveRender(bool doAlpha = false);
+		void RecursiveRender();
 
 		///Run on parent when a child is added
 		virtual void OnAddChild() {};
@@ -89,7 +89,6 @@ class MercuryNode : public MessageHandler
 		
 		virtual MercuryMatrix ManipulateMatrix(const MercuryMatrix& matrix);
 
-		
 	protected:
 		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
 		MercuryNode* m_parent;

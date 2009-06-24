@@ -105,7 +105,7 @@ void MercuryNode::RecursiveUpdate(float dTime)
 		child->RecursiveUpdate(dTime);
 }
 
-void MercuryNode::RecursiveRender(bool doAlpha)
+void MercuryNode::RecursiveRender()
 {
 	MercuryMatrix modelView;
 	ShaderAttribute sa;
@@ -128,7 +128,7 @@ void MercuryNode::RecursiveRender(bool doAlpha)
 	//call render on other render graph entries under me
 	for (MercuryNode* child = FirstChild(); child != NULL; child = NextChild(child))
 	{
-		if (child->m_useAlphaPath && !doAlpha)
+		if ( child->m_useAlphaPath )
 			CURRENTRENDERGRAPH->AddAlphaNode(child);
 		else
 			child->RecursiveRender();
