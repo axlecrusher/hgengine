@@ -48,7 +48,7 @@ int main( int argc, char ** argv )
 		fprintf( stderr, "Could not open font output file: %s\n", fname );
 		exit( -1 );
 	}
-	fprintf( fontfile, "%s\n%d\n", pngname, FONTSIZE );
+	fprintf( fontfile, "%s\n%d %f %f %f\n", pngname, FONTSIZE, 4, 15, 80 );
 
 	my_read_font( argv[1], imagedata, 64, 64, 16, 16 );
 	my_write_png( pngname, imagedata, 1024, 1024 );
