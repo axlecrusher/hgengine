@@ -3,6 +3,8 @@
 
 enum ColorByteType
 {
+	WHITE,
+	WHITE_ALPHA,
 	RGB,
  	RGBA
 };

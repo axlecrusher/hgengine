@@ -102,10 +102,17 @@ RawImageData* LoadPNG( MercuryFile * fp )
 
 	png_free_data(png_ptr, info_ptr, PNG_FREE_ALL, -1);
 
-	if (color_type & PNG_COLOR_MASK_ALPHA)
-		image->m_ColorByteType = RGBA;	
+	if (color_type & PNG_COLOR_MASK_COLOR )
+		if (color_type & PNG_COLOR_MASK_ALPHA)
+			image->m_ColorByteType = RGBA;	
+		else
+			image->m_ColorByteType = RGB;
 	else
-		image->m_ColorByteType = RGB;	
+		if (color_type & PNG_COLOR_MASK_ALPHA)
+			image->m_ColorByteType = WHITE_ALPHA;	
+		else
+			image->m_ColorByteType = WHITE;
+
 
 //	SAFE_DELETE(texture->m_data);
 	
@@ -113,6 +120,25 @@ RawImageData* LoadPNG( MercuryFile * fp )
 
 	switch (image->m_ColorByteType)
 	{
+		case WHITE:
+			for ( y=0; y < (unsigned)image->m_height; ++y) {
+				png_byte* row = row_pointers[y];
+				for (unsigned long x = 0; x < image->m_width; ++x) {
+					png_byte* ptr = &(row[x]);
+					image->m_data[(x + y * image->m_width)] = ptr[0];
+				}	
+			}
+			break;
+		case WHITE_ALPHA:
+			for ( y=0; y < (unsigned)image->m_height; ++y) {
+				png_byte* row = row_pointers[y];
+				for (unsigned long x = 0; x < image->m_width; ++x) {
+					png_byte* ptr = &(row[x*2]);
+					image->m_data[(x + y * image->m_width) * 2] = ptr[0];
+					image->m_data[(x + y * image->m_width) * 2 + 1] = ptr[1];
+				}	
+			}
+			break;
 		case RGBA:
 			for ( y=0; y < (unsigned)image->m_height; ++y) {
 				png_byte* row = row_pointers[y];

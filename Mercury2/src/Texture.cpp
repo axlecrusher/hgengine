@@ -52,6 +52,12 @@ void Texture::LoadFromRaw()
 	
 	switch (m_raw->m_ColorByteType)
 	{
+		case WHITE:
+			ByteType = GL_LUMINANCE;
+			break;
+		case WHITE_ALPHA:
+			ByteType = GL_LUMINANCE_ALPHA;
+			break;
 		case RGB:
 			ByteType = GL_RGB;
 			break;
