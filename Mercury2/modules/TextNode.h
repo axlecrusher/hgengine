@@ -10,18 +10,37 @@ class TextNode : public MercuryNode
 {
 public:
 	TextNode();
+
+	enum TextAlignment
+	{
+		LEFT,
+		RIGHT,
+		CENTER,
+		FIT,
+		FIT_FULL
+	};
+
 	
 	virtual void Update(float dTime);
 	virtual void LoadFromXML(const XMLNode& node);
+
 	virtual bool LoadFont( const MString & sFont );
 	virtual void SetSize( float fSize );
 	virtual void SetText( const MString & sText );
 
-	inline void SetDirtyText() { m_bDirty = true; }
-
 	virtual void RenderText();
 
+	inline void SetAlignment( TextAlignment t ) { m_alignment = t; }
+	inline TextAlignment GetAlignment() { return m_alignment; }
+
+	inline float GetWidth() { return m_fTextWidth; }
+	inline void SetWidth( float fWidth ) { m_fTextWidth = fWidth; }
+
+	inline const MString & GetText() { return m_sText; }
+	inline void SetDirtyText() { m_bDirty = true; }
+	
 	GENRTTI(TextNode);
+
 private:
 	class Font;
 
@@ -30,6 +49,9 @@ private:
 	MString	m_sFont;
 	bool	m_bDirty;
 	Font *	m_pThisFont;
+	TextAlignment m_alignment;
+	float m_fTextWidth;
+	
 
 	MAutoPtr< MercuryAsset > m_kVBO;
 	MAutoPtr< MercuryAsset > m_kTEX;
@@ -53,6 +75,10 @@ private:
 		std::map< int, Glyph >	m_mGlyphs;
 		MString 		m_sImage;
 		float			m_fHeight;
+
+		float			m_fBlank; //For space between letters
+		float			m_fSpace; //For distance a space advances
+		float			m_fTab;   //For distance a tab goes
 	};
 
 	static MHash< Font > g_AllFonts;
@@ -61,12 +87,15 @@ private:
 	class DChar
 	{
 	public:
-		DChar( Glyph * g, int c, float x, float y ) : glyph(g), character(c), xps(x), yps(y) { }
+		DChar( Glyph * g, int c, float x, float y, float w, bool start ) : glyph(g), character(c), xps(x), yps(y), width(w), bWordStart( start ) { }
 
 		Glyph * glyph;
 		int character;
 		float xps;	//aka pos on line
 		float yps;	//aka line
+		float width;
+
+		bool bWordStart; //used for wrapping
 	};
 };
 

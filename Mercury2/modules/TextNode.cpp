@@ -9,7 +9,11 @@
 REGISTER_NODE_TYPE(TextNode);
 
 TextNode::TextNode()
-	:MercuryNode(),m_fSize(1.),m_bDirty(false),m_pThisFont(NULL),m_kVBO(0), m_kTEX(0)
+	:MercuryNode(),m_fSize(1.),
+	m_bDirty(false),m_pThisFont(NULL),
+	m_alignment( LEFT ),
+	m_fTextWidth( INFINITY ),
+	m_kVBO(0), m_kTEX(0)
 {
 }
 
@@ -33,6 +37,16 @@ void TextNode::LoadFromXML(const XMLNode& node)
 		SetSize( StrToFloat( node.Attribute("size") ) );
 	if ( !node.Attribute("text").empty() )
 		SetText( node.Attribute("text") );
+	if ( !node.Attribute("width").empty() )
+		SetWidth( StrToFloat( node.Attribute("width") ) );
+	if ( !node.Attribute("alignment").empty() )
+	{
+		MString sAlign = node.Attribute("alignment");
+		if( sAlign == "RIGHT" )		SetAlignment( RIGHT );
+		if( sAlign == "CENTER" )	SetAlignment( CENTER );
+		if( sAlign == "FIT" )		SetAlignment( FIT );
+		if( sAlign == "FIT_FULL" ) 	SetAlignment( FIT_FULL );
+	}
 }
 
 void TextNode::RenderText()
@@ -40,6 +54,7 @@ void TextNode::RenderText()
 	std::vector< DChar > chars;
 	float xps = 0;
 	float yps = 0;
+	bool  bWasBlank = true;
 
 	if( !m_pThisFont )
 		return;
@@ -73,29 +88,160 @@ void TextNode::RenderText()
 	for( const char * c = &m_sText[0]; *c != 0; c++ )
 	{
 		if( *c == 9 )
-			xps+=80;
+		{
+			xps += m_pThisFont->m_fTab;
+			bWasBlank = true;
+		}
 		else if( *c == 10 )
 		{
 			xps = 0;
-			yps += m_pThisFont->m_fHeight;	//??XXXX NEED TO SET TO RIGHT VALUE!
+			yps += m_pThisFont->m_fHeight;
+			bWasBlank = true;
 		}
 		else if( *c == 32 )
-			xps+=20;
+		{
+			xps += m_pThisFont->m_fSpace;
+			bWasBlank = true;
+		}
 		else
 		{
 			if( m_pThisFont->m_mGlyphs.find( *c ) != m_pThisFont->m_mGlyphs.end() )
 			{
 				Glyph & g = m_pThisFont->m_mGlyphs[*c];
 
-				chars.push_back( DChar( &g, *c, xps, yps ) );
+				chars.push_back( DChar( &g, *c, xps, yps, g.ilx+m_pThisFont->m_fBlank, bWasBlank ) );
 				//Here is the right place to do line-splitting if need be.
 
-				xps += g.ilx+4;	//Why 4?
+				xps += g.ilx+m_pThisFont->m_fBlank;
+
+				bWasBlank = false;
+
+				//Check wrapping
+				if( xps > m_fTextWidth )
+				{
+					int i, j;
+					//Track backward, and dump current word on next line.
+					for( i = (int)chars.size()-1; i >= 0; i-- )
+					{
+						if( chars[i].bWordStart ) break;
+					}
+
+					//If word begins at the beginning of the line
+					if( chars[i].xps == 0 )
+					{
+						//advance "This" letter to the next line
+						chars[chars.size()-1].xps = 0;
+						chars[chars.size()-1].yps += m_pThisFont->m_fHeight;
+						chars[chars.size()-1].bWordStart = true;
+
+						xps = g.ilx+m_pThisFont->m_fBlank;
+						yps += m_pThisFont->m_fHeight;
+					} else
+					{
+						//break to new line
+						float fPosStart = chars[i].xps;
+						for( j = i; j < (int)chars.size(); j++ )
+						{
+							chars[j].xps -= fPosStart;
+							xps = chars[j].xps;
+							chars[j].yps += m_pThisFont->m_fHeight;
+						}
+						xps += g.ilx+m_pThisFont->m_fBlank;
+						yps += m_pThisFont->m_fHeight;
+					}
+				}
 			}
 		}
 	}
 
-	//Stage 2: Actually generate the geometry.
+	//Stage 2: Handle alignment
+	if( m_alignment != LEFT )
+	{
+		float fLinePos = 0;
+		int iLineStart = 0;
+		int iLettersOnLine = 0;
+		int iWordsOnLine = 0;
+		for( unsigned i = 0; i <= chars.size(); i++ )
+		{
+			bool bNewLine = false;
+			if( i < chars.size() )
+			{
+				DChar & dc = chars[i];
+				if( dc.yps != fLinePos )
+				{
+					bNewLine = true;
+				}
+				fLinePos = dc.yps;
+			} else
+				bNewLine = true;
+
+			iLettersOnLine++;
+
+			if( bNewLine && i > 0 )
+			{
+				float fEndOfLine = chars[i-1].xps + chars[i-1].width;
+
+				iLettersOnLine--;
+
+				if( m_alignment == RIGHT )
+				{
+					float offset = m_fTextWidth - fEndOfLine;
+					for( unsigned j = iLineStart; j < i; j++ )
+					{
+						chars[j].xps += offset;
+					}
+				} else if( m_alignment == CENTER )
+				{
+					float offset = m_fTextWidth - fEndOfLine;
+					offset/=2;
+					for( unsigned j = iLineStart; j < i; j++ )
+					{
+						chars[j].xps += offset;
+					}
+				} else if( m_alignment == FIT_FULL )
+				{
+					float offset = m_fTextWidth - fEndOfLine;
+					offset/=float(iLettersOnLine);
+
+					float letter = 0;
+
+					for( unsigned j = iLineStart; j < i; j++ )
+					{
+						chars[j].xps += offset*letter;
+						letter++;
+					}
+				} else if( m_alignment == FIT )
+				{
+					float offset = m_fTextWidth - fEndOfLine;
+
+					if( iWordsOnLine != 0 )
+					{
+						offset/=float(iWordsOnLine-1);
+
+						float fTOffset = 0;
+	
+						for( unsigned j = iLineStart; j < i; j++ )
+						{
+							if( chars[j].bWordStart && j != (unsigned)iLineStart )
+								fTOffset += offset;
+							chars[j].xps += fTOffset ;
+						}
+					}
+				}
+
+				iLineStart = i;
+				iLettersOnLine = 0;
+				iWordsOnLine = 0;
+			}
+
+			if( i < chars.size() )
+			{
+				if( chars[i].bWordStart || i == 0 ) iWordsOnLine++;
+			}
+		}
+	}
+
+	//Stage 3: Actually generate the geometry.
 	((MercuryVBO*)m_kVBO.Ptr())->AllocateIndexSpace(chars.size()*6);
 	((MercuryVBO*)m_kVBO.Ptr())->AllocateVertexSpace(chars.size()*4);
 
@@ -151,7 +297,6 @@ void TextNode::RenderText()
 		vd[(i*4+3)*8+6] = ey;
 		vd[(i*4+3)*8+7] = 0;
 
-		printf( "%f %f   %f %f   %f %f   %f %f\n", vd[(i*4+0)*8+5], vd[(i*4+0)*8+6], vd[(i*4+1)*8+5], vd[(i*4+1)*8+6], vd[(i*4+2)*8+5], vd[(i*4+2)*8+6], vd[(i*4+3)*8+5], vd[(i*4+3)*8+6] );
 		id[i*6+0] = i * 4 + 2;
 		id[i*6+1] = i * 4 + 1;
 		id[i*6+2] = i * 4 + 0;
@@ -218,7 +363,7 @@ bool TextNode::Font::LoadFromFile( const MString & fName )
 		return false;
 	}
 
-	if( sscanf( sLine.c_str(), "%f", &m_fHeight ) != 1 )
+	if( sscanf( sLine.c_str(), "%f %f %f %f", &m_fHeight, &m_fBlank, &m_fSpace, &m_fTab ) != 4 )
 	{
 		fprintf( stderr, "Malformatted font size.\n" );
 		delete f;
