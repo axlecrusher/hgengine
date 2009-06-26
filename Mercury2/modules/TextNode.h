@@ -103,7 +103,8 @@ private:
 
 
 /****************************************************************************
- *   Copyright (C) 2009 by Joshua Allen                                     *
+ *   Copyright (C) 2009 by Charles Lohr                                     *
+ *                         Joshua Allen                                     *
  *                                                                          *
  *                                                                          *
  *   All rights reserved.                                                   *
