@@ -27,7 +27,7 @@ printf("GL Error:%s\n", GlError2String(e).c_str()); \
 assert(0); } }
 
 #define CHECKFBO { \
-uint32_t e = glCheckFramebufferStatus(GL_FRAMEBUFFER); \
+uint32_t e = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER); \
 if ( e != GL_FRAMEBUFFER_COMPLETE ) { \
 printf("GL FBO Error:%s\n", GlError2String(e).c_str()); \
 assert(0); } }
