@@ -186,7 +186,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\Camera.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Camera.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Frustum.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\FullscreenQuad.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\FullscreenQuad.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\GLHelpers.cpp"
 				>
 			</File>
 			<File
@@ -218,6 +238,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryFBO.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryFile.cpp"
 				>
 			</File>
@@ -235,6 +259,10 @@
 			</File>
 			<File
 				RelativePath=".\src\MercuryFileDriverZipped.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryInput.cpp"
 				>
 			</File>
 			<File
@@ -302,10 +330,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\MQuaternion.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\MSemaphore.cpp"
 				>
 			</File>
@@ -323,10 +347,6 @@
 			</File>
 			<File
 				RelativePath=".\src\RawImageData.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenderableNode.cpp"
 				>
 			</File>
 			<File
@@ -392,6 +412,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\GLHelpers.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\global.h"
 				>
 			</File>
@@ -424,6 +448,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryFBO.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryFile.h"
 				>
 			</File>
@@ -441,6 +469,14 @@
 			</File>
 			<File
 				RelativePath=".\src\MercuryFileDriverZipped.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryHash.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryInput.h"
 				>
 			</File>
 			<File
@@ -492,6 +528,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryVector.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryVertex.h"
 				>
 			</File>
@@ -505,6 +545,10 @@
 			</File>
 			<File
 				RelativePath=".\src\Mint.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MQuaternion.h"
 				>
 			</File>
 			<File
@@ -587,6 +631,14 @@
 			</File>
 			<File
 				RelativePath=".\modules\BillboardNode.h"
+				>
+			</File>
+			<File
+				RelativePath=".\modules\TextNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\modules\TextNode.h"
 				>
 			</File>
 		</Filter>
