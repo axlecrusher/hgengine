@@ -70,7 +70,12 @@ bool ModuleManager::LoadModule( const MString & ModuleName, const MString & Load
 
 	if( !m_hAllHandles[ModuleName] )
 	{
+#ifdef WIN32
+		fprintf( stderr, "Error opening: %s\n", ModuleName.c_str() );
+#else
 		fprintf( stderr, "Error opening: %s (%s)\n", ModuleName.c_str(), dlerror() );
+#endif
+
 		return false;
 	}
 
