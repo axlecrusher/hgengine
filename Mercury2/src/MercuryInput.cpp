@@ -13,9 +13,9 @@ void MouseInput::ProcessMouseInput(int dx, int dy, bool leftButton, bool rightBu
 	mi->dy = dy;
 	
 	uint8_t buttonMasks = 0;
-	buttonMasks |= (leftButton << MB_LEFT); //enable if true
-	buttonMasks |= (rightButton << MB_RIGHT); //enable if true
-	buttonMasks |= (centerButton << MB_CENTER); //enable if true
+	buttonMasks |= (leftButton << MOUSE_LEFT); //enable if true
+	buttonMasks |= (rightButton << MOUSE_RIGHT); //enable if true
+	buttonMasks |= (centerButton << MOUSE_CENTER); //enable if true
 	mi->buttonMasks = buttonMasks;
 	
 	currentButtonMasks = buttonMasks;
