@@ -10,6 +10,11 @@ typedef __m128 FloatRow __attribute__((aligned(16)));
 typedef float FloatRow[4];
 #endif
 
+#ifdef WIN32
+#include <limits>
+#define INFINITY  (std::numeric_limits<float>::infinity())
+#endif
+
 void ZeroFloatRow(FloatRow& r);
 
 #define DEGRAD	0.01745329251994329576f		//degree to radian
