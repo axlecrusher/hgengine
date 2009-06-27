@@ -470,7 +470,7 @@ void Shader::SetAttributeInternal(const MString& name, const ShaderAttribute& x)
 				glUniform4fvARB( location, 4, &x.value.fFloatV4[0] );
 				break;
 			case ShaderAttribute::TYPE_MATRIX:
-				glUniformMatrix4fv(location, 1, 1, x.value.matrix); //transpase too
+				glUniformMatrix4fvARB(location, 1, 1, x.value.matrix); //transpase too
 		};
 		GLERRORCHECK;
 	}
