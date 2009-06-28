@@ -4,10 +4,9 @@
 #include <MAutoPtr.h>
 #include <MercuryUtil.h>
 
-#include <vector>
-
-//XXX When we write a Mercury Vector, replace this line  !!! XXX !!! NOTE
-#define MVector std::vector
+//Forward decleration, as there's no real need to have this included unless we _need_ it.
+template< typename t >
+class MVector;
 
 ///File permissions (self-explainatory)
 enum FilePermission

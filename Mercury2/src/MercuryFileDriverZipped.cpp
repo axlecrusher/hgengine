@@ -1,5 +1,6 @@
 #include <MercuryFileDriverZipped.h>
 #include <MercuryFileDriverPacked.h>
+#include <MercuryVector.h>
 
 //For the store compression on zips
 #include <zlib.h>

@@ -1,4 +1,5 @@
-#include "MercuryFileDriverDirect.h"
+#include <MercuryFileDriverDirect.h>
+#include <MercuryVector.h>
 
 #ifndef WIN32
 #include <dirent.h>

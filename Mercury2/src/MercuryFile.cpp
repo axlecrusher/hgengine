@@ -1,5 +1,5 @@
 #include "MercuryFile.h"
-
+#include <MercuryVector.h>
 #include <MercuryFileDriverDirect.h>
 #include <MercuryFileDriverNet.h>
 #include <MercuryFileDriverMem.h>
