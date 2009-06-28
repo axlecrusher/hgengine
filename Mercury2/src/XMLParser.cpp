@@ -1,5 +1,6 @@
 #include <XMLParser.h>
 #include <MercuryFile.h>
+#include <MercuryVector.h>
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -182,6 +183,33 @@ const XMLNode& XMLNode::operator=(const XMLNode& n)
 	m_node = n.m_node;
 	m_doc = n.m_doc;
 	return *this;
+}
+
+bool XMLNode::GetValue( const MString & sDataPointer, MString & sReturn )
+{
+	MVector< MString > out;
+	SplitStrings( sDataPointer, out, ".", " ", 1, 1 );
+	//Out now contains the input in a parsed form;
+	//a.b.c is now:
+	//out[0] = "a"; out[1] = "b"; out[2] = "c";
+	XMLNode & rthis = *this;
+	for( unsigned i = 0; i < out.size() - 1; i++ )
+	{
+		while( rthis.Name() != out[i] && rthis.IsValid() )
+			rthis = rthis.NextNode();
+
+		if( !rthis.IsValid() )
+			return false;
+
+		if( i < out.size() - 2 )
+			rthis = rthis.Child();
+
+		if( !rthis.IsValid() )
+			return false;
+	}
+
+	sReturn = rthis.Attribute( out[out.size()-1] );
+	return true;
 }
 
 XMLDocument::XMLDocument()
