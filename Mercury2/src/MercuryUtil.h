@@ -104,6 +104,24 @@ inline bool isPow2(int x) { int num = 1; while(num < x) num<<=1; return num==x; 
 ///pattern is the next prime number that's roughly two times the last.
 int GetAPrime( int ith );
 
+
+
+
+//String processing functions
+//XXX: This may not be portable. We do not in fact need to include the header for MVector yet.
+template<typename T>
+class MVector;
+
+///Bytes until desired terminal
+long	BytesUntil( const char* strin, const char * termin, long start, long slen, long termlen );
+
+///Bytes until something other than a terminal
+long	BytesNUntil( const char* strin, const char * termin, long start, long slen, long termlen );
+
+///Split given string into other strings using delimiters from termin
+void	SplitStrings( const MString & in, MVector < MString > & out, const char * termin, const char * whitespace, long termlen, long wslen );
+
+
 #endif
 
 /* Copyright (c) 2009, Joshua Allen and Charles Lohr

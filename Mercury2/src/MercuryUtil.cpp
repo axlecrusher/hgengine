@@ -1,6 +1,7 @@
 #include <MercuryUtil.h>
 #include <MercuryFile.h>
 #include <Mint.h>
+#include <MercuryVector.h>
 
 MString ToUpper(const MString& s)
 {
@@ -86,6 +87,55 @@ int GetAPrime( int ith )
 {
 	return (ith<0)?3:(ith>15)?GeneralUsePrimes[15]:GeneralUsePrimes[ith];
 }
+
+//String processing functions
+long	BytesUntil( const char* strin, const char * termin, long start, long slen, long termlen )
+{
+	int i;
+	for ( i = start; i < slen; i++ )
+		for ( int j = 0; j < termlen; j++ )
+			if ( termin[j] == strin[i] )
+				return i - start;
+	return i - start;
+}
+
+long	BytesNUntil( const char* strin, const char * termin, long start, long slen, long termlen )
+{
+	int i;
+	for ( i = start; i < slen; i++ )
+	{
+		bool found = false;
+		for ( int j = 0; j < termlen; j++ )
+		{
+			if ( termin[j] == strin[i] )
+				found = true;
+		}
+		if ( !found ) 
+			return i - start;
+	}
+	return i - start;
+}
+
+void	SplitStrings( const MString & in, MVector < MString > & out, 
+					 const char * termin, const char * whitespace, 
+					 long termlen, long wslen )
+{
+	const char * inStr = in.c_str();
+	long	curPos = 0;
+	long	inLen = in.length();
+	while ( curPos < inLen )
+	{
+		curPos += BytesNUntil( inStr, whitespace, curPos, inLen, wslen );
+		long NextPos = BytesUntil( inStr, termin, curPos, inLen, termlen );
+		out.push_back( in.substr( curPos, NextPos ) );
+		curPos += NextPos + 1;
+	}
+}
+
+
+
+
+
 
 /* Copyright (c) 2009, Joshua Allen and Charles Lohr
  * All rights reserved.
