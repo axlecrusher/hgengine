@@ -4,6 +4,7 @@
 #include <MercuryNode.h>
 #include <GLHeaders.h>
 #include <Shader.h>
+#include <assert.h>
 
 using namespace std;
 

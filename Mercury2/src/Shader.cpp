@@ -1,10 +1,8 @@
 #include <Shader.h>
 #include <MercuryNode.h>
 #include <MercuryFile.h>
-
+#include <assert.h>
 #include <GLHeaders.h>
-
-
 #include <string.h>
 
 using namespace std;

@@ -1,6 +1,7 @@
 #include <MercuryFBO.h>
 #include <GLHeaders.h>
 #include <MercuryWindow.h>
+#include <assert.h>
 
 REGISTER_NODE_TYPE(MercuryFBO);
 

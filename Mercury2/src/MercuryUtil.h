@@ -3,12 +3,8 @@
 
 #include <stdlib.h>
 #include <MercuryString.h>
-#include <assert.h>
 #include <global.h>
-
-/*#ifndef NULL
-#define NULL 0
-#endif*/
+#include <stdio.h>
 
 #define SAFE_DELETE( x ) { if (x) { delete x; } x = NULL; }
 #define SAFE_DELETE_ARRAY( x ) { if (x) { delete[] x; } x = NULL; }
@@ -19,8 +15,6 @@
 //returns an aligned pointer, mem is the actual (unaligned) pointer for freeing
 void* mmemalign(size_t align, size_t size, void*& mem);
 bool isAligned(size_t align, const void* mem);
-
-#define ASSERT(x) assert(!x)
 
 #if defined(__GNUC__)
 #define M_ALIGN(n) __attribute__((aligned(n)))
@@ -56,7 +50,6 @@ const T& Clamp(const T& min, const T& max, const T& value)
 //This counter is used with singletons to
 //ensure proper destruction order of the
 //singleton
-#include <stdio.h>
 template<typename T>
 class InstanceCounter
 {
