@@ -24,6 +24,11 @@ bool MercuryPreferences::GetValue( const MString & sDataPointer, MString & sRetu
 	return m_PrefsDoc->GetRootNode().GetValue( sDataPointer, sReturn );
 }
 
+XMLNode MercuryPreferences::GetRootXML()
+{
+	return m_PrefsDoc->GetRootNode();
+}
+
 /****************************************************************************
  *   Copyright (C) 2009 by Charles Lohr                                     *
  *                                                                          *

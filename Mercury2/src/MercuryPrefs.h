@@ -16,6 +16,8 @@ public:
 	virtual bool GetValue( const MString & sDataPointer, MString & sReturn );
 
 	static MercuryPreferences & GetInstance();
+
+	XMLNode GetRootXML();
 private:
 	XMLDocument  * m_PrefsDoc;
 };
