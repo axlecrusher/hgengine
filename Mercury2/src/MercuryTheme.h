@@ -1,44 +1,42 @@
-#include <MercuryPrefs.h>
-#include <XMLParser.h>
+#ifndef _MERCURY_THEME_H
+#define _MERCURY_THEME_H
 
-MercuryPreferences & MercuryPreferences::GetInstance()
+#include <MercuryNamedResource.h>
+#include <MercuryUtil.h> //huh?
+#include <MercuryVector.h>
+
+class XMLNode;
+class XMLDocument;
+
+class MercuryThemeManager : public MercuryNamedResource
 {
-	static MercuryPreferences * m_gPreferences = 0;
-	if( !m_gPreferences )
-		m_gPreferences = new MercuryPreferences();
-	return *m_gPreferences;
-}
+public:
+	MercuryThemeManager();
+	~MercuryThemeManager();
+	
+	static MercuryThemeManager& GetInstance();
 
-MercuryPreferences::MercuryPreferences()
-{
-	m_PrefsDoc  = XMLDocument::Load("preferences.xml");
-	if( !m_PrefsDoc )
-		FAIL( "Could not load preferences.xml." );
+	virtual bool GetValue( const MString & sDataPointer, MString & sReturn );
+private:
+	class Theme
+	{
+	public:
+		Theme( );
+		bool Setup( const MString & sThemeName );
+		~Theme();
+		MString sTheme;
+		XMLNode *	m_xNode;
+		XMLDocument  *	m_xDoc;
+	};
+	MVector< Theme > m_vThemes;
+};
 
-	m_PrefsNode = new XMLNode();
+static InstanceCounter<MercuryThemeManager> MFMcounter("MercuryThemeManager");
 
-	*m_PrefsNode = m_PrefsDoc->GetRootNode();
+#define THEME MercuryFileManager::GetInstance()
 
-	if( !m_PrefsNode->IsValid() )
-		FAIL( "Could not get root node in Preferences." );
 
-	*m_PrefsNode = m_PrefsNode->Child();
-
-	if( !m_PrefsNode->IsValid() )
-		FAIL( "Could not get Preferences node in Preferences." );
-}
-
-MercuryPreferences::~MercuryPreferences()
-{
-	delete m_PrefsDoc;
-	delete m_PrefsNode;
-}
-
-bool MercuryPreferences::GetValue( const MString & sDataPointer, MString & sReturn )
-{
-	return m_PrefsNode->GetValue( sDataPointer, sReturn );
-}
-
+#endif
 
 /****************************************************************************
  *   Copyright (C) 2009 by Charles Lohr                                     *

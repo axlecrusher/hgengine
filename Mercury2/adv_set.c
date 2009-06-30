@@ -12,7 +12,8 @@ SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp src/MercuryNode.cpp \
 	src/MercuryFile.cpp src/MercuryTimer.cpp src/MercuryMessageManager.cpp src/MercuryVertex.cpp \
 	src/MercuryPlane.cpp src/BoundingBox.cpp src/Shader.cpp src/RenderGraph.cpp src/Frustum.cpp \
 	src/Camera.cpp src/MercuryInput.cpp src/MQuaternion.cpp src/ModuleManager.cpp src/MercuryFBO.cpp \
-	src/GLHelpers.cpp src/FullscreenQuad.cpp src/MercuryNamedResource.cpp src/MercuryPrefs.cpp"
+	src/GLHelpers.cpp src/FullscreenQuad.cpp src/MercuryNamedResource.cpp src/MercuryPrefs.cpp \
+	src/MercuryTheme.cpp"
 
 SOURCES="$SOURCES src/MercuryFileDriverDirect.cpp src/MercuryFileDriverMem.cpp \
 	src/MercuryFileDriverPacked.cpp src/MercuryFileDriverZipped.cpp"

@@ -1,42 +1,92 @@
+#include <MercuryTheme.h>
 #include <MercuryPrefs.h>
 #include <XMLParser.h>
 
-MercuryPreferences & MercuryPreferences::GetInstance()
+#define MAX_THEMES 100
+
+MercuryThemeManager & MercuryThemeManager::GetInstance()
 {
-	static MercuryPreferences * m_gPreferences = 0;
-	if( !m_gPreferences )
-		m_gPreferences = new MercuryPreferences();
-	return *m_gPreferences;
+	static MercuryThemeManager * m_gTheme = 0;
+	if( !m_gTheme )
+		m_gTheme = new MercuryThemeManager();
+	return *m_gTheme;
 }
 
-MercuryPreferences::MercuryPreferences()
+MercuryThemeManager::MercuryThemeManager()
 {
-	m_PrefsDoc  = XMLDocument::Load("preferences.xml");
-	if( !m_PrefsDoc )
-		FAIL( "Could not load preferences.xml." );
+	int i;
 
-	m_PrefsNode = new XMLNode();
+	m_vThemes.resize( 0 );
 
-	*m_PrefsNode = m_PrefsDoc->GetRootNode();
+	for( i = 0; i < MAX_THEMES; i++ )
+	{
+		MString ThemeName = PREFSMAN.GetValueS( ssprintf( "Themes.Theme%d", i ) );
+		if( !ThemeName.length() )
+			break;
 
-	if( !m_PrefsNode->IsValid() )
-		FAIL( "Could not get root node in Preferences." );
-
-	*m_PrefsNode = m_PrefsNode->Child();
-
-	if( !m_PrefsNode->IsValid() )
-		FAIL( "Could not get Preferences node in Preferences." );
+		m_vThemes.resize( m_vThemes.size() + 1 );
+		if( !m_vThemes[m_vThemes.size()-1].Setup( ThemeName ) )
+			m_vThemes.resize( m_vThemes.size() - 1 );
+	}
+	if( m_vThemes.size() == 0 )
+	{
+		FAIL( "Zero themes loaded.  This may be due to a misconfiguration in your preferences.ini" );
+	}
 }
 
-MercuryPreferences::~MercuryPreferences()
+MercuryThemeManager::~MercuryThemeManager()
 {
-	delete m_PrefsDoc;
-	delete m_PrefsNode;
+	//no code
 }
 
-bool MercuryPreferences::GetValue( const MString & sDataPointer, MString & sReturn )
+bool MercuryThemeManager::GetValue( const MString & sDataPointer, MString & sReturn )
 {
-	return m_PrefsNode->GetValue( sDataPointer, sReturn );
+	//XXX: Incomplete
+	//This code needs to be filled out.
+	return true;
+}
+
+MercuryThemeManager::Theme::Theme()
+{
+	m_xDoc = 0;
+	m_xNode = 0;
+}
+
+MercuryThemeManager::Theme::~Theme()
+{
+	SAFE_DELETE( m_xDoc );
+	SAFE_DELETE( m_xNode );
+}
+
+bool MercuryThemeManager::Theme::Setup( const MString & sThemeName )
+{
+	sTheme = sThemeName;
+	m_xDoc  = XMLDocument::Load(ssprintf("Themes/%s/metrics.xml",sTheme.c_str()));
+	if( !m_xDoc )
+	{
+		printf( "Could not open: Themes/%s/metrics.xml\n",sTheme.c_str());
+		return false;
+	}
+
+	m_xNode = new XMLNode();
+
+	*m_xNode = m_xDoc->GetRootNode();
+
+	if( !m_xNode->IsValid() )
+	{
+		printf( "Could not get root node in: Themes/%s/metrics.xml\n",sTheme.c_str());
+		return false;
+	}
+
+	*m_xNode = m_xNode->Child();
+
+	if( !m_xNode->IsValid() )
+	{
+		printf( "Could not get sub node in: Themes/%s/metrics.xml\n",sTheme.c_str());
+		return false;
+	}
+
+	return true;
 }
 
 
@@ -71,3 +121,4 @@ bool MercuryPreferences::GetValue( const MString & sDataPointer, MString & sRetu
  *   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  *
  *   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   *
  ***************************************************************************/
+
