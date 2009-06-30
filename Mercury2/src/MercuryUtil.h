@@ -12,6 +12,9 @@
 
 #define TO_ENDIAN( x )
 
+void fail_m( const char * message, const char * file, int line );
+#define FAIL( message ) fail_m( message, __FILE__, __LINE__ );
+
 //returns an aligned pointer, mem is the actual (unaligned) pointer for freeing
 void* mmemalign(size_t align, size_t size, void*& mem);
 bool isAligned(size_t align, const void* mem);

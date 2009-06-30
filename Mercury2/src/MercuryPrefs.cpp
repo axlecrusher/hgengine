@@ -12,6 +12,20 @@ MercuryPreferences & MercuryPreferences::GetInstance()
 MercuryPreferences::MercuryPreferences()
 {
 	m_PrefsDoc  = XMLDocument::Load("preferences.xml");
+	if( !m_PrefsDoc )
+		FAIL( "Could not load preferences.xml." );
+
+	m_PrefsNode = new XMLNode();
+
+	*m_PrefsNode = m_PrefsDoc->GetRootNode();
+
+	if( !m_PrefsNode->IsValid() )
+		FAIL( "Could not get root node in Preferences." );
+
+	*m_PrefsNode = m_PrefsNode->Child();
+
+	if( !m_PrefsNode->IsValid() )
+		FAIL( "Could not get Preferences node in Preferences." );
 }
 
 MercuryPreferences::~MercuryPreferences()
@@ -21,13 +35,9 @@ MercuryPreferences::~MercuryPreferences()
 
 bool MercuryPreferences::GetValue( const MString & sDataPointer, MString & sReturn )
 {
-	return m_PrefsDoc->GetRootNode().GetValue( sDataPointer, sReturn );
+	return m_PrefsNode->GetValue( sDataPointer, sReturn );
 }
 
-XMLNode MercuryPreferences::GetRootXML()
-{
-	return m_PrefsDoc->GetRootNode();
-}
 
 /****************************************************************************
  *   Copyright (C) 2009 by Charles Lohr                                     *

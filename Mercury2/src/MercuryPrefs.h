@@ -17,9 +17,10 @@ public:
 
 	static MercuryPreferences & GetInstance();
 
-	XMLNode GetRootXML();
+	XMLNode * GetRootXML() { return m_PrefsNode; }
 private:
-	XMLDocument  * m_PrefsDoc;
+	XMLNode *	m_PrefsNode;
+	XMLDocument  *	m_PrefsDoc;
 };
 
 static InstanceCounter<MercuryPreferences> MPcounter("MercuryPreferences");

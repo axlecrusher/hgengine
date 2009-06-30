@@ -36,6 +36,15 @@ int32_t StrToInt(const  MString & s, int32_t d)
 #endif
 	return x;
 }
+
+
+void fail_m( const char * message, const char * file, int line )
+{
+	//Probably should message box here somewhere in the event we're running on Windows.
+	fprintf( stderr, "Fatal Error: \"%s\" in %s:%d\n", message, file, line );
+	exit(-1);
+}
+
 void* mmemalign(size_t align, size_t size, void*& mem)
 {
 	uintptr_t mask = ~(uintptr_t)(align - 1);

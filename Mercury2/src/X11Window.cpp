@@ -1,6 +1,7 @@
 #include <X11Window.h>
 #include <MercuryMessageManager.h>
 #include <MercuryInput.h>
+#include <MercuryPrefs.h>
 
 Callback0R< MercuryWindow* > MercuryWindow::genWindowClbk(X11Window::GenX11Window); //Register window generation callback
 
@@ -91,7 +92,14 @@ X11Window::~X11Window()
 
 MercuryWindow* X11Window::GenX11Window()
 {
-	return new X11Window("Mercury2 Tests", 640, 480, 24, 16, false);
+	return new X11Window(
+		PREFSMAN.GetValueS("Screen.Name", "Screen name not set." ),
+		PREFSMAN.GetValueI( "Screen.Width", 640 ),
+		PREFSMAN.GetValueI( "Screen.Height", 480 ),
+		24,
+		PREFSMAN.GetValueI( "Screen.Depth", 16 ),
+		PREFSMAN.GetValueB( "Screen.FullScreen", 1 )
+		);
 }
 
 bool X11Window::SwapBuffers()

@@ -43,7 +43,18 @@ bool MercuryNamedResource::GetValueB( const MString & sDataPointer, bool bDefaul
 {
 	MString tmpret;
 	if( GetValue( sDataPointer, tmpret ) )
+	{
+		tmpret = ToUpper( tmpret );
+		if( tmpret.compare( "TRUE" ) == 0 )	return 1;
+		if( tmpret.compare( "FALSE" ) == 0 )	return 0;
+		if( tmpret.compare( "ON" ) == 0 )	return 1;
+		if( tmpret.compare( "OFF" ) == 0 )	return 0;
+		if( tmpret.compare( "YES" ) == 0 )	return 1;
+		if( tmpret.compare( "NO" ) == 0 )	return 0;
+
 		return StrToInt( tmpret );
+	}
+
 	if( bSetValue )
 		SetValueB( sDataPointer, bDefaultValue );
 
