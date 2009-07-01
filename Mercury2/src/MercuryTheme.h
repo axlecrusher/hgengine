@@ -3,6 +3,7 @@
 
 #include <MercuryNamedResource.h>
 #include <MercuryUtil.h> //huh?
+#include <MercuryHash.h>
 #include <MercuryVector.h>
 
 class XMLNode;
@@ -13,11 +14,7 @@ class MercuryThemeManager : public MercuryNamedResource
 public:
 	MercuryThemeManager();
 	~MercuryThemeManager();
-	
-	static MercuryThemeManager& GetInstance();
 
-	virtual bool GetValue( const MString & sDataPointer, MString & sReturn );
-private:
 	class Theme
 	{
 	public:
@@ -28,12 +25,19 @@ private:
 		XMLNode *	m_xNode;
 		XMLDocument  *	m_xDoc;
 	};
+	
+	static MercuryThemeManager& GetInstance();
+
+	virtual bool GetValue( const MString & sDataPointer, MString & sReturn );
+	const MVector< Theme > & GetThemes() { return m_vThemes; }
+private:
 	MVector< Theme > m_vThemes;
+	MHash< MString > m_hCache;
 };
 
-static InstanceCounter<MercuryThemeManager> MFMcounter("MercuryThemeManager");
+static InstanceCounter<MercuryThemeManager> MTMcounter("MercuryThemeManager");
 
-#define THEME MercuryFileManager::GetInstance()
+#define THEME MercuryThemeManager::GetInstance()
 
 
 #endif

@@ -15,6 +15,40 @@ MString ToUpper(const MString& s)
 	return t;
 }
 
+MString ToLower(const MString & s)
+{
+	MString t = s;
+	char * ti = (char*)t.c_str();
+	for (unsigned long i = 0; i < s.length(); ++i)
+	{
+		if( ti[i] >= 'A' && ti[i] <= 'Z' )
+			ti[i] += ( 'a' - 'A' );
+	}
+	return t;
+}
+
+MString ToProper(const MString & s)
+{
+	if( s.length() == 0 )
+		return "";
+
+	MString t = s;
+	char * ti = (char*)t.c_str();
+
+	if( ti[0] >= 'a' && ti[0] <= 'z' )
+		ti[0] -= ( 'a' - 'A' );
+
+	for (unsigned long i = 1; i < s.length(); ++i)
+	{
+		if( ti[i] >= 'A' && ti[i] <= 'Z' )
+			ti[i] += ( 'a' - 'A' );
+	}
+	return t;
+
+}
+
+
+
 float StrToFloat(const  MString & s, float d)
 {
 	float x = d;

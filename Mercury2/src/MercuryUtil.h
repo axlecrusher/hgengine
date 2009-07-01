@@ -25,7 +25,14 @@ bool isAligned(size_t align, const void* mem);
 #define M_ALIGN(n)
 #endif
 
+///Make a string all upper case
 MString ToUpper(const MString & s);
+
+///Make a string all lower case
+MString ToLower(const MString & s);
+
+///Make a string proper case (HELLO -> Hello, hello -> Hello)
+MString ToProper(const MString & s);
 
 float StrToFloat(const MString & s, float d = 0);
 int32_t StrToInt(const MString & s, int32_t d = 0);

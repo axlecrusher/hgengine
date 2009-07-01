@@ -8,26 +8,26 @@
 	</node>
 
 	<node type="transformnode" movz="-5" >
-		<node type="TextNode" text="test font 123 HELLO WORLD!!! WOOT!" font="testfont.hgfont" size=".01" width="300" alphaPath="true" alignment="FIT_FULL" />
+		<node type="TextNode" text="test font 123 HELLO WORLD!!! WOOT!" font="FONT:testfont.hgfont" size=".01" width="300" alphaPath="true" alignment="FIT_FULL" />
 	</node>
 <!--	<asset type="texture" file="screenFBO_0" dynamic="true"/>
 	<asset type="fullscreenquad"/>
 	<node type="mercuryfbo" width="640" height="480" depth="true" tnum="2" name="screenFBO" usescreensize="true">
 		<asset type="shader" file="testShader"/>
 -->		<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
-			<asset type="texture" file="map.png"/>
-			<asset type="hgmdlmodel" file="map.hgmdl" />
+			<asset type="texture" file="MODEL:map.png"/>
+			<asset type="hgmdlmodel" file="MODEL:map.hgmdl" />
 		</node>
 		<node type="mercurynode" name="lampForest" >
 			<node type="transformnode" movz="-5" movx="0" movy="0" name="lamprow" >
 				<node type="mercurynode" name="lamp">
 					<node type="transformnode" rotx="-90" >
-						<asset type="texture" file="lamp.png"/>
-						<asset type="hgmdlmodel" file="lampN.hgmdl" />
+						<asset type="texture" file="MODEL:lamp.png"/>
+						<asset type="hgmdlmodel" file="MODEL:lampN.hgmdl" />
 					</node>
 					<node type="billboardnode" billboardaxis="0,1,0" spheremode="true" >
 						<node type="transformnode" roty="180" scalex="0.1" scaley="0.1" alphaPath="true">
-							<asset type="texture" file="flame.png"/>
+							<asset type="texture" file="GRAPHIC:flame.png"/>
 							<asset type="quad"/>
 						</node>
 					</node>

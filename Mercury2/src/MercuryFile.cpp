@@ -1,10 +1,11 @@
 #include "MercuryFile.h"
-#include <MercuryVector.h>
-#include <MercuryFileDriverDirect.h>
-#include <MercuryFileDriverNet.h>
-#include <MercuryFileDriverMem.h>
-#include <MercuryFileDriverZipped.h>
-#include <MercuryFileDriverPacked.h>
+#include "MercuryVector.h"
+#include "MercuryFileDriverDirect.h"
+#include "MercuryFileDriverNet.h"
+#include "MercuryFileDriverMem.h"
+#include "MercuryFileDriverZipped.h"
+#include "MercuryFileDriverPacked.h"
+#include "MercuryTheme.h"
 
 
 /********************FILE MANAGER**************************/
@@ -50,18 +51,26 @@ MercuryFile * MercuryFileManager::Open( const MString & sPath, FilePermission p 
 	if( sPath.empty() )
 		return NULL;
 
-//XXX !!! XXX NOTE TODO
-//This code below is very useful, but cannot be implemented until we get a theme system.  Once then, we can give it a shot.
-
-//First check to see if we are using an associated FS
-//Currently these are only theme supported.
-//	if ( sPath.find( "GRAPHIC:" ) == 0 )
-//		return Open( THEME.GetPathToGraphic( sPath.substr( 8 ) ), p );
-//	if ( sPath.find( "MODEL:" ) == 0 )
-//		return Open( THEME.GetPathToModel( sPath.substr( 6 ) ), p );
-//	if ( sPath.find( "FILE:" ) == 0 )
-//		return Open( THEME.GetPathToFile( sPath.substr( 5 ) ), p );
-
+	//Tricky: We can support all caps colon (GRAPHIC:, FILE:, etc.)
+	//So, instead of doing some checking in multiple passes, we are doing
+	//a generalized system to handle getting it.
+	{
+		const char * c;
+		for( c = sPath.c_str(); (*c <= 'Z' && *c >= 'A'); c++ );
+		if( *c == ':' )
+		{
+			c++;
+			MString ExtString = ToProper( MString( sPath.c_str(), c-sPath.c_str()-1 ) ) + "/" + c;
+			const MVector< MercuryThemeManager::Theme > & th = THEME.GetThemes();
+			for( int i = (int)th.size()-1; i >= 0; i-- )
+			{
+				MercuryFile * ret = FILEMAN.Open( ssprintf( "Themes/%s/%s", th[i].sTheme.c_str(),ExtString.c_str() ), p );
+				if( ret )
+					return ret;
+			}
+			return 0;
+		}
+	}
 
 	MercuryFile * ret;
 	for ( unsigned int i = 0; i < m_Drivers->size(); i++ )
@@ -139,7 +148,7 @@ MercuryFileManager& MercuryFileManager::GetInstance()
 
 
 /* 
- * Copyright (c) 2005-2006, Charles Lohr
+ * Copyright (c) 2005-2009, Charles Lohr
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or

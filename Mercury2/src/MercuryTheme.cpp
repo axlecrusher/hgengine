@@ -41,9 +41,34 @@ MercuryThemeManager::~MercuryThemeManager()
 
 bool MercuryThemeManager::GetValue( const MString & sDataPointer, MString & sReturn )
 {
-	//XXX: Incomplete
-	//This code needs to be filled out.
-	return true;
+	MString * cacheret;
+	if( (cacheret = m_hCache.get( sDataPointer ) ) != 0 )
+	{
+		sReturn = *cacheret;
+		return true;
+	}
+
+	MVector< MString > out;
+	SplitStrings( sDataPointer, out, ".", " ", 1, 1 );
+
+	for( unsigned i = out.size() - 1; i > 0; i-- )
+	{
+		MString sOut;
+		for( int j = 0; j < (int)i; j++ )
+			sOut += out[j] + '.';
+		sOut += out[out.size()-1];
+
+		for( int j = (int)m_vThemes.size() - 1; j >= 0; j-- )
+		{
+			if( m_vThemes[j].m_xNode->GetValue( sOut, sReturn ) )
+			{
+				m_hCache[sDataPointer] = sReturn;
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 MercuryThemeManager::Theme::Theme()

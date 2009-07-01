@@ -17,7 +17,7 @@
 #include <Texture.h>
 #include <GLHeaders.h>
 #include <ModuleManager.h>
-
+#include <MercuryFile.h>
 bool SHOWBOUNDINGVOLUME = false;
 
 MSemaphore UpdateLoopGo;
@@ -57,7 +57,7 @@ int main()
 
 	MercuryNode* root = new MercuryNode();
 	
-	XMLDocument* doc = XMLDocument::Load("scenegraph.xml");
+	XMLDocument* doc = XMLDocument::Load("FILE:scenegraph.xml");
 	XMLNode r = doc->GetRootNode();
 	root->LoadFromXML( r );
 
