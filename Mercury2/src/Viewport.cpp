@@ -23,9 +23,7 @@ void Viewport::PreRender(const MercuryMatrix& matrix)
 	//Load the frustum into the projection
 	//"eye" position does not go into projection
 	glMatrixMode(GL_PROJECTION);
-	MercuryMatrix f = m_frustum.GetMatrix();
-	f.Transpose();
-	glLoadMatrixf( f.Ptr() );
+	glLoadMatrix( m_frustum.GetMatrix() );
 	
 	glMatrixMode(GL_MODELVIEW);
 	
