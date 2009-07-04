@@ -60,9 +60,17 @@ void HGMDLModel::LoadModel(MercuryFile* hgmdl, HGMDLModel* model)
 
 void HGMDLModel::Render(const MercuryNode* node)
 {
+	bool cull;
 	if ( GetLoadState() != LOADING )
+	{
 		for(uint16_t i = 0; i < m_meshes.size(); ++i)
-			m_meshes[i]->Render(node);
+		{
+			cull = false;
+			const BoundingVolume* bv = m_meshes[i]->GetBoundingVolume();
+			if (bv) cull = bv->FrustumCull();
+			if ( !cull ) m_meshes[i]->Render(node);
+		}
+	}
 }
 
 void HGMDLModel::LoadHGMDL( const MString& path )
