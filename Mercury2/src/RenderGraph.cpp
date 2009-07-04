@@ -19,9 +19,8 @@ void RenderGraphEntry::Render()
 		m_node->PreRender( *m_matrix ); //calls on children assets
 		modelView = m_node->ManipulateMatrix( *m_matrix );
 		if ( m_node->IsHidden() || m_node->IsCulled(modelView) ) return;
-		modelView.Transpose();
 		
-		glLoadMatrixf( modelView.Ptr() );
+		glLoadMatrix( modelView );
 		
 		sa.type = ShaderAttribute::TYPE_MATRIX;
 		sa.value.matrix = m_matrix->Ptr();
@@ -37,7 +36,7 @@ void RenderGraphEntry::Render()
 
 	if (m_node)
 	{
-		glLoadMatrixf( modelView.Ptr() );
+		glLoadMatrix( modelView );
 		Shader::SetAttribute("HG_ModelMatrix", sa);
 		m_node->PostRender( modelView );  //calls on children assets
 	}	
