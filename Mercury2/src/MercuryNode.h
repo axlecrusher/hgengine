@@ -42,7 +42,11 @@ class MercuryNode : public MessageHandler
 		MercuryNode* NextChild(const MercuryNode* n) const; ///Finds the next child in regards to n
 		MercuryNode* PrevChild(const MercuryNode* n) const; ///Finds the previous child in regards to n
 		const std::list< MercuryNode* >& Children() const { return m_children; }
-		
+
+		///Find a child node that has the name matching sNameOfNode.
+		/** The search order is breadth-first, however this may change without notice! */
+		MercuryNode* FindChild( const MString & sNameOfNode, int depth = MAXINT );
+
 		virtual void Update(float dTime) {};
 		virtual void RecursiveUpdate(float dTime);
 		void ThreadedUpdate(float dTime);

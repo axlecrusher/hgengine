@@ -15,6 +15,8 @@ typedef float FloatRow[4];
 #define INFINITY  (std::numeric_limits<float>::infinity())
 #endif
 
+#define MAXINT	(0x7FFFFFFF)
+
 void ZeroFloatRow(FloatRow& r);
 
 #define DEGRAD	0.01745329251994329576f		//degree to radian

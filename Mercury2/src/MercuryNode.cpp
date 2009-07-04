@@ -97,6 +97,30 @@ MercuryNode* MercuryNode::PrevChild(const MercuryNode* child) const
 	return child->PrevSibling();
 }
 
+MercuryNode* MercuryNode::FindChild( const MString & sNameOfNode, int depth )
+{
+	if( depth >= 0 )
+	{
+		for( std::list< MercuryNode* >::iterator i = m_children.begin(); i != m_children.end(); i++ )
+		{
+			if( (*i)->GetName().compare( sNameOfNode ) == 0 )
+				return (*i);
+		}
+
+		for( std::list< MercuryNode* >::iterator i = m_children.begin(); i != m_children.end(); i++ )
+		{
+			MercuryNode * ret;
+			if( ( ret = (*i)->FindChild( sNameOfNode, depth - 1 ) ) )
+			{
+				if( (*i)->GetName().compare( sNameOfNode ) == 0 )
+					return ret;
+			}
+		}
+	}
+	return NULL;
+}
+
+
 void MercuryNode::RecursiveUpdate(float dTime)
 {
 	Update(dTime);
