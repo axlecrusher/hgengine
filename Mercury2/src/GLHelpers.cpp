@@ -39,6 +39,14 @@ MString GlError2String(uint32_t e)
 	return "Unknown Error";
 }
 
+void glLoadMatrix(const MercuryMatrix& m)
+{
+	static MercuryMatrix l;
+	l = m;
+	l.Transpose();
+	glLoadMatrixf( l.Ptr() );
+}
+
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
  *                                                                          *
