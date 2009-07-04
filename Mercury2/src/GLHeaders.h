@@ -19,6 +19,7 @@
 #endif
 
 #include <GLHelpers.h>
+#include <assert.h>
 
 #define GLERRORCHECK { \
 uint32_t e = glGetError(); \

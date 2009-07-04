@@ -14,7 +14,7 @@ void FullscreenQuad::Render(const MercuryNode* node)
 {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glLoadMatrixf( m_matrix.Ptr() );
+	glLoadMatrixf( m_matrix.Ptr() ); //this is OK
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
