@@ -1,7 +1,9 @@
 #include <global.h>
 #include <MercuryUtil.h>
+#include <MercuryMatrix.h>
 
 MString GlError2String(uint32_t e);
+void glLoadMatrix(const MercuryMatrix& m);
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
