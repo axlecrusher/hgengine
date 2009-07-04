@@ -19,6 +19,7 @@
 #include <ModuleManager.h>
 #include <MercuryFile.h>
 bool SHOWBOUNDINGVOLUME = false;
+bool SHOWAXISES = false;
 
 MSemaphore UpdateLoopGo;
 void* UpdateThread(void* node)

@@ -8,6 +8,7 @@
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 
 extern bool SHOWBOUNDINGVOLUME;
+extern bool SHOWAXISES;
 
 MercuryVBO::MercuryVBO()
 	:MercuryAsset(), m_initiated(false)
@@ -60,7 +61,7 @@ void MercuryVBO::Render(const MercuryNode* node)
 	m_lastVBOrendered = this;
 	
 	if (m_boundingVolume && SHOWBOUNDINGVOLUME) m_boundingVolume->Render();
-	DrawAxes();
+	if ( SHOWAXISES ) DrawAxes();
 }
 
 void MercuryVBO::InitVBO()

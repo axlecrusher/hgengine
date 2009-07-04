@@ -20,6 +20,9 @@ class BoundingVolume
 		
 		virtual bool Clip( const MercuryPlane& p ) = 0;
 		virtual bool Clip( const Frustum& f ) = 0;
+		
+		virtual bool FrustumCull() const = 0;
+		virtual bool OcclusionCull() const = 0;
 };
 
 class BoundingBox : public BoundingVolume
@@ -44,6 +47,9 @@ class BoundingBox : public BoundingVolume
 		
 		virtual bool Clip( const MercuryPlane& p );
 		virtual bool Clip( const Frustum& f );
+
+		virtual bool FrustumCull() const;
+		virtual bool OcclusionCull() const;
 
 	private:
 		void ComputeNormals();

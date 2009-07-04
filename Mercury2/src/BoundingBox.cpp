@@ -35,27 +35,31 @@ void BoundingBox::LoadFromBinary(char* data)
 
 void BoundingBox::ComputeNormals()
 {
-	MercuryVertex t(m_center);
+	//normals are probably just the cardinal axises
+/*	MercuryVertex t(m_center, 0);
 	t.SetX( t.GetX() + m_extend.GetX() );
-	m_normals[0] = (m_center - t).Normalize();
+	m_normals[0] = t;//.Normalize();
 	
 	t = m_center;
 	t.SetY( t.GetY() + m_extend.GetY() );
-	m_normals[1] = (m_center - t).Normalize();
+	m_normals[1] = t;//.Normalize();
 
 	t = m_center;
 	t.SetZ( t.GetZ() + m_extend.GetZ() );
-	m_normals[2] = (m_center - t).Normalize();
+	m_normals[2] = t;//.Normalize();
+	*/
 }
 
 void BoundingBox::Transform( const MercuryMatrix& m )
 {
 	BoundingBox bb;
-	bb.m_extend = m_center;
-	bb.m_center = m * m_center;
-	bb.m_normals[0] = (m * m_normals[0]).Normalize();
-	bb.m_normals[1] = (m * m_normals[1]).Normalize();
-	bb.m_normals[2] = (m * m_normals[2]).Normalize();
+	bb.m_extend = m_extend;
+	MercuryMatrix mm = m * FRUSTUM->GetMatrix();
+	bb.m_center = mm * MercuryVertex(m_center, 1);
+	bb.m_normals[0] = (mm * MercuryVector(1.0f,0,0,0)).Normalize();
+	bb.m_normals[1] = (mm * MercuryVector(0,1.0f,0,0)).Normalize();
+	bb.m_normals[2] = (mm * MercuryVector(0,0,1.0f,0)).Normalize();
+//	bb.Render();
 	*this = bb;
 }
 
@@ -84,6 +88,120 @@ bool BoundingBox::Clip( const Frustum& f )
 	return !inView;
 }
 
+bool BoundingBox::FrustumCull() const
+{
+	static float b[3];
+	uint32_t samples;
+	const float* center = GetCenter();
+	const float* extend = GetExtend();
+	
+	glPushAttrib( GL_CURRENT_BIT | GL_ENABLE_BIT );
+	glDisable(GL_CULL_FACE);
+	glFeedbackBuffer(3, GL_3D, b);
+	glRenderMode( GL_FEEDBACK );
+		
+	glBegin(GL_QUADS);
+
+	//front
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+
+	//back
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+
+	//top
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+
+	//bottom
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	
+	//left
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	
+	//right
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+	
+	glEnd();
+	samples = glRenderMode( GL_RENDER );
+	glPopAttrib( );
+	return samples==0;
+}
+
+bool BoundingBox::OcclusionCull() const
+{
+	static uint32_t q;
+	uint32_t samples;
+	const float* center = GetCenter();
+	const float* extend = GetExtend();
+		
+	glPushAttrib( GL_CURRENT_BIT | GL_ENABLE_BIT );
+	glDisable(GL_CULL_FACE);
+	glGenQueriesARB(1, &q);
+	glBeginQueryARB(GL_SAMPLES_PASSED_ARB, q);
+	
+	glBegin(GL_QUADS);
+
+	//front
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+
+	//back
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+
+	//top
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+
+	//bottom
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	
+	//left
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	
+	//right
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+	
+	glEnd();
+	glEndQueryARB(GL_SAMPLES_PASSED_ARB);
+	glGetQueryObjectuivARB(q, GL_QUERY_RESULT_ARB, &samples);
+
+	glPopAttrib( );
+	
+	return samples==0;
+}
 
 void BoundingBox::Render()
 {
@@ -95,6 +213,8 @@ void BoundingBox::Render()
 	const float* center = GetCenter();
 	const float* extend = GetExtend();
 	
+//	glPushMatrix();
+//	glLoadIdentity();
 	glPushAttrib( GL_CURRENT_BIT  );
 	glBegin(GL_LINES);
 	glColor3f(0,1.0f,0);
@@ -133,12 +253,34 @@ void BoundingBox::Render()
 
 	glEnd();
 	
+	//center
 	glPointSize(4);
 	glBegin(GL_POINTS);
 	glVertex3f(center[0], center[1], center[2]);
 	glEnd();
 	
+	//normals
+	MercuryVertex c;
+	glBegin(GL_LINES);
+	glColor3f(1.0f,0,0);
+	glVertex3f(center[0], center[1], center[2]);
+	c = center;
+	c += m_normals[0];
+	glVertex3f(c.GetX(), c.GetY(), c.GetZ());
+	glColor3f(0,1.0f,0);
+	glVertex3f(center[0], center[1], center[2]);
+	c = center;
+	c += m_normals[1];
+	glVertex3f(c.GetX(), c.GetY(), c.GetZ());
+	glColor3f(0,0,1.0f);
+	glVertex3f(center[0], center[1], center[2]);
+	c = center;
+	c += m_normals[2];
+	glVertex3f(c.GetX(), c.GetY(), c.GetZ());
+	glEnd();
+
 	glPopAttrib( );
+//	glPopMatrix();
 }
 
 /****************************************************************************

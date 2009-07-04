@@ -137,11 +137,12 @@ void MercuryNode::RecursiveRender()
 	MercuryMatrix matrix = FindGlobalMatrix();
 	
 	PreRender( matrix ); //calls on children assets
+	
 	modelView = ManipulateMatrix( matrix );
-	if ( IsHidden() || IsCulled(modelView) ) return;
-	modelView.Transpose();
-		
-	glLoadMatrixf( modelView.Ptr() );
+//	if ( IsHidden() || IsCulled(modelView) ) return;
+	if ( IsHidden() ) return;
+	
+	glLoadMatrix( modelView );
 		
 	sa.type = ShaderAttribute::TYPE_MATRIX;
 	sa.value.matrix = matrix.Ptr();
@@ -158,7 +159,7 @@ void MercuryNode::RecursiveRender()
 			child->RecursiveRender();
 	}
 
-	glLoadMatrixf( modelView.Ptr() );
+	glLoadMatrix( modelView );
 	Shader::SetAttribute("HG_ModelMatrix", sa);
 	PostRender( modelView );  //calls on children assets
 }
@@ -217,9 +218,15 @@ void MercuryNode::PreRender(const MercuryMatrix& matrix)
 
 void MercuryNode::Render(const MercuryMatrix& matrix)
 {
+	bool cull;
 	list< MercuryAsset* >::iterator i;
 	for (i = m_render.begin(); i != m_render.end(); ++i )
-		(*i)->Render(this);
+	{
+		cull = false;
+		const BoundingVolume* bv = (*i)->GetBoundingVolume();
+		if (bv) cull = bv->FrustumCull();
+		if ( !cull ) (*i)->Render(this);
+	}
 }
 
 void MercuryNode::PostRender(const MercuryMatrix& matrix)
@@ -283,22 +290,14 @@ bool MercuryNode::IsInAssetList( MercuryAsset* asset ) const
 bool MercuryNode::IsCulled(const MercuryMatrix& matrix)
 {
 	bool clip = false;
-	
+/*	
 	std::list< MAutoPtr< MercuryAsset > >::iterator i;
 	for (i = m_assets.begin(); i != m_assets.end(); ++i )
 	{
-		const BoundingVolume* bv = (*i)->GetBoundingVolume();
-		if (bv)
-		{
-			BoundingVolume* v = bv->SpawnClone();
-			v->Transform( matrix );
-			clip = v->Clip( *FRUSTUM );
-			delete v;
-			if ( clip == false ) return false;
-		}
-		else
-			return false;
+		clip = (*i)->IsCulled( matrix );
+		if ( clip == false ) return false;
 	}
+	*/
 	return clip;
 }
 
