@@ -28,6 +28,13 @@ MercuryVertex::MercuryVertex( const MercuryVertex& v)
 		(*this)[i] = v[i];
 }
 
+MercuryVertex::MercuryVertex( const MercuryVertex& v, float w)
+{
+	for (unsigned int i = 0; i < 3; ++i)
+		(*this)[i] = v[i];
+	(*this)[3] = w;
+}
+
 void MercuryVertex::NormalizeSelf()
 {
 	float imag = 1.0f/Length();
