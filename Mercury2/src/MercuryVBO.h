@@ -24,12 +24,14 @@ class MercuryVBO : public MercuryAsset
 
 		float * GetVertexHandle() { return &m_vertexData[0]; }
 		short unsigned int * GetIndexHandle() { return &m_indexData[0]; }
+	
+		static void* m_lastVBOrendered;
+		
 	private:
 		virtual void InitVBO();
 	
 		unsigned int m_bufferIDs[2];
 		bool m_initiated;		
-		static void* m_lastVBOrendered;
 
 	protected:
 		AlignedBuffer<float> m_vertexData;

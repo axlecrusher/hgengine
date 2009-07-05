@@ -129,25 +129,36 @@ void MercuryNode::RecursiveUpdate(float dTime)
 		child->RecursiveUpdate(dTime);
 }
 
-void MercuryNode::RecursiveRender()
+void MercuryNode::RecursivePreRender()
 {
-	MercuryMatrix modelView;
-	ShaderAttribute sa;
+	if ( IsHidden() ) return;
 	
 	MercuryMatrix matrix = FindGlobalMatrix();
+	MercuryMatrix modelView = ManipulateMatrix( matrix );
 	
+	glLoadMatrix( modelView );
+
 	PreRender( matrix ); //calls on children assets
-	
-	modelView = ManipulateMatrix( matrix );
+
+	for (MercuryNode* child = FirstChild(); child != NULL; child = NextChild(child))
+		child->RecursivePreRender();
+}
+
+void MercuryNode::RecursiveRender()
+{
+	if ( IsHidden() || m_occlusionResult.IsOccluded() ) return;
+		
+	MercuryMatrix matrix = FindGlobalMatrix();
+	MercuryMatrix modelView = ManipulateMatrix( matrix );
 //	if ( IsHidden() || IsCulled(modelView) ) return;
-	if ( IsHidden() ) return;
 	
 	glLoadMatrix( modelView );
 		
+	ShaderAttribute sa;
 	sa.type = ShaderAttribute::TYPE_MATRIX;
 	sa.value.matrix = matrix.Ptr();
 	Shader::SetAttribute("HG_ModelMatrix", sa);
-		
+
 	Render( modelView ); //calls on children assets
 	
 	//call render on other render graph entries under me
@@ -218,15 +229,9 @@ void MercuryNode::PreRender(const MercuryMatrix& matrix)
 
 void MercuryNode::Render(const MercuryMatrix& matrix)
 {
-	bool cull;
 	list< MercuryAsset* >::iterator i;
 	for (i = m_render.begin(); i != m_render.end(); ++i )
-	{
-		cull = false;
-		const BoundingVolume* bv = (*i)->GetBoundingVolume();
-		if (bv) cull = bv->FrustumCull();
-		if ( !cull ) (*i)->Render(this);
-	}
+		(*i)->Render(this);
 }
 
 void MercuryNode::PostRender(const MercuryMatrix& matrix)

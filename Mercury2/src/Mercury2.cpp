@@ -87,6 +87,7 @@ int main()
 //		renderGraph.Render();
 //		RenderableNode::RecursiveRender(root);
 //		printf("\n");
+		root->RecursivePreRender();
 		root->RecursiveRender();
 		renderGraph.RenderAlpha();
 		w->SwapBuffers();

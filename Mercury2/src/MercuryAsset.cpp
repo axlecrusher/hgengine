@@ -16,6 +16,7 @@ MercuryAsset::~MercuryAsset()
 void MercuryAsset::Init(MercuryNode* node)
 {
 //	RenderableNode* rn;
+	if ( node ) node->AddPreRender(this);
 	if ( node ) node->AddRender(this);
 }
 
@@ -34,6 +35,13 @@ LoadState MercuryAsset::GetLoadState()
 void MercuryAsset::LoadedCallback()
 {
 	SetLoadState( LOADED );
+}
+
+void MercuryAsset::PreRender(const MercuryNode* node)
+{
+	MercuryNode* n = const_cast<MercuryNode*>(node);
+	if ( m_boundingVolume )
+		m_boundingVolume->DoOcclusionTest( n->GetOcclusionResult() );
 }
 
 void MercuryAsset::DrawAxes()

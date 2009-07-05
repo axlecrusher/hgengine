@@ -9,6 +9,7 @@
 #include <MessageHandler.h>
 
 #include <MercuryAsset.h>
+#include <BoundingBox.h>
 
 /** This is the basic node of the scene graph.  It is not intended to be instanced.
 	Each node exists as a single entity in the scene graph.
@@ -52,6 +53,7 @@ class MercuryNode : public MessageHandler
 		void ThreadedUpdate(float dTime);
 		
 		
+		void RecursivePreRender();
 		void RecursiveRender();
 
 		///Run on parent when a child is added
@@ -92,7 +94,9 @@ class MercuryNode : public MessageHandler
 		bool IsHidden() { return m_hidden; }
 		
 		virtual MercuryMatrix ManipulateMatrix(const MercuryMatrix& matrix);
-
+		
+		inline OcclusionResult& GetOcclusionResult() { return m_occlusionResult; }
+		inline const OcclusionResult& GetOcclusionResult() const { return m_occlusionResult; }
 	protected:
 		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
 		MercuryNode* m_parent;
@@ -106,6 +110,8 @@ class MercuryNode : public MessageHandler
 	private:
 		bool IsInAssetList(MercuryAsset* asset) const;
 		
+		OcclusionResult m_occlusionResult;
+
 		//The asset is actually stored here
 		std::list< MAutoPtr< MercuryAsset > > m_assets;
 		

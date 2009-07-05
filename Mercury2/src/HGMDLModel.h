@@ -18,6 +18,8 @@ class HGMDLModel : public MercuryAsset
 		static void LoadModel(MercuryFile* hgmdl, HGMDLModel* model);
 		
 		static HGMDLModel* Generate();
+		
+		virtual void PreRender(const MercuryNode* node);
 		virtual void Render(const MercuryNode* node);
 
 	private:

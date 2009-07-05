@@ -1,5 +1,5 @@
 #include <HGMDLModel.h>
-
+#include <MercuryNode.h>
 REGISTER_ASSET_TYPE(HGMDLModel);
 
 const uint16_t EXPCTMJRV = 2;
@@ -58,17 +58,21 @@ void HGMDLModel::LoadModel(MercuryFile* hgmdl, HGMDLModel* model)
 	}
 }
 
+void HGMDLModel::PreRender(const MercuryNode* node)
+{
+	if ( GetLoadState() != LOADING )
+		for(uint16_t i = 0; i < m_meshes.size(); ++i)
+			m_meshes[i]->PreRender(node);
+}
+
 void HGMDLModel::Render(const MercuryNode* node)
 {
-	bool cull;
 	if ( GetLoadState() != LOADING )
 	{
 		for(uint16_t i = 0; i < m_meshes.size(); ++i)
 		{
-			cull = false;
-			const BoundingVolume* bv = m_meshes[i]->GetBoundingVolume();
-			if (bv) cull = bv->FrustumCull();
-			if ( !cull ) m_meshes[i]->Render(node);
+			if ( !node->GetOcclusionResult().IsOccluded() )
+				m_meshes[i]->Render(node);
 		}
 	}
 }

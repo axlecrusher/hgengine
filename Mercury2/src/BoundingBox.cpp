@@ -4,17 +4,27 @@
 #include <Viewport.h>
 #include <Texture.h>
 
+#include <MercuryVBO.h>
+
 #define SIGNED_DIST(x) m_normal.DotProduct(x)
 
 // origional algorithim was -x<0
 #define BEHIND_PLANE(x) x>=0
 
-bool BoundingVolume::IsOccluded()
+OcclusionResult::~OcclusionResult()
 {
-	uint32_t samples = 1;
-	if (m_occlusionQuery != 0)
-		glGetQueryObjectuivARB(m_occlusionQuery, GL_QUERY_RESULT_ARB, &samples);
-	return samples==0;
+	if ( m_occlusionQuery != 0 )
+		glDeleteQueriesARB( 1, &m_occlusionQuery );
+	m_occlusionQuery = 0;
+}
+
+uint32_t OcclusionResult::GetSamples() const
+{
+	if (m_occlusionQuery == 0) return ~0;
+	
+	uint32_t samples;
+	glGetQueryObjectuivARB(m_occlusionQuery, GL_QUERY_RESULT_ARB, &samples);
+	return samples;
 }
 
 BoundingBox::BoundingBox(const MercuryVertex& center, const MercuryVertex& extend)
@@ -101,6 +111,11 @@ bool BoundingBox::Clip( const Frustum& f )
 
 bool BoundingBox::FrustumCull() const
 {
+	/*feedback in openGL is probably depreciated
+	and is known to fallback to software
+	the OcclusionTest provides the same performence
+	it is probably best to avoid using this function */
+	
 	static float b[3];
 	uint32_t samples;
 	const float* center = GetCenter();
@@ -147,49 +162,36 @@ bool BoundingBox::FrustumCull() const
 	return samples==0;
 }
 
-void BoundingBox::DoOcclusionTest()
+void BoundingBox::DoOcclusionTest( OcclusionResult& result )
 {
 	const float* center = GetCenter();
 	const float* extend = GetExtend();
-
+	
 	glPushAttrib( GL_CURRENT_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glDisable(GL_CULL_FACE);
 	
 	glPushMatrix();
 	glTranslatef(center[0], center[1], center[2]);
 	glScalef(extend[0],extend[1],extend[2]);
-/*
-	uint8_t tCount = Texture::NumberActiveTextures();
-	for (uint8_t i = 0; i < tCount; ++i)
+	
+	if (m_vboID == 0) InitVBO();
+	
+	if ( MercuryVBO::m_lastVBOrendered != &m_vboID )
 	{
-		glActiveTexture( GL_TEXTURE0+i );
-		glClientActiveTextureARB( GL_TEXTURE0+i );
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glDisable( GL_TEXTURE_2D );
+		MercuryVBO::m_lastVBOrendered = &m_vboID;
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID); // once
+		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);  // once
+		glVertexPointer(3, GL_FLOAT, 0, 0);  // once
 	}
-*/	
-	InitVBO();
 	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID);
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-	glVertexPointer(3, GL_FLOAT, 0, 0);
-	
-	if (m_occlusionQuery == 0) glGenQueriesARB(1, &m_occlusionQuery);
-	glBeginQueryARB(GL_SAMPLES_PASSED_ARB, m_occlusionQuery);
+	if (result.GetQueryID() == 0) glGenQueriesARB(1, &result.GetQueryID());
+	glBeginQueryARB(GL_SAMPLES_PASSED_ARB, result.GetQueryID());
 
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glDepthMask(GL_FALSE);
 
 	glDrawArrays(GL_QUADS, 0, 24);
-/*
-	for (uint8_t i = 0; i < tCount; ++i)
-	{
-		glActiveTexture( GL_TEXTURE0+i );
-		glClientActiveTextureARB(GL_TEXTURE0+i);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glEnable( GL_TEXTURE_2D );
-	}
-*/	
+	
 	glEndQueryARB(GL_SAMPLES_PASSED_ARB);
 //	glGetQueryObjectuivARB(q, GL_QUERY_RESULT_ARB, &samples);
 
@@ -323,8 +325,6 @@ void BoundingBox::PopulateVertices()
 
 void BoundingBox::InitVBO()
 {
-	if (m_vboID != 0) return;
-	
 	glGenBuffersARB(1, &m_vboID);
 	
 	//vertex VBO

@@ -24,18 +24,15 @@ void RenderBuffer::Init(MercuryNode* node)
 	RenderableNode* rn = RenderableNode::Cast( node );
 	if ( rn )
 	{
-		rn->AddPreRender( this );
+//		rn->AddPreRender( this );
 		rn->AddPostRender( this );
 	}
 }
 
-void RenderBuffer::PreRender(const MercuryNode* node)
-{
-	if ( !m_initiated ) InitRenderBuffer();
-}
-
 void RenderBuffer::Render(const MercuryNode* node)
 {
+	if ( !m_initiated ) InitRenderBuffer();
+	
 	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_bufferID);
 	
 	if ( NeedResize() ) AllocateSpace();

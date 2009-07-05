@@ -20,7 +20,6 @@ class RenderBuffer : public MercuryAsset
 		
 		virtual void Init(MercuryNode* node);
 		
-		virtual void PreRender(const MercuryNode* node);
 		virtual void Render(const MercuryNode* node);
 		virtual void PostRender(const MercuryNode* node);
 		virtual void LoadFromXML(const XMLNode& node);

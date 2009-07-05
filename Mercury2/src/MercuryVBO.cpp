@@ -27,19 +27,13 @@ void MercuryVBO::Render(const MercuryNode* node)
 	uint8_t numTextures = Texture::NumberActiveTextures();
 	uint16_t stride = sizeof(float)*8;
 	
-	if ( m_initiated )
-	{
-		if ( this != m_lastVBOrendered)
-		{
-			glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]);
-			glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]);
-		}
-	}
-	else
-		InitVBO();
+	if ( !m_initiated ) InitVBO();
 		
-	if ( this != m_lastVBOrendered)
+	if ( this != m_lastVBOrendered )
 	{		
+		m_lastVBOrendered = this;
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]);
+		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]);
 		glVertexPointer(3, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*5));
 		++m_vboBinds;
 	}
@@ -57,9 +51,7 @@ void MercuryVBO::Render(const MercuryNode* node)
 
 	glDrawRangeElements(GL_TRIANGLES, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL);
 	m_vboBatches++;
-	
-	m_lastVBOrendered = this;
-	
+		
 	if (m_boundingVolume && SHOWBOUNDINGVOLUME) m_boundingVolume->Render();
 	if ( SHOWAXISES ) DrawAxes();
 }

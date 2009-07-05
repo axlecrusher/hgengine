@@ -32,8 +32,13 @@ class MercuryAsset : public RefBase, MessageHandler
 		
 		virtual void Init(MercuryNode* node);
 		
-		virtual void PreRender(const MercuryNode* node) {};
+		/** PreRender should be called before any real openGL render commands.
+		It is used to handles things like frustum culling, and occlusion culling.
+		Currently only occlusion culling test is run here.**/
+		virtual void PreRender(const MercuryNode* node);
+		
 		virtual void Render(const MercuryNode* node) = 0;
+		
 		virtual void PostRender(const MercuryNode* node) {};
 		
 		///Loads an asset from an XMLAsset representing itself
@@ -43,7 +48,7 @@ class MercuryAsset : public RefBase, MessageHandler
 		
 		inline void IsInstanced(bool b) { m_isInstanced = b; }
 
-		inline const BoundingVolume* GetBoundingVolume() const { return m_boundingVolume; }
+		inline BoundingVolume* GetBoundingVolume() const { return m_boundingVolume; }
 		inline const MString& Path() const { return m_path; }
 
 		void DrawAxes();

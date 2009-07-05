@@ -10,6 +10,21 @@
 
 #include <AlignedBuffer.h>
 
+class OcclusionResult
+{
+	public:
+		OcclusionResult()
+			:m_occlusionQuery(0)
+		{}
+		~OcclusionResult();
+		
+		uint32_t GetSamples() const;
+		inline uint32_t IsOccluded() const { return GetSamples() == 0; }
+		inline uint32_t& GetQueryID() { return m_occlusionQuery; }
+	private:
+		uint32_t m_occlusionQuery;
+};
+
 class BoundingVolume
 {
 	public:
@@ -27,10 +42,15 @@ class BoundingVolume
 		virtual bool Clip( const MercuryPlane& p ) = 0;
 		virtual bool Clip( const Frustum& f ) = 0;
 		
-		virtual bool FrustumCull() const = 0;
+		virtual bool FrustumCull() const = 0; //Do not use
 //		virtual bool OcclusionCull() const = 0;
-		bool IsOccluded();
-		virtual void DoOcclusionTest() = 0;
+		
+		/** This uses openGL to do an occlusion test in hardware.
+		The answer is not immediately known, but this can be run on the GPU
+		while the CPU does something else. Get the anser later by calling
+		IsOccluded() on the result.
+		**/
+		virtual void DoOcclusionTest(OcclusionResult& result) = 0;
 
 	protected:
 		uint32_t m_occlusionQuery;
@@ -65,9 +85,9 @@ class BoundingBox : public BoundingVolume
 		virtual bool Clip( const MercuryPlane& p );
 		virtual bool Clip( const Frustum& f );
 
-		virtual bool FrustumCull() const;
+		virtual bool FrustumCull() const; //Do not use
 //		virtual bool OcclusionCull() const;
-		virtual void DoOcclusionTest();
+		virtual void DoOcclusionTest(OcclusionResult& result);
 
 	private:
 		void ComputeNormals();
