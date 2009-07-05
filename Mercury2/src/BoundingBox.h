@@ -8,9 +8,15 @@
 #include <Mint.h>
 #include <MercuryPlane.h>
 
+#include <AlignedBuffer.h>
+
 class BoundingVolume
 {
 	public:
+		BoundingVolume()
+			:m_occlusionQuery(0)
+		{}
+		
 		virtual ~BoundingVolume() {};
 
 		virtual void LoadFromBinary(char* data) = 0;
@@ -22,14 +28,25 @@ class BoundingVolume
 		virtual bool Clip( const Frustum& f ) = 0;
 		
 		virtual bool FrustumCull() const = 0;
-		virtual bool OcclusionCull() const = 0;
+//		virtual bool OcclusionCull() const = 0;
+		bool IsOccluded();
+		virtual void DoOcclusionTest() = 0;
+
+	protected:
+		uint32_t m_occlusionQuery;
 };
 
 class BoundingBox : public BoundingVolume
 {
 	public:
-		BoundingBox() {};
+		BoundingBox()
+			:BoundingVolume()
+		{
+			PopulateVertices();
+		}
+		
 		BoundingBox(const MercuryVertex& center, const MercuryVertex& extend);
+		
 		BoundingBox(const BoundingBox& bb);
 
 		virtual ~BoundingBox() {};
@@ -49,15 +66,21 @@ class BoundingBox : public BoundingVolume
 		virtual bool Clip( const Frustum& f );
 
 		virtual bool FrustumCull() const;
-		virtual bool OcclusionCull() const;
+//		virtual bool OcclusionCull() const;
+		virtual void DoOcclusionTest();
 
 	private:
 		void ComputeNormals();
-		
+		static void PopulateVertices();
+		static void InitVBO();
+
 		MercuryVertex m_center;
 		MercuryVertex m_extend;
 		
 		MercuryVector m_normals[3];
+		
+		static AlignedBuffer<float> m_vertexData;
+		static uint32_t m_vboID;
 };
 
 #endif

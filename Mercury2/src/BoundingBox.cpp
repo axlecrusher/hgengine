@@ -2,21 +2,32 @@
 #include <BoundingBox.h>
 #include <string.h>
 #include <Viewport.h>
+#include <Texture.h>
 
 #define SIGNED_DIST(x) m_normal.DotProduct(x)
 
 // origional algorithim was -x<0
 #define BEHIND_PLANE(x) x>=0
 
+bool BoundingVolume::IsOccluded()
+{
+	uint32_t samples = 1;
+	if (m_occlusionQuery != 0)
+		glGetQueryObjectuivARB(m_occlusionQuery, GL_QUERY_RESULT_ARB, &samples);
+	return samples==0;
+}
+
 BoundingBox::BoundingBox(const MercuryVertex& center, const MercuryVertex& extend)
 	:m_center(center), m_extend(extend)
 {
+	PopulateVertices();
 	ComputeNormals();
-};
+}
 
 BoundingBox::BoundingBox(const BoundingBox& bb)
 	:m_center(bb.m_center), m_extend(bb.m_extend)
 {
+	PopulateVertices();
 	for (uint8_t i = 0; i < 3; ++i)
 		m_normals[i] = bb.m_normals[i];
 }
@@ -94,113 +105,96 @@ bool BoundingBox::FrustumCull() const
 	uint32_t samples;
 	const float* center = GetCenter();
 	const float* extend = GetExtend();
-	
+		
 	glPushAttrib( GL_CURRENT_BIT | GL_ENABLE_BIT );
 	glDisable(GL_CULL_FACE);
+	
+	glPushMatrix();
+	glTranslatef(center[0], center[1], center[2]);
+	glScalef(extend[0],extend[1],extend[2]);
+
+	uint8_t tCount = Texture::NumberActiveTextures();
+	for (uint8_t i = 0; i < tCount; ++i)
+	{
+		glActiveTexture( GL_TEXTURE0+i );
+		glClientActiveTextureARB( GL_TEXTURE0+i );
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisable( GL_TEXTURE_2D );
+	}
 	glFeedbackBuffer(3, GL_3D, b);
 	glRenderMode( GL_FEEDBACK );
-		
-	glBegin(GL_QUADS);
-
-	//front
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
-
-	//back
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
-
-	//top
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
-
-	//bottom
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
 	
-	//left
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	InitVBO();
 	
-	//right
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID);
+	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
+	glDrawArrays(GL_QUADS, 0, 24);
+
+	for (uint8_t i = 0; i < tCount; ++i)
+	{
+		glActiveTexture( GL_TEXTURE0+i );
+		glClientActiveTextureARB(GL_TEXTURE0+i);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnable( GL_TEXTURE_2D );
+	}
 	
-	glEnd();
 	samples = glRenderMode( GL_RENDER );
+	glPopMatrix();
 	glPopAttrib( );
+	
+//	return false;
 	return samples==0;
 }
 
-bool BoundingBox::OcclusionCull() const
+void BoundingBox::DoOcclusionTest()
 {
-	static uint32_t q;
-	uint32_t samples;
 	const float* center = GetCenter();
 	const float* extend = GetExtend();
-		
-	glPushAttrib( GL_CURRENT_BIT | GL_ENABLE_BIT );
+
+	glPushAttrib( GL_CURRENT_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glDisable(GL_CULL_FACE);
-	glGenQueriesARB(1, &q);
-	glBeginQueryARB(GL_SAMPLES_PASSED_ARB, q);
 	
-	glBegin(GL_QUADS);
-
-	//front
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
-
-	//back
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
-
-	//top
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
-
-	//bottom
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	glPushMatrix();
+	glTranslatef(center[0], center[1], center[2]);
+	glScalef(extend[0],extend[1],extend[2]);
+/*
+	uint8_t tCount = Texture::NumberActiveTextures();
+	for (uint8_t i = 0; i < tCount; ++i)
+	{
+		glActiveTexture( GL_TEXTURE0+i );
+		glClientActiveTextureARB( GL_TEXTURE0+i );
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		glDisable( GL_TEXTURE_2D );
+	}
+*/	
+	InitVBO();
 	
-	//left
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID);
+	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
 	
-	//right
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
-	
-	glEnd();
+	if (m_occlusionQuery == 0) glGenQueriesARB(1, &m_occlusionQuery);
+	glBeginQueryARB(GL_SAMPLES_PASSED_ARB, m_occlusionQuery);
+
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glDepthMask(GL_FALSE);
+
+	glDrawArrays(GL_QUADS, 0, 24);
+/*
+	for (uint8_t i = 0; i < tCount; ++i)
+	{
+		glActiveTexture( GL_TEXTURE0+i );
+		glClientActiveTextureARB(GL_TEXTURE0+i);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glEnable( GL_TEXTURE_2D );
+	}
+*/	
 	glEndQueryARB(GL_SAMPLES_PASSED_ARB);
-	glGetQueryObjectuivARB(q, GL_QUERY_RESULT_ARB, &samples);
+//	glGetQueryObjectuivARB(q, GL_QUERY_RESULT_ARB, &samples);
 
 	glPopAttrib( );
-	
-	return samples==0;
+	glPopMatrix();
 }
 
 void BoundingBox::Render()
@@ -282,6 +276,64 @@ void BoundingBox::Render()
 	glPopAttrib( );
 //	glPopMatrix();
 }
+
+void BoundingBox::PopulateVertices()
+{
+	if (m_vertexData.Length() == 72) return;
+	m_vertexData.Allocate( 72 );
+	
+	uint32_t i = 0;
+	
+	//back
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f;
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f;
+
+	//front
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f;
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f;
+
+	//left
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f;
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f;
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f;
+
+	//right
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f;
+
+	//top
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f;
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f;
+
+	//bottom
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
+}
+
+void BoundingBox::InitVBO()
+{
+	if (m_vboID != 0) return;
+	
+	glGenBuffersARB(1, &m_vboID);
+	
+	//vertex VBO
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_vertexData.LengthInBytes(), m_vertexData.Buffer(), GL_STATIC_DRAW_ARB);
+}
+
+AlignedBuffer<float> BoundingBox::m_vertexData;
+uint32_t BoundingBox::m_vboID = 0;
 
 /****************************************************************************
  *   Copyright (C) 2008 by Joshua Allen                                     *
