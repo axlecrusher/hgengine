@@ -109,13 +109,13 @@ bool BoundingBox::Clip( const Frustum& f )
 	return !inView;
 }
 
-bool BoundingBox::FrustumCull() const
-{
+//bool BoundingBox::FrustumCull() const
+//{
 	/*feedback in openGL is probably depreciated
 	and is known to fallback to software
 	the OcclusionTest provides the same performence
 	it is probably best to avoid using this function */
-	
+/*	
 	static float b[3];
 	uint32_t samples;
 	const float* center = GetCenter();
@@ -161,9 +161,18 @@ bool BoundingBox::FrustumCull() const
 //	return false;
 	return samples==0;
 }
+*/
+
+bool BoundingBox::DoFrustumTest( const MercuryMatrix& m )
+{
+	BoundingBox bb(*this);
+	bb.Transform( m );
+	return false;
+}
 
 void BoundingBox::DoOcclusionTest( OcclusionResult& result )
 {
+	return;
 	const float* center = GetCenter();
 	const float* extend = GetExtend();
 	

@@ -71,7 +71,7 @@ void HGMDLModel::Render(const MercuryNode* node)
 	{
 		for(uint16_t i = 0; i < m_meshes.size(); ++i)
 		{
-			if ( !node->GetOcclusionResult().IsOccluded() )
+			if ( !(node->GetOcclusionResult().IsOccluded() || node->IsCulled()) )
 				m_meshes[i]->Render(node);
 		}
 	}

@@ -91,8 +91,10 @@ class MercuryNode : public MessageHandler
 		const MercuryMatrix& FindGlobalMatrix() const;
 		
 		virtual bool IsCulled(const MercuryMatrix& matrix);
-		bool IsHidden() { return m_hidden; }
+		inline bool IsHidden() { return m_hidden; }
 		
+		inline void SetCulled(bool t) { m_culled = t; }
+		inline bool IsCulled() const { return m_culled; }
 		virtual MercuryMatrix ManipulateMatrix(const MercuryMatrix& matrix);
 		
 		inline OcclusionResult& GetOcclusionResult() { return m_occlusionResult; }
@@ -105,8 +107,10 @@ class MercuryNode : public MessageHandler
 
 		static bool m_rebuildRenderGraph;
 		MString m_name;
+		
 		bool m_hidden;
 		bool m_useAlphaPath;
+		bool m_culled;
 	private:
 		bool IsInAssetList(MercuryAsset* asset) const;
 		

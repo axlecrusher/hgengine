@@ -42,8 +42,7 @@ class BoundingVolume
 		virtual bool Clip( const MercuryPlane& p ) = 0;
 		virtual bool Clip( const Frustum& f ) = 0;
 		
-		virtual bool FrustumCull() const = 0; //Do not use
-//		virtual bool OcclusionCull() const = 0;
+		virtual bool DoFrustumTest( const MercuryMatrix& m ) = 0;
 		
 		/** This uses openGL to do an occlusion test in hardware.
 		The answer is not immediately known, but this can be run on the GPU
@@ -85,8 +84,7 @@ class BoundingBox : public BoundingVolume
 		virtual bool Clip( const MercuryPlane& p );
 		virtual bool Clip( const Frustum& f );
 
-		virtual bool FrustumCull() const; //Do not use
-//		virtual bool OcclusionCull() const;
+		virtual bool DoFrustumTest( const MercuryMatrix& m );
 		virtual void DoOcclusionTest(OcclusionResult& result);
 
 	private:

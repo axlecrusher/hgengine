@@ -14,7 +14,7 @@ using namespace std;
 REGISTER_NODE_TYPE(MercuryNode);
 
 MercuryNode::MercuryNode()
-	:m_parent(NULL), m_prevSibling(NULL), m_nextSibling(NULL), m_hidden(false), m_useAlphaPath(false)
+	:m_parent(NULL), m_prevSibling(NULL), m_nextSibling(NULL), m_hidden(false), m_useAlphaPath(false), m_culled(false)
 {
 }
 
@@ -146,7 +146,7 @@ void MercuryNode::RecursivePreRender()
 
 void MercuryNode::RecursiveRender()
 {
-	if ( IsHidden() || m_occlusionResult.IsOccluded() ) return;
+	if ( IsHidden() || m_occlusionResult.IsOccluded() || IsCulled() ) return;
 		
 	MercuryMatrix matrix = FindGlobalMatrix();
 	MercuryMatrix modelView = ManipulateMatrix( matrix );
