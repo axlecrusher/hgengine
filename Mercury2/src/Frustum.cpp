@@ -88,7 +88,6 @@ void Frustum::LookAt(const MercuryVertex& eye, const MercuryVector& look, const 
 	aux = (m_nc + X*m_nw) - eye;
 	aux.NormalizeSelf();
 	normal = Y.CrossProduct(aux);
-	normal.Print();
 	m_planes[PRIGHT].Setup(m_nc+X*m_nw,normal);
 }
 
