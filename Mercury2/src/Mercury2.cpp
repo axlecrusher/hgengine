@@ -20,6 +20,7 @@
 #include <MercuryFile.h>
 bool SHOWBOUNDINGVOLUME = false;
 bool SHOWAXISES = false;
+bool DOOCCLUSIONCULL = false;
 
 MSemaphore UpdateLoopGo;
 void* UpdateThread(void* node)

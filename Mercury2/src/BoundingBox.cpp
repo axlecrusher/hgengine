@@ -86,140 +86,61 @@ void BoundingBox::Transform( const MercuryMatrix& m )
 	bb.m_normals[1] = (m * MercuryVector(0,1,0)).Normalize();
 	bb.m_normals[2] = (m * MercuryVector(0,0,1)).Normalize();
 	
+	//compute box vertices into world coordinates
+	//it would be nice to do this without needing to save
+	//the result in the bounding box.
+	//XXX look into ways to optimize this
+	MercuryMatrix mm = m;
+	mm.Translate( m_center );
+	mm.Scale( m_extend );
+	
+	bb.v[0] = mm * MercuryVertex(-1, 1, 1, 1);
+	bb.v[1] = mm * MercuryVertex(-1, -1, 1, 1);
+	bb.v[2] = mm * MercuryVertex(1, -1, 1, 1);
+	bb.v[3] = mm * MercuryVertex(1, 1, 1, 1);
+		
+	bb.v[4] = mm * MercuryVertex(-1, 1, -1, 1);
+	bb.v[5] = mm * MercuryVertex(-1, -1, -1, 1);
+	bb.v[6] = mm * MercuryVertex(1, -1, -1, 1);
+	bb.v[7] = mm * MercuryVertex(1, 1, -1, 1);
+	
 	*this = bb;
 }
 
 bool BoundingBox::Clip( const MercuryPlane& p )
 {
 	//do a quick spherical test using the signed distance
+	//from the center of the box
 	float d = p.GetNormal().DotProduct( m_center - p.GetCenter() );
-	if (d < -m_extend.Length()) return true;
-	return false;
+	if (d < -m_extend.Length()) return true;  //sphere is further than radius distance behind plane
 	
-	///XXX everything below is broken
+	//all points must be behind a plane to be considered clipped
+	bool clip = true;
+	for (uint8_t i = 0; (i < 8) && clip; ++i)
+		clip = p.IsBehindPlane( v[i] );
 	
-	MercuryVector dp; //plain normal in box space
-//	dp = p.GetNormal().DotProduct3(m_normals[0],m_normals[2],m_normals[3]);
-	dp[0] = m_normals[0].DotProduct( p.GetNormal() );
-	dp[1] = m_normals[1].DotProduct( p.GetNormal() );
-	dp[2] = m_normals[2].DotProduct( p.GetNormal() );
-	dp.NormalizeSelf();
-//	dp = p.GetNormal();
-	
-	MercuryVertex P; //max
-	if (dp[0] >= 0) P[0] = m_center.GetX() + m_extend.GetX();
-	if (dp[1] >= 0) P[1] = m_center.GetY() + m_extend.GetY();
-	if (dp[2] >= 0) P[2] = m_center.GetZ() + m_extend.GetZ();
-
-	MercuryVertex N; //min
-	if (dp[0] >= 0) N[0] = m_center.GetX() - m_extend.GetX();
-	if (dp[1] >= 0) N[1] = m_center.GetY() - m_extend.GetY();
-	if (dp[2] >= 0) N[2] = m_center.GetZ() - m_extend.GetZ();
-	
-	float x = dp.DotProduct( P );
-	float y = dp.DotProduct( N );
-//	printf("p %f     n %f\n", x, y);
-	if ( x < 0)
-		return true; //max value outside
-	if ( y < 0) //is negative value outside
-		return false; //intersect
-
-	return false;
-/*
-	db * m_extend;
-	float x = ABS( m_extend.GetX() * dp[0] );
-	x += ABS( m_extend.GetY() * dp[1] );
-	x += ABS( m_extend.GetZ() * dp[2] );
-	
-	float d = p.GetNormal().DotProduct( m_center+p.GetCenter() ); //signed distance
-	if ( ABS(d) <= x ) //intersection
-		return false;
-
-	return BEHIND_PLANE(d); //if we don't intersect, just see what side we are on
-	*/
+	return clip;
 }
 
 bool BoundingBox::Clip( const Frustum& f )
 {
 	bool clipped = false;
 	for (uint8_t i = 0; (i < 6) && !clipped; ++i)
-	{
-		bool t = Clip( f.GetPlane(i) );
-//		printf("p%d %d\n", i, t);
-		clipped = t;
-	}
-//	printf("******\n");
-//	return false;
+		clipped = Clip( f.GetPlane(i) );
 	
 	return clipped;
 }
-
-//bool BoundingBox::FrustumCull() const
-//{
-	/*feedback in openGL is probably depreciated
-	and is known to fallback to software
-	the OcclusionTest provides the same performence
-	it is probably best to avoid using this function */
-/*	
-	static float b[3];
-	uint32_t samples;
-	const float* center = GetCenter();
-	const float* extend = GetExtend();
-		
-	glPushAttrib( GL_CURRENT_BIT | GL_ENABLE_BIT );
-	glDisable(GL_CULL_FACE);
-	
-	glPushMatrix();
-	glTranslatef(center[0], center[1], center[2]);
-	glScalef(extend[0],extend[1],extend[2]);
-
-	uint8_t tCount = Texture::NumberActiveTextures();
-	for (uint8_t i = 0; i < tCount; ++i)
-	{
-		glActiveTexture( GL_TEXTURE0+i );
-		glClientActiveTextureARB( GL_TEXTURE0+i );
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glDisable( GL_TEXTURE_2D );
-	}
-	glFeedbackBuffer(3, GL_3D, b);
-	glRenderMode( GL_FEEDBACK );
-	
-	InitVBO();
-	
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID);
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-	glVertexPointer(3, GL_FLOAT, 0, 0);
-	glDrawArrays(GL_QUADS, 0, 24);
-
-	for (uint8_t i = 0; i < tCount; ++i)
-	{
-		glActiveTexture( GL_TEXTURE0+i );
-		glClientActiveTextureARB(GL_TEXTURE0+i);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glEnable( GL_TEXTURE_2D );
-	}
-	
-	samples = glRenderMode( GL_RENDER );
-	glPopMatrix();
-	glPopAttrib( );
-	
-//	return false;
-	return samples==0;
-}
-*/
 
 bool BoundingBox::DoFrustumTest( const MercuryMatrix& m )
 {
 	BoundingBox bb(*this);
 //	bb.Render();
 	bb.Transform( m );
-//	bb.Render();
 	return bb.Clip( *FRUSTUM );
 }
 
 void BoundingBox::DoOcclusionTest( OcclusionResult& result )
 {
-	return;
 	const float* center = GetCenter();
 	const float* extend = GetExtend();
 	

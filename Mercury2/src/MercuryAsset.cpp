@@ -3,6 +3,8 @@
 #include <MercuryNode.h>
 #include <GLHeaders.h>
 
+extern bool DOOCCLUSIONCULL;
+
 MercuryAsset::MercuryAsset()
 	:m_isInstanced(false), m_boundingVolume(NULL), m_loadState(NONE)
 {
@@ -42,7 +44,7 @@ void MercuryAsset::DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix)
 	if ( m_boundingVolume )
 	{
 		n->SetCulled( m_boundingVolume->DoFrustumTest(matrix) );
-		if ( !n->IsCulled() )
+		if ( !n->IsCulled() && DOOCCLUSIONCULL)
 			m_boundingVolume->DoOcclusionTest( n->GetOcclusionResult() );
 	}
 }

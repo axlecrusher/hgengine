@@ -99,6 +99,7 @@ class BoundingBox : public BoundingVolume
 		
 		static AlignedBuffer<float> m_vertexData;
 		static uint32_t m_vboID;
+		MercuryVertex v[8];
 };
 
 #endif
