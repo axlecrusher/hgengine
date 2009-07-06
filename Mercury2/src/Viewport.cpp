@@ -33,8 +33,9 @@ void Viewport::PreRender(const MercuryMatrix& matrix)
 	
 	VIEWMATRIX = matrix;
 	
-	MercuryVector z(0,0,1);
-	LOOKAT = (matrix * z).Normalize();
+	//the camera sets this (the calculation here is wrong)
+//	MercuryVector z(0,0,-1); //look down Z by default
+//	LOOKAT = (matrix * z).Normalize();
 	
 //	matrix.Print();
 //	EYE.Print("Eye");

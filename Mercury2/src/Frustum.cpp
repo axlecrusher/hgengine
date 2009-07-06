@@ -55,37 +55,40 @@ void Frustum::LookAt(const MercuryVertex& eye, const MercuryVector& look, const 
 	//Right now this only builds the frustum planes
 	MercuryVector X,Y,Z;
 	
-	Z = (eye - look).Normalize(); //direction behind camera
+	Z = look * -1; //direction opposite of look
 	X = (up.CrossProduct(Z)).Normalize(); //X axis
 	Y = Z.CrossProduct( X ); //real up
 	
-	m_nc = (eye - Z) * m_zNear;
-	m_fc = (eye - Z) * m_zFar;
+	m_nc = eye - (Z * m_zNear);
+	m_fc = eye - (Z * m_zFar);
 	
-	m_planes[PNEAR].Setup(m_nc, Z*(-1));
+	//All the normals must face inwards
+	m_planes[PNEAR].Setup(m_nc, Z*-1);
 	m_planes[PFAR].Setup(m_fc, Z);
+//	m_planes[PFAR].GetNormal().Print();
 //	m_fc.Print();
 //	Z.Print();
 	MercuryVector aux,normal;
 
 	aux = (m_nc + Y*m_nh) - eye;
 	aux.NormalizeSelf();
-	normal = aux * X;
+	normal = aux.CrossProduct(X);
 	m_planes[PTOP].Setup(m_nc+Y*m_nh,normal);
-
+	
 	aux = (m_nc - Y*m_nh) - eye;
 	aux.NormalizeSelf();
-	normal = X * aux;
+	normal = X.CrossProduct(aux);
 	m_planes[PBOTTOM].Setup(m_nc-Y*m_nh,normal);
 	
 	aux = (m_nc - X*m_nw) - eye;
 	aux.NormalizeSelf();
-	normal = aux * Y;
+	normal = aux.CrossProduct(Y);
 	m_planes[PLEFT].Setup(m_nc-X*m_nw,normal);
 
 	aux = (m_nc + X*m_nw) - eye;
 	aux.NormalizeSelf();
-	normal = Y * aux;
+	normal = Y.CrossProduct(aux);
+	normal.Print();
 	m_planes[PRIGHT].Setup(m_nc+X*m_nw,normal);
 }
 
