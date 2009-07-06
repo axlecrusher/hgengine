@@ -19,6 +19,7 @@ class HGMDLModel : public MercuryAsset
 		
 		static HGMDLModel* Generate();
 		
+		virtual void DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix);
 		virtual void PreRender(const MercuryNode* node);
 		virtual void Render(const MercuryNode* node);
 

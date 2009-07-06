@@ -58,6 +58,13 @@ void HGMDLModel::LoadModel(MercuryFile* hgmdl, HGMDLModel* model)
 	}
 }
 
+void HGMDLModel::DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix)
+{
+	if ( GetLoadState() != LOADING )
+		for(uint16_t i = 0; i < m_meshes.size(); ++i)
+			m_meshes[i]->DoCullingTests(n, matrix);
+}
+
 void HGMDLModel::PreRender(const MercuryNode* node)
 {
 	if ( GetLoadState() != LOADING )

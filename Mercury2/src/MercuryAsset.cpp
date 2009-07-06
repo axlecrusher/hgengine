@@ -37,8 +37,19 @@ void MercuryAsset::LoadedCallback()
 	SetLoadState( LOADED );
 }
 
+void MercuryAsset::DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix)
+{
+	if ( m_boundingVolume )
+	{
+		n->SetCulled( m_boundingVolume->DoFrustumTest(matrix) );
+		if ( !n->IsCulled() )
+			m_boundingVolume->DoOcclusionTest( n->GetOcclusionResult() );
+	}
+}
+
 void MercuryAsset::PreRender(const MercuryNode* node)
 {
+	/*
 	MercuryNode* n = const_cast<MercuryNode*>(node);
 	if ( m_boundingVolume )
 	{
@@ -46,6 +57,7 @@ void MercuryAsset::PreRender(const MercuryNode* node)
 		if ( !n->IsCulled() )
 			m_boundingVolume->DoOcclusionTest( n->GetOcclusionResult() );
 	}
+	*/
 }
 
 void MercuryAsset::DrawAxes()

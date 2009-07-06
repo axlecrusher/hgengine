@@ -51,6 +51,7 @@ class MercuryAsset : public RefBase, MessageHandler
 		inline BoundingVolume* GetBoundingVolume() const { return m_boundingVolume; }
 		inline const MString& Path() const { return m_path; }
 
+		virtual void DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix);
 		void DrawAxes();
 	protected:
 		void SetLoadState(LoadState ls); //thread safe

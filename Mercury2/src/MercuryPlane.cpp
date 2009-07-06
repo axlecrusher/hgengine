@@ -2,14 +2,10 @@
 #include <stdio.h>
 #include <MercuryMath.h>
 
-#define SIGNED_DIST(x) m_normal.DotProduct(x)
-
-// origional algorithim was -x<0
-#define BEHIND_PLANE(x) x>=0
-
 bool MercuryPlane::IsBehindPlane(const MercuryVertex& point) const
 {
-	return BEHIND_PLANE( SIGNED_DIST( point+m_center ) );
+	//signed distance between the plane and the point
+	return m_normal.DotProduct( point - m_center ) < 0;
 }
 
 /****************************************************************************

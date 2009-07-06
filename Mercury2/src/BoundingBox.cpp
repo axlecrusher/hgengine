@@ -56,37 +56,77 @@ void BoundingBox::LoadFromBinary(char* data)
 
 void BoundingBox::ComputeNormals()
 {
-	//normals are probably just the cardinal axises
-/*	MercuryVertex t(m_center, 0);
+	//these need to be the normals of each face
+	/*
+	MercuryVertex t(m_center, 0);
 	t.SetX( t.GetX() + m_extend.GetX() );
-	m_normals[0] = t;//.Normalize();
+	m_normals[0] = (m_center - t).Normalize();
 	
 	t = m_center;
 	t.SetY( t.GetY() + m_extend.GetY() );
-	m_normals[1] = t;//.Normalize();
+	m_normals[1] = (m_center - t).Normalize();
 
 	t = m_center;
 	t.SetZ( t.GetZ() + m_extend.GetZ() );
-	m_normals[2] = t;//.Normalize();
+	m_normals[2] = (m_center - t).Normalize();
+	m_normals[0].Print();
 	*/
 }
 
 void BoundingBox::Transform( const MercuryMatrix& m )
 {
+	//the frustum planes are defined in world space so
+	//these values need to be transformed into world space
 	BoundingBox bb;
-	bb.m_extend = m_extend;
-	MercuryMatrix mm = m * FRUSTUM->GetMatrix();
-	bb.m_center = mm * MercuryVertex(m_center, 1);
-	bb.m_normals[0] = (mm * MercuryVector(1.0f,0,0,0)).Normalize();
-	bb.m_normals[1] = (mm * MercuryVector(0,1.0f,0,0)).Normalize();
-	bb.m_normals[2] = (mm * MercuryVector(0,0,1.0f,0)).Normalize();
-//	bb.Render();
+	bb.m_extend = m * m_extend; //Rotate and scale
+	bb.m_center = m * MercuryVertex(m_center, 1);
+	
+	//transform the box axises into world axises
+	bb.m_normals[0] = (m * MercuryVector(1,0,0)).Normalize();
+	bb.m_normals[1] = (m * MercuryVector(0,1,0)).Normalize();
+	bb.m_normals[2] = (m * MercuryVector(0,0,1)).Normalize();
+	
 	*this = bb;
 }
 
 bool BoundingBox::Clip( const MercuryPlane& p )
 {
-	MercuryVertex dp = p.GetNormal().DotProduct3(m_normals[0], m_normals[1], m_normals[2]);
+	//do a quick spherical test using the signed distance
+	float d = p.GetNormal().DotProduct( m_center - p.GetCenter() );
+	if (d < -m_extend.Length()) return true;
+	return false;
+	
+	///XXX everything below is broken
+	
+	MercuryVector dp; //plain normal in box space
+//	dp = p.GetNormal().DotProduct3(m_normals[0],m_normals[2],m_normals[3]);
+	dp[0] = m_normals[0].DotProduct( p.GetNormal() );
+	dp[1] = m_normals[1].DotProduct( p.GetNormal() );
+	dp[2] = m_normals[2].DotProduct( p.GetNormal() );
+	dp.NormalizeSelf();
+//	dp = p.GetNormal();
+	
+	MercuryVertex P; //max
+	if (dp[0] >= 0) P[0] = m_center.GetX() + m_extend.GetX();
+	if (dp[1] >= 0) P[1] = m_center.GetY() + m_extend.GetY();
+	if (dp[2] >= 0) P[2] = m_center.GetZ() + m_extend.GetZ();
+
+	MercuryVertex N; //min
+	if (dp[0] >= 0) N[0] = m_center.GetX() - m_extend.GetX();
+	if (dp[1] >= 0) N[1] = m_center.GetY() - m_extend.GetY();
+	if (dp[2] >= 0) N[2] = m_center.GetZ() - m_extend.GetZ();
+	
+	float x = dp.DotProduct( P );
+	float y = dp.DotProduct( N );
+//	printf("p %f     n %f\n", x, y);
+	if ( x < 0)
+		return true; //max value outside
+	if ( y < 0) //is negative value outside
+		return false; //intersect
+
+	return false;
+/*
+	db * m_extend;
 	float x = ABS( m_extend.GetX() * dp[0] );
 	x += ABS( m_extend.GetY() * dp[1] );
 	x += ABS( m_extend.GetZ() * dp[2] );
@@ -96,17 +136,22 @@ bool BoundingBox::Clip( const MercuryPlane& p )
 		return false;
 
 	return BEHIND_PLANE(d); //if we don't intersect, just see what side we are on
+	*/
 }
 
 bool BoundingBox::Clip( const Frustum& f )
 {
-	bool inView = true;
-	for (uint8_t i = 0; (i < 6) && inView; ++i)
+	bool clipped = false;
+	for (uint8_t i = 0; (i < 6) && !clipped; ++i)
 	{
-		inView = Clip( f.GetPlane(i) )?false:inView;
+		bool t = Clip( f.GetPlane(i) );
+//		printf("p%d %d\n", i, t);
+		clipped = t;
 	}
+//	printf("******\n");
+//	return false;
 	
-	return !inView;
+	return clipped;
 }
 
 //bool BoundingBox::FrustumCull() const
@@ -166,8 +211,10 @@ bool BoundingBox::Clip( const Frustum& f )
 bool BoundingBox::DoFrustumTest( const MercuryMatrix& m )
 {
 	BoundingBox bb(*this);
+//	bb.Render();
 	bb.Transform( m );
-	return false;
+//	bb.Render();
+	return bb.Clip( *FRUSTUM );
 }
 
 void BoundingBox::DoOcclusionTest( OcclusionResult& result )
@@ -218,7 +265,7 @@ void BoundingBox::Render()
 	const float* center = GetCenter();
 	const float* extend = GetExtend();
 	
-//	glPushMatrix();
+	glPushMatrix();
 //	glLoadIdentity();
 	glPushAttrib( GL_CURRENT_BIT  );
 	glBegin(GL_LINES);
@@ -258,34 +305,45 @@ void BoundingBox::Render()
 
 	glEnd();
 	
-	//center
 	glPointSize(4);
 	glBegin(GL_POINTS);
+	//center
 	glVertex3f(center[0], center[1], center[2]);
+	//max point
+	glColor3f(1,1,0);
+	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+	//min point
+//	glColor3f(1,0,0);
+	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
 	glEnd();
+
 	
 	//normals
 	MercuryVertex c;
 	glBegin(GL_LINES);
+	
 	glColor3f(1.0f,0,0);
 	glVertex3f(center[0], center[1], center[2]);
 	c = center;
 	c += m_normals[0];
 	glVertex3f(c.GetX(), c.GetY(), c.GetZ());
+	
 	glColor3f(0,1.0f,0);
 	glVertex3f(center[0], center[1], center[2]);
 	c = center;
 	c += m_normals[1];
 	glVertex3f(c.GetX(), c.GetY(), c.GetZ());
+	
 	glColor3f(0,0,1.0f);
 	glVertex3f(center[0], center[1], center[2]);
 	c = center;
 	c += m_normals[2];
 	glVertex3f(c.GetX(), c.GetY(), c.GetZ());
+	
 	glEnd();
 
 	glPopAttrib( );
-//	glPopMatrix();
+	glPopMatrix();
 }
 
 void BoundingBox::PopulateVertices()

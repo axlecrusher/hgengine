@@ -224,7 +224,10 @@ void MercuryNode::PreRender(const MercuryMatrix& matrix)
 {
 	list< MercuryAsset* >::iterator i;
 	for (i = m_prerender.begin(); i != m_prerender.end(); ++i )
+	{
+		(*i)->DoCullingTests( this, matrix );
 		(*i)->PreRender(this);
+	}
 }
 
 void MercuryNode::Render(const MercuryMatrix& matrix)
