@@ -47,6 +47,14 @@ void glLoadMatrix(const MercuryMatrix& m)
 	glLoadMatrixf( l.Ptr() );
 }
 
+MercuryMatrix glGetMatrix(GLenum m)
+{
+	MercuryMatrix mm;
+	glGetFloatv(m, mm.Ptr());
+	mm.Transpose();
+	return mm;
+}
+
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
  *                                                                          *

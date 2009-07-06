@@ -4,6 +4,7 @@
 
 MString GlError2String(uint32_t e);
 void glLoadMatrix(const MercuryMatrix& m);
+MercuryMatrix glGetMatrix(GLenum m);
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
