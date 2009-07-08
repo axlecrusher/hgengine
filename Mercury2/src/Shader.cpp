@@ -5,11 +5,19 @@
 #include <GLHeaders.h>
 #include <string.h>
 
+//Because we need to dynamically check for glProgramParameteriEXT, even in Linux.
+#include <GL/glx.h>
+
 using namespace std;
 
 REGISTER_ASSET_TYPE( Shader );
 
 Shader * Shader::CurrentShader = NULL;
+
+//On many GL Implementations, this is super wonky.
+//It may not even exist at all, so we make it optional.
+bool IsCustomGLProgramParISet = false;
+PFNGLPROGRAMPARAMETERIEXTPROC CustomGLProgramParI;
 
 ShaderAttribute * ShaderAttributesSet::GetHandle( const MString & sName )
 {
@@ -31,6 +39,16 @@ Shader::Shader()
 	iTimeCode[0] = 0;
 	iTimeCode[1] = 0;
 	iTimeCode[2] = 0;
+
+#ifdef WIN32
+	CustomGLProgramParI = glProgramParameteriEXT;
+#else
+	if( !IsCustomGLProgramParISet )
+	{
+		CustomGLProgramParI = (PFNGLPROGRAMPARAMETERIEXTPROC)glXGetProcAddress( (GLubyte*)"glProgramParameteriEXT" );
+		IsCustomGLProgramParISet = true;
+	}
+#endif
 }
 
 Shader::~Shader()
@@ -272,10 +290,10 @@ bool Shader::LinkShaders()
 	glLinkProgramARB( iProgramID );
 
 	//If we're using a geometry shader, we have to do a little extra.
-	if( geometryShader )
+	if( CustomGLProgramParI && geometryShader )
 	{
-		glProgramParameteriEXT( iProgramID, GL_GEOMETRY_INPUT_TYPE_EXT, GL_TRIANGLES );
-		glProgramParameteriEXT( iProgramID, GL_GEOMETRY_OUTPUT_TYPE_EXT, GL_TRIANGLE_STRIP );
+		CustomGLProgramParI( iProgramID, GL_GEOMETRY_INPUT_TYPE_EXT, GL_TRIANGLES );
+		CustomGLProgramParI( iProgramID, GL_GEOMETRY_OUTPUT_TYPE_EXT, GL_TRIANGLE_STRIP );
 
 		int ierror, i;
 		GLint imaxvert;
@@ -288,7 +306,7 @@ bool Shader::LinkShaders()
 		}
 		for( i = 1; i < imaxvert; i++ )
 		{
-			glProgramParameteriEXT(iProgramID,GL_GEOMETRY_VERTICES_OUT_EXT,imaxvert/i);
+			CustomGLProgramParI(iProgramID,GL_GEOMETRY_VERTICES_OUT_EXT,imaxvert/i);
 			if( glGetError() == 0 )
 				break;
 		}

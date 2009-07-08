@@ -15,7 +15,7 @@
 #include <OGLExtensions.h>
 #else
 #include <GL/glext.h>
-#include <GL/freeglut.h>
+#include <GL/glu.h>
 #endif
 
 #include <GLHelpers.h>
