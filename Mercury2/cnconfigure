@@ -72,9 +72,9 @@ else
 fi
 
 echo "Link line used: g++ $CC_BASE $LD_BASE"
-echo -n "Checking to make sure ldflags and linker are acceptable... "
+echo -n "Checking to make sure ldflags and cflags are acceptable... "
 echo -e "int main() { return 0; }" > tmp.c
-if gcc $CC_BASE $LD_BASE -o bar tmp.c  1> foo 2> foo; then
+if g++ $CC_BASE $LD_BASE -o bar tmp.c  1> foo 2> foo; then
         rm ./tmp.c
         rm ./foo
         rm ./bar
