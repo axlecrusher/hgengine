@@ -5,6 +5,84 @@
 
 Callback0R< MercuryWindow* > MercuryWindow::genWindowClbk(X11Window::GenX11Window); //Register window generation callback
 
+//XXX: THIS SECTION IS INCOMPLETE!  IT NEEDS The right half of the keyboard (Bar arrow keys) + it needs the windows keys/sel keys mapped
+short X11Window::ConvertScancode( int scanin )
+{
+	switch( scanin )
+	{
+	case 9: return 27;	//esc
+	case 19: return '0';
+	case 49: return 97;	//`
+	case 22: return 8;      //backspace
+	case 95: return 292;    //F11
+	case 96: return 293;    //F12
+	case 20: return 45; 	//-
+	case 21: return 61;	//=
+	case 51: return 92;	//backslash
+	case 23: return 9;	//tab
+	case 50: return 160;	//[lshift]
+	case 62: return 161;	//[rshift]
+
+	case 38: return 'a';
+	case 56: return 'b';
+	case 54: return 'c';
+	case 40: return 'd';
+	case 26: return 'e';
+	case 41: return 'f';
+	case 42: return 'g';
+	case 43: return 'h';
+	case 31: return 'i';
+	case 44: return 'j';
+	case 45: return 'k';	
+	case 46: return 'l';	
+	case 58: return 'm';	
+	case 57: return 'n';	
+	case 32: return 'o';	
+	case 33: return 'p';	
+	case 24: return 'q';	
+	case 27: return 'r';	
+	case 39: return 's';	
+	case 28: return 't';	
+	case 30: return 'u';	
+	case 55: return 'v';	
+	case 25: return 'w';	
+	case 53: return 'x';	
+	case 29: return 'y';	
+	case 52: return 'z';	
+
+	case 34: return 91;	//misc keys inbetween letters and enter
+	case 35: return 93;
+	case 47: return 59;
+	case 48: return 39;
+	case 59: return 44;
+	case 60: return 46;
+	case 61: return 47;
+
+	case 111: return 273;	//arrow keys
+	case 113: return 276;
+	case 114: return 275;
+	case 116: return 274;
+
+	case 37: return 162;	//ctrl, win, alt
+	case 133: return 91;
+	case 64: return 164;
+	
+	case 108: return 165;	//RIGHT buttons like ctrl, sel, alt
+	case 135: return 93;
+	case 105: return 263;
+
+	case 36: return 13;
+	case 66: return 15;
+
+	default:
+		if( scanin >= 10 && scanin <= 18 )
+			return scanin + ( (short)'1' - 10 );
+		if( scanin >= 67 && scanin <= 76 )	//f1-f10
+			return scanin + ( 282 - 67 );
+		return scanin;
+	}
+}
+
 X11Window::X11Window(const MString& title, int width, int height, int bits, int depthBits, bool fullscreen)
 	:MercuryWindow(title, width, height, bits, depthBits, fullscreen), m_display(NULL)
 {
@@ -165,8 +243,8 @@ bool X11Window::PumpMessages()
 			{
 				//ignore autorepeat
 				if ( IsKeyRepeat(&event.xkey) ) break;
-				
-				KeyboardInput::ProcessKeyInput(event.xkey.keycode, true, false);
+
+				KeyboardInput::ProcessKeyInput( ConvertScancode( event.xkey.keycode ), true, false);
 				break;
 			}
 			case KeyRelease:
@@ -174,7 +252,7 @@ bool X11Window::PumpMessages()
 				//ignore autorepeat
 				if ( IsKeyRepeat(&event.xkey) ) break;
 				
-				KeyboardInput::ProcessKeyInput(event.xkey.keycode, false, false);
+				KeyboardInput::ProcessKeyInput( ConvertScancode( event.xkey.keycode ), false, false);
 				break;
 			}
 			case MotionNotify:

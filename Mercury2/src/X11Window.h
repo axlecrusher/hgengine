@@ -13,7 +13,7 @@ class X11Window : public MercuryWindow
 		virtual ~X11Window();
 		
 		static MercuryWindow* GenX11Window();
-		
+		static short ConvertScancode( int scanin );
 		virtual bool SwapBuffers();
 		virtual bool PumpMessages();
 

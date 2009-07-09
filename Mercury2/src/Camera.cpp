@@ -71,11 +71,11 @@ void CameraNode::Update(float dTime)
 	float a = 0;
 	float b = 0;
 	
-	if ( KeyboardInput::IsKeyDown(25) ) a += dTime*2; //W
-	if ( KeyboardInput::IsKeyDown(39) ) a -= dTime*2; //S
+	if ( KeyboardInput::IsKeyDown('w') ) a += dTime*2; //W
+	if ( KeyboardInput::IsKeyDown('s') ) a -= dTime*2; //S
 	
-	if ( KeyboardInput::IsKeyDown(38) ) b -= dTime*2; //A
-	if ( KeyboardInput::IsKeyDown(40) ) b += dTime*2; //D
+	if ( KeyboardInput::IsKeyDown('a') ) b -= dTime*2; //A
+	if ( KeyboardInput::IsKeyDown('d') ) b += dTime*2; //D
 
 	MercuryVector Xaxis = m_lookAt.CrossProduct( MercuryVector(0,1,0) );
 	Xaxis.NormalizeSelf();
