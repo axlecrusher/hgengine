@@ -6,7 +6,9 @@
 #include <string.h>
 
 //Because we need to dynamically check for glProgramParameteriEXT, even in Linux.
+#ifndef WIN32
 #include <GL/glx.h>
+#endif
 
 using namespace std;
 

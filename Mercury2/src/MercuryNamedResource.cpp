@@ -1,6 +1,6 @@
 #include <MercuryNamedResource.h>
 #include <MercuryUtil.h>
-
+#include <stdio.h>
 
 MString MercuryNamedResource::GetValueS( const MString & sDataPointer )
 {
@@ -35,7 +35,11 @@ float MercuryNamedResource::GetValueF( const MString & sDataPointer, float fDefa
 void  MercuryNamedResource::SetValueF( const MString & sDataPointer, float fValue )
 {
 	char sset[64];
+#ifdef WIN32
+	_snprintf_s( sset, 63, "%f", fValue );
+#else
 	snprintf( sset, 63, "%f", fValue );
+#endif
 	SetValueS( sDataPointer, sset );
 }
 
@@ -83,7 +87,11 @@ int  MercuryNamedResource::GetValueI( const MString & sDataPointer, int iDefault
 void MercuryNamedResource::SetValueI( const MString & sDataPointer, int iValue )
 {
 	char sset[64];
+#ifdef WIN32
+	_snprintf_s( sset, 63, "%d", iValue );
+#else
 	snprintf( sset, 63, "%d", iValue );
+#endif
 	SetValueS( sDataPointer, sset );
 }
 

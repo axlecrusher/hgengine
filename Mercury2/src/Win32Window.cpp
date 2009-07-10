@@ -116,6 +116,8 @@ void Win32Window::GenWindow()
 	ShowWindow(m_hwnd,SW_SHOW);
 	SetForegroundWindow(m_hwnd);					// Slightly Higher Priority
 	SetFocus(m_hwnd);								// Sets Keyboard Focus To The Window
+
+		
 }
 
 void Win32Window::SetPixelType()
@@ -175,6 +177,12 @@ void Win32Window::GenPixelType()
 
 bool Win32Window::SwapBuffers()
 {
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_NORMALIZE);
+	glEnable (GL_BLEND); 
+	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	return (::SwapBuffers( m_hdc )==TRUE);
 }
 
@@ -184,14 +192,35 @@ bool Win32Window::PumpMessages()
 
 	while (PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
 	{
-		// Stop Update if the user is trying to quit
-		if (message.message == WM_QUIT)
-			return false;
-		else
+		switch( message.message )
 		{
-			TranslateMessage(&message);				// Translate The Message
-			DispatchMessage(&message);				// Dispatch The Message
+		case WM_QUIT:
+			return false;
+		case WM_KEYDOWN:
+			printf( "%d\n", message.lParam>>16 );
+			break;
+		case WM_KEYUP:
+			break;
+		case WM_MOUSEMOVE:
+			break;
+		case WM_LBUTTONDOWN:
+			break;
+		case WM_LBUTTONUP:
+			break;
+		case WM_RBUTTONDOWN:
+			break;
+		case WM_RBUTTONUP:
+			break;
+		case WM_MBUTTONDOWN:
+			break;
+		case WM_MBUTTONUP:
+			break;
+		case 0x020A:	//Do nothing (at least now) It's a mouse wheel!
+			break;
 		}
+
+		TranslateMessage(&message);				// Translate The Message
+		DispatchMessage(&message);				// Dispatch The Message
 	}
 	return true;
 }

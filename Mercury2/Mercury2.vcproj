@@ -6,7 +6,6 @@
 	ProjectGUID="{071CC088-86A7-4A9F-9FEE-50BD69132886}"
 	RootNamespace="Mercury2"
 	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -66,8 +65,6 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -87,6 +84,9 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -142,8 +142,6 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -163,6 +161,9 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -190,19 +191,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\Camera.h"
-				>
-			</File>
-			<File
 				RelativePath=".\src\Frustum.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\src\FullscreenQuad.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\FullscreenQuad.h"
 				>
 			</File>
 			<File
@@ -278,6 +271,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryNamedResource.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryNode.cpp"
 				>
 			</File>
@@ -290,7 +287,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryPrefs.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryString.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryTheme.cpp"
 				>
 			</File>
 			<File
@@ -319,10 +324,6 @@
 			</File>
 			<File
 				RelativePath=".\src\ModuleManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ModuleManager.h"
 				>
 			</File>
 			<File
@@ -400,7 +401,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\Camera.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Frustum.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\FullscreenQuad.h"
 				>
 			</File>
 			<File
@@ -496,6 +505,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryNamedResource.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryNode.h"
 				>
 			</File>
@@ -508,7 +521,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryPrefs.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryString.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryTheme.h"
 				>
 			</File>
 			<File
@@ -545,6 +566,10 @@
 			</File>
 			<File
 				RelativePath=".\src\Mint.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\ModuleManager.h"
 				>
 			</File>
 			<File
