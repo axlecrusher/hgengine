@@ -1,0 +1,15 @@
+README for Mercury2
+
+This file contains notes relating to Mercury2 that is useful to the developers,
+and potentially users.
+
+
+
+* What packages do I need in order to use Mercury 2?
+
+On Ubuntu/Debian:
+ (for subversion) 
+    $ sudo apt-get install subversion
+ (for everything else) (note that mesa includes OpenGL and libpng-dev includes zlib-dev)
+    $ sudo apt-get install build-essential libglu1-mesa-dev libpng-dev libxml2-dev
+
