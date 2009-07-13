@@ -223,7 +223,7 @@ bool X11Window::PumpMessages()
 			{
 				XFocusChangeEvent*e = (XFocusChangeEvent*)&event;
 				inFocus = (event.type == FocusIn);
-				if (inFocus) XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
+				if (inFocus && m_bGrabbed ) XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
 				break;
 			}
 		}
@@ -263,13 +263,19 @@ bool X11Window::PumpMessages()
 				left = e->state & Button1Mask;
 				right = e->state & Button3Mask;
 				center = e->state & Button2Mask;
-				x = m_width/2 - e->x;
-				y = m_height/2 - e->y;
-				if (x!=0 || y!=0) //prevent recursive XWarp
+				if( m_bGrabbed )
 				{
-					MouseInput::ProcessMouseInput(x, y,
-					left, right, center);
-					XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
+					x = m_width/2 - e->x;
+					y = m_height/2 - e->y;
+					if (x!=0 || y!=0) //prevent recursive XWarp
+					{
+						MouseInput::ProcessMouseInput(x, y, left, right, center);
+						XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
+					}
+				}
+				else
+				{
+					MouseInput::ProcessMouseInput(e->x, e->y, left, right, center);
 				}
 				break;
 			}

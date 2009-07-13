@@ -32,10 +32,13 @@ public:
 	inline int Width() const { return m_width; }
 	inline int Height() const { return m_height; }
 
+	void SetGrabbedMouseMode( bool bGrabbed ) { m_bGrabbed = bGrabbed; }
+	bool GetGrabbedMouseMode( ) { return m_bGrabbed; }
 protected:
 	static Callback0R< MercuryWindow* > genWindowClbk;
 	static MercuryWindow* m_windowInstance;
 	
+	bool m_bGrabbed;
 	MString m_title;
 	int m_width, m_height;
 	uint8_t m_bits, m_depthBits;
