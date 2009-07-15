@@ -243,7 +243,7 @@ bool X11Window::PumpMessages()
 			{
 				//ignore autorepeat
 				if ( IsKeyRepeat(&event.xkey) ) break;
-
+				
 				KeyboardInput::ProcessKeyInput( ConvertScancode( event.xkey.keycode ), true, false);
 				break;
 			}
@@ -298,7 +298,7 @@ bool X11Window::IsKeyRepeat(XKeyEvent* e)
 			nEvent.xkey.time == e->time)
 		{
 			XNextEvent(m_display, &nEvent); //forget next event
-			KeyboardInput::ProcessKeyInput(e->keycode, true, true); //set repeat flag
+			KeyboardInput::ProcessKeyInput( ConvertScancode( e->keycode ), true, true ); //set repeat flag
 			return true;
 		}
 	}
