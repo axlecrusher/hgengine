@@ -1,10 +1,12 @@
 #include <global.h>
 #include <MercuryUtil.h>
 #include <MercuryMatrix.h>
+#include <MercuryVertex.h>
 
 MString GlError2String(uint32_t e);
 void glLoadMatrix(const MercuryMatrix& m);
 MercuryMatrix glGetMatrix(int m);
+MercuryVertex pointFromScreenLoc(int screen_x, int screen_y);
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
