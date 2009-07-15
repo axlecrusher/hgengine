@@ -14,6 +14,7 @@ MercuryVBO::MercuryVBO()
 	:MercuryAsset(), m_initiated(false)
 {
 	m_bufferIDs[0] = m_bufferIDs[1] = 0;
+	m_bDirtyIndices = m_bDirtyVertices = 0;
 }
 
 MercuryVBO::~MercuryVBO()
@@ -27,11 +28,18 @@ void MercuryVBO::Render(const MercuryNode* node)
 	uint8_t numTextures = Texture::NumberActiveTextures();
 	uint16_t stride = sizeof(float)*8;
 	
-	if ( !m_initiated ) InitVBO();
-		
+	if ( !m_initiated )
+		InitVBO();
+
 	if ( this != m_lastVBOrendered )
-	{		
+	{
 		m_lastVBOrendered = this;
+
+		if ( m_bDirtyVertices )
+			UpdateVertices();
+		if( m_bDirtyIndices )
+			UpdateIndices();
+
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]);
 		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]);
 		glVertexPointer(3, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*5));
@@ -58,19 +66,30 @@ void MercuryVBO::Render(const MercuryNode* node)
 
 void MercuryVBO::InitVBO()
 {
-	glGenBuffersARB(2, m_bufferIDs);
-	
-	//vertex VBO
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_vertexData.LengthInBytes(), m_vertexData.Buffer(), GL_STATIC_DRAW_ARB);
+	if (!m_bufferIDs[0])
+	{
+		glGenBuffersARB(2, m_bufferIDs);
+	}
 
-	//indices VBO
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]);
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_indexData.LengthInBytes(), m_indexData.Buffer(), GL_STATIC_DRAW_ARB);
-		
+	UpdateIndices();
+	UpdateVertices();
 	glEnableClientState(GL_VERTEX_ARRAY);
 
 	m_initiated = true;
+}
+
+void MercuryVBO::UpdateIndices()
+{
+	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]);
+	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_indexData.LengthInBytes(), m_indexData.Buffer(), GL_STATIC_DRAW_ARB);
+	m_bDirtyIndices = 0;
+}
+
+void MercuryVBO::UpdateVertices()
+{
+	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]);
+	glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_vertexData.LengthInBytes(), m_vertexData.Buffer(), GL_STATIC_DRAW_ARB);
+	m_bDirtyVertices = 0;
 }
 
 void MercuryVBO::AllocateVertexSpace(unsigned int count)

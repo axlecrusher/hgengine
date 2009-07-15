@@ -26,13 +26,20 @@ class MercuryVBO : public MercuryAsset
 		short unsigned int * GetIndexHandle() { return &m_indexData[0]; }
 	
 		static void* m_lastVBOrendered;
-		
+
+		void DirtyVertices() { m_bDirtyVertices = 1; }
+		void DirtyIndices() { m_bDirtyIndices = 1; }
 	private:
 		virtual void InitVBO();
 	
 		unsigned int m_bufferIDs[2];
-		bool m_initiated;		
+		bool m_initiated;
+	
+		bool m_bDirtyIndices;
+		bool m_bDirtyVertices;
 
+		void UpdateVertices();
+		void UpdateIndices();
 	protected:
 		AlignedBuffer<float> m_vertexData;
 		AlignedBuffer<uint16_t> m_indexData;
