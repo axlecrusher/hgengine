@@ -22,18 +22,19 @@ short X11Window::ConvertScancode( int scanin )
 {
 	switch( scanin )
 	{
-	case 9: return 27;	//esc
+	case 9: return 27;      //esc
 	case 19: return '0';
-	case 49: return 97;	//`
+	case 49: return 97;     //`
 	case 22: return 8;      //backspace
 	case 95: return 292;    //F11
 	case 96: return 293;    //F12
-	case 20: return 45; 	//-
-	case 21: return 61;	//=
-	case 51: return 92;	//backslash
-	case 23: return 9;	//tab
-	case 50: return 160;	//[lshift]
-	case 62: return 161;	//[rshift]
+	case 20: return 45;     //-
+	case 21: return 61;     //=
+	case 51: return 92;     //backslash
+	case 23: return 9;      //tab
+	case 66: return 15;     //Caps lock
+	case 50: return 160;    //[lshift]
+	case 62: return 161;    //[rshift]
 
 	case 38: return 'a';
 	case 56: return 'b';
@@ -62,34 +63,61 @@ short X11Window::ConvertScancode( int scanin )
 	case 29: return 'y';	
 	case 52: return 'z';	
 
-	case 34: return 91;	//misc keys inbetween letters and enter
-	case 35: return 93;
-	case 47: return 59;
-	case 48: return 39;
-	case 59: return 44;
-	case 60: return 46;
-	case 61: return 47;
+	case 47: return 59;	//;
+	case 48: return 39;	//'
+	case 59: return 44;	//,
+	case 60: return 46;	//.
+	case 61: return 47;	// /
 
-	case 111: return 273;	//arrow keys
-	case 113: return 276;
-	case 114: return 275;
-	case 116: return 274;
+	case 111: return 273;	//arrow keys: up
+	case 113: return 276;	//arrow keys: left
+	case 114: return 275;	//arrow keys: right
+	case 116: return 274;	//arrow keys: down
 
-	case 37: return 162;	//ctrl, win, alt
-	case 133: return 91;
-	case 64: return 164;
+	case 37: return 162;	//left ctrl
+	case 133: return 91;	//left super (aka win)
+	case 64: return 164;	//left alt
+	case 65: return 32;	//space bar
+	case 108: return 165;	//right alt
+	case 134: return 91;	//right super (aka win)
+	case 135: return 93;	//menu
+	case 105: return 268;	//right control
 	
-	case 108: return 165;	//RIGHT buttons like ctrl, sel, alt
-	case 135: return 93;
-	case 105: return 263;
-
-	case 36: return 13;
-	case 66: return 15;
-
+	case 107: return 316;	//Print Screen
+	//case 78: scroll lock
+	case 127: return 19;	//Pause
+	case 118: return 277;	//Insert
+	case 110: return 278;	//Home
+	case 112: return 280;	//Page Up
+	case 119: return 127;	//Delete
+	case 115: return 279;	//End
+	case 117: return 181;	//Page Down
+	
+	//case 77: Num Lock (not mapped)
+	case 106: return 267;	//Keypad /
+	case 63: return 268;	//Keypad *
+	case 82: return 269;	//Keypad -
+	case 79: return 263;	//Keypad 7
+	case 80: return 264;	//Keypad 8
+	case 81: return 265;	//Keypad 9
+	case 86: return 270;	//Keypad +
+	case 83: return 260;	//Keypad 4
+	case 84: return 261;	//Keypad 5
+	case 85: return 262;	//Keypad 6
+	case 87: return 257;	//Keypad 1
+	case 88: return 258;	//Keypad 2
+	case 89: return 259;	//Keypad 3
+	case 36:		//Enter
+	case 104: return 13;	//Keypad enter
+	case 90: return 260;	//Keypad 0
+	case 91: return 266;	//Keypad .
+	
 	default:
+		// numbers
 		if( scanin >= 10 && scanin <= 18 )
 			return scanin + ( (short)'1' - 10 );
-		if( scanin >= 67 && scanin <= 76 )	//f1-f10
+		// f1 -- f10
+		if( scanin >= 67 && scanin <= 76 )
 			return scanin + ( 282 - 67 );
 		return scanin;
 	}
