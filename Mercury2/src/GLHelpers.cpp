@@ -55,6 +55,29 @@ MercuryMatrix glGetMatrix(GLenum m)
 	return mm;
 }
 
+MercuryVertex pointFromScreenLoc(int screen_x, int screen_y)
+{
+	GLfloat winX, winY, winZ;
+	GLdouble mouseX = 0, mouseY = 0, mouseZ = 0;
+	GLint viewport[4];
+	GLdouble modelview[16];
+	GLdouble projection[16];
+	
+	glGetIntegerv(GL_VIEWPORT, viewport);
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+	glGetDoublev(GL_PROJECTION_MATRIX, projection);
+	
+	winX = (float)screen_x;
+	winY = (float)viewport[3] - (float)screen_y;
+	glReadPixels( screen_x, (int)winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
+	
+	gluUnProject(
+		winX, winY, winZ,
+		modelview, projection, viewport,
+		&mouseX, &mouseY, &mouseZ);
+	return MercuryVertex( mouseX, mouseY, mouseZ );
+}
+
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
  *                                                                          *
