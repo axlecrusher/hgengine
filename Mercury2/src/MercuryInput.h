@@ -10,22 +10,25 @@ const MString INPUTEVENT_KEYBOARD = "KeyboardInputEvent";
 class MouseInput : public MessageData
 {
 	public:
-		static void ProcessMouseInput(int dx, int dy, bool leftButton, bool rightButton, bool centerButton);
+		typedef union
+		{
+			uint8_t data;
+			struct {
+				unsigned int left: 1;
+				unsigned int right: 1;
+				unsigned int center: 1;
+				unsigned int scrollup: 1;
+				unsigned int scrolldown: 1;
+			};
+		} buttonMask;
+		static void ProcessMouseInput(int dx, int dy, bool leftButton, bool rightButton, bool centerButton, bool scrollUpButton, bool scrollDownButton);
 		
 		MouseInput();
 		int32_t dx, dy;
-		uint8_t buttonMasks;
-
-		enum MouseButton
-		{
-			MOUSE_NONE = 0,
-			MOUSE_LEFT = 1,
-			MOUSE_RIGHT = 2,
-			MOUSE_CENTER = 3
-		};
+		buttonMask buttons;
 
 	private:
-		static uint8_t currentButtonMasks;
+		static buttonMask currentButtonMasks;
 };
 
 class KeyboardInput : public MessageData

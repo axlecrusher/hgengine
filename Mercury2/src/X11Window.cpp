@@ -3,6 +3,18 @@
 #include <MercuryInput.h>
 #include <MercuryPrefs.h>
 
+#define MOUSE_BTN_LEFT 1
+#define MOUSE_BTN_RIGHT 3
+#define MOUSE_BTN_CENTER 2
+#define MOUSE_BTN_SCROLL_UP 4
+#define MOUSE_BTN_SCROLL_DOWN 5
+
+// Use X11_MASK(MOUSE_BTN_SCROLL_UP) to generate the token Button4Mask
+#define X11_MASK(x) _X11_MASK(x)
+// Sigh... second #define needed, because otherwise x doesn't get evaluated.
+// That is, instead of giving you Button4Mask this would give ButtonMOUSE_BTN_SCROLL_UPMask
+#define _X11_MASK(x) Button##x##Mask
+
 Callback0R< MercuryWindow* > MercuryWindow::genWindowClbk(X11Window::GenX11Window); //Register window generation callback
 
 //XXX: THIS SECTION IS INCOMPLETE!  IT NEEDS The right half of the keyboard (Bar arrow keys) + it needs the windows keys/sel keys mapped
@@ -236,7 +248,19 @@ bool X11Window::PumpMessages()
 			case ButtonRelease:
 			{
 				XButtonEvent* e = (XButtonEvent*)&event;
-				MouseInput::ProcessMouseInput(0, 0, e->button & Button1, e->button & Button3, e->button & Button2);
+				uint8_t left, right, center, su, sd;
+				left   = (e->state & X11_MASK(MOUSE_BTN_LEFT))        ^ (e->button == MOUSE_BTN_LEFT);
+				right  = (e->state & X11_MASK(MOUSE_BTN_RIGHT))       ^ (e->button == MOUSE_BTN_RIGHT);
+				center = (e->state & X11_MASK(MOUSE_BTN_CENTER))      ^ (e->button == MOUSE_BTN_CENTER);
+				su     = (e->state & X11_MASK(MOUSE_BTN_SCROLL_UP))   ^ (e->button == MOUSE_BTN_SCROLL_UP);
+				sd     = (e->state & X11_MASK(MOUSE_BTN_SCROLL_DOWN)) ^ (e->button == MOUSE_BTN_SCROLL_DOWN);
+				
+				MouseInput::ProcessMouseInput(0, 0, 
+					e->state & X11_MASK(MOUSE_BTN_LEFT),
+					e->state & X11_MASK(MOUSE_BTN_RIGHT),
+					e->state & X11_MASK(MOUSE_BTN_CENTER),
+					e->state & X11_MASK(MOUSE_BTN_SCROLL_UP),
+					e->state & X11_MASK(MOUSE_BTN_SCROLL_DOWN));
 				break;
 			}
 			case KeyPress:
@@ -257,25 +281,28 @@ bool X11Window::PumpMessages()
 			}
 			case MotionNotify:
 			{
+				
 				XMotionEvent* e = (XMotionEvent*)&event;
 				int x, y;
-				bool left, right, center;
-				left = e->state & Button1Mask;
-				right = e->state & Button3Mask;
-				center = e->state & Button2Mask;
+				bool left, right, center, su, sd;
+				left = e->state & X11_MASK(MOUSE_BTN_LEFT);
+				right = e->state & X11_MASK(MOUSE_BTN_RIGHT);
+				center = e->state & X11_MASK(MOUSE_BTN_CENTER);
+				su = e->state & X11_MASK(MOUSE_BTN_SCROLL_UP);
+				sd = e->state & X11_MASK(MOUSE_BTN_SCROLL_DOWN);
 				if( m_bGrabbed )
 				{
 					x = m_width/2 - e->x;
 					y = m_height/2 - e->y;
 					if (x!=0 || y!=0) //prevent recursive XWarp
 					{
-						MouseInput::ProcessMouseInput(x, y, left, right, center);
+						MouseInput::ProcessMouseInput(x, y, left, right, center, su, sd);
 						XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
 					}
 				}
 				else
 				{
-					MouseInput::ProcessMouseInput(e->x, e->y, left, right, center);
+					MouseInput::ProcessMouseInput(e->x, e->y, left, right, center, su, sd);
 				}
 				break;
 			}

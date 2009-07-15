@@ -2,23 +2,24 @@
 #include <MercuryMessageManager.h>
 
 MouseInput::MouseInput()
-	:MessageData(), dx(0), dy(0), buttonMasks(0)
+	:MessageData(), dx(0), dy(0)
 {
+	buttons.data = 0;
 }
 
-void MouseInput::ProcessMouseInput(int dx, int dy, bool leftButton, bool rightButton, bool centerButton)
+void MouseInput::ProcessMouseInput(int dx, int dy, bool leftButton, bool rightButton, bool centerButton, bool scrollUpButton, bool scrollDownButton)
 {	
 	MouseInput* mi = new MouseInput();
 	mi->dx = dx;
 	mi->dy = dy;
-	
-	uint8_t buttonMasks = 0;
-	buttonMasks |= (leftButton << MOUSE_LEFT); //enable if true
-	buttonMasks |= (rightButton << MOUSE_RIGHT); //enable if true
-	buttonMasks |= (centerButton << MOUSE_CENTER); //enable if true
-	mi->buttonMasks = buttonMasks;
-	
-	currentButtonMasks = buttonMasks;
+	buttonMask buttons = {0};
+	buttons.left = leftButton;
+	buttons.right = rightButton;
+	buttons.center = centerButton;
+	buttons.scrollup = scrollUpButton;
+	buttons.scrolldown = scrollDownButton;
+	mi->buttons = buttons;
+	currentButtonMasks = buttons;
 	
 	POST_MESSAGE( INPUTEVENT_MOUSE, mi, 0 );
 }
@@ -65,7 +66,7 @@ bool KeyboardInput::IsKeyRepeat(uint16_t key)
 
 
 uint8_t KeyboardInput::m_keyStates[512];
-uint8_t MouseInput::currentButtonMasks;
+MouseInput::buttonMask MouseInput::currentButtonMasks;
 
 
 /****************************************************************************
