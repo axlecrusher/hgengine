@@ -120,6 +120,14 @@ MercuryNode* MercuryNode::FindChild( const MString & sNameOfNode, int depth )
 	return NULL;
 }
 
+MercuryNode* MercuryNode::FindParent( const MString & sNameOfNode, int depth )
+{
+	MercuryNode * ret = this;
+	while( ret && ret->GetName() != sNameOfNode )
+		ret = ret->Parent();
+	return ret;
+}
+
 
 void MercuryNode::RecursiveUpdate(float dTime)
 {

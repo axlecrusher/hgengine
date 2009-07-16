@@ -48,6 +48,10 @@ class MercuryNode : public MessageHandler
 		/** The search order is breadth-first, however this may change without notice! */
 		MercuryNode* FindChild( const MString & sNameOfNode, int depth = MAXINT );
 
+		///Find a parent node that has the name matching sNameOfNode.
+		/** Traversal is from the closest parent on upward */
+		MercuryNode* FindParent( const MString & sNameOfNode, int depth = MAXINT );
+
 		virtual void Update(float dTime) {};
 		virtual void RecursiveUpdate(float dTime);
 		void ThreadedUpdate(float dTime);
