@@ -7,11 +7,6 @@
 #include <MercuryPlane.h>
 #include <Frustum.h>
 
-extern const Frustum* FRUSTUM;
-extern MercuryMatrix VIEWMATRIX;
-extern MercuryVertex EYE;
-extern MercuryVector LOOKAT;
-
 class Viewport : public MercuryNode
 {
 	public:

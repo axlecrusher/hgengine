@@ -28,8 +28,8 @@ void MercuryVBO::Render(const MercuryNode* node)
 	uint8_t numTextures = Texture::NumberActiveTextures();
 	uint16_t stride = sizeof(float)*8;
 	
-	if ( !m_initiated )
-		InitVBO();
+	if ( !m_initiated ) InitVBO();
+glDisable(GL_CULL_FACE);		
 
 	if ( this != m_lastVBOrendered )
 	{

@@ -1,47 +1,61 @@
-#ifndef FRUSTUM_H
-#define FRUSTUM_H
+#include <Orthographic.h>
+#include <GLHeaders.h>
+#include <MercuryWindow.h>
 
-#include <MercuryMatrix.h>
-#include <MercuryPlane.h>
+REGISTER_NODE_TYPE(Orthographic);
 
-enum PlanePos
+Orthographic::Orthographic()
 {
-	PTOP = 0,
- PBOTTOM,
- PLEFT,
- PRIGHT,
- PNEAR,
- PFAR
-};
+}
 
-class Frustum
+void Orthographic::PreRender(const MercuryMatrix& matrix)
 {
+	FRUSTUM = &m_frustum;
+	
+	MercuryWindow* w = MercuryWindow::GetCurrentWindow();
 
-	public:
-		void SetPerspective( float fov, float aspect, float znear, float zfar );
-		const MercuryMatrix& GetMatrix() const { return m_frustum; }
-		void ComputeFrustum(float left, float right, float bottom, float top, float zNear, float zFar);
-		void LookAt(const MercuryVertex& eye, const MercuryVector& look, const MercuryVector& up);
-		void Ortho(float left, float right, float bottom, float top, float near, float far);
-		
-		inline const MercuryPlane& GetPlane(int i) const { return m_planes[i]; }
-	private:
-		
-		MercuryPlane m_planes[6];
-		MercuryMatrix m_frustum;
-		
-		float m_aspect, m_fov, m_zNear, m_zFar;
-		float m_nh, m_nw, m_fh, m_fw;
-		
-		MercuryVector m_nc, m_fc;
-};
+	//Load the frustum into the projection
+	//"eye" position does not go into projection
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrix( m_frustum.GetMatrix() );
+	m_frustum.GetMatrix().Print();
+	glMatrixMode(GL_MODELVIEW);
+	
+	//compute the position of the eye
+//	EYE = MercuryVertex(0,0,0,1); //wrong
+//	EYE = matrix * EYE;
+	
+	VIEWMATRIX = matrix;
+	
+	//the camera sets this (the calculation here is wrong)
+//	MercuryVector z(0,0,-1); //look down Z by default
+//	LOOKAT = (matrix * z).Normalize();
+	
+//	matrix.Print();
+//	EYE.Print("Eye");
+//	LOOKAT.Print("Lookat");
+//	printf("******\n");
+//	LOOKAT = (matrix * l).Normalize();
+//	LOOKAT.
+//	LOOKAT.Print();
+	
+	//Sets up the clipping frustum
+//	m_frustum.LookAt(EYE, LOOKAT, MercuryVertex(0,1,0));
+}
 
-extern const Frustum* FRUSTUM;
-extern MercuryMatrix VIEWMATRIX;
-extern MercuryVertex EYE;
-extern MercuryVector LOOKAT;
+void Orthographic::LoadFromXML(const XMLNode& node)
+{
+	MercuryWindow* w = MercuryWindow::GetCurrentWindow();
 
-#endif
+	m_frustum.Ortho( StrToFloat(node.Attribute("left")),
+			StrToFloat(node.Attribute("right")),
+			StrToFloat(node.Attribute("bottom")),
+			StrToFloat(node.Attribute("top")),
+			StrToFloat(node.Attribute("near")),
+			StrToFloat(node.Attribute("far")) );
+	
+	MercuryNode::LoadFromXML(node);
+}
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *

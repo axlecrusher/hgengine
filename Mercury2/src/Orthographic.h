@@ -1,48 +1,28 @@
-#ifndef FRUSTUM_H
-#define FRUSTUM_H
+#ifndef ORTHOGRAPHIC_H
+#define ORTHOGRAPHIC_H
 
+#include <MercuryNode.h>
 #include <MercuryMatrix.h>
+#include <MercuryVertex.h>
 #include <MercuryPlane.h>
+#include <Frustum.h>
 
-enum PlanePos
+class Orthographic : public MercuryNode
 {
-	PTOP = 0,
- PBOTTOM,
- PLEFT,
- PRIGHT,
- PNEAR,
- PFAR
-};
-
-class Frustum
-{
-
 	public:
-		void SetPerspective( float fov, float aspect, float znear, float zfar );
-		const MercuryMatrix& GetMatrix() const { return m_frustum; }
-		void ComputeFrustum(float left, float right, float bottom, float top, float zNear, float zFar);
-		void LookAt(const MercuryVertex& eye, const MercuryVector& look, const MercuryVector& up);
-		void Ortho(float left, float right, float bottom, float top, float near, float far);
+		Orthographic();
+		virtual void PreRender(const MercuryMatrix& matrix);
 		
-		inline const MercuryPlane& GetPlane(int i) const { return m_planes[i]; }
+		virtual void LoadFromXML(const XMLNode& node);
+	
+		GENRTTI(Orthographic);
 	private:
-		
-		MercuryPlane m_planes[6];
-		MercuryMatrix m_frustum;
-		
-		float m_aspect, m_fov, m_zNear, m_zFar;
-		float m_nh, m_nw, m_fh, m_fw;
-		
-		MercuryVector m_nc, m_fc;
+		Frustum m_frustum;
+//		float m_xFactor, m_yFactor;
+//		int m_minx, m_miny;
 };
-
-extern const Frustum* FRUSTUM;
-extern MercuryMatrix VIEWMATRIX;
-extern MercuryVertex EYE;
-extern MercuryVector LOOKAT;
 
 #endif
-
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
  *                                                                          *
