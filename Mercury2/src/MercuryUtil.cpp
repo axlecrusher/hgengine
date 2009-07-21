@@ -2,6 +2,7 @@
 #include <MercuryFile.h>
 #include <Mint.h>
 #include <MercuryVector.h>
+#include <MercuryBacktrace.h>
 
 MString ToUpper(const MString& s)
 {
