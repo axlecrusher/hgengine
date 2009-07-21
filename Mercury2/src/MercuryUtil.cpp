@@ -74,8 +74,11 @@ int32_t StrToInt(const  MString & s, int32_t d)
 
 void fail_m( const char * message, const char * file, int line )
 {
+	char backtracebuffer[2048];
 	//Probably should message box here somewhere in the event we're running on Windows.
 	fprintf( stderr, "Fatal Error: \"%s\" in %s:%d\n", message, file, line );
+	cnget_backtrace( 1, backtracebuffer, 2047 );
+	puts( backtracebuffer );
 	exit(-1);
 }
 
