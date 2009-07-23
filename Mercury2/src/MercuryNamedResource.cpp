@@ -56,7 +56,7 @@ bool MercuryNamedResource::GetValueB( const MString & sDataPointer, bool bDefaul
 		if( tmpret.compare( "YES" ) == 0 )	return 1;
 		if( tmpret.compare( "NO" ) == 0 )	return 0;
 
-		return StrToInt( tmpret );
+		return StrToInt( tmpret ) != 0;
 	}
 
 	if( bSetValue )

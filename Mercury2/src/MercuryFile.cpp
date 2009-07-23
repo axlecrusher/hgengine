@@ -60,7 +60,7 @@ MercuryFile * MercuryFileManager::Open( const MString & sPath, FilePermission p 
 		if( *c == ':' )
 		{
 			c++;
-			MString ExtString = ToProper( MString( sPath.c_str(), c-sPath.c_str()-1 ) ) + "/" + c;
+			MString ExtString = ToProper( MString( sPath.c_str(), (int)(c-sPath.c_str()-1) ) ) + "/" + c;
 			const MVector< MercuryThemeManager::Theme > & th = THEME.GetThemes();
 			for( int i = (int)th.size()-1; i >= 0; i-- )
 			{

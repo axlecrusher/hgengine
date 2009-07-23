@@ -13,9 +13,10 @@ typedef float FloatRow[4];
 #ifdef WIN32
 #include <limits>
 #define INFINITY  (std::numeric_limits<float>::infinity())
+#else
+#define MAXINT	(0x7FFFFFFF)
 #endif
 
-#define MAXINT	(0x7FFFFFFF)
 
 void ZeroFloatRow(FloatRow& r);
 

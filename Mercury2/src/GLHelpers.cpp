@@ -75,7 +75,7 @@ MercuryVertex pointFromScreenLoc(int screen_x, int screen_y)
 		winX, winY, winZ,
 		modelview, projection, viewport,
 		&mouseX, &mouseY, &mouseZ);
-	return MercuryVertex( mouseX, mouseY, mouseZ );
+	return MercuryVertex( (float)mouseX, (float)mouseY, (float)mouseZ );
 }
 
 /****************************************************************************

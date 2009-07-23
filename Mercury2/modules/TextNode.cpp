@@ -242,8 +242,8 @@ void TextNode::RenderText()
 	}
 
 	//Stage 3: Actually generate the geometry.
-	((MercuryVBO*)m_kVBO.Ptr())->AllocateIndexSpace(chars.size()*6);
-	((MercuryVBO*)m_kVBO.Ptr())->AllocateVertexSpace(chars.size()*4);
+	((MercuryVBO*)m_kVBO.Ptr())->AllocateIndexSpace((unsigned)chars.size()*6);
+	((MercuryVBO*)m_kVBO.Ptr())->AllocateVertexSpace((unsigned)chars.size()*4);
 
 	for( unsigned i = 0; i < chars.size(); i++ )
 	{

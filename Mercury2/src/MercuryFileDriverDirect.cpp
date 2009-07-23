@@ -150,7 +150,7 @@ unsigned long MercuryFileObjectDirect::Read( void * data, unsigned long length )
 {
 	if ( m_fF == NULL )
 		return false;
-	return ( fread( data, 1, length, m_fF) );
+	return (unsigned long)( fread( data, 1, length, m_fF) );
 }
 
 bool MercuryFileObjectDirect::Check()
