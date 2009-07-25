@@ -12,35 +12,12 @@ void Orthographic::PreRender(const MercuryMatrix& matrix)
 {
 	FRUSTUM = &m_frustum;
 	
-	MercuryWindow* w = MercuryWindow::GetCurrentWindow();
-
 	//Load the frustum into the projection
-	//"eye" position does not go into projection
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrix( m_frustum.GetMatrix() );
-	m_frustum.GetMatrix().Print();
 	glMatrixMode(GL_MODELVIEW);
 	
-	//compute the position of the eye
-//	EYE = MercuryVertex(0,0,0,1); //wrong
-//	EYE = matrix * EYE;
-	
 	VIEWMATRIX = matrix;
-	
-	//the camera sets this (the calculation here is wrong)
-//	MercuryVector z(0,0,-1); //look down Z by default
-//	LOOKAT = (matrix * z).Normalize();
-	
-//	matrix.Print();
-//	EYE.Print("Eye");
-//	LOOKAT.Print("Lookat");
-//	printf("******\n");
-//	LOOKAT = (matrix * l).Normalize();
-//	LOOKAT.
-//	LOOKAT.Print();
-	
-	//Sets up the clipping frustum
-//	m_frustum.LookAt(EYE, LOOKAT, MercuryVertex(0,1,0));
 }
 
 void Orthographic::LoadFromXML(const XMLNode& node)
