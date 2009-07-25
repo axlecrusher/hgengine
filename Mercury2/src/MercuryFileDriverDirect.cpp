@@ -40,7 +40,7 @@ bool MercuryFile::Init( const MString &sPath, FilePermission p )
 bool MercuryFile::ReadLine( MString & data )
 {
 	data = "";
-	char b1[1];
+	char b1[1] = { 0 };
 	bool Success;
 	while ( ( Success = ( Read( b1, 1 ) > 0 ) ) )
 	{
@@ -223,6 +223,7 @@ MercuryFileDirverDirect::MercuryFileDirverDirect()
 	}
 #else
 	char buffer[PATH_MAX];
+	memset( buffer, 0, PATH_MAX );
 	char * path_end;
 	if( readlink( "/proc/self/exe", buffer, PATH_MAX ) <= 0 )
 	{
