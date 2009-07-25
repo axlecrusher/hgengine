@@ -38,7 +38,7 @@ class TransformNode : public MercuryNode
 		GENRTTI(TransformNode);
 		
 	private:
-		void RippleTaintDown();
+		static void RippleTaintDown(MercuryNode* n);
 		
 		//use of accessor required
 		MercuryVertex m_scale;

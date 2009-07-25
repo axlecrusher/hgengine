@@ -44,7 +44,7 @@ void TransformNode::SetRotation( const MQuaternion& rotation )
 void TransformNode::SetTaint(bool taint)
 {
 	m_tainted = taint;
-	RippleTaintDown();
+	RippleTaintDown(this);
 }
 
 void TransformNode::ComputeMatrix()
@@ -81,19 +81,18 @@ const MercuryMatrix& TransformNode::GetParentMatrix() const
 	return MercuryMatrix::Identity();
 }
 
-void TransformNode::RippleTaintDown()
+void TransformNode::RippleTaintDown(MercuryNode* node)
 {
-	if (m_tainted == true)
+	TransformNode* tn;
+
+	for (MercuryNode* n = node->FirstChild(); n != NULL; n = node->NextChild(n))
 	{
-		TransformNode* tn;
-		std::list< MercuryNode* >::iterator i;
-		
-		for (i = m_children.begin(); i != m_children.end(); ++i )
-		{
-			tn = TransformNode::Cast(*i);
-			if ( tn )
-				tn->SetTaint( true );
-		}
+		tn = TransformNode::Cast(n);
+		if (tn)
+			//stop this recursion here on this branch SetTaint will start a new taint recursion
+			tn->SetTaint(true);
+		else
+			RippleTaintDown( n );
 	}
 }
 
@@ -147,7 +146,7 @@ void TransformNode::OnAdded()
 		tn = TransformNode::Cast( n );
 		if ( tn )
 		{
-			tn->RippleTaintDown();
+			RippleTaintDown(tn);
 			return;
 		}
 		n = n->Parent();
