@@ -32,7 +32,8 @@ void CameraNode::ComputeMatrix()
 	r.toMatrix4( local );
 	local.Translate( GetPosition()*-1 );
 	
-	m_globalMatrix = local * parent; //fold in any parent transform in reverse (correct rotation)
+//	m_globalMatrix = local * parent; //fold in any parent transform in reverse (correct rotation)
+	VIEWMATRIX = local * parent;
 	
 	//compute camera position in world space (broken if camera is in transform node)
 	local = MercuryMatrix::Identity();

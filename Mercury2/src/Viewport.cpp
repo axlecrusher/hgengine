@@ -31,7 +31,7 @@ void Viewport::PreRender(const MercuryMatrix& matrix)
 //	EYE = MercuryVertex(0,0,0,1); //wrong
 //	EYE = matrix * EYE;
 	
-	VIEWMATRIX = matrix;
+//	VIEWMATRIX = matrix;
 	
 	//the camera sets this (the calculation here is wrong)
 //	MercuryVector z(0,0,-1); //look down Z by default
