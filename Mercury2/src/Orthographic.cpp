@@ -18,6 +18,20 @@ void Orthographic::PreRender(const MercuryMatrix& matrix)
 	glMatrixMode(GL_MODELVIEW);
 	
 	VIEWMATRIX = matrix;
+	MercuryNode::PreRender(matrix);
+}
+
+void Orthographic::Render(const MercuryMatrix& matrix)
+{
+	FRUSTUM = &m_frustum;
+	
+	//Load the frustum into the projection
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrix( m_frustum.GetMatrix() );
+	glMatrixMode(GL_MODELVIEW);
+	
+	VIEWMATRIX = matrix;
+	MercuryNode::Render(matrix);
 }
 
 void Orthographic::LoadFromXML(const XMLNode& node)

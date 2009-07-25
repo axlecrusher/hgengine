@@ -12,6 +12,7 @@ class Viewport : public MercuryNode
 	public:
 		Viewport();
 		virtual void PreRender(const MercuryMatrix& matrix);
+		virtual void Render(const MercuryMatrix& matrix);
 		
 		virtual void LoadFromXML(const XMLNode& node);
 	

@@ -11,11 +11,14 @@ class CameraNode : public TransformNode
 		virtual void ComputeMatrix();
 		virtual void HandleMessage(const MString& message, const MessageData* data);
 		virtual void Update(float dTime);
+		virtual void PreRender(const MercuryMatrix& matrix);
+		virtual void Render(const MercuryMatrix& matrix);
 
 		GENRTTI(CameraNode);
 	private:
 		MercuryVector m_lookAt;
 		float m_x, m_y;
+		MercuryMatrix m_viewMatrix;
 };
 
 #endif

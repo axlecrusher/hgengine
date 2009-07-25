@@ -12,6 +12,18 @@ CameraNode::CameraNode()
 	REGISTER_FOR_MESSAGE( INPUTEVENT_MOUSE );
 }
 
+void CameraNode::PreRender(const MercuryMatrix& matrix)
+{
+	VIEWMATRIX = m_viewMatrix;
+	TransformNode::PreRender(matrix);
+}
+
+void CameraNode::Render(const MercuryMatrix& matrix)
+{
+	VIEWMATRIX = m_viewMatrix;
+	TransformNode::Render(matrix);
+}
+
 void CameraNode::ComputeMatrix()
 {
 	m_tainted = false;
@@ -33,7 +45,7 @@ void CameraNode::ComputeMatrix()
 	local.Translate( GetPosition()*-1 );
 	
 //	m_globalMatrix = local * parent; //fold in any parent transform in reverse (correct rotation)
-	VIEWMATRIX = local * parent;
+	m_viewMatrix = local * parent;
 	
 	//compute camera position in world space (broken if camera is in transform node)
 	local = MercuryMatrix::Identity();
