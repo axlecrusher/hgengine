@@ -38,7 +38,7 @@
 			</node>
 		</node>
 	</node>
-<!--	<node type="orthographic" left="0" right="1" top="0" bottom="1" near="-1" far="1">
+	<node type="orthographic" left="0" right="1" top="1" bottom="0" near="-1" far="1">
 		<asset type="quad"/>
-	</node> -->
+	</node>
 </SceneGraph>

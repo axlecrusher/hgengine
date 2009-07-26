@@ -25,6 +25,7 @@ class TransformNode : public MercuryNode
 		
 //		inline const MercuryMatrix& GetGlobalMatrix() const { return m_globalMatrix; }
 		virtual const MercuryMatrix& GetGlobalMatrix() const;
+		inline const MercuryMatrix& GetModelViewMatrix() const { return m_modelView; }
 		const MercuryMatrix& GetParentMatrix() const;
 		
 		void SetTaint(bool taint);
@@ -34,6 +35,8 @@ class TransformNode : public MercuryNode
 		virtual void LoadFromXML(const XMLNode& node);
 		
 		virtual void OnAdded();
+		
+		virtual void RecursivePreRender();
 
 		GENRTTI(TransformNode);
 		
@@ -47,7 +50,7 @@ class TransformNode : public MercuryNode
 		
 //		MercuryMatrix m_localMatrix;
 	protected:
-
+		MercuryMatrix m_modelView;
 		MercuryMatrix m_globalMatrix;
 		
 		bool m_tainted;

@@ -57,8 +57,8 @@ class MercuryNode : public MessageHandler
 		void ThreadedUpdate(float dTime);
 		
 		
-		void RecursivePreRender();
-		void RecursiveRender();
+		virtual void RecursivePreRender();
+		virtual void RecursiveRender();
 
 		///Run on parent when a child is added
 		virtual void OnAddChild() {};
@@ -93,6 +93,7 @@ class MercuryNode : public MessageHandler
 		
 		///This will get the world space matrix
 		const MercuryMatrix& FindGlobalMatrix() const;
+		const MercuryMatrix& FindModelViewMatrix() const;
 		
 		virtual bool IsCulled(const MercuryMatrix& matrix);
 		inline bool IsHidden() { return m_hidden; }

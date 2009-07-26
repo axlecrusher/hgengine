@@ -1,4 +1,6 @@
 #include <TransformNode.h>
+#include <GLHeaders.h>
+#include <Shader.h>
 
 REGISTER_NODE_TYPE(TransformNode);
 REGISTER_NODE_TYPE(RotatorNode);
@@ -12,6 +14,18 @@ TransformNode::TransformNode()
 void TransformNode::Update(float dTime)
 {
 	if (m_tainted) ComputeMatrix();
+}
+
+void TransformNode::RecursivePreRender()
+{
+	if ( IsHidden() ) return;
+	
+	const MercuryMatrix& matrix = FindGlobalMatrix();
+	m_modelView = ManipulateMatrix( matrix );
+	
+	glLoadMatrix( m_modelView );
+
+	MercuryNode::RecursivePreRender();
 }
 
 void TransformNode::SetScale( const MercuryVertex& scale )

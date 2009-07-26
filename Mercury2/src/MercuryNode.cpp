@@ -141,11 +141,8 @@ void MercuryNode::RecursivePreRender()
 {
 	if ( IsHidden() ) return;
 	
-	MercuryMatrix matrix = FindGlobalMatrix();
-	MercuryMatrix modelView = ManipulateMatrix( matrix );
+	const MercuryMatrix& matrix = FindGlobalMatrix();
 	
-	glLoadMatrix( modelView );
-
 	PreRender( matrix ); //calls on children assets
 
 	for (MercuryNode* child = FirstChild(); child != NULL; child = NextChild(child))
@@ -156,17 +153,21 @@ void MercuryNode::RecursiveRender()
 {
 	if ( IsHidden() || m_occlusionResult.IsOccluded() || IsCulled() ) return;
 		
-	MercuryMatrix matrix = FindGlobalMatrix();
-	MercuryMatrix modelView = ManipulateMatrix( matrix );
-//	if ( IsHidden() || IsCulled(modelView) ) return;
+	const MercuryMatrix& matrix = FindGlobalMatrix();
+	const MercuryMatrix& modelView = FindModelViewMatrix(); //get the one computed in the last transform
+		
 	
+	//A lot of this stuff could be moved into the transform node, BUT
+	//the alpha render path requires that all things things happen, so
+	//it is just easier to leave it here than to duplicate this code in
+	//RenderGraph::RenderAlpha
 	glLoadMatrix( modelView );
 		
 	ShaderAttribute sa;
 	sa.type = ShaderAttribute::TYPE_MATRIX;
 	sa.value.matrix = matrix.Ptr();
 	Shader::SetAttribute("HG_ModelMatrix", sa);
-
+	
 	Render( modelView ); //calls on children assets
 	
 	//call render on other render graph entries under me
@@ -261,6 +262,20 @@ const MercuryMatrix& MercuryNode::FindGlobalMatrix() const
 		tn = TransformNode::Cast(n);
 		if ( tn )
 			return tn->GetGlobalMatrix();
+	}
+
+	return MercuryMatrix::Identity();
+}
+
+const MercuryMatrix& MercuryNode::FindModelViewMatrix() const
+{
+	const MercuryNode* n = NULL;
+	const TransformNode* tn;
+	for (n = this; n; n = n->Parent())
+	{
+		tn = TransformNode::Cast(n);
+		if ( tn )
+			return tn->GetModelViewMatrix();
 	}
 
 	return MercuryMatrix::Identity();
