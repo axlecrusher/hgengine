@@ -90,7 +90,7 @@ int main()
 //		printf("\n");
 		root->RecursivePreRender();
 		root->RecursiveRender();
-		renderGraph.RenderAlpha();
+//		renderGraph.RenderAlpha();
 		w->SwapBuffers();
 		++m_count;
 		
