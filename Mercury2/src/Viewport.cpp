@@ -8,6 +8,8 @@ MercuryMatrix VIEWMATRIX;
 MercuryVertex EYE;
 MercuryVector LOOKAT;
 
+#include <RenderGraph.h>
+
 Viewport::Viewport()
 	:m_xFactor(1), m_yFactor(0.5), m_minx(0), m_miny(0)
 {
@@ -83,6 +85,16 @@ void Viewport::Render(const MercuryMatrix& matrix)
 	
 	//Sets up the clipping frustum
 //	m_frustum.LookAt(EYE, LOOKAT, MercuryVertex(0,1,0));
+}
+
+void Viewport::PostRender(const MercuryMatrix& matrix)
+{
+	glPushMatrix();
+//	glLoadIdentity();
+	glLoadMatrix( matrix );
+	CURRENTRENDERGRAPH->RenderAlpha();
+	glPopMatrix();
+	MercuryNode::PostRender(matrix);
 }
 
 void Viewport::LoadFromXML(const XMLNode& node)
