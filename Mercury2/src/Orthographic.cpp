@@ -36,8 +36,6 @@ void Orthographic::Render(const MercuryMatrix& matrix)
 
 void Orthographic::LoadFromXML(const XMLNode& node)
 {
-	MercuryWindow* w = MercuryWindow::GetCurrentWindow();
-
 	m_frustum.Ortho( StrToFloat(node.Attribute("left")),
 			StrToFloat(node.Attribute("right")),
 			StrToFloat(node.Attribute("bottom")),

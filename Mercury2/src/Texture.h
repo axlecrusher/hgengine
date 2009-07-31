@@ -25,9 +25,8 @@ class Texture : public MercuryAsset
 		inline static uint32_t ReadAndResetBindCount() { uint32_t t = m_textureBinds; m_textureBinds = 0; return t; }
 		inline uint32_t TextureID() const { return m_textureID; }
 		
-		void MakeDynamic(uint16_t width, uint16_t height, const MString& name);
+		void MakeDynamic(uint16_t width, uint16_t height, ColorByteType cbt, const MString& name);
 
-				
 		static Texture* Generate();
 		static MAutoPtr< Texture > LoadFromFile(const MString& path);
 		static MAutoPtr< Texture > LoadDynamicTexture(const MString& name);

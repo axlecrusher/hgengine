@@ -6,7 +6,9 @@ enum ColorByteType
 	WHITE,
 	WHITE_ALPHA,
 	RGB,
- 	RGBA
+	RGBA,
+	RGB16,
+	RGBA16,
 };
 
 class RawImageData

@@ -49,28 +49,8 @@ void Texture::LoadFromRaw()
 	if ( !m_textureID ) glGenTextures(1, &m_textureID);
 	
 //	m_raw = raw;
-	int ByteType;
+	GLenum byteType = ToGLColorType( m_raw->m_ColorByteType );
 	
-	switch (m_raw->m_ColorByteType)
-	{
-		case WHITE:
-			ByteType = GL_LUMINANCE;
-			break;
-		case WHITE_ALPHA:
-			ByteType = GL_LUMINANCE_ALPHA;
-			break;
-		case RGB:
-			ByteType = GL_RGB;
-			break;
-		case RGBA:
-			ByteType = GL_RGBA;
-			break;
-		default:
-			printf( "Unsupported byte type (%d) in Texture::LoadFromRaw\n", m_raw->m_ColorByteType );
-			ByteType = GL_RGB;
-			break;
-	}
-
 	glBindTexture(GL_TEXTURE_2D, m_textureID);
 /*	
 	glTexImage2D(GL_TEXTURE_2D,
@@ -83,7 +63,7 @@ void Texture::LoadFromRaw()
 				GL_UNSIGNED_BYTE,
 				m_raw->m_data);
 */
-	gluBuild2DMipmaps( GL_TEXTURE_2D, ByteType, m_raw->m_width, m_raw->m_height, ByteType, GL_UNSIGNED_BYTE, m_raw->m_data );
+	gluBuild2DMipmaps( GL_TEXTURE_2D, byteType, m_raw->m_width, m_raw->m_height, byteType, GL_UNSIGNED_BYTE, m_raw->m_data );
 	
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
@@ -94,7 +74,7 @@ void Texture::LoadFromRaw()
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	
 //	gluBuild2DMipmaps( GL_TEXTURE_2D, 3, m_raw->m_width, m_raw->m_height, ByteType, GL_UNSIGNED_BYTE, m_raw->m_data );
-
+	SAFE_DELETE(m_raw);
 };
 
 void Texture::Render(const MercuryNode* node)
@@ -121,7 +101,7 @@ void Texture::LoadFromXML(const XMLNode& node)
 	MString file = node.Attribute("file");
 	
 	if ( dynamic )
-		MakeDynamic( 0, 0, file );
+		MakeDynamic( 0, 0, RGBA, file );
 	else
 		LoadImagePath( file );
 }
@@ -188,7 +168,7 @@ void Texture::SetRawData(RawImageData* raw)
 	m_raw = raw;
 }
 
-void Texture::MakeDynamic(uint16_t width, uint16_t height, const MString& name)
+void Texture::MakeDynamic(uint16_t width, uint16_t height, ColorByteType cbt, const MString& name)
 {
 //	Clean();
 
@@ -200,7 +180,7 @@ void Texture::MakeDynamic(uint16_t width, uint16_t height, const MString& name)
 	
 	if (m_textureID == 0) glGenTextures( 1, &m_textureID );
 	glBindTexture( GL_TEXTURE_2D, m_textureID );
-	glCopyTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, width, height, 0 );
+	glCopyTexImage2D( GL_TEXTURE_2D, 0, ToGLColorType(cbt), 0, 0, width, height, 0 );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glBindTexture( GL_TEXTURE_2D, 0 );

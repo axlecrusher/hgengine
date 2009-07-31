@@ -46,7 +46,7 @@ void MercuryFBO::GenerateFBO()
 	{
 		MString n = ssprintf("%s_%d", m_name.c_str(), i);
 		m_textures[i] = Texture::LoadDynamicTexture(n);
-		m_textures[i]->MakeDynamic(m_width, m_height,n);
+		m_textures[i]->MakeDynamic(m_width, m_height, RGBA, n);
 	}
 }
 
@@ -90,7 +90,7 @@ void MercuryFBO::PreRender(const MercuryMatrix& matrix)
 			for (uint8_t i = 0; i < m_numTextures; ++i)
 			{
 				MString n = ssprintf("%s_%d", m_name.c_str(), i);
-				m_textures[i]->MakeDynamic(m_width, m_height,n);
+				m_textures[i]->MakeDynamic(m_width, m_height, RGBA, n);
 			}
 		}
 		Bind();

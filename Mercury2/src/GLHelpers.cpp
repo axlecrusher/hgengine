@@ -78,6 +78,30 @@ MercuryVertex pointFromScreenLoc(int screen_x, int screen_y)
 	return MercuryVertex( (float)mouseX, (float)mouseY, (float)mouseZ );
 }
 
+GLenum ToGLColorType(ColorByteType cbt)
+{
+	switch (cbt)
+	{
+		case WHITE:
+			return GL_LUMINANCE;
+		case WHITE_ALPHA:
+			return GL_LUMINANCE_ALPHA;
+		case RGB:
+			return GL_RGB;
+		case RGBA:
+			return GL_RGBA;
+		case RGB16:
+			return GL_RGBA16;
+		case RGBA16:
+			return GL_RGBA16;
+			break;
+		default:
+			printf( "Unsupported color byte type (%d)\n", cbt );
+			return GL_RGB;
+	}
+
+}
+
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
  *                                                                          *
