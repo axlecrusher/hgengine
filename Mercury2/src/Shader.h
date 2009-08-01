@@ -17,6 +17,7 @@ public:
 	enum ShaderAttributeTyp
 	{
 		TYPE_INT,		///Synonomous to 'int' when passing into a shader
+		TYPE_INT4,		///Synonomous to 'ivec4' when passing into a shader
 		TYPE_SAMPLER,		///Synonomous to 'sampler2D' when passing into a shader
 		TYPE_FLOAT,		///Synonomous to 'float' when passing into a shader
 		TYPE_FLOATV4,		///Synonomous to 'vec4' when passing into a shader
@@ -31,6 +32,7 @@ public:
 		float 		fFloat;		///Synonomous to 'float'
 		float		fFloatV4[4]; 	///Synonomous to 'vec4'
 		const float*	matrix;		///Synonomous to 'mat4'
+		int		iInts[4];	///Synonomous to 'int4'
 	} value;
 };
 

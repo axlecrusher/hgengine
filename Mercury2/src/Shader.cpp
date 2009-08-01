@@ -485,10 +485,14 @@ void Shader::SetAttributeInternal(const MString& name, const ShaderAttribute& x)
 				break;
 			case ShaderAttribute::TYPE_FLOAT:
 			case ShaderAttribute::TYPE_FLOATV4:
-				glUniform4fvARB( location, 4, &x.value.fFloatV4[0] );
+				glUniform4fvARB( location, 1, &x.value.fFloatV4[0] );
 				break;
 			case ShaderAttribute::TYPE_MATRIX:
 				glUniformMatrix4fvARB(location, 1, 1, x.value.matrix); //transpase too
+				break;
+			case ShaderAttribute::TYPE_INT4:
+				glUniform4ivARB( location, 1, x.value.iInts );
+				break;
 		};
 		GLERRORCHECK;
 	}
