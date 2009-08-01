@@ -11,6 +11,20 @@ RawImageData::~RawImageData()
 	SAFE_DELETE_ARRAY(m_data);
 }
 
+ColorByteType ToColorByteType(const MString& s)
+{
+	if (s == "RGB")
+		return RGB;
+	else if (s == "RGBA")
+		return RGBA;
+	else if (s == "RGB16")
+		return RGB16;
+	else if (s == "RGBA16")
+		return RGBA16;
+	
+	return RGB;
+}
+
 /****************************************************************************
  *   Copyright (C) 2008 by Joshua Allen  									*
  * 	     																	*

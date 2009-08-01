@@ -1,6 +1,8 @@
 #ifndef RAWIMAGEDATA_H
 #define RAWIMAGEDATA_H
 
+#include <MercuryUtil.h>
+
 enum ColorByteType
 {
 	WHITE,
@@ -10,6 +12,8 @@ enum ColorByteType
 	RGB16,
 	RGBA16,
 };
+
+ColorByteType ToColorByteType(const MString& s);
 
 class RawImageData
 {
