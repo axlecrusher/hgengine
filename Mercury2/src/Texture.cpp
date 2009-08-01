@@ -120,7 +120,7 @@ void Texture::BindTexture()
 	
 	ShaderAttribute sa;
 	sa.type = ShaderAttribute::TYPE_SAMPLER;
-	sa.value.iSampler = m_textureResource;
+	sa.value.iSampler = m_numActiveTextures;
 	Shader::SetAttribute( ssprintf("HG_Texture%d", m_numActiveTextures), sa);
 
 	m_activeTextures.push_back(this);
