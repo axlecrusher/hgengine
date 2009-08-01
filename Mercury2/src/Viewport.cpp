@@ -2,6 +2,8 @@
 #include <GLHeaders.h>
 #include <MercuryWindow.h>
 
+#include <Shader.h>
+
 REGISTER_NODE_TYPE(Viewport);
 const Frustum* FRUSTUM;
 MercuryMatrix VIEWMATRIX;
@@ -47,6 +49,10 @@ void Viewport::Render(const MercuryMatrix& matrix)
 	
 	glMatrixMode(GL_MODELVIEW);
 	
+	ShaderAttribute sa;
+	sa.type = ShaderAttribute::TYPE_INT4;
+	glGetIntegerv(GL_VIEWPORT, sa.value.iInts);
+	Shader::SetAttribute("HG_ViewPort", sa);
 }
 
 void Viewport::PostRender(const MercuryMatrix& matrix)
