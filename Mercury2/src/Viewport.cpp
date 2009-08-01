@@ -53,6 +53,13 @@ void Viewport::Render(const MercuryMatrix& matrix)
 	sa.type = ShaderAttribute::TYPE_INT4;
 	glGetIntegerv(GL_VIEWPORT, sa.value.iInts);
 	Shader::SetAttribute("HG_ViewPort", sa);
+
+	sa.type = ShaderAttribute::TYPE_FLOATV4;
+	sa.value.fFloatV4[0] = m_frustum.ZNear();
+	sa.value.fFloatV4[1] = m_frustum.ZFar();
+	sa.value.fFloatV4[2] = m_frustum.DepthRange();
+	sa.value.fFloatV4[3] = 1.0f/m_frustum.DepthRange();
+	Shader::SetAttribute("HG_DepthRange", sa);
 }
 
 void Viewport::PostRender(const MercuryMatrix& matrix)

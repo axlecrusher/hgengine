@@ -25,6 +25,9 @@ class Frustum
 		void Ortho(float left, float right, float bottom, float top, float near, float far);
 		
 		inline const MercuryPlane& GetPlane(int i) const { return m_planes[i]; }
+		inline float ZNear() const { return m_zNear; }
+		inline float ZFar() const { return m_zFar; }
+		inline float DepthRange() const { return m_zFar - m_zNear; }
 	private:
 		
 		MercuryPlane m_planes[6];
