@@ -3,6 +3,7 @@
 
 #include <MercuryNode.h>
 #include <Texture.h>
+#include <RawImageData.h>
 
 class MercuryFBO : public MercuryNode
 {
@@ -10,7 +11,6 @@ class MercuryFBO : public MercuryNode
 		MercuryFBO();
 		virtual ~MercuryFBO();
 		
-		virtual void PreRender(const MercuryMatrix& matrix);
 		virtual void Render(const MercuryMatrix& matrix);
 		virtual void PostRender(const MercuryMatrix& matrix);
 	
@@ -19,7 +19,7 @@ class MercuryFBO : public MercuryNode
 		inline void SetWidth(uint16_t width) { m_width = width; }
 		inline void SetHeight(uint16_t height) { m_height = height; }
 		inline void SetUseDepth(bool toggle) { m_useDepth = toggle; }
-		inline void SetNumTextures(uint8_t x) { m_numTextures = x; }
+		inline void SetNumTextures(uint8_t x) { m_numTextures = MIN<uint8_t>(x,4); }
 		
 
 		GENRTTI(MercuryFBO);
@@ -37,6 +37,7 @@ class MercuryFBO : public MercuryNode
 //		uint32_t m_textureID[4];
 		MAutoPtr< Texture > m_textures[4];
 		uint8_t m_numTextures;
+		ColorByteType m_cbt[4];
 		
 //		static uint32_t m_lastRendered;
 		
