@@ -1,0 +1,10 @@
+//Uniforms available from HG2
+uniform mat4 HG_ModelMatrix;
+uniform vec4 HG_DepthRange; //x=zNear, //y=zFar, z=(zFar-zNear), w=1/z
+uniform ivec4 HG_ViewPort; //values for the current viewport
+
+
+//compute linear depth
+//(gl_Position.z - zNear) * (1/depthRange);
+linearDepth = (gl_Position.z - HG_DepthRange.x) * HG_DepthRange.w;
+
