@@ -21,7 +21,11 @@ ColorByteType ToColorByteType(const MString& s)
 		return RGB16;
 	else if (s == "RGBA16")
 		return RGBA16;
-	
+	else if (s == "RGBA16F")
+		return RGBA16F;
+	else if (s == "RGBA32F")
+		return RGBA32F;
+	printf("Color Byte Type %s unknown\n", s.c_str());
 	return RGB;
 }
 

@@ -11,7 +11,7 @@ MercuryFBO::MercuryFBO()
 	for (uint8_t i = 0; i < 4; ++i)
 	{
 		m_textures[i] = NULL;
-		m_cbt[i] = RGB;
+		m_cbt[i] = RGBA;
 	}
 }
 

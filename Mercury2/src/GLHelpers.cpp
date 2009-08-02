@@ -91,10 +91,14 @@ GLenum ToGLColorType(ColorByteType cbt)
 		case RGBA:
 			return GL_RGBA;
 		case RGB16:
-			return GL_RGBA16;
+			return GL_RGB16;
 		case RGBA16:
 			return GL_RGBA16;
-			break;
+		case RGBA16F:
+			return GL_RGBA16F_ARB;
+		case RGBA32F:
+			printf( "GL_RGBA32F_ARB unsupported using GL_RGBA16F_ARB\n" );
+			return GL_RGBA16F_ARB;
 		default:
 			printf( "Unsupported color byte type (%d)\n", cbt );
 			return GL_RGB;

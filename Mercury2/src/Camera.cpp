@@ -3,6 +3,8 @@
 #include <MercuryInput.h>
 #include <Viewport.h>
 
+#include <Shader.h>
+
 REGISTER_NODE_TYPE(CameraNode);
 
 CameraNode::CameraNode()
@@ -37,6 +39,14 @@ void CameraNode::ComputeMatrix()
 	m_lookAt = m_lookAt.Rotate( r );
 	m_lookAt.NormalizeSelf();
 	LOOKAT = m_lookAt;
+	
+	ShaderAttribute sa;
+	sa.type = ShaderAttribute::TYPE_FLOATV4;
+	sa.value.fFloatV4[0] = LOOKAT.GetX();
+	sa.value.fFloatV4[1] = LOOKAT.GetY();
+	sa.value.fFloatV4[2] = LOOKAT.GetZ();
+	sa.value.fFloatV4[3] = 0;
+	Shader::SetAttribute("HG_LookVector", sa);
 		
 	r.W() *= -1; //reverse angle for camera
 	

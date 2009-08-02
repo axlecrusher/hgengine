@@ -11,6 +11,8 @@ enum ColorByteType
 	RGBA,
 	RGB16,
 	RGBA16,
+	RGBA16F,
+	RGBA32F
 };
 
 ColorByteType ToColorByteType(const MString& s);
