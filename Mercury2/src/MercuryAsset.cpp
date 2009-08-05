@@ -39,14 +39,16 @@ void MercuryAsset::LoadedCallback()
 	SetLoadState( LOADED );
 }
 
-void MercuryAsset::DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix)
+bool MercuryAsset::DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix)
 {
+	bool culled = false;
 	if ( m_boundingVolume )
 	{
-		n->SetCulled( m_boundingVolume->DoFrustumTest(matrix) );
-		if ( !n->IsCulled() && DOOCCLUSIONCULL)
+		culled = m_boundingVolume->DoFrustumTest(matrix);
+		if ( !culled && DOOCCLUSIONCULL)
 			m_boundingVolume->DoOcclusionTest( n->GetOcclusionResult() );
 	}
+	return culled;
 }
 
 void MercuryAsset::PreRender(const MercuryNode* node)
@@ -60,6 +62,17 @@ void MercuryAsset::PreRender(const MercuryNode* node)
 			m_boundingVolume->DoOcclusionTest( n->GetOcclusionResult() );
 	}
 	*/
+}
+
+void MercuryAsset::LoadFromXML(const XMLNode& node)
+{
+	
+	printf("asset xml\n");
+	if ( !node.Attribute("nocull").empty() )
+	{
+		printf("NO CULL!!!!!!!!!!\n");
+		SetExcludeFromCull( node.Attribute("nocull")=="true" );
+	}
 }
 
 void MercuryAsset::DrawAxes()

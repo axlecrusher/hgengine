@@ -28,14 +28,14 @@ uint32_t OcclusionResult::GetSamples() const
 }
 
 BoundingBox::BoundingBox(const MercuryVertex& center, const MercuryVertex& extend)
-	:m_center(center), m_extend(extend)
+	:BoundingVolume(), m_center(center), m_extend(extend)
 {
 	PopulateVertices();
 	ComputeNormals();
 }
 
 BoundingBox::BoundingBox(const BoundingBox& bb)
-	:m_center(bb.m_center), m_extend(bb.m_extend)
+	:BoundingVolume(), m_center(bb.m_center), m_extend(bb.m_extend)
 {
 	PopulateVertices();
 	for (uint8_t i = 0; i < 3; ++i)
@@ -172,7 +172,30 @@ void BoundingBox::DoOcclusionTest( OcclusionResult& result )
 	glEndQueryARB(GL_SAMPLES_PASSED_ARB);
 //	glGetQueryObjectuivARB(q, GL_QUERY_RESULT_ARB, &samples);
 
+	glPopMatrix();
 	glPopAttrib( );
+}
+
+void BoundingBox::RenderFaces() const
+{
+	const float* center = GetCenter();
+	const float* extend = GetExtend();
+	
+	glPushMatrix();
+	glTranslatef(center[0], center[1], center[2]);
+	glScalef(extend[0],extend[1],extend[2]);
+	
+	if (m_vboID == 0) InitVBO();
+	
+//	if ( MercuryVBO::m_lastVBOrendered != &m_vboID )
+	{
+		MercuryVBO::m_lastVBOrendered = &m_vboID;
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID); // once
+		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);  // once
+		glVertexPointer(3, GL_FLOAT, 0, 0);  // once
+	}
+	
+	glDrawArrays(GL_QUADS, 0, 24);
 	glPopMatrix();
 }
 
@@ -275,10 +298,10 @@ void BoundingBox::PopulateVertices()
 	uint32_t i = 0;
 	
 	//back
-	m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f;
-	m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
-	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
 	m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f;
 
 	//front
 	m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f;
@@ -293,10 +316,10 @@ void BoundingBox::PopulateVertices()
 	m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f;
 
 	//right
-	m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f;
-	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
-	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f;
 	m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f;
 
 	//top
 	m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f;
@@ -305,10 +328,10 @@ void BoundingBox::PopulateVertices()
 	m_vertexData[i++] = 1.0f; m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f;
 
 	//bottom
-	m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
-	m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f;
-	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f;
 	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
+	m_vertexData[i++] = 1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f;
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = 1.0f;
+	m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f; m_vertexData[i++] = -1.0f;
 }
 
 void BoundingBox::InitVBO()

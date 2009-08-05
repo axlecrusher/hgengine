@@ -79,6 +79,7 @@ class BoundingBox : public BoundingVolume
 		const MercuryVector& Normal(uint8_t i) const { return m_normals[i]; }
 
 		virtual void Render();
+		void RenderFaces() const;
 		virtual BoundingVolume* SpawnClone() const;
 		
 		virtual bool Clip( const MercuryPlane& p );

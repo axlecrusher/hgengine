@@ -104,6 +104,20 @@ void RenderGraph::RenderAlpha()
 	}
 }
 
+void RenderGraph::AddDifferedLight( Light* l )
+{
+	m_lights.push_back( l );
+}
+
+void RenderGraph::DoDifferedLightPass()
+{
+	std::list< Light* >::iterator i;
+	for (i = m_lights.begin();i != m_lights.end(); ++i)
+		(*i)->DifferedRender();
+	
+	m_lights.clear();
+}
+
 StoreRenderState::StoreRenderState()
 	:Node(NULL)
 {

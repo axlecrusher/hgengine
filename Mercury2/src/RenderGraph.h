@@ -5,6 +5,8 @@
 //#include <RenderableNode.h>
 #include <PriorityQueue.h>
 
+#include <Light.h>
+
 class RenderGraphEntry
 {
 	friend class RenderGraph;
@@ -49,12 +51,16 @@ class RenderGraph
 		
 		void AddAlphaNode( MercuryNode* node );
 		void RenderAlpha();
+	
+		void AddDifferedLight( Light* l );
+		void DoDifferedLightPass();
 	private:
 		void Build( MercuryNode* node, RenderGraphEntry& entry );
 		RenderGraphEntry m_root;
 		
 		//nodes that use alpha, ordered from farthest to nearest from the camera
 		PriorityQueue<float, StoreRenderState > m_alphaNodesQueue;
+		std::list< Light* > m_lights;
 };
 
 extern RenderGraph* CURRENTRENDERGRAPH;

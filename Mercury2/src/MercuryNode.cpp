@@ -220,6 +220,7 @@ void MercuryNode::LoadFromXML(const XMLNode& node)
 			MAutoPtr< MercuryAsset > asset( AssetFactory::GetInstance().Generate( child.Attribute("type"), key ) );
 			if ( asset.IsValid() )
 			{
+				printf("new asset %s\n", child.Attribute("type").c_str());
 				asset->LoadFromXML( child );
 				this->AddAsset( asset );
 				asset->Init( this );
@@ -231,11 +232,15 @@ void MercuryNode::LoadFromXML(const XMLNode& node)
 
 void MercuryNode::PreRender(const MercuryMatrix& matrix)
 {
+	SetCulled( false );
+	bool culled = true;
 	list< MercuryAsset* >::iterator i;
 	for (i = m_prerender.begin(); i != m_prerender.end(); ++i )
 	{
-		(*i)->DoCullingTests( this, matrix );
+		if ( !(*i)->ExcludeFromCull() )
+			culled = culled && (*i)->DoCullingTests( this, matrix );
 		(*i)->PreRender(this);
+		SetCulled( culled );
 	}
 }
 

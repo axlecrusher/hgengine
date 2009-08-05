@@ -42,7 +42,7 @@ class MercuryAsset : public RefBase, MessageHandler
 		virtual void PostRender(const MercuryNode* node) {};
 		
 		///Loads an asset from an XMLAsset representing itself
-		virtual void LoadFromXML(const XMLNode& node) {};
+		virtual void LoadFromXML(const XMLNode& node);
 		
 		virtual void LoadedCallback(); //thread safe
 		
@@ -51,8 +51,12 @@ class MercuryAsset : public RefBase, MessageHandler
 		inline BoundingVolume* GetBoundingVolume() const { return m_boundingVolume; }
 		inline const MString& Path() const { return m_path; }
 
-		virtual void DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix);
+		///Retuns true if culled, also will initiate occlusion test
+		virtual bool DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix);
 		void DrawAxes();
+		
+		inline void SetExcludeFromCull(bool t) { m_excludeFromCull = t; }
+		inline bool ExcludeFromCull() const { return m_excludeFromCull; }
 	protected:
 		void SetLoadState(LoadState ls); //thread safe
 		LoadState GetLoadState(); //thread safe
@@ -63,6 +67,7 @@ class MercuryAsset : public RefBase, MessageHandler
 	private:
 		LoadState m_loadState;
 		MSemaphore m_lock;
+		bool m_excludeFromCull;
 };
 
 class LoaderThreadData

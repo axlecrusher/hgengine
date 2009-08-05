@@ -3,6 +3,8 @@
 #include <MercuryWindow.h>
 #include <assert.h>
 
+#include <RenderGraph.h>
+
 REGISTER_NODE_TYPE(MercuryFBO);
 
 MercuryFBO::MercuryFBO()
@@ -134,8 +136,10 @@ void MercuryFBO::PostRender(const MercuryMatrix& matrix)
 //		glActiveTextureARB( GL_TEXTURE0_ARB + i );
 //		glDisable( GL_TEXTURE_2D );
 //	}
+//	CURRENTRENDERGRAPH->DoDifferedLightPass();
 	glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 );
 //	glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, 0 );
+//	CURRENTRENDERGRAPH->DoDifferedLightPass();
 
 	CHECKFBO;
 	GLERRORCHECK;

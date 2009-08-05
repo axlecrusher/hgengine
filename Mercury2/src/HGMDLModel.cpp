@@ -19,6 +19,8 @@ void HGMDLModel::LoadFromXML(const XMLNode& node)
 {
 	MString path = node.Attribute("file");
 	LoadHGMDL( path );
+	
+	MercuryAsset::LoadFromXML( node );
 }
 
 void HGMDLModel::LoadModel(MercuryFile* hgmdl, HGMDLModel* model)
@@ -58,11 +60,16 @@ void HGMDLModel::LoadModel(MercuryFile* hgmdl, HGMDLModel* model)
 	}
 }
 
-void HGMDLModel::DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix)
+bool HGMDLModel::DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix)
 {
+	bool culled = false;
 	if ( GetLoadState() != LOADING )
+	{
+		culled = true;
 		for(uint16_t i = 0; i < m_meshes.size(); ++i)
-			m_meshes[i]->DoCullingTests(n, matrix);
+			culled = culled && m_meshes[i]->DoCullingTests(n, matrix);
+	}
+	return culled;
 }
 
 void HGMDLModel::PreRender(const MercuryNode* node)

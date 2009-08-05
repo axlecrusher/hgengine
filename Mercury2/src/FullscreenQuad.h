@@ -1,4 +1,8 @@
+#ifndef FULLSCREENQUAD_H
+#define FULLSCREENQUAD_H
+
 #include <Quad.h>
+
 
 class FullscreenQuad : public Quad
 {
@@ -12,6 +16,8 @@ class FullscreenQuad : public Quad
 	private:
 		MercuryMatrix m_matrix;
 };
+
+#endif
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *

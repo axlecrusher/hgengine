@@ -18,6 +18,8 @@ Texture::Texture()
 		m_initTextureSuccess = true;
 		m_numActiveTextures = 0;
 	}
+	
+	SetExcludeFromCull( true );
 }
 
 Texture::~Texture()
