@@ -61,6 +61,13 @@ void CameraNode::ComputeMatrix()
 	local = MercuryMatrix::Identity();
 	local.Translate( GetPosition() );
 	EYE = (parent * local) * MercuryVertex(0,0,0,1);
+	
+	sa.type = ShaderAttribute::TYPE_FLOATV4;
+	sa.value.fFloatV4[0] = EYE.GetX();
+	sa.value.fFloatV4[1] = EYE.GetY();
+	sa.value.fFloatV4[2] = EYE.GetZ();
+	Shader::SetAttribute("HG_EyePos", sa);
+
 //	EYE.Print();
 }
 
