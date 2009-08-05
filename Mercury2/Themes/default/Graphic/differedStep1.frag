@@ -7,6 +7,6 @@ void main()
 	gl_FragData[0] = vec4(pos, 1.0);
 
 	//store normal, a unused
-	gl_FragData[1] = vec4( (normalize(normal)+1.0)*0.5, 1.0);
+	gl_FragData[1] = vec4( normalize(normal), 1.0);
 }
 

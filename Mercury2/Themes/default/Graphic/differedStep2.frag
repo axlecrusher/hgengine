@@ -11,9 +11,9 @@ void main()
 {
 	vec2 coord = gl_FragCoord.xy / vec2(HG_ViewPort.zw);
 	vec3 pos = texture2D(HG_Texture0, coord).xyz;
-	vec3 norm = texture2D(HG_Texture1, coord).xyz;
+	vec3 norm = texture2D(HG_Texture1, coord).rgb;
 
-	norm = normalize(norm);
+//	norm = normalize(norm);
 
 	vec3 eyeVec = normalize(HG_EyePos.xyz - pos);
 	vec3 lightDir = HG_LightPos.xyz - pos;
