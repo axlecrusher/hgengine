@@ -8,3 +8,13 @@ uniform ivec4 HG_ViewPort; //values for the current viewport
 //(gl_Position.z - zNear) * (1/depthRange);
 linearDepth = (gl_Position.z - HG_DepthRange.x) * HG_DepthRange.w;
 
+//normal to RGB
+rgb = (normal.xyz + 1.0) * 0.5;
+
+//rgb to normal
+normal.xyz = (c.rgb*2.0) - 1.0;
+
+//recompute normal z
+//WARNING this can cause incorrect sign on z
+Normal.z = sqrt(1.0 - n.x*n.x - ny*ny);
+
