@@ -13,6 +13,7 @@ Light::Light()
 	:MercuryAsset()
 {
 	m_atten[0] = m_atten[1] = m_atten[2] = 0.0f;
+	m_color[0] = m_color[1] = m_color[2] = 1.0f;
 	m_radius = 1.0f;
 	m_fullscreen = false;
 }
@@ -116,6 +117,11 @@ void Light::DifferedRender()
 	sa.value.fFloatV4[3] = m_radius;
 	Shader::SetAttribute("HG_LightAtten", sa);
 	
+	sa.value.fFloatV4[0] = m_color[0];
+	sa.value.fFloatV4[1] = m_color[1];
+	sa.value.fFloatV4[2] = m_color[2];
+	Shader::SetAttribute("HG_LightColor", sa);
+
 	if (m_fullscreen)
 	{
 		glCullFace(GL_BACK);

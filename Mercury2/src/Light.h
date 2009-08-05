@@ -31,6 +31,7 @@ class Light : public MercuryAsset
 		void ComputeRadius();
 		
 		float m_atten[3];
+		float m_color[3];
 		float m_radius;
 		MercuryMatrix m_worldPosition;
 		MercuryMatrix m_worldPosition2;
