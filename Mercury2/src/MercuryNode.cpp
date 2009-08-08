@@ -220,7 +220,6 @@ void MercuryNode::LoadFromXML(const XMLNode& node)
 			MAutoPtr< MercuryAsset > asset( AssetFactory::GetInstance().Generate( child.Attribute("type"), key ) );
 			if ( asset.IsValid() )
 			{
-				printf("new asset %s\n", child.Attribute("type").c_str());
 				asset->LoadFromXML( child );
 				this->AddAsset( asset );
 				asset->Init( this );

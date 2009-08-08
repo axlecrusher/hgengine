@@ -67,10 +67,8 @@ void MercuryAsset::PreRender(const MercuryNode* node)
 void MercuryAsset::LoadFromXML(const XMLNode& node)
 {
 	
-	printf("asset xml\n");
 	if ( !node.Attribute("nocull").empty() )
 	{
-		printf("NO CULL!!!!!!!!!!\n");
 		SetExcludeFromCull( node.Attribute("nocull")=="true" );
 	}
 }
