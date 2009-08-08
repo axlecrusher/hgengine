@@ -23,6 +23,12 @@ void CameraNode::PreRender(const MercuryMatrix& matrix)
 void CameraNode::Render(const MercuryMatrix& matrix)
 {
 	VIEWMATRIX = m_viewMatrix;
+	
+	ShaderAttribute sa;
+	sa.type = ShaderAttribute::TYPE_MATRIX;
+	sa.value.matrix = m_viewMatrix.Ptr();
+	Shader::SetAttribute("HG_ViewMatrix", sa);
+	
 	TransformNode::Render(matrix);
 }
 
@@ -66,6 +72,7 @@ void CameraNode::ComputeMatrix()
 	sa.value.fFloatV4[0] = EYE.GetX();
 	sa.value.fFloatV4[1] = EYE.GetY();
 	sa.value.fFloatV4[2] = EYE.GetZ();
+	sa.value.fFloatV4[3] = 1.0f;
 	Shader::SetAttribute("HG_EyePos", sa);
 
 //	EYE.Print();

@@ -29,9 +29,8 @@ void RenderDifferedLights::Render(const MercuryNode* node)
 	}
 
 	glPushAttrib( GL_CURRENT_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_POLYGON_BIT);
-//	glEnable(GL_CULL_FACE); 
 	glCullFace(GL_FRONT);
-	
+
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(false);
 	glBlendFunc(GL_ONE, GL_ONE);
@@ -39,7 +38,6 @@ void RenderDifferedLights::Render(const MercuryNode* node)
 	CURRENTRENDERGRAPH->DoDifferedLightPass();
 	
 	glPopAttrib( );
-//	glCullFace(GL_BACK);
 }
 
 RenderDifferedLights* RenderDifferedLights::Generate()

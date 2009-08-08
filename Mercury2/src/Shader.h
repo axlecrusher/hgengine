@@ -89,8 +89,8 @@ public:
 	///Explicitly get the OpenGL ProgramID in the event you need it for advanced techniques
 	unsigned int	GetProgramID() { return iProgramID; }
 	inline static Shader* GetCurrentShader() { return CurrentShader; }
-private:
 	void LoadShader( const MString& path, float priority );
+private:
 	
 	int32_t GetUniformLocation(const MString& n);
 

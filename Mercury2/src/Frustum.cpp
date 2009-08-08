@@ -89,6 +89,15 @@ void Frustum::LookAt(const MercuryVertex& eye, const MercuryVector& look, const 
 	aux.NormalizeSelf();
 	normal = Y.CrossProduct(aux);
 	m_planes[PRIGHT].Setup(m_nc+X*m_nw,normal);
+	
+	
+	//near frustum points
+	m_ntl = m_planes[PNEAR].GetCenter() + (Y * m_nh/2.0f) - (X * m_nw/2.0f);
+	m_nbr = m_planes[PNEAR].GetCenter() - (Y * m_nh/2.0f) + (X * m_nw/2.0f);
+	
+	//far frustum points
+	m_ftl = m_planes[PFAR].GetCenter() + (Y * m_fh/2.0f) - (X * m_fw/2.0f);
+	m_fbr = m_planes[PFAR].GetCenter() - (Y * m_fh/2.0f) + (X * m_fw/2.0f);
 }
 
 void Frustum::Ortho(float left, float right, float bottom, float top, float near, float far)

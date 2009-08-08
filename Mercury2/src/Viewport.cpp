@@ -60,6 +60,28 @@ void Viewport::Render(const MercuryMatrix& matrix)
 	sa.value.fFloatV4[2] = m_frustum.DepthRange();
 	sa.value.fFloatV4[3] = 1.0f/m_frustum.DepthRange();
 	Shader::SetAttribute("HG_DepthRange", sa);
+	
+	sa.type = ShaderAttribute::TYPE_FLOATV4;
+	sa.value.fFloatV4[0] = m_frustum.ZNear();
+	sa.value.fFloatV4[1] = m_frustum.ZFar();
+	sa.value.fFloatV4[2] = m_frustum.DepthRange();
+	sa.value.fFloatV4[3] = 1.0f/m_frustum.DepthRange();
+	Shader::SetAttribute("HG_DepthRange", sa);
+
+	sa.type = ShaderAttribute::TYPE_FLOATV4;
+	m_frustum.GetPlane(PNEAR).GetCenter().ConvertToVector3( sa.value.fFloatV4 );
+	Shader::SetAttribute("HG_NearClip", sa);
+	
+	sa.type = ShaderAttribute::TYPE_FLOATV4;
+	m_frustum.GetPlane(PFAR).GetCenter().ConvertToVector3( sa.value.fFloatV4 );
+	Shader::SetAttribute("HG_FarClip", sa);
+
+	sa.type = ShaderAttribute::TYPE_FLOATV4;
+	sa.value.fFloatV4[0] = m_frustum.NearWidth()*0.5f;
+	sa.value.fFloatV4[1] = m_frustum.NearHeight()*0.5f;
+	sa.value.fFloatV4[2] = m_frustum.FarWidth()*0.5f;
+	sa.value.fFloatV4[3] = m_frustum.FarHeight()*0.5f;
+	Shader::SetAttribute("HG_ClipExtends", sa);
 }
 
 void Viewport::PostRender(const MercuryMatrix& matrix)

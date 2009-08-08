@@ -28,6 +28,11 @@ class Frustum
 		inline float ZNear() const { return m_zNear; }
 		inline float ZFar() const { return m_zFar; }
 		inline float DepthRange() const { return m_zFar - m_zNear; }
+		
+		inline float NearWidth() const { return m_nw; }
+		inline float NearHeight() const { return m_nh; }
+		inline float FarWidth() const { return m_fw; }
+		inline float FarHeight() const { return m_fh; }
 	private:
 		
 		MercuryPlane m_planes[6];
@@ -37,6 +42,7 @@ class Frustum
 		float m_nh, m_nw, m_fh, m_fw;
 		
 		MercuryVector m_nc, m_fc;
+		MercuryVertex m_ntl, m_nbr, m_ftl, m_fbr;
 };
 
 extern const Frustum* FRUSTUM;

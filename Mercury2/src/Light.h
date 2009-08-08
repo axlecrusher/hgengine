@@ -1,10 +1,11 @@
-#include <MercuryAsset.h>
-#include <FullscreenQuad.h>
-
 #ifndef MLIGHT_H
 #define MLIGHT_H
 
-class Light : public MercuryAsset
+#include <MercuryNode.h>
+#include <FullscreenQuad.h>
+#include <Shader.h>
+
+class Light : public MercuryNode
 {
 	public:
 		Light();
@@ -17,7 +18,7 @@ class Light : public MercuryAsset
 		Currently only occlusion culling test is run here.**/
 //		virtual void PreRender(const MercuryNode* node);
 			
-		virtual void Render(const MercuryNode* node);
+		virtual void Render(const MercuryMatrix& matrix);
 //		virtual void PostRender(const MercuryNode* node) {};
 			
 		///Loads an asset from an XMLAsset representing itself
@@ -26,6 +27,7 @@ class Light : public MercuryAsset
 		static Light* Generate();
 		
 		void DifferedRender();
+		inline void SetShader( Shader* shader) { m_shader = shader; }
 	private:
 		void StrTo3Float(const MString& s, float* a);
 		void ComputeRadius();
@@ -37,9 +39,13 @@ class Light : public MercuryAsset
 		MercuryMatrix m_worldPosition2;
 		
 		bool m_fullscreen;
-		const MercuryNode* m_parent;
+//		const MercuryNode* m_parent;
 		
 		FullscreenQuad m_fullScreenQuad;
+		
+		MAutoPtr< Shader > m_shader;
+		
+		BoundingVolume* m_boundingVolume;
 };
 
 #endif

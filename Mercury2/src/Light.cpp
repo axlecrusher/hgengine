@@ -7,10 +7,10 @@
 
 #include <Shader.h>
 
-REGISTER_ASSET_TYPE(Light);
+REGISTER_NODE_TYPE(Light);
 
 Light::Light()
-	:MercuryAsset()
+	:MercuryNode(), m_boundingVolume( NULL )
 {
 	m_atten[0] = m_atten[1] = m_atten[2] = 0.0f;
 	m_color[0] = m_color[1] = m_color[2] = 1.0f;
@@ -22,12 +22,13 @@ Light::~Light()
 {
 }
 
-void Light::Render(const MercuryNode* node)
+void Light::Render(const MercuryMatrix& matrix)
 {
-	m_worldPosition = glGetMatrix(GL_MODELVIEW_MATRIX);
-	m_worldPosition2 = node->FindGlobalMatrix();
+//	printf("render!\n");
+	m_worldPosition = FindModelViewMatrix();
+	m_worldPosition2 = FindGlobalMatrix();
 	CURRENTRENDERGRAPH->AddDifferedLight( this );
-	m_parent = node;
+//	m_parent = node;
 }
 
 void Light::LoadFromXML(const XMLNode& node)
@@ -38,9 +39,25 @@ void Light::LoadFromXML(const XMLNode& node)
 	if ( !node.Attribute("fullscreen").empty() )
 		m_fullscreen = node.Attribute("fullscreen")=="true"?true:false;
 
+	if ( !node.Attribute("shader").empty() )
+	{
+		MString key = node.Attribute("shader");
+		MAutoPtr< MercuryAsset > asset( AssetFactory::GetInstance().Generate( "shader", key ) );
+		if ( asset.IsValid() )
+		{
+			Shader* shader = dynamic_cast<Shader*>( asset.Ptr() );
+//			shader->LoadFromXML( node );
+			shader->LoadShader(key, 0);
+			SetShader( shader );
+//			shader->Init( this );
+		}
+
+		m_fullscreen = node.Attribute("fullscreen")=="true"?true:false;
+	}	
+	
 	ComputeRadius();
 
-	MercuryAsset::LoadFromXML( node );
+	MercuryNode::LoadFromXML( node );
 }
 
 void Light::StrTo3Float(const MString& s, float* a)
@@ -96,19 +113,24 @@ void Light::DifferedRender()
 	glLoadMatrix( m_worldPosition );
 	if ( !m_boundingVolume ) return;
 	
+	m_shader->Render( this );
+	
 	BoundingBox* bb = (BoundingBox*)m_boundingVolume;
 //	bb->Render();
 	
 	MercuryVertex p(0,0,0,1);
 	p = m_worldPosition2 * p;
 	
-//	p.Print();
-	
 	ShaderAttribute sa;
+	sa.type = ShaderAttribute::TYPE_MATRIX;
+	sa.value.matrix = m_worldPosition2.Ptr();
+	Shader::SetAttribute("HG_ModelMatrix", sa);
+
 	sa.type = ShaderAttribute::TYPE_FLOATV4;
 	sa.value.fFloatV4[0] = p.GetX();
 	sa.value.fFloatV4[1] = p.GetY();
 	sa.value.fFloatV4[2] = p.GetZ();
+	sa.value.fFloatV4[3] = 1.0f;
 	Shader::SetAttribute("HG_LightPos", sa);
 	
 	sa.value.fFloatV4[0] = m_atten[0];
@@ -125,11 +147,14 @@ void Light::DifferedRender()
 	if (m_fullscreen)
 	{
 		glCullFace(GL_BACK);
-		m_fullScreenQuad.Render( m_parent );
+		m_fullScreenQuad.Render( this );
 		glCullFace(GL_FRONT);
 	}
 	else
 		bb->RenderFaces();
+	
+	m_shader->PostRender( this);
+
 }
 
 /****************************************************************************

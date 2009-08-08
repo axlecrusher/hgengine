@@ -1,7 +1,9 @@
+uniform vec4 HG_EyePos;
 uniform mat4 HG_ModelMatrix;
-
+uniform vec4 HG_DepthRange;
 varying vec3 normal;
 varying vec3 pos;
+varying float dist;
 
 void main()
 {
@@ -10,8 +12,10 @@ void main()
 
 	vec4 n = vec4(gl_Normal, 0);
 	
-	//normalize in fragment
-	normal = (HG_ModelMatrix * n).xyz;
+	//viewspace normal
+	normal = (gl_ModelViewMatrix * n).xyz;
 
-	pos = (HG_ModelMatrix * gl_Vertex).xyz;
+	//clip space depth
+	pos = (gl_ModelViewMatrix * gl_Vertex).xyz;
+	dist = pos.z;
 }
