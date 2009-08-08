@@ -6,7 +6,8 @@ REGISTER_ASSET_TYPE(FullscreenQuad);
 FullscreenQuad::FullscreenQuad()
 {
 	m_matrix = MercuryMatrix::Identity();
-	m_matrix.Scale(2,2,1);
+	m_matrix.Transotale(0,0,-1,0,0,0,2,2,0.01);
+//	m_matrix.Scale(2,2,1);
 	m_matrix.Transpose();
 }
 
@@ -14,16 +15,18 @@ void FullscreenQuad::Render(const MercuryNode* node)
 {
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
+//	glLoadIdentity();
 	glLoadMatrixf( m_matrix.Ptr() ); //this is OK
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
-	glLoadIdentity();
+//	glLoadIdentity();
 	
 	Quad::Render( node );
 	
 	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW); glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
 }
 
 FullscreenQuad* FullscreenQuad::Generate()
