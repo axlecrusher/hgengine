@@ -39,7 +39,6 @@ void main()
 
 	float dist = length(lightDir);
 	lightDir /= dist; //normalize
-//	gl_FragColor = vec4(vec3(mod(depth,0.998)), 1.0);
 //	gl_FragColor = vec4((norm+1.0)*0.5, 1.0);
 
 	float NdotL = max(dot(norm, lightDir),0.0);

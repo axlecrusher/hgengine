@@ -23,5 +23,7 @@ void main()
 	vec3 n = normalize(normal);
 	n.xy = CartesianToSpherical( n );
 	gl_FragData[0] = vec4( n.xy, d, 1.0);
+
+//	gl_FragData[1] = vec4(pos, 1.0);
 }
 
