@@ -3,8 +3,7 @@
 		<node type="cameranode" movx="0" movz="0" movy="0" rotx="0" roty="0" rotz="0" name="camera">
 			<node type="mercuryfbo" width="640" height="480" depth="true" tnum="1" name="screenFBO" usescreensize="true" colorbyte0="RGBA16F" colorbyte1="RGBA16F">
 				<asset type="shader" file="GRAPHIC:differedStep1"/>
-<!--				<asset type="light" atten="10,0,0" fullscreen="true"/>
-				<asset type="shader" file="GRAPHIC:test"/> -->
+				<node type="light" atten="10,0,0" fullscreen="true" shader="GRAPHIC:globalLight" />
 				<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
 					<asset type="texture" file="MODEL:map.png"/>
 					<asset type="hgmdlmodel" file="MODEL:map.hgmdl" />
@@ -15,7 +14,7 @@
 							<node type="transformnode" rotx="-90" >
 								<asset type="texture" file="MODEL:lamp.png"/>
 								<asset type="hgmdlmodel" file="MODEL:lampN.hgmdl" />
-								<node type="light" atten="0.7,100,0.0" shader="GRAPHIC:differedStep2" />
+								<node type="light" atten="0.7,50,0.0" shader="GRAPHIC:pointLight" />
 							</node>
 							<node type="billboardnode" billboardaxis="0,1,0" spheremode="true" >
 								<node type="transformnode" roty="180" scalex="0.1" scaley="0.1" alphaPath="true">
