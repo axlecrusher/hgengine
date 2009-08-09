@@ -14,7 +14,7 @@ Light::Light()
 {
 	m_atten[0] = m_atten[1] = m_atten[2] = 0.0f;
 	m_color[0] = m_color[1] = m_color[2] = 1.0f;
-	m_radius = 1.0f;
+	m_radius = 0.0f;
 	m_fullscreen = false;
 }
 
@@ -113,7 +113,8 @@ void Light::DifferedRender()
 	glLoadMatrix( m_worldPosition );
 	if ( !m_boundingVolume ) return;
 	
-	m_shader->Render( this );
+	if ( m_shader.IsValid() )
+		m_shader->Render( this );
 	
 	BoundingBox* bb = (BoundingBox*)m_boundingVolume;
 //	bb->Render();
@@ -153,8 +154,8 @@ void Light::DifferedRender()
 	else
 		bb->RenderFaces();
 	
-	m_shader->PostRender( this);
-
+	if ( m_shader.IsValid() )
+		m_shader->PostRender( this);
 }
 
 /****************************************************************************
