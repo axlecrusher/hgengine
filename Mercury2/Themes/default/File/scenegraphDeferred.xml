@@ -1,41 +1,38 @@
 <SceneGraph name="root">
 	<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100" name="vp">
 		<node type="cameranode" movx="0" movz="0" movy="0" rotx="0" roty="0" rotz="0" name="camera">
-			<node type="mercuryfbo" width="640" height="480" depth="true" tnum="1" name="screenFBO" usescreensize="true" colorbyte0="RGBA16F" colorbyte1="RGBA16F">
+			<node type="mercuryfbo" width="640" height="480" depth="true" tnum="2" name="screenFBO" usescreensize="true" colorbyte0="RGBA16F" colorbyte1="RGBA16F">
 				<asset type="shader" file="GRAPHIC:differedStep1"/>
-				<node type="light" atten="10,0,0" fullscreen="true" shader="GRAPHIC:globalLight" />
-				<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
+				<node type="transformnode" movz="0" movx="0" movy="2">
+					<node type="light" atten="8,0,0" fullscreen="true" shader="GRAPHIC:globalLight" />
+				</node>
+				<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-1">
 					<asset type="texture" file="MODEL:map.png"/>
 					<asset type="hgmdlmodel" file="MODEL:map.hgmdl" />
 				</node>
-				<node type="mercurynode" name="lampForest" >
-					<node type="transformnode" movz="-5" movx="0" movy="0" name="lamprow" >
-						<node type="mercurynode" name="lamp">
-							<node type="transformnode" rotx="-90" >
-								<asset type="texture" file="MODEL:lamp.png"/>
-								<asset type="hgmdlmodel" file="MODEL:lampN.hgmdl" />
-								<node type="light" atten="0.7,50,0.0" shader="GRAPHIC:pointLight" />
-							</node>
-							<node type="billboardnode" billboardaxis="0,1,0" spheremode="true" >
-								<node type="transformnode" roty="180" scalex="0.1" scaley="0.1" alphaPath="true">
-									<asset type="texture" file="GRAPHIC:flame.png"/>
-									<asset type="quad" />
-								</node>
+				<node type="transformnode" movz="-8" movx="-1" name="lamps">
+					<node type="mercurynode" name="lamp">
+						<node type="transformnode" rotx="-90" >
+							<asset type="texture" file="MODEL:lamp.png"/>
+							<asset type="hgmdlmodel" file="MODEL:lampN.hgmdl" />
+							<node type="light" atten="0.7,5,0" shader="GRAPHIC:pointLight" />
+						</node>
+						<node type="billboardnode" billboardaxis="0,1,0" spheremode="true" >
+							<node type="transformnode" roty="180" scalex="0.1" scaley="0.1" alphaPath="true">
+								<asset type="texture" file="GRAPHIC:flame.png"/>
+								<asset type="quad" />
 							</node>
 						</node>
-						<node type="transformnode" movx="1" fallback="lamprow.lamp" />
-						<node type="transformnode" movx="2" fallback="lamprow.lamp" />
-						<node type="transformnode" movx="3" fallback="lamprow.lamp" />
-						<node type="transformnode" movx="-1" fallback="lamprow.lamp" />
-						<node type="transformnode" movx="-2" fallback="lamprow.lamp" />
-						<node type="transformnode" movx="-3" fallback="lamprow.lamp" />
 					</node>
-					<node type="transformnode" movz="-6" fallback="lampForest.lamprow"/>
-					<node type="transformnode" movz="-7" fallback="lampForest.lamprow"/>
-					<node type="transformnode" movz="-8" fallback="lampForest.lamprow"/>
-					<node type="transformnode" movz="-9" fallback="lampForest.lamprow"/>
-					<node type="transformnode" movz="-4" fallback="lampForest.lamprow"/>
-					<node type="transformnode" movz="-3" fallback="lampForest.lamprow"/>
+					<node type="transformnode" fallback="lamps.lamp" movz="3"/>
+					<node type="transformnode" fallback="lamps.lamp" movz="6"/>
+					<node type="transformnode" fallback="lamps.lamp" movz="-4"/>
+					<node type="transformnode" fallback="lamps.lamp" movz="-7"/>
+					
+					<node type="transformnode" fallback="lamps.lamp" movx="2" movz="4.5"/>
+					<node type="transformnode" fallback="lamps.lamp" movx="2" movz="1.5"/>
+					<node type="transformnode" fallback="lamps.lamp" movx="2" movz="-2.5"/>
+
 				</node>
 			</node>
 			<asset type="texture" file="screenFBO_0" dynamic="true"/>

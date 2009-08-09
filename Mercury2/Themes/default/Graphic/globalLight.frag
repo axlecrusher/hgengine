@@ -1,4 +1,6 @@
 uniform sampler2D HG_Texture0;
+uniform sampler2D HG_Texture1;
+
 uniform vec4 HG_EyePos;
 uniform ivec4 HG_ViewPort;
 uniform vec4 HG_LightPos;
@@ -7,6 +9,8 @@ uniform vec4 HG_LightColor;
 
 uniform mat4 HG_ModelMatrix;
 uniform vec4 HG_DepthRange;
+uniform vec4 HG_LookVector;
+
 
 varying vec3 ecEye;
 varying vec3 ecLight;
@@ -38,29 +42,25 @@ void main()
 
 	float dist = length(lightDir);
 	lightDir /= dist; //normalize
-//	gl_FragColor = vec4(vec3(mod(pos,0.998)), 1.0);
-//	gl_FragColor = vec4((ray+1.0)*0.5, 1.0);
 
 	float NdotL = max(dot(norm, lightDir),0.0);
 
-	if((dist > HG_LightAtten.w) || (NdotL <= 0.0)) discard;
+	if( dist > HG_LightAtten.w ) discard;
 
-	vec3 materialSpec = vec3(1.0,1.0,1.0);
-	vec3 lightSpec = vec3(1.0,1.0,1.0);
-
-	//x = constant, y = linear, z = quad
-	float att = 1.0 / (HG_LightAtten.x +
-	HG_LightAtten.y * dist +
+	float att = 1.0 / (HG_LightAtten.x + HG_LightAtten.y * dist +
 	HG_LightAtten.z * dist * dist);
 
-	vec3 color = att * (HG_LightColor.rgb * NdotL);
+	vec3 diffuse = texture2D(HG_Texture1, coord).rgb;
 
-	vec3 hv = normalize( lightDir+(ecEye-pos) );
-	float NdotHV = max(dot(norm,hv),0.0);
+	vec3 R = reflect(-lightDir, norm);
+	vec3 specular = diffuse * pow( max(dot(R,HG_LookVector.xyz), 0.0), 10.0 );
 
-	//pow(max(dot(H, normal.xyz), 0.0)
+	diffuse	*= HG_LightColor.rgb * NdotL;
 
-	color += att * materialSpec * lightSpec * pow(max(NdotHV, 0.0), 3.0);
-	color = clamp(color, 0.0, 1.0);
-	gl_FragColor = vec4(color, 1.0);
+	vec3 color = diffuse;
+
+	color += specular;
+	color *= att;
+
+	gl_FragColor.rgb = clamp(color, 0.0, 1.0);
 }

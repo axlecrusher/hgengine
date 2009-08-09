@@ -7,7 +7,7 @@ varying float dist;
 
 void main()
 {
-//	gl_TexCoord[0] = gl_MultiTexCoord0;
+	gl_TexCoord[0] = gl_MultiTexCoord0;
 	gl_Position = ftransform();
 
 	vec4 n = vec4(gl_Normal, 0);
