@@ -47,7 +47,7 @@ void main()
 
 	if( dist > HG_LightAtten.w ) discard;
 
-	float att = 1.0 / (HG_LightAtten.x + HG_LightAtten.y * dist +
+	float att = HG_LightColor.a / (HG_LightAtten.x + HG_LightAtten.y * dist +
 	HG_LightAtten.z * dist * dist);
 
 	vec3 diffuse = texture2D(HG_Texture1, coord).rgb;
@@ -59,7 +59,7 @@ void main()
 
 	vec3 color = diffuse;
 
-	color += specular;
+	color += specular*float(NdotL>0.0); //no speculat on back faces
 	color *= att;
 
 	gl_FragColor.rgb = clamp(color, 0.0, 1.0);
