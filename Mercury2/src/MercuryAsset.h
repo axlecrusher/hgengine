@@ -57,8 +57,6 @@ class MercuryAsset : public RefBase, MessageHandler
 		
 		inline void SetExcludeFromCull(bool t) { m_excludeFromCull = t; }
 		inline bool ExcludeFromCull() const { return m_excludeFromCull; }
-		
-		inline bool IsCulled() const { return m_culled; }
 	protected:
 		void SetLoadState(LoadState ls); //thread safe
 		LoadState GetLoadState(); //thread safe
@@ -66,7 +64,6 @@ class MercuryAsset : public RefBase, MessageHandler
 		bool m_isInstanced;
 		BoundingVolume* m_boundingVolume;
 		MString m_path;
-		bool m_culled;
 	private:
 		LoadState m_loadState;
 		MSemaphore m_lock;

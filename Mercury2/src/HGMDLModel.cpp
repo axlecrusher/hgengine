@@ -69,7 +69,6 @@ bool HGMDLModel::DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix)
 		for(uint16_t i = 0; i < m_meshes.size(); ++i)
 			culled = culled && m_meshes[i]->DoCullingTests(n, matrix);
 	}
-	m_culled = culled;
 	return culled;
 }
 

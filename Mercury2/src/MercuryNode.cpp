@@ -250,10 +250,7 @@ void MercuryNode::Render(const MercuryMatrix& matrix)
 {
 	list< MercuryAsset* >::iterator i;
 	for (i = m_render.begin(); i != m_render.end(); ++i )
-	{
-		if ( !(*i)->IsCulled() )
-			(*i)->Render(this);
-	}
+		(*i)->Render(this);
 }
 
 void MercuryNode::PostRender(const MercuryMatrix& matrix)
