@@ -6,7 +6,7 @@
 extern bool DOOCCLUSIONCULL;
 
 MercuryAsset::MercuryAsset()
-	:m_isInstanced(false), m_boundingVolume(NULL), m_loadState(NONE)
+	:m_isInstanced(false), m_boundingVolume(NULL), m_loadState(NONE), m_culled(false)
 {
 }
 
@@ -48,6 +48,7 @@ bool MercuryAsset::DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix)
 		if ( !culled && DOOCCLUSIONCULL)
 			m_boundingVolume->DoOcclusionTest( n->GetOcclusionResult() );
 	}
+	m_culled = culled;
 	return culled;
 }
 

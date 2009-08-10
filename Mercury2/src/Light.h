@@ -16,8 +16,7 @@ class Light : public MercuryNode
 		/** PreRender should be called before any real openGL render commands.
 		It is used to handles things like frustum culling, and occlusion culling.
 		Currently only occlusion culling test is run here.**/
-//		virtual void PreRender(const MercuryNode* node);
-			
+		virtual void PreRender(const MercuryMatrix& matrix);
 		virtual void Render(const MercuryMatrix& matrix);
 //		virtual void PostRender(const MercuryNode* node) {};
 			
@@ -35,6 +34,7 @@ class Light : public MercuryNode
 		float m_atten[3];
 		float m_color[3];
 		float m_radius;
+		float m_power;
 		MercuryMatrix m_worldPosition;
 		MercuryMatrix m_worldPosition2;
 		

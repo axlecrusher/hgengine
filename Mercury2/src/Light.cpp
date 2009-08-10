@@ -16,15 +16,20 @@ Light::Light()
 	m_color[0] = m_color[1] = m_color[2] = 1.0f;
 	m_radius = 0.0f;
 	m_fullscreen = false;
+	m_power = 1.0f;
 }
 
 Light::~Light()
 {
 }
 
+void Light::PreRender(const MercuryMatrix& matrix)
+{
+	SetCulled( m_boundingVolume->DoFrustumTest( matrix ) );
+}
+
 void Light::Render(const MercuryMatrix& matrix)
 {
-//	printf("render!\n");
 	m_worldPosition = FindModelViewMatrix();
 	m_worldPosition2 = FindGlobalMatrix();
 	CURRENTRENDERGRAPH->AddDifferedLight( this );
@@ -35,6 +40,9 @@ void Light::LoadFromXML(const XMLNode& node)
 {
 	if ( !node.Attribute("atten").empty() )
 		StrTo3Float(node.Attribute("atten"), m_atten);
+
+	if ( !node.Attribute("power").empty() )
+		m_power = StrToFloat(node.Attribute("power"), 1.0);
 
 	if ( !node.Attribute("fullscreen").empty() )
 		m_fullscreen = node.Attribute("fullscreen")=="true"?true:false;
@@ -74,7 +82,7 @@ void Light::ComputeRadius()
 {
 	//300 ensures that RGB of 255 reaches 0
 	//at 50, 255 is about 5. Close enough for me
-	const float maxDenom = 50;//300;
+	const float maxDenom = 50;
 	float a = m_atten[2]; //quadratic
 	float b = m_atten[1]; //linear
 	float c = m_atten[0]; //constant
@@ -99,11 +107,16 @@ void Light::ComputeRadius()
 		float s = SQRT((b*b)-(4*a*c));
 		float x1 = ((-b) - s)/bottom;
 		float x2 = ((-b) + s)/bottom;
+		x1 = x1>=0?x1:-x1;
+		x2 = x2>=0?x2:-x2;
 		d = MAX<float>(x1,x2);
 	}
 
+	d = m_power * d;
 	m_radius = Clamp<float>(0.0f, 1000.0f, d);
 	
+	printf("light radius %f\n", m_radius);
+
 	SAFE_DELETE( m_boundingVolume );
 	m_boundingVolume = new BoundingBox(MercuryVertex(0,0,0), MercuryVertex(m_radius,m_radius,m_radius) );
 }
@@ -143,6 +156,7 @@ void Light::DifferedRender()
 	sa.value.fFloatV4[0] = m_color[0];
 	sa.value.fFloatV4[1] = m_color[1];
 	sa.value.fFloatV4[2] = m_color[2];
+	sa.value.fFloatV4[3] = m_power;
 	Shader::SetAttribute("HG_LightColor", sa);
 
 	if (m_fullscreen)

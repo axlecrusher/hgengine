@@ -146,7 +146,10 @@ void MercuryNode::RecursivePreRender()
 	PreRender( matrix ); //calls on children assets
 
 	for (MercuryNode* child = FirstChild(); child != NULL; child = NextChild(child))
+	{
 		child->RecursivePreRender();
+		m_culled = m_culled && child->IsCulled();
+	}
 }
 
 void MercuryNode::RecursiveRender()
@@ -247,7 +250,10 @@ void MercuryNode::Render(const MercuryMatrix& matrix)
 {
 	list< MercuryAsset* >::iterator i;
 	for (i = m_render.begin(); i != m_render.end(); ++i )
-		(*i)->Render(this);
+	{
+		if ( !(*i)->IsCulled() )
+			(*i)->Render(this);
+	}
 }
 
 void MercuryNode::PostRender(const MercuryMatrix& matrix)

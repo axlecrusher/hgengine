@@ -34,18 +34,10 @@ class MercuryFBO : public MercuryNode
 		uint32_t m_fboID, m_depthBufferID;
 		bool m_initiated, m_useDepth, m_useScreenSize;
 		uint16_t m_width, m_height;
-//		uint32_t m_textureID[4];
 		MAutoPtr< Texture > m_textures[4];
 		uint8_t m_numTextures;
 		ColorByteType m_cbt[4];
-		
-//		static uint32_t m_lastRendered;
-		
-//		uint32_t m_lastInStask;
-
 	protected:
-//		AlignedBuffer<float> m_vertexData;
-//		AlignedBuffer<uint16_t> m_indexData;
 };
 
 #endif
