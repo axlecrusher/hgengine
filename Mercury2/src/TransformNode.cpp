@@ -28,6 +28,17 @@ void TransformNode::RecursivePreRender()
 	MercuryNode::RecursivePreRender();
 }
 
+void TransformNode::HandleMatrixOperations()
+{
+	if ( IsHidden() ) return;
+	
+	const MercuryMatrix& matrix = FindGlobalMatrix();
+	m_modelView = ManipulateMatrix( matrix );
+	
+	glLoadMatrix( m_modelView );
+}
+
+
 void TransformNode::SetScale( const MercuryVertex& scale )
 {
 	if (scale != m_scale)

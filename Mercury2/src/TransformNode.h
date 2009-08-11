@@ -38,6 +38,10 @@ class TransformNode : public MercuryNode
 		
 		virtual void RecursivePreRender();
 
+		//XXX: For charles' tests. This function will proably overtake the
+		//RecursivePreRender stuff, and be renamed
+		virtual void HandleMatrixOperations();
+
 		GENRTTI(TransformNode);
 		
 	private:

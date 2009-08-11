@@ -76,22 +76,42 @@ int main()
 	{
 		timer.Touch();
 		MESSAGEMAN::GetInstance().PumpMessages( timer.MicrosecondsSinceInit() );
-		root->RecursiveUpdate( timer.Age() ); //comment to use threads
-		
-		CURRENTRENDERGRAPH = &renderGraph;
-		if ( MercuryNode::NeedsRebuild() )
+
+		//If false, use experimental traversal technique.
+		if(true)
 		{
-			renderGraph.Build(root);
-		}
+			root->RecursiveUpdate( timer.Age() ); //comment to use threads
 		
-		w->Clear();
-//		renderGraph.Render();
-//		RenderableNode::RecursiveRender(root);
-//		printf("\n");
-		root->RecursivePreRender();
-		root->RecursiveRender();
-//		renderGraph.RenderAlpha();
-		w->SwapBuffers();
+			CURRENTRENDERGRAPH = &renderGraph;
+			if ( MercuryNode::NeedsRebuild() )
+			{
+				renderGraph.Build(root);
+			}
+
+			w->Clear();
+	//		renderGraph.Render();
+	//		RenderableNode::RecursiveRender(root);
+	//		printf("\n");
+			root->RecursivePreRender();
+			root->RecursiveRender();
+	//		renderGraph.RenderAlpha();
+			w->SwapBuffers();
+		}
+		else
+		{
+			CURRENTRENDERGRAPH = &renderGraph;
+			if ( MercuryNode::NeedsRebuild() )
+			{
+				renderGraph.Build(root);
+			}
+
+			Viewport* vp = (Viewport*)root->FirstChild();
+			w->Clear();
+			vp->GoAll( timer.Age() );
+			w->SwapBuffers();
+		}
+
+
 		++m_count;
 		
 		fpsTimer.Touch(timer);

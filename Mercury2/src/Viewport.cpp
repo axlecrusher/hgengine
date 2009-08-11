@@ -42,9 +42,9 @@ void Viewport::GoAll( const float fDtime )
 	{
 		const MercuryMatrix& matrix = n->FindGlobalMatrix();
 
-//		TransformNode * tn = dynamic_cast< TransformNode * >( n );
-//		if( tn )
-//			tn->m_modelView = tn->ManipulateMatrix( matrix );
+		TransformNode * tn = dynamic_cast< TransformNode * >( n );
+		if( tn )
+			tn->HandleMatrixOperations();
 
 		n->PreRender( matrix );
 		n = n->TraversalNextNode( this, depth );
