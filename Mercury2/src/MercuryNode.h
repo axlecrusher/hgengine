@@ -52,6 +52,11 @@ class MercuryNode : public MessageHandler
 		/** Traversal is from the closest parent on upward */
 		MercuryNode* FindParent( const MString & sNameOfNode, int depth = MAXINT );
 
+		///Get the next node in an in-order traversal
+		/** In the traversal, stopnode indicates the node that when passing
+		    by on returning up the tree haults traversal. */
+		MercuryNode * TraversalNextNode( MercuryNode * stopnode );
+
 		virtual void Update(float dTime) {};
 		virtual void RecursiveUpdate(float dTime);
 		void ThreadedUpdate(float dTime);
