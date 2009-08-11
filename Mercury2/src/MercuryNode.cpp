@@ -128,18 +128,25 @@ MercuryNode* MercuryNode::FindParent( const MString & sNameOfNode, int depth )
 	return ret;
 }
 
-MercuryNode * MercuryNode::TraversalNextNode( MercuryNode * stopnode )
+MercuryNode * MercuryNode::TraversalNextNode( MercuryNode * stopnode, int & iDepthDelta )
 {
 	if( !m_children.empty() )
+	{
+		iDepthDelta++;
 		return *(m_children.begin());
+	}
 	else if( m_nextSibling )
 		return m_nextSibling;
 	else if( m_parent )
 	{
 		MercuryNode * ret = m_parent;
+		iDepthDelta--;
 
 		while( ret && ret != stopnode && !ret->m_nextSibling )
+		{
+			iDepthDelta--;
 			ret = ret->m_parent;
+		}
 
 		if( !ret || ret == stopnode )
 			return 0;

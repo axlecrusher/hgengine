@@ -55,7 +55,7 @@ class MercuryNode : public MessageHandler
 		///Get the next node in an in-order traversal
 		/** In the traversal, stopnode indicates the node that when passing
 		    by on returning up the tree haults traversal. */
-		MercuryNode * TraversalNextNode( MercuryNode * stopnode );
+		MercuryNode * TraversalNextNode( MercuryNode * stopnode, int & iDepthDelta );
 
 		virtual void Update(float dTime) {};
 		virtual void RecursiveUpdate(float dTime);
@@ -121,7 +121,7 @@ class MercuryNode : public MessageHandler
 		bool m_hidden;
 		bool m_useAlphaPath;
 		bool m_culled;
-	private:
+	public:	//XXX: This will become private sooner or later...  It is temporarily public for other work.
 		bool IsInAssetList(MercuryAsset* asset) const;
 		
 		OcclusionResult m_occlusionResult;
