@@ -47,7 +47,7 @@ void glLoadMatrix(const MercuryMatrix& m)
 	glLoadMatrixf( l.Ptr() );
 }
 
-MercuryMatrix glGetMatrix(GLenum m)
+MercuryMatrix glGetMatrix(unsigned int m)
 {
 	MercuryMatrix mm;
 	glGetFloatv(m, mm.Ptr());
@@ -78,7 +78,7 @@ MercuryVertex pointFromScreenLoc(int screen_x, int screen_y)
 	return MercuryVertex( (float)mouseX, (float)mouseY, (float)mouseZ );
 }
 
-GLenum ToGLColorType(ColorByteType cbt)
+unsigned int ToGLColorType(ColorByteType cbt)
 {
 	switch (cbt)
 	{

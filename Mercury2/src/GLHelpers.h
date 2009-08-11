@@ -7,9 +7,9 @@
 
 MString GlError2String(uint32_t e);
 void glLoadMatrix(const MercuryMatrix& m);
-MercuryMatrix glGetMatrix(GLenum m);
+MercuryMatrix glGetMatrix(unsigned int m);
 MercuryVertex pointFromScreenLoc(int screen_x, int screen_y);
-GLenum ToGLColorType(ColorByteType cbt);
+unsigned int ToGLColorType(ColorByteType cbt);
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
