@@ -11,6 +11,9 @@ class Viewport : public MercuryNode
 {
 	public:
 		Viewport();
+
+		virtual void GoAll( const float fDtime );
+
 		virtual void PreRender(const MercuryMatrix& matrix);
 		virtual void Render(const MercuryMatrix& matrix);
 		virtual void PostRender(const MercuryMatrix& matrix);

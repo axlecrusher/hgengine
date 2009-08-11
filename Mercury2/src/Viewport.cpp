@@ -1,6 +1,7 @@
 #include <Viewport.h>
 #include <GLHeaders.h>
 #include <MercuryWindow.h>
+#include <TransformNode.h>
 
 #include <Shader.h>
 
@@ -16,6 +17,65 @@ Viewport::Viewport()
 	:m_xFactor(1), m_yFactor(0.5), m_minx(0), m_miny(0)
 {
 }
+
+void Viewport::GoAll( const float fDtime )
+{
+	MercuryNode * n;
+	int depth = 0;
+
+	if( NeedsRebuild() )
+	{
+		printf( "Xxxx\n" );
+	}
+
+	//Update pass
+	n = this;
+	while( n )
+	{
+		n->Update( fDtime );
+		n = n->TraversalNextNode( this, depth );
+	}
+
+	//Prerender pass
+	n = this;
+	while( n )
+	{
+		const MercuryMatrix& matrix = n->FindGlobalMatrix();
+
+//		TransformNode * tn = dynamic_cast< TransformNode * >( n );
+//		if( tn )
+//			tn->m_modelView = tn->ManipulateMatrix( matrix );
+
+		n->PreRender( matrix );
+		n = n->TraversalNextNode( this, depth );
+	}
+
+	n = this;
+	while( n )
+	{
+		const MercuryMatrix& matrix = n->FindGlobalMatrix();
+		const MercuryMatrix& modelView = n->FindModelViewMatrix(); //get the one computed in the last transform
+
+		glLoadMatrix( modelView );
+
+		ShaderAttribute sa;
+		sa.type = ShaderAttribute::TYPE_MATRIX;
+		sa.value.matrix = matrix.Ptr();
+		Shader::SetAttribute("HG_ModelMatrix", sa);
+	
+		n->Render( modelView );
+
+		glLoadMatrix( modelView );
+		Shader::SetAttribute("HG_ModelMatrix", sa);
+
+		n->PostRender( modelView );
+
+		n = n->TraversalNextNode( this, depth );
+	}
+
+
+}
+
 
 void Viewport::PreRender(const MercuryMatrix& matrix)
 {
