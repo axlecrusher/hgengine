@@ -40,6 +40,23 @@ void Viewport::GoAll( const float fDtime )
 	n = this;
 	while( n )
 	{
+		//If we're hidden, skip to the next traversable element
+		if( n->IsHidden() )
+		{
+			//Make sure we have a next sibling...
+			while( n && n != this && !n->NextSibling() )
+			{
+				depth--;
+				n = n->Parent();
+			}
+
+			if( !n || n == this )
+				break;
+
+			n = n->NextSibling();
+		}
+
+
 		const MercuryMatrix& matrix = n->FindGlobalMatrix();
 
 		TransformNode * tn = dynamic_cast< TransformNode * >( n );
@@ -47,12 +64,60 @@ void Viewport::GoAll( const float fDtime )
 			tn->HandleMatrixOperations();
 
 		n->PreRender( matrix );
+
+		if( n->Parent() )
+			n->Parent()->m_culled = n->Parent()->m_culled && n->IsCulled();
+
+		//Traverse next
+/*
+		MercuryNode * ret;
+		if( ret = n->FirstChild() )
+		{
+			depth++;
+			n = ret;
+		}
+		else if( ret = n->NextSibling() )
+			n = ret;
+		else if( ret = n->Parent() )
+		{
+			depth--;
+
+			while( ret && ret != this && !ret->NextSibling() )
+			{
+				depth--;
+				ret = ret->Parent();
+			}
+
+			if( !ret || ret == this )
+				return 0;
+
+			n = ret->m_nextSibling;
+		}
+		else
+			return 0;
+*/
+
 		n = n->TraversalNextNode( this, depth );
 	}
 
 	n = this;
 	while( n )
 	{
+		if( n->IsHidden() || m_occlusionResult.IsOccluded() || IsCulled() )
+		{
+			//Make sure we have a next sibling...
+			while( n && n != this && !n->NextSibling() )
+			{
+				depth--;
+				n = n->Parent();
+			}
+
+			if( !n || n == this )
+				break;
+
+			n = n->NextSibling();
+		}
+
 		const MercuryMatrix& matrix = n->FindGlobalMatrix();
 		const MercuryMatrix& modelView = n->FindModelViewMatrix(); //get the one computed in the last transform
 
@@ -62,18 +127,23 @@ void Viewport::GoAll( const float fDtime )
 		sa.type = ShaderAttribute::TYPE_MATRIX;
 		sa.value.matrix = matrix.Ptr();
 		Shader::SetAttribute("HG_ModelMatrix", sa);
-	
-		n->Render( modelView );
+
+		if ( n->m_useAlphaPath )
+			CURRENTRENDERGRAPH->AddAlphaNode(n);
+		else	
+			n->Render( modelView );
 
 		glLoadMatrix( modelView );
 		Shader::SetAttribute("HG_ModelMatrix", sa);
 
-		n->PostRender( modelView );
+		if ( !n->m_useAlphaPath )
+			n->PostRender( modelView );
 
 		n = n->TraversalNextNode( this, depth );
 	}
 
-
+	this->PostRender( FindModelViewMatrix() );
+	
 }
 
 
