@@ -30,6 +30,7 @@ class Light : public MercuryNode
 	private:
 		void StrTo3Float(const MString& s, float* a);
 		void ComputeRadius();
+		void BuildBoundingBox();
 		
 		float m_atten[3];
 		float m_color[3];

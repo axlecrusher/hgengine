@@ -33,6 +33,7 @@ void Light::Render(const MercuryMatrix& matrix)
 	m_worldPosition = FindModelViewMatrix();
 	m_worldPosition2 = FindGlobalMatrix();
 	CURRENTRENDERGRAPH->AddDifferedLight( this );
+//	m_boundingVolume->Render();
 //	m_parent = node;
 }
 
@@ -40,12 +41,17 @@ void Light::LoadFromXML(const XMLNode& node)
 {
 	if ( !node.Attribute("atten").empty() )
 		StrTo3Float(node.Attribute("atten"), m_atten);
+	
+	ComputeRadius();
 
 	if ( !node.Attribute("power").empty() )
 		m_power = StrToFloat(node.Attribute("power"), 1.0);
 
 	if ( !node.Attribute("fullscreen").empty() )
 		m_fullscreen = node.Attribute("fullscreen")=="true"?true:false;
+
+	if ( !node.Attribute("radius").empty() )
+		m_radius = StrToFloat(node.Attribute("radius"), 1.0);
 
 	if ( !node.Attribute("shader").empty() )
 	{
@@ -63,8 +69,8 @@ void Light::LoadFromXML(const XMLNode& node)
 		m_fullscreen = node.Attribute("fullscreen")=="true"?true:false;
 	}	
 	
-	ComputeRadius();
-
+	BuildBoundingBox();
+	
 	MercuryNode::LoadFromXML( node );
 }
 
@@ -116,7 +122,10 @@ void Light::ComputeRadius()
 	m_radius = Clamp<float>(0.0f, 1000.0f, d);
 	
 	printf("light radius %f\n", m_radius);
+}
 
+void Light::BuildBoundingBox()
+{
 	SAFE_DELETE( m_boundingVolume );
 	m_boundingVolume = new BoundingBox(MercuryVertex(0,0,0), MercuryVertex(m_radius,m_radius,m_radius) );
 }

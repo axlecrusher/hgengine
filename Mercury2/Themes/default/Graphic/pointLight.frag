@@ -41,8 +41,10 @@ void main()
 
 	if( dist > HG_LightAtten.w ) discard;
 
-	float att = HG_LightColor.a / (HG_LightAtten.x + HG_LightAtten.y * dist +
-	HG_LightAtten.z * dist * dist);
+//	float att = HG_LightColor.a / (HG_LightAtten.x + HG_LightAtten.y * dist+
+//	HG_LightAtten.z * dist * dist);
+
+	float att = ((HG_LightAtten.w - (HG_LightAtten.y * dist) - (HG_LightAtten.z * dist * dist))/HG_LightAtten.w) * HG_LightColor.a;
 
 	vec3 diffuse = texture2D(HG_Texture1, coord).rgb;
 
