@@ -37,11 +37,6 @@ void Texture::Clean()
 	m_textureID = 0;
 }
 
-void Texture::Init(MercuryNode* node)
-{
-	MercuryAsset::Init( node );
-}
-
 void Texture::LoadFromRaw()
 {
 	if ( !m_raw ) return;

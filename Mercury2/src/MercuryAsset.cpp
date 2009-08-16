@@ -15,10 +15,8 @@ MercuryAsset::~MercuryAsset()
 	SAFE_DELETE(m_boundingVolume);
 }
 
-void MercuryAsset::Init(MercuryNode* node)
+void MercuryAsset::Init()
 {
-//	if ( node ) node->AddPreRender(this);
-//	if ( node ) node->AddRender(this);
 }
 
 void MercuryAsset::SetLoadState(LoadState ls)

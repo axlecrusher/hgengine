@@ -63,7 +63,6 @@ void Light::LoadFromXML(const XMLNode& node)
 //			shader->LoadFromXML( node );
 			shader->LoadShader(key, 0);
 			SetShader( shader );
-//			shader->Init( this );
 		}
 
 		m_fullscreen = node.Attribute("fullscreen")=="true"?true:false;

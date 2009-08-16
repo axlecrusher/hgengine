@@ -30,7 +30,7 @@ class MercuryAsset : public RefBase, MessageHandler
 		MercuryAsset();
 		virtual ~MercuryAsset();
 		
-		virtual void Init(MercuryNode* node);
+		virtual void Init();
 		
 		/** PreRender should be called before any real openGL render commands.
 		It is used to handles things like frustum culling, and occlusion culling.

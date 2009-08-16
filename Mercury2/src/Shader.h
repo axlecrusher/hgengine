@@ -77,7 +77,6 @@ public:
 	Shader();
 	virtual ~Shader();
 		
-	virtual void Init(MercuryNode* node);
 	virtual void Render(const MercuryNode* node);
 	virtual void PostRender(const MercuryNode* node);
 	static Shader* Generate() { return new Shader; }

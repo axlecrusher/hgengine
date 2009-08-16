@@ -58,11 +58,6 @@ Shader::~Shader()
 	DestroyShader( );
 }
 
-void Shader::Init(MercuryNode* node)
-{
-	MercuryAsset::Init( node );
-}
-
 void Shader::Render(const MercuryNode* node)
 {
 	bool bApply = true;

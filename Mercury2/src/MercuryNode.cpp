@@ -257,7 +257,6 @@ void MercuryNode::LoadFromXML(const XMLNode& node)
 			{
 				asset->LoadFromXML( child );
 				this->AddAsset( asset );
-				asset->Init( this );
 			}
 		}
 	}

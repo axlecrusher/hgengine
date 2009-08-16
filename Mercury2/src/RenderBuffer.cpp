@@ -17,18 +17,6 @@ RenderBuffer::~RenderBuffer()
 	if (m_bufferID != 0) glDeleteRenderbuffersEXT(1, &m_bufferID);
 }
 
-void RenderBuffer::Init(MercuryNode* node)
-{
-	MercuryAsset::Init( node );
-	
-	RenderableNode* rn = RenderableNode::Cast( node );
-	if ( rn )
-	{
-//		rn->AddPreRender( this );
-		rn->AddPostRender( this );
-	}
-}
-
 void RenderBuffer::Render(const MercuryNode* node)
 {
 	if ( !m_initiated ) InitRenderBuffer();
