@@ -69,6 +69,7 @@ void TextNode::RenderText()
 			fprintf( stderr, "Could not create Texture for text.\n" );
 			return;
 		}
+		AddAsset( m_kTEX );
 	}
 
 	//Setup FBO and Texture
