@@ -34,11 +34,9 @@ void MercuryFBO::Clean()
 void MercuryFBO::Setup()
 {
 	Clean();
-	
-	m_initiated = true;
-
 	GenerateFBO();
 	Bind();
+	m_initiated = true;
 
 //	CHECKFBO; //Incomplete FBO
 }
@@ -97,6 +95,7 @@ void MercuryFBO::Render(const MercuryMatrix& matrix)
 			for (uint8_t i = 0; i < m_numTextures; ++i)
 			{
 				MString n = ssprintf("%s_%d", m_name.c_str(), i);
+//				m_textures[i] = Texture::LoadDynamicTexture(n);
 				m_textures[i]->MakeDynamic(m_width, m_height, m_cbt[i], n);
 			}
 		}
