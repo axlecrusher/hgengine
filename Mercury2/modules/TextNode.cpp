@@ -69,7 +69,6 @@ void TextNode::RenderText()
 			fprintf( stderr, "Could not create Texture for text.\n" );
 			return;
 		}
-		m_kTEX->Init( this );
 	}
 
 	//Setup FBO and Texture
@@ -306,7 +305,6 @@ void TextNode::RenderText()
 	}
 
 	m_bDirty = false;
-	m_kVBO->Init( this );
 }
 
 bool TextNode::LoadFont( const MString & sFont )
