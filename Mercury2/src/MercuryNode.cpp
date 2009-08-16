@@ -29,6 +29,11 @@ MercuryNode::~MercuryNode()
 	m_children.clear();
 }
 
+void MercuryNode::AddAsset(MercuryAsset* asset)
+{
+	m_assets.push_back( MercuryAssetInstance(asset) );
+}
+
 void MercuryNode::AddChild(MercuryNode* n)
 {
 //	list< MercuryNode* >::iterator last = m_children.end();
@@ -181,7 +186,7 @@ void MercuryNode::RecursivePreRender()
 
 void MercuryNode::RecursiveRender()
 {
-	if ( IsHidden() || m_occlusionResult.IsOccluded() || IsCulled() ) return;
+	if ( IsHidden() || IsCulled() ) return;
 		
 	const MercuryMatrix& matrix = FindGlobalMatrix();
 	const MercuryMatrix& modelView = FindModelViewMatrix(); //get the one computed in the last transform
@@ -263,28 +268,31 @@ void MercuryNode::PreRender(const MercuryMatrix& matrix)
 {
 	SetCulled( false );
 	bool culled = true;
-	list< MercuryAsset* >::iterator i;
-	for (i = m_prerender.begin(); i != m_prerender.end(); ++i )
+	
+	std::list< MercuryAssetInstance >::iterator i;
+	for (i = m_assets.begin(); i != m_assets.end(); ++i )
 	{
-		if ( !(*i)->ExcludeFromCull() )
-			culled = culled && (*i)->DoCullingTests( this, matrix );
-		(*i)->PreRender(this);
-		SetCulled( culled );
+		MercuryAssetInstance& mai = *i;
+		MercuryAsset& a = mai.Asset();
+		if ( !a.ExcludeFromCull() )
+			culled = culled && mai.Culled( a.DoCullingTests( mai.GetOcclusionResult(), matrix ) );
+		if ( !mai.Culled() ) a.PreRender(this);
 	}
+	SetCulled( culled );
 }
 
 void MercuryNode::Render(const MercuryMatrix& matrix)
 {
-	list< MercuryAsset* >::iterator i;
-	for (i = m_render.begin(); i != m_render.end(); ++i )
-		(*i)->Render(this);
+	std::list< MercuryAssetInstance >::iterator i;
+	for (i = m_assets.begin(); i != m_assets.end(); ++i )
+		if ( !(i->Culled() || i->GetOcclusionResult().IsOccluded()) ) i->Asset().Render(this);
 }
 
 void MercuryNode::PostRender(const MercuryMatrix& matrix)
 {
-	list< MercuryAsset* >::iterator i;
-	for (i = m_postrender.begin(); i != m_postrender.end(); ++i )
-		(*i)->PostRender(this);
+	std::list< MercuryAssetInstance >::iterator i;
+	for (i = m_assets.begin(); i != m_assets.end(); ++i )
+		i->Asset().PostRender(this);
 }
 
 const MercuryMatrix& MercuryNode::FindGlobalMatrix() const
@@ -313,43 +321,6 @@ const MercuryMatrix& MercuryNode::FindModelViewMatrix() const
 	}
 
 	return MercuryMatrix::Identity();
-}
-
-void MercuryNode::AddPreRender(MercuryAsset* asset)
-{
-#ifdef MCHECKASSETS
-	if ( !IsInAssetList(asset) ) //yell and scream
-		assert(!"Asset does not exist in list!");
-#endif
-		
-	m_prerender.push_back(asset);
-}
-
-void MercuryNode::AddRender(MercuryAsset* asset)
-{
-#ifdef MCHECKASSETS
-	if ( !IsInAssetList(asset) ) //yell and scream
-		assert(!"Asset does not exist in list!");
-#endif
-	
-	m_render.push_back(asset);
-}
-void MercuryNode::AddPostRender(MercuryAsset* asset)
-{
-#ifdef MCHECKASSETS
-	if ( !IsInAssetList(asset) ) //yell and scream
-		assert(!"Asset does not exist in list!");
-#endif
-	
-	m_postrender.push_back(asset);
-}
-
-bool MercuryNode::IsInAssetList( MercuryAsset* asset ) const
-{
-	std::list< MAutoPtr< MercuryAsset > >::const_iterator i;
-	for (i = m_assets.begin(); i != m_assets.end(); ++i )
-		if ( (*i) == asset ) return true;
-	return false;
 }
 
 bool MercuryNode::IsCulled(const MercuryMatrix& matrix)

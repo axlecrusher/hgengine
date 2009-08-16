@@ -66,7 +66,7 @@ void Viewport::GoAll( const float fDtime )
 		n->PreRender( matrix );
 
 		if( n->Parent() )
-			n->Parent()->m_culled = n->Parent()->m_culled && n->IsCulled();
+			n->Parent()->SetCulled( n->Parent()->IsCulled() && n->IsCulled() );
 
 		//Traverse next
 /*
@@ -103,7 +103,7 @@ void Viewport::GoAll( const float fDtime )
 	n = this;
 	while( n )
 	{
-		if( n->IsHidden() || m_occlusionResult.IsOccluded() || IsCulled() )
+		if( n->IsHidden() || IsCulled() )
 		{
 			//Make sure we have a next sibling...
 			while( n && n != this && !n->NextSibling() )

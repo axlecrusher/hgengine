@@ -52,7 +52,7 @@ class MercuryAsset : public RefBase, MessageHandler
 		inline const MString& Path() const { return m_path; }
 
 		///Retuns true if culled, also will initiate occlusion test
-		virtual bool DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix);
+		virtual bool DoCullingTests(OcclusionResult& occlusion, const MercuryMatrix& matrix);
 		void DrawAxes();
 		
 		inline void SetExcludeFromCull(bool t) { m_excludeFromCull = t; }
@@ -68,6 +68,26 @@ class MercuryAsset : public RefBase, MessageHandler
 		LoadState m_loadState;
 		MSemaphore m_lock;
 		bool m_excludeFromCull;
+};
+
+/** This holds the per-instance data for each asset instance.
+Used in MercuryNode. */
+class MercuryAssetInstance
+{
+	public:
+		MercuryAssetInstance(MercuryAsset* asset);
+		inline MercuryAsset& Asset() { return *m_asset; }
+		inline const MercuryAsset& Asset() const { return *m_asset; }
+		inline const MercuryAsset* AssetPtr() const { return m_asset; }
+		
+		inline bool Culled() const { return m_isCulled; }
+		inline bool Culled(bool t) { m_isCulled = t; return m_isCulled; }
+		
+		inline OcclusionResult& GetOcclusionResult() { return m_occlusionResult; }
+	private:
+		MAutoPtr< MercuryAsset > m_asset; //actual asset storage
+		OcclusionResult m_occlusionResult;
+		bool m_isCulled;
 };
 
 class LoaderThreadData
@@ -97,7 +117,7 @@ class AssetFactory
 
 		std::list< std::pair< MString, Callback0R< MAutoPtr<MercuryAsset> > > > m_factoryCallbacks;
 		
-		//the actual storage point is in renderable nodes
+		//the actual storage point is in MercuryAssetInstance
 		static std::map<MString, MercuryAsset*> m_assetInstances;
 
 };

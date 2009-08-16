@@ -11,6 +11,7 @@ class HGMDLMesh : public MercuryVBO
 		void ReadExtraData(MercuryFile* hgmdl);
 		void LoadOBB(MercuryFile* hgmdl);
 
+		OcclusionResult m_occlusionResult;
 	private:
 		MString m_name;
 		bool m_cachable;

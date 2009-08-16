@@ -35,7 +35,7 @@ class MercuryNode : public MessageHandler
 		
 		void AddChild(MercuryNode* n);
 		void RemoveChild(MercuryNode* n);
-		
+				
 		inline MercuryNode* Parent() const { return m_parent; }
 		inline MercuryNode* NextSibling() const { return m_nextSibling; }
 		inline MercuryNode* PrevSibling() const { return m_prevSibling; }
@@ -86,11 +86,7 @@ class MercuryNode : public MessageHandler
 		inline void SetName(const MString& name) { m_name = name; }
 		inline MString GetName() const { return m_name; }
 		
-		inline void AddAsset(MAutoPtr< MercuryAsset > asset) { m_assets.push_back(asset); }
-		
-		void AddPreRender(MercuryAsset* asset);
-		void AddRender(MercuryAsset* asset);
-		void AddPostRender(MercuryAsset* asset);
+		void AddAsset(MercuryAsset* asset);
 		
 		virtual void PreRender(const MercuryMatrix& matrix);
 		virtual void Render(const MercuryMatrix& matrix);
@@ -107,8 +103,6 @@ class MercuryNode : public MessageHandler
 		inline bool IsCulled() const { return m_culled; }
 		virtual MercuryMatrix ManipulateMatrix(const MercuryMatrix& matrix);
 		
-		inline OcclusionResult& GetOcclusionResult() { return m_occlusionResult; }
-		inline const OcclusionResult& GetOcclusionResult() const { return m_occlusionResult; }
 	protected:
 		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
 		MercuryNode* m_parent;
@@ -119,22 +113,22 @@ class MercuryNode : public MessageHandler
 		MString m_name;
 		
 		bool m_hidden;
-		bool m_useAlphaPath;
-		bool m_culled;
 	public:	//XXX: This will become private sooner or later...  It is temporarily public for other work.
 		bool IsInAssetList(MercuryAsset* asset) const;
+		bool m_useAlphaPath;
 		
-		OcclusionResult m_occlusionResult;
+	private:
+		bool m_culled;
 
 		//The asset is actually stored here
-		std::list< MAutoPtr< MercuryAsset > > m_assets;
+		std::list< MercuryAssetInstance > m_assets;
 		
 		//we will just use normal pointers here because we don't want to waste too much time
 		//dereferencing the autopointer. As a precaution when assets are added to these lists,
 		//they must exist in m_assets.
-		std::list< MercuryAsset* > m_prerender;
-		std::list< MercuryAsset* > m_render;
-		std::list< MercuryAsset* > m_postrender;
+//		std::list< MercuryAsset* > m_prerender;
+//		std::list< MercuryAsset* > m_render;
+//		std::list< MercuryAsset* > m_postrender;
 };
 
 class NodeFactory

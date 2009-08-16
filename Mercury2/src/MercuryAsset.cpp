@@ -17,9 +17,8 @@ MercuryAsset::~MercuryAsset()
 
 void MercuryAsset::Init(MercuryNode* node)
 {
-//	RenderableNode* rn;
-	if ( node ) node->AddPreRender(this);
-	if ( node ) node->AddRender(this);
+//	if ( node ) node->AddPreRender(this);
+//	if ( node ) node->AddRender(this);
 }
 
 void MercuryAsset::SetLoadState(LoadState ls)
@@ -39,14 +38,13 @@ void MercuryAsset::LoadedCallback()
 	SetLoadState( LOADED );
 }
 
-bool MercuryAsset::DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix)
+bool MercuryAsset::DoCullingTests(OcclusionResult& occlusion, const MercuryMatrix& matrix)
 {
 	bool culled = false;
 	if ( m_boundingVolume )
 	{
 		culled = m_boundingVolume->DoFrustumTest(matrix);
-		if ( !culled && DOOCCLUSIONCULL)
-			m_boundingVolume->DoOcclusionTest( n->GetOcclusionResult() );
+		if ( !culled && DOOCCLUSIONCULL) m_boundingVolume->DoOcclusionTest( occlusion );
 	}
 	return culled;
 }
@@ -87,6 +85,11 @@ void MercuryAsset::DrawAxes()
 	glVertex3f(0,0,0.5);
 	glColor3f(1,1,1);
 	glEnd();
+}
+
+MercuryAssetInstance::MercuryAssetInstance(MercuryAsset* asset)
+	:m_asset( asset ), m_isCulled( false )
+{
 }
 
 AssetFactory& AssetFactory::GetInstance()

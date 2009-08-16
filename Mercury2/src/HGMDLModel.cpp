@@ -60,14 +60,14 @@ void HGMDLModel::LoadModel(MercuryFile* hgmdl, HGMDLModel* model)
 	}
 }
 
-bool HGMDLModel::DoCullingTests(MercuryNode* n, const MercuryMatrix& matrix)
+bool HGMDLModel::DoCullingTests(OcclusionResult& occlusion, const MercuryMatrix& matrix)
 {
 	bool culled = false;
 	if ( GetLoadState() != LOADING )
 	{
 		culled = true;
 		for(uint16_t i = 0; i < m_meshes.size(); ++i)
-			culled = culled && m_meshes[i]->DoCullingTests(n, matrix);
+			culled = culled && m_meshes[i]->DoCullingTests(m_meshes[i]->m_occlusionResult, matrix);
 	}
 	return culled;
 }
@@ -85,7 +85,7 @@ void HGMDLModel::Render(const MercuryNode* node)
 	{
 		for(uint16_t i = 0; i < m_meshes.size(); ++i)
 		{
-			if ( !(node->GetOcclusionResult().IsOccluded() || node->IsCulled()) )
+			if ( !(m_meshes[i]->m_occlusionResult.IsOccluded() || node->IsCulled()) )
 				m_meshes[i]->Render(node);
 		}
 	}

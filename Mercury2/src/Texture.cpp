@@ -40,9 +40,6 @@ void Texture::Clean()
 void Texture::Init(MercuryNode* node)
 {
 	MercuryAsset::Init( node );
-	
-//	RenderableNode* rn = RenderableNode::Cast( node );
-	if ( node ) node->AddPostRender( this );
 }
 
 void Texture::LoadFromRaw()
