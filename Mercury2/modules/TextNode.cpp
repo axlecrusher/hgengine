@@ -336,7 +336,7 @@ void TextNode::SetSize( float fSize )
 
 void TextNode::SetText( const MString & sText )
 {
-	m_sText = sText;
+	m_sText = ConvertToUnformatted( sText );
 	SetDirtyText();
 }
 
