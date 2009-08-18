@@ -2,7 +2,7 @@
 #define SHADER_H
 
 #include <MercuryAsset.h>
-#include <map>
+#include <MercuryHash.h>
 #include <vector>
 
 #include <MercuryMatrix.h>
@@ -49,7 +49,7 @@ private:
 	    no longer referenced, it will remain in the map, as to
 	    prevent bad pointers.  This list is all-enduring.
 	*/
-	std::map< MString, ShaderAttribute * > m_AllShaderAttributes;
+	MHash< ShaderAttribute * > m_AllShaderAttributes;
 };
 
 class UniformMap
@@ -176,7 +176,7 @@ private:
 	Shader * OriginalShader;
 	
 	//global uniform that should be applied to all shaders
-	static std::map< MString, ShaderAttribute > m_globalAttributes;
+	static MHash< ShaderAttribute > m_globalAttributes;
 };
 
 #endif

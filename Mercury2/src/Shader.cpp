@@ -425,11 +425,9 @@ void Shader::ActivateShader()
 	std::list< UniformMap >::iterator ui = m_uniforms.begin();
 	for (;ui != m_uniforms.end(); ++ui)
 	{
-		std::map< MString, ShaderAttribute >::iterator sai = m_globalAttributes.find( ui->name );
-		if (sai != m_globalAttributes.end())
-		{
-			SetAttributeInternal(sai->first, sai->second);
-		}
+		ShaderAttribute* a = m_globalAttributes.get( ui->name );
+		if( a )
+			SetAttributeInternal(ui->name,*a);
 	}
 }
 
@@ -459,8 +457,7 @@ void Shader::SetAttribute(const MString& name, const ShaderAttribute& x)
 
 void Shader::RemoveAttribute(const MString& name)
 {
-	std::map< MString, ShaderAttribute>::iterator i = m_globalAttributes.find( name );
-	if ( i != m_globalAttributes.end() ) m_globalAttributes.erase( i );
+	m_globalAttributes.remove( name );
 	//no sense in unsetting it in the current shader, what would we set it to?
 }
 
@@ -491,7 +488,7 @@ void Shader::SetAttributeInternal(const MString& name, const ShaderAttribute& x)
 	}
 }
 
-std::map< MString, ShaderAttribute> Shader::m_globalAttributes;
+MHash< ShaderAttribute> Shader::m_globalAttributes;
 
 /* 
  * Copyright (c) 2009 Charles Lohr

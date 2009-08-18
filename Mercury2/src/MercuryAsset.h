@@ -9,7 +9,7 @@
 #include <XMLParser.h>
 #include <Callback.h>
 
-#include <map>
+#include <MercuryHash.h>
 #include <list>
 
 enum LoadState
@@ -113,12 +113,12 @@ class AssetFactory
 		void RemoveAssetInstance(const MString& key);
 
 	private:
-		MercuryAsset* LocateAsset( const MString& key );
+		MercuryAsset* LocateAsset( const MString& key ) { MercuryAsset ** a = m_assetInstances.get( key ); return a?(*a):0; }
 
 		std::list< std::pair< MString, Callback0R< MAutoPtr<MercuryAsset> > > > m_factoryCallbacks;
 		
 		//the actual storage point is in MercuryAssetInstance
-		static std::map<MString, MercuryAsset*> m_assetInstances;
+		static MHash< MercuryAsset*> m_assetInstances;
 
 };
 

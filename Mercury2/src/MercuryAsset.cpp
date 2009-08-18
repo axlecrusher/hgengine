@@ -120,13 +120,6 @@ MAutoPtr<MercuryAsset> AssetFactory::Generate(const MString& type, const MString
 	return NULL;
 }
 
-MercuryAsset* AssetFactory::LocateAsset( const MString& key )
-{
-	std::map<MString, MercuryAsset*>::iterator asset = m_assetInstances.find(key);
-	if ( asset != m_assetInstances.end() ) return asset->second;
-	return NULL;
-}
-
 void AssetFactory::AddAssetInstance(const MString& key, MercuryAsset* asset)
 {
 	asset->IsInstanced(true);
@@ -135,16 +128,10 @@ void AssetFactory::AddAssetInstance(const MString& key, MercuryAsset* asset)
 
 void AssetFactory::RemoveAssetInstance(const MString& key)
 {
-	std::map<MString, MercuryAsset*>::iterator asset = m_assetInstances.find(key);
-	if ( asset != m_assetInstances.end() )
-	{
-		m_assetInstances.erase( asset );
-		printf("removed asset %s\n", key.c_str());
-	}
-	
+	m_assetInstances.remove( key );
 }
 
-std::map<MString, MercuryAsset*> AssetFactory::m_assetInstances;
+MHash< MercuryAsset*> AssetFactory::m_assetInstances;
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
