@@ -53,6 +53,10 @@ void RenderGraph::Build( MercuryNode* node, RenderGraphEntry& entry)
 {
 	RenderGraphEntry* lastEntry = &entry;
 //	MercuryNode* rn = MercuryNode::Cast(node);
+
+	//Update the Matrices
+	node->m_pGlobalMatrix = &node->FindGlobalMatrix();
+	node->m_pModelViewMatrix = &node->FindModelViewMatrix();
 	
 	if ( node )
 	{
@@ -72,7 +76,7 @@ void RenderGraph::AddAlphaNode( MercuryNode* node )
 {
 	StoreRenderState srs;
 	srs.Save();
-	srs.Matrix = node->FindGlobalMatrix();
+	srs.Matrix = node->GetGlobalMatrix();
 	srs.Node = node;
 	
 	MercuryVertex p = srs.Matrix * MercuryVertex(0,0,0,1);

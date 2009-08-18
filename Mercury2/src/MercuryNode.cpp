@@ -14,7 +14,9 @@ using namespace std;
 REGISTER_NODE_TYPE(MercuryNode);
 
 MercuryNode::MercuryNode()
-	:m_parent(NULL), m_prevSibling(NULL), m_nextSibling(NULL), m_hidden(false), m_useAlphaPath(false), m_culled(false)
+	:m_parent(NULL), m_prevSibling(NULL),
+	m_nextSibling(NULL), m_hidden(false),
+	m_useAlphaPath(false), m_culled(false)
 {
 }
 
@@ -173,7 +175,7 @@ void MercuryNode::RecursivePreRender()
 {
 	if ( IsHidden() ) return;
 	
-	const MercuryMatrix& matrix = FindGlobalMatrix();
+	const MercuryMatrix& matrix = GetGlobalMatrix();
 	
 	PreRender( matrix ); //calls on children assets
 
@@ -188,8 +190,8 @@ void MercuryNode::RecursiveRender()
 {
 	if ( IsHidden() || IsCulled() ) return;
 		
-	const MercuryMatrix& matrix = FindGlobalMatrix();
-	const MercuryMatrix& modelView = FindModelViewMatrix(); //get the one computed in the last transform
+	const MercuryMatrix& matrix = GetGlobalMatrix();
+	const MercuryMatrix& modelView = GetModelViewMatrix(); //get the one computed in the last transform
 		
 	
 	//A lot of this stuff could be moved into the transform node, BUT
@@ -370,6 +372,8 @@ MercuryNode* NodeFactory::Generate(const MString& type)
 }
 
 bool MercuryNode::m_rebuildRenderGraph = false;
+__thread int g_iViewportID;
+
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
  *      *

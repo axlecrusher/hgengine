@@ -27,6 +27,10 @@ virtual const  char * GetType() { return #x; }
 while(tn) { if (typeid(x) == typeid(*tn)) return true; tn = *n; } \
 return false;}
 */
+
+///The Global Viewport ID for this thread (to enable multi-threaded functioning for Viewports)
+extern __thread int g_iViewportID;
+
 class MercuryNode : public MessageHandler
 {
 	public:
@@ -91,18 +95,16 @@ class MercuryNode : public MessageHandler
 		virtual void PreRender(const MercuryMatrix& matrix);
 		virtual void Render(const MercuryMatrix& matrix);
 		virtual void PostRender(const MercuryMatrix& matrix);
-		
-		///This will get the world space matrix
-		const MercuryMatrix& FindGlobalMatrix() const;
-		const MercuryMatrix& FindModelViewMatrix() const;
-		
+				
 		virtual bool IsCulled(const MercuryMatrix& matrix);
 		inline bool IsHidden() { return m_hidden; }
 		
 		inline void SetCulled(bool t) { m_culled = t; }
 		inline bool IsCulled() const { return m_culled; }
 		virtual MercuryMatrix ManipulateMatrix(const MercuryMatrix& matrix);
-		
+
+		const MercuryMatrix & GetGlobalMatrix() const { return m_pGlobalMatrix[g_iViewportID]; }
+		const MercuryMatrix & GetModelViewMatrix() const { return m_pModelViewMatrix[g_iViewportID]; }
 	protected:
 		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
 		MercuryNode* m_parent;
@@ -112,13 +114,10 @@ class MercuryNode : public MessageHandler
 		static bool m_rebuildRenderGraph;
 		MString m_name;
 		
-		bool m_hidden;
-	public:	//XXX: This will become private sooner or later...  It is temporarily public for other work.
-		bool IsInAssetList(MercuryAsset* asset) const;
+		bool m_hidden;		
 		bool m_useAlphaPath;
-		
-	private:
 		bool m_culled;
+		bool IsInAssetList(MercuryAsset* asset) const;
 
 		//The asset is actually stored here
 		std::list< MercuryAssetInstance > m_assets;
@@ -129,6 +128,15 @@ class MercuryNode : public MessageHandler
 //		std::list< MercuryAsset* > m_prerender;
 //		std::list< MercuryAsset* > m_render;
 //		std::list< MercuryAsset* > m_postrender;
+
+		///This will get the world space matrix
+		const MercuryMatrix& FindGlobalMatrix() const;
+		const MercuryMatrix& FindModelViewMatrix() const;
+
+		const MercuryMatrix * m_pGlobalMatrix;
+		const MercuryMatrix * m_pModelViewMatrix;
+
+		friend class RenderGraph;
 };
 
 class NodeFactory

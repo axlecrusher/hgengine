@@ -20,7 +20,7 @@ void TransformNode::RecursivePreRender()
 {
 	if ( IsHidden() ) return;
 	
-	const MercuryMatrix& matrix = FindGlobalMatrix();
+	const MercuryMatrix& matrix = GetGlobalMatrix();
 	m_modelView = ManipulateMatrix( matrix );
 	
 	glLoadMatrix( m_modelView );
@@ -32,7 +32,7 @@ void TransformNode::HandleMatrixOperations()
 {
 	if ( IsHidden() ) return;
 	
-	const MercuryMatrix& matrix = FindGlobalMatrix();
+	const MercuryMatrix& matrix = GetGlobalMatrix();
 	m_modelView = ManipulateMatrix( matrix );
 	
 	glLoadMatrix( m_modelView );
