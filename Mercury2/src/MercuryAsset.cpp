@@ -6,7 +6,7 @@
 extern bool DOOCCLUSIONCULL;
 
 MercuryAsset::MercuryAsset()
-	:m_isInstanced(false), m_boundingVolume(NULL), m_loadState(NONE)
+	:m_isInstanced(false), m_boundingVolume(NULL), m_loadState(NONE), m_excludeFromCull(true)
 {
 }
 
