@@ -38,11 +38,11 @@ protected:
 	static Callback0R< MercuryWindow* > genWindowClbk;
 	static MercuryWindow* m_windowInstance;
 	
-	bool m_bGrabbed;
 	MString m_title;
 	int m_width, m_height;
 	uint8_t m_bits, m_depthBits;
 	bool m_fullscreen;
+	bool m_bGrabbed;
 };
 
 #endif

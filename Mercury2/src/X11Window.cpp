@@ -261,7 +261,7 @@ bool X11Window::PumpMessages()
 			case FocusIn:
 			case FocusOut:
 			{
-				XFocusChangeEvent*e = (XFocusChangeEvent*)&event;
+				//XFocusChangeEvent*e = (XFocusChangeEvent*)&event;
 				inFocus = (event.type == FocusIn);
 				if (inFocus && m_bGrabbed ) XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
 				break;
