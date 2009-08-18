@@ -4,6 +4,85 @@
 #include <MercuryVector.h>
 #include <MercuryBacktrace.h>
 
+MString	ConvertToCFormat( const MString & ncf )
+{
+	MString ret;
+	const char* nccf = ncf.c_str();
+
+	for ( int i = 0; (unsigned)i < ncf.length(); i++ )
+	{
+		switch ( nccf[i] )
+		{
+		case '\t':	ret += "\\t";	break;
+		case '\n':	ret += "\\n";	break;
+		case '\r':	ret += "\\r";	break;
+		case '\f':	ret += "\\f";	break;
+		case '\b':	ret += "\\b";	break;
+		case '\\':	ret += "\\\\";	break;
+		case '\'':	ret += "\\\'";	break;
+		case '\"':	ret += "\\\"";	break;
+		default:
+			if( nccf[i] < 32 )
+			{
+				ret += "\\"; 
+				ret += ((unsigned char)nccf[i]/64)%8 + '0';
+				ret += ((unsigned char)nccf[i]/8)%8 + '0';
+				ret += (unsigned char)nccf[i]%8 + '0';
+			} else
+				ret += nccf[i];
+		}
+	}
+	return ret;
+}
+
+MString ConvertToUnformatted( const MString & cf )
+{
+	MString ret;
+	const char* ccf = cf.c_str();
+
+	for ( int i = 0; (unsigned)i < cf.length(); i++ )
+	{
+		switch ( ccf[i] )
+		{
+		case '\\':
+			i++;
+			if ( (unsigned)i >= cf.length() )
+				return ret;
+			switch ( ccf[i] )
+			{
+			case 't':	ret += '\t';	break;
+			case 'n':	ret += '\n';	break;
+			case 'r':	ret += '\r';	break;
+			case 'f':	ret += '\f';	break;
+			case 'b':	ret += '\b';	break;
+			case '\\':	ret += '\\';	break;
+			case '\'':	ret += '\'';	break;
+			case '\"':	ret += '\"';	break;
+			default:
+				if( ccf[i] >= '0' && ccf[i] <= '7' )
+				{
+					char c = ccf[i] - '0';
+					if( ccf[i+1] >= '0' && ccf[i+1] <= '8' )
+					{
+						i++;
+						c = c * 8 + ccf[i] - '0';
+					}
+					if( ccf[i+1] >= '0' && ccf[i+1] <= '8' )
+					{
+						i++;
+						c = c * 8 + ccf[i] - '0';
+					}
+					ret += c;
+				}
+			}
+			break;
+		default:
+			ret += ccf[i];
+		}
+	}
+	return ret;
+}
+
 MString ToUpper(const MString& s)
 {
 	MString t = s;

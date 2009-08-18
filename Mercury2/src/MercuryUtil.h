@@ -124,6 +124,11 @@ long	BytesNUntil( const char* strin, const char * termin, long start, long slen,
 ///Split given string into other strings using delimiters from termin
 void	SplitStrings( const MString & in, MVector < MString > & out, const char * termin, const char * whitespace, long termlen, long wslen );
 
+///Convert string containing binary characters to C-style formatted string. 
+MString	ConvertToCFormat( const MString & ncf );
+
+///Convert a C-style formatted string into it's binary string equivalent.
+MString ConvertToUnformatted( const MString & cf );
 
 #endif
 
