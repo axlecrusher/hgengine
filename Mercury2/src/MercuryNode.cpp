@@ -275,13 +275,16 @@ void MercuryNode::PreRender(const MercuryMatrix& matrix)
 	{
 		MercuryAssetInstance& mai = *i;
 		MercuryAsset& a = mai.Asset();
+		
 		if ( !a.ExcludeFromCull() )
-			culled = culled && mai.Culled( a.DoCullingTests( mai.GetOcclusionResult(), matrix ) );
-		if ( !mai.Culled() )
 		{
-			culled = false;
-			a.PreRender(this);
+			mai.Culled( a.DoCullingTests( mai.GetOcclusionResult(), matrix ) );
+			culled = culled && mai.Culled();
 		}
+		
+		if ( a.ExcludeFromCull() ) culled = false; //node must be rendered if something was excluded
+		
+		if ( !mai.Culled() ) a.PreRender(this);
 	}
 	SetCulled( culled );
 }
