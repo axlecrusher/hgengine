@@ -26,6 +26,7 @@ ModuleManager::ModuleManager()
 {
 }
 
+
 ModuleManager & ModuleManager::GetInstance()
 {
 	static ModuleManager *instance = NULL;
@@ -53,6 +54,7 @@ void ModuleManager::InitializeAllModules()
 		MString LoadFunct = child.Attribute( "func" );
 		LoadModule( ModuleName, LoadFunct );
 	}
+	delete doc;
 }
 
 void ModuleManager::UnloadModule( const MString & ModuleName )
