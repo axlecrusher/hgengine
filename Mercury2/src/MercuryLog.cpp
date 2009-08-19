@@ -66,6 +66,8 @@ void MercuryLog::WriteQueue()
 		m_file << m << endl;
 	}
 	
+	m_file.flush();
+	
 	m_outQueue.clear();
 }
 
