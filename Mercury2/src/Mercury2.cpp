@@ -18,6 +18,9 @@
 #include <GLHeaders.h>
 #include <ModuleManager.h>
 #include <MercuryFile.h>
+
+#include <MercuryLog.h>
+
 bool SHOWBOUNDINGVOLUME = false;
 bool SHOWAXISES = false;
 bool DOOCCLUSIONCULL = false;
@@ -36,9 +39,9 @@ void* UpdateThread(void* node)
 int SignalHandler( int signal )
 {
 	char buffer[2048];
-	printf( "Fatal error encountered in Mercury 2:  %s\n", cn_get_crash_description( signal ) );
+	LOG.Write(ssprintf( "Fatal error encountered in Mercury 2:  %s", cn_get_crash_description( signal ) ));
 	cnget_backtrace( 1, buffer, 2047 );
-	printf( "%s\n", buffer );
+	LOG.Write( buffer );
 
 	return 0;	//Continue regular crash.
 }
@@ -103,7 +106,7 @@ int main()
 			float batches = MercuryVBO::ResetBatchCount()/(float)m_count;
 			float VBinds = MercuryVBO::ResetBindCount()/(float)m_count;
 			float Tbinds = Texture::ReadAndResetBindCount()/(float)m_count;
-			printf("FPS: %f, VBO batches %f, TBinds %f, VBinds %f\n", m_count/fpsTimer.Age(), batches, Tbinds, VBinds);
+			LOG.Write( ssprintf("FPS: %f, VBO batches %f, TBinds %f, VBinds %f", m_count/fpsTimer.Age(), batches, Tbinds, VBinds) );
 			m_count = 0;
 			fpsTimer = timer;
 		}

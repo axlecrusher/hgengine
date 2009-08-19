@@ -1,79 +1,87 @@
-#include <ImageLoader.h>
-#include <MercuryUtil.h>
-#include <Texture.h>
 #include <MercuryLog.h>
+#include <iostream>
 
 using namespace std;
 
-void* ImageLoader::ImageLoaderThread(void* d)
+void* MercuryLog::ThreadLoop(void* d)
 {
-	LoaderThreadData *pd = (LoaderThreadData*)d;
-	LoaderThreadData data = *pd;
-	delete pd;
+	MercuryLog* log = static_cast<MercuryLog*>(d);
 	
-	Texture *texture = (Texture*)data.asset.Ptr();
-	RawImageData* imageData = GetInstance().LoadImage( data.asset->Path() );
-	texture->SetRawData(imageData);
-	data.asset->LoadedCallback();
-	return 0;
-}
-
-ImageLoader& ImageLoader::GetInstance()
-{
-	static ImageLoader* instance = NULL;
-	if (!instance)
-		instance = new ImageLoader;
-	return *instance;
-}
-
-bool ImageLoader::RegisterFactoryCallback(const MString& type, Callback1R< MercuryFile*, RawImageData* > functor)
-{
-	MString t = ToUpper( type );
-	std::pair<MString, Callback1R< MercuryFile*, RawImageData* > > pp(t, functor);
-	m_factoryCallbacks.push_back( pp );
-	return true;
-}
-
-RawImageData* ImageLoader::LoadImage(const MString& filename)
-{
-	MercuryFile* f = FILEMAN.Open( filename );
-	char fingerprint[4];
-	fingerprint[3] = 0;
-	
-	if( !f )
+	while (true)
 	{
-		LOG.Write( "Error opening image: "+filename );
-		return 0;
+		log->CopyQueue();
+		log->WriteQueue();
+		usleep(100000); //10x/sec
 	}
-
-	f->Read( fingerprint, 3 );
-	f->Seek( 0 );
-	
-	MString t(fingerprint);// = ToUpper( type );
-	std::list< std::pair< MString, Callback1R< MercuryFile*, RawImageData* > > >::iterator i;
-	for (i = m_factoryCallbacks.begin(); i != m_factoryCallbacks.end(); ++i)
-	{
-		if (i->first == t)
-		{
-			RawImageData* d = i->second(f);
-			delete f;
-			return d;
-		}
-	}
-	delete f;
-	return NULL;
 }
 
-void ImageLoader::LoadImageThreaded(MercuryAsset* t)
+MercuryLog::MercuryLog()
 {
-	LoaderThreadData* data = new LoaderThreadData(t);
-	MercuryThread loaderThread;
-	loaderThread.HaltOnDestroy(false);
-	loaderThread.Create( ImageLoader::ImageLoaderThread, data, true );
+	m_thread.Create(MercuryLog::ThreadLoop, this, true);
+}
+
+MercuryLog::~MercuryLog()
+{
+	m_thread.Halt();
+	CopyQueue();
+	WriteQueue();
+}
+
+void MercuryLog::Open(const MString& file)
+{
+	m_file.open(file.c_str());
+}
+
+void MercuryLog::Close()
+{
+	m_file.close();
+}
+
+void MercuryLog::Write(const MString& message)
+{
+	AutoMutexLock lock(m_mutex);
+	m_queue.push_back( message );
+}
+
+void MercuryLog::CopyQueue()
+{
+	AutoMutexLock lock(m_mutex);
+	
+	std::list< MString >::iterator i;
+	
+	for (i = m_queue.begin(); i != m_queue.end(); ++i)
+		m_outQueue.push_back( *i );
+	
+	m_queue.clear();
+}
+
+void MercuryLog::WriteQueue()
+{
+	std::list< MString >::iterator i;
+	
+	for (i = m_outQueue.begin(); i != m_outQueue.end(); ++i)
+	{
+		const MString& m = *i;
+		cout << m << endl;
+		m_file << m << endl;
+	}
+	
+	m_outQueue.clear();
+}
+
+MercuryProgramLog& MercuryProgramLog::GetInstance()
+{
+	static MercuryProgramLog* pl = NULL;
+	if (!pl)
+	{
+		pl = new MercuryProgramLog;
+		pl->m_log.Open("log.txt");
+	}
+	return *pl;
 }
 
 /****************************************************************************
- *   Copyright (C) 2008 by Joshua Allen                                     *
+ *   Copyright (C) 2009 by Joshua Allen                                     *
  *                                                                          *
  *                                                                          *
  *   All rights reserved.                                                   *

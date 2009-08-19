@@ -1,5 +1,6 @@
 #include <HGMDLModel.h>
 #include <MercuryNode.h>
+
 REGISTER_ASSET_TYPE(HGMDLModel);
 
 const uint16_t EXPCTMJRV = 2;
@@ -33,7 +34,7 @@ void HGMDLModel::LoadModel(MercuryFile* hgmdl, HGMDLModel* model)
 	MString p(fingerPrint);
 	if (p != "MBMF")
 	{
-		printf("Not a HGMDL file.\n");
+		LOG.Write("Not a HGMDL file.");
 		return;
 	}
 	
@@ -45,7 +46,7 @@ void HGMDLModel::LoadModel(MercuryFile* hgmdl, HGMDLModel* model)
 	
 	if ((majorVersion != EXPCTMJRV) || (minorVersion != EXPCTMNRV))
 	{
-		printf("Can only read HGMDL version %d.%d, this file is %d.%d\n", EXPCTMJRV,EXPCTMNRV,majorVersion,minorVersion);
+		LOG.Write(ssprintf("Can only read HGMDL version %d.%d, this file is %d.%d", EXPCTMJRV,EXPCTMNRV,majorVersion,minorVersion) );
 		return;
 	}
 	
@@ -109,7 +110,7 @@ void HGMDLModel::LoadHGMDL( const MString& path )
 
 HGMDLModel* HGMDLModel::Generate()
 {
-	printf("new HGMDL\n");
+	LOG.Write( "new HGMDL" );
 	return new HGMDLModel();
 }
 
@@ -124,7 +125,7 @@ void* HGMDLModel::LoaderThread(void* d)
 	MercuryFile * f = FILEMAN.Open( model->m_path );
 	if( !f )
 	{
-		printf( "Could not open file: \"%s\" for model\n", model->m_path.c_str() );
+		LOG.Write( "Could not open file: \""+ model->m_path +"\" for model");
 		return 0;
 	}
 	

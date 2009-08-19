@@ -1,5 +1,6 @@
 #include <RawImageData.h>
 #include <MercuryUtil.h>
+#include <MercuryLog.h>
 
 RawImageData::RawImageData()
 	:m_data(NULL)
@@ -25,7 +26,7 @@ ColorByteType ToColorByteType(const MString& s)
 		return RGBA16F;
 	else if (s == "RGBA32F")
 		return RGBA32F;
-	printf("Color Byte Type %s unknown\n", s.c_str());
+	LOG.Write( "Color Byte Type " + s + " unknown" );
 	return RGB;
 }
 

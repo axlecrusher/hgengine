@@ -8,6 +8,7 @@
 #include <MSemaphore.h>
 #include <XMLParser.h>
 #include <Callback.h>
+#include <MercuryLog.h>
 
 #include <MercuryHash.h>
 #include <list>

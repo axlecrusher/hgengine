@@ -374,7 +374,7 @@ MercuryNode* NodeFactory::Generate(const MString& type)
 	std::list< std::pair< MString, Callback0R<MercuryNode*> > >::iterator i;
 	for (i = m_factoryCallbacks.begin(); i != m_factoryCallbacks.end(); ++i)
 		if (i->first == t) return i->second();
-	printf("WARNING: Node type %s not found.\n", type.c_str());
+	LOG.Write( "WARNING: Node type " + type + " not found." );
 	return NULL;
 }
 

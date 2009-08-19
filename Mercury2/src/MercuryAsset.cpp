@@ -116,7 +116,7 @@ MAutoPtr<MercuryAsset> AssetFactory::Generate(const MString& type, const MString
 	std::list< std::pair< MString, Callback0R< MAutoPtr<MercuryAsset> > > >::iterator i;
 	for (i = m_factoryCallbacks.begin(); i != m_factoryCallbacks.end(); ++i)
 		if (i->first == t) return i->second();
-	printf("WARNING: Asset type %s not found.\n", type.c_str());
+	LOG.Write( "WARNING: Asset type " + type + " not found." );
 	return NULL;
 }
 
@@ -129,6 +129,7 @@ void AssetFactory::AddAssetInstance(const MString& key, MercuryAsset* asset)
 void AssetFactory::RemoveAssetInstance(const MString& key)
 {
 	m_assetInstances.remove( key );
+	LOG.Write( "removed asset "+key );
 }
 
 MHash< MercuryAsset*> AssetFactory::m_assetInstances;

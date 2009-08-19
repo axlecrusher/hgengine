@@ -41,7 +41,7 @@ void HGMDLMesh::LoadFromFile(MercuryFile* hgmdl)
 	
 	uint32_t extraDataCount;
 	hgmdl->Read( &extraDataCount, sizeof( uint32_t ) );
-	printf("has %d extras\n", extraDataCount);
+	LOG.Write(ssprintf("has %d extras", extraDataCount));
 	for (uint32_t i = 0; i < extraDataCount; ++i)
 	{
 		ReadExtraData(hgmdl);
@@ -62,7 +62,7 @@ void HGMDLMesh::ReadExtraData(MercuryFile* hgmdl)
 		}
 		default:
 		{
-			printf("Junk extra type '%x'\n", type);
+			LOG.Write(ssprintf("Junk extra type '%x'", type));
 			//read and discard as junk
 			uint32_t length;
 			hgmdl->Read( &length, sizeof(uint32_t) );

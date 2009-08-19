@@ -21,16 +21,18 @@
 #include <GLHelpers.h>
 #include <assert.h>
 
+#include <MercuryLog.h>
+
 #define GLERRORCHECK { \
 uint32_t e = glGetError(); \
 if ( e != GL_NO_ERROR ) { \
-printf("GL Error:%s\n", GlError2String(e).c_str()); \
+LOG.Write(ssprintf("GL Error:%s", GlError2String(e).c_str())); \
 assert(0); } }
 
 #define CHECKFBO { \
 uint32_t e = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER); \
 if ( e != GL_FRAMEBUFFER_COMPLETE ) { \
-printf("GL FBO Error:%s\n", GlError2String(e).c_str()); \
+LOG.Write(ssprintf("GL FBO Error:%s", GlError2String(e).c_str())); \
 assert(0); } }
 
 

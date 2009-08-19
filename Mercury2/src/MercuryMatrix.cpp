@@ -1,5 +1,5 @@
 #include "MercuryMatrix.h"
-#include <stdio.h>
+#include <MercuryLog.h>
 
 MercuryMatrix::MercuryMatrix()
 {
@@ -197,9 +197,9 @@ void MercuryMatrix::Print() const
 {
 	for (int i = 0; i < 4; ++i)
 	{
-		printf( "%f %f %f %f\n", (*this)[i][0], (*this)[i][1], (*this)[i][2], (*this)[i][3] );
+		LOG.Write( ssprintf( "%f %f %f %f", (*this)[i][0], (*this)[i][1], (*this)[i][2], (*this)[i][3] ) );
 	}
-	printf("\n");
+	LOG.Write("\n");
 }
 
 MercuryVector MercuryMatrix::operator*(const MercuryVector& v) const

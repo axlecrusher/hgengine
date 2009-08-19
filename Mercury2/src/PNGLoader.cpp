@@ -1,5 +1,6 @@
 #include <ImageLoader.h>
 #include <MercuryUtil.h>
+#include <MercuryLog.h>
 
 #include <assert.h>
 
@@ -163,7 +164,7 @@ RawImageData* LoadPNG( MercuryFile * fp )
 			}
 			break;
 		default:
-			printf("Invalid color byte type for PNG.\n");
+			LOG.Write("Invalid color byte type for PNG.");
 			SAFE_DELETE_ARRAY( image );
 			return false;
 	}

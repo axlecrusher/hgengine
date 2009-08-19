@@ -97,10 +97,10 @@ unsigned int ToGLColorType(ColorByteType cbt)
 		case RGBA16F:
 			return GL_RGBA16F_ARB;
 		case RGBA32F:
-			printf( "GL_RGBA32F_ARB unsupported using GL_RGBA16F_ARB\n" );
+			LOG.Write("GL_RGBA32F_ARB unsupported using GL_RGBA16F_ARB" );
 			return GL_RGBA16F_ARB;
 		default:
-			printf( "Unsupported color byte type (%d)\n", cbt );
+			LOG.Write(ssprintf( "Unsupported color byte type (%d)", cbt ));
 			return GL_RGB;
 	}
 

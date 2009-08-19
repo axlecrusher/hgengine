@@ -7,6 +7,8 @@
 #include <XMLParser.h>
 #include <MercuryUtil.h>
 #include <MessageHandler.h>
+#include <MercuryLog.h>
+
 
 #include <MercuryAsset.h>
 #include <BoundingBox.h>
@@ -156,7 +158,7 @@ static InstanceCounter<NodeFactory> NFcounter("NodeFactory");
 	MercuryNode* FactoryFunct##class() { return new class(); } \
 	Callback0R<MercuryNode*> factoryclbk##class( FactoryFunct##class ); \
 	bool GlobalRegisterSuccess##class = NodeFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class); \
-	extern "C" { int Install##class() { printf( "Installing "#class "\n" ); NodeFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class); return 0; } }
+	extern "C" { int Install##class() { LOG.Write("Installing "#class ); NodeFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class); return 0; } }
 
 
 #endif

@@ -123,9 +123,9 @@ bool Shader::LoadShader( )
 	if( f1 == 0 || f2 == 0 )
 	{
 		if( !f1 )
-			printf( "Could not open %s.\n", (char*)s1.c_str() );
+			LOG.Write(ssprintf( "Could not open %s.", (char*)s1.c_str() ));
 		if( !f2 )
-			printf( "Could not open %s.\n", (char*)s2.c_str() );
+			LOG.Write(ssprintf( "Could not open %s.", (char*)s2.c_str() ));
 		return false;
 	}
 	if( f1 )
@@ -134,7 +134,7 @@ bool Shader::LoadShader( )
 		Buffer = (char*)malloc( i+1 );
 		f1->Read( Buffer, i );
 		f1->Close();
-		printf( "Compiling: %s\n", s1.c_str() );
+		LOG.Write( "Compiling: " + s1 );
 		Buffer[i] = '\0';
 		if( !LoadShaderFrag( Buffer ) )
 		{
@@ -143,7 +143,7 @@ bool Shader::LoadShader( )
 				f2->Close();
 			if( f3 )
 				f3->Close();
-			printf( "Reporting failed shaderload. Not linking.\n" );
+			LOG.Write("Reporting failed shaderload. Not linking." );
 			return false;
 		}
 		free( Buffer );
@@ -155,13 +155,13 @@ bool Shader::LoadShader( )
 		f2->Read( Buffer, i );
 		f2->Close();
 		Buffer[i] = '\0';
-		printf( "Compiling: %s\n", s2.c_str() );
+		LOG.Write("Compiling: %s"+s2);
 		if( !LoadShaderVert( Buffer ) )
 		{
 			if( f3 )
 				f3->Close();
 			free( Buffer );
-			printf( "Reporting failed shaderload. Not linking.\n" );
+			LOG.Write("Reporting failed shaderload. Not linking." );
 			return false;
 		}
 		free( Buffer );
@@ -173,11 +173,11 @@ bool Shader::LoadShader( )
 		f3->Read( Buffer, i );
 		f3->Close();
 		Buffer[i] = '\0';
-		printf( "Compiling: %s\n", s3.c_str() );
+		LOG.Write("Compiling: %s"+s3);
 		if( !LoadShaderGeom( Buffer ) )
 		{
 			free( Buffer );
-			printf( "Reporting failed shaderload. Not linking.\n" );
+			LOG.Write("Reporting failed shaderload. Not linking." );
 			return false;
 		}
 		free( Buffer );
@@ -297,7 +297,7 @@ bool Shader::LinkShaders()
 		{
 			puts( "ERROR: You cannot load a geometry shader when there are still errors left in OpenGL." );
 			puts( "Please track down the error remaining by using glGetError() to cordon off your code." );
-			printf( "The last error received was: %d\n", ierror );
+			LOG.Write( ssprintf( "The last error received was: %d", ierror ) );
 		}
 		for( i = 1; i < imaxvert; i++ )
 		{
@@ -305,7 +305,7 @@ bool Shader::LinkShaders()
 			if( glGetError() == 0 )
 				break;
 		}
-		printf( "Geometry Shader loaded with a total of %d max verticies.  Because there are %d max vertices, and %d preceived components per vert.\n", imaxvert/i, imaxvert, i );
+		LOG.Write(ssprintf( "Geometry Shader loaded with a total of %d max verticies.  Because there are %d max vertices, and %d preceived components per vert.", imaxvert/i, imaxvert, i ));
 	}
 
 

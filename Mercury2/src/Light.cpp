@@ -120,7 +120,7 @@ void Light::ComputeRadius()
 	d = m_power * d;
 	m_radius = Clamp<float>(0.0f, 1000.0f, d);
 	
-	printf("light radius %f\n", m_radius);
+	LOG.Write(ssprintf("light radius %f", m_radius));
 }
 
 void Light::BuildBoundingBox()

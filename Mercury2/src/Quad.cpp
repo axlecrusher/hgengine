@@ -49,7 +49,7 @@ Quad* Quad::Generate()
 {
 	Quad *asset = new Quad();
 	ADD_ASSET_INSTANCE(Quad,"",asset);
-	printf("new quad\n");
+	LOG.Write( "new quad" );
 	return asset;
 }
 

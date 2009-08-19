@@ -1,79 +1,57 @@
-#include <ImageLoader.h>
+#ifndef MERCURYLOG_H
+#define MERCURYLOG_H
+
+#include <fstream>
+#include <list>
+#include <MercuryString.h>
+#include <MercuryThreads.h>
+
 #include <MercuryUtil.h>
-#include <Texture.h>
-#include <MercuryLog.h>
 
-using namespace std;
-
-void* ImageLoader::ImageLoaderThread(void* d)
+class MercuryLog
 {
-	LoaderThreadData *pd = (LoaderThreadData*)d;
-	LoaderThreadData data = *pd;
-	delete pd;
-	
-	Texture *texture = (Texture*)data.asset.Ptr();
-	RawImageData* imageData = GetInstance().LoadImage( data.asset->Path() );
-	texture->SetRawData(imageData);
-	data.asset->LoadedCallback();
-	return 0;
-}
+	public:
+		MercuryLog();
+		~MercuryLog();
+		
+		static MercuryLog& GetInstance();
+		
+		void Open(const MString& file);
+		void Close();
+		
+		void Write(const MString& message);
 
-ImageLoader& ImageLoader::GetInstance()
+	private:
+		static void* ThreadLoop(void* d);
+		void CopyQueue();
+		void WriteQueue();
+		
+		std::list< MString > m_queue;
+		std::list< MString > m_outQueue;
+		
+		std::ofstream m_file;
+		MercuryMutex m_mutex;
+		
+		MercuryThread m_thread;
+};
+
+class MercuryProgramLog
 {
-	static ImageLoader* instance = NULL;
-	if (!instance)
-		instance = new ImageLoader;
-	return *instance;
-}
+	public:
+		static MercuryProgramLog& GetInstance();
+		inline MercuryLog& Log() { return m_log; }
+	private:
+		MercuryLog m_log;
+};
 
-bool ImageLoader::RegisterFactoryCallback(const MString& type, Callback1R< MercuryFile*, RawImageData* > functor)
-{
-	MString t = ToUpper( type );
-	std::pair<MString, Callback1R< MercuryFile*, RawImageData* > > pp(t, functor);
-	m_factoryCallbacks.push_back( pp );
-	return true;
-}
+static InstanceCounter<MercuryProgramLog> MLOGcounter("MercuryProgramLog");
 
-RawImageData* ImageLoader::LoadImage(const MString& filename)
-{
-	MercuryFile* f = FILEMAN.Open( filename );
-	char fingerprint[4];
-	fingerprint[3] = 0;
-	
-	if( !f )
-	{
-		LOG.Write( "Error opening image: "+filename );
-		return 0;
-	}
+#define LOG MercuryProgramLog::GetInstance().Log()
 
-	f->Read( fingerprint, 3 );
-	f->Seek( 0 );
-	
-	MString t(fingerprint);// = ToUpper( type );
-	std::list< std::pair< MString, Callback1R< MercuryFile*, RawImageData* > > >::iterator i;
-	for (i = m_factoryCallbacks.begin(); i != m_factoryCallbacks.end(); ++i)
-	{
-		if (i->first == t)
-		{
-			RawImageData* d = i->second(f);
-			delete f;
-			return d;
-		}
-	}
-	delete f;
-	return NULL;
-}
-
-void ImageLoader::LoadImageThreaded(MercuryAsset* t)
-{
-	LoaderThreadData* data = new LoaderThreadData(t);
-	MercuryThread loaderThread;
-	loaderThread.HaltOnDestroy(false);
-	loaderThread.Create( ImageLoader::ImageLoaderThread, data, true );
-}
+#endif
 
 /****************************************************************************
- *   Copyright (C) 2008 by Joshua Allen                                     *
+ *   Copyright (C) 2009 by Joshua Allen                                     *
  *                                                                          *
  *                                                                          *
  *   All rights reserved.                                                   *
