@@ -3,6 +3,7 @@
 
 #include <MercuryNode.h>
 #include <MercuryHash.h>
+#include <map>
 
 class MercuryAsset;
 
