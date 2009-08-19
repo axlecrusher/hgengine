@@ -33,19 +33,19 @@ Texture::~Texture()
 
 void Texture::Clean()
 {
-	if (m_textureID) glDeleteTextures(1, &m_textureID);
+	if (m_textureID) { GLCALL( glDeleteTextures(1, &m_textureID) ); }
 	m_textureID = 0;
 }
 
 void Texture::LoadFromRaw()
 {
 	if ( !m_raw ) return;
-	if ( !m_textureID ) glGenTextures(1, &m_textureID);
+	if ( !m_textureID ) { GLCALL( glGenTextures(1, &m_textureID) ); }
 	
 //	m_raw = raw;
 	GLenum byteType = ToGLColorType( m_raw->m_ColorByteType );
 	
-	glBindTexture(GL_TEXTURE_2D, m_textureID);
+	GLCALL( glBindTexture(GL_TEXTURE_2D, m_textureID) );
 /*	
 	glTexImage2D(GL_TEXTURE_2D,
 				0,
@@ -57,17 +57,17 @@ void Texture::LoadFromRaw()
 				GL_UNSIGNED_BYTE,
 				m_raw->m_data);
 */
-	gluBuild2DMipmaps( GL_TEXTURE_2D, byteType, m_raw->m_width, m_raw->m_height, byteType, GL_UNSIGNED_BYTE, m_raw->m_data );
+	GLCALL( gluBuild2DMipmaps( GL_TEXTURE_2D, byteType, m_raw->m_width, m_raw->m_height, byteType, GL_UNSIGNED_BYTE, m_raw->m_data ) );
 	
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+	GLCALL( glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST) );
+	GLCALL( glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR) );
 
-//	glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+//	GLCALL( glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE ) );
 	
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	GLCALL( glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP) );
+	GLCALL( glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP) );
 	
-//	gluBuild2DMipmaps( GL_TEXTURE_2D, 3, m_raw->m_width, m_raw->m_height, ByteType, GL_UNSIGNED_BYTE, m_raw->m_data );
+//	GLCALL( gluBuild2DMipmaps( GL_TEXTURE_2D, 3, m_raw->m_width, m_raw->m_height, ByteType, GL_UNSIGNED_BYTE, m_raw->m_data ) );
 	SAFE_DELETE(m_raw);
 };
 
@@ -103,12 +103,12 @@ void Texture::LoadFromXML(const XMLNode& node)
 void Texture::BindTexture()
 {
 	m_textureResource = GL_TEXTURE0+m_numActiveTextures;
-	glActiveTexture( m_textureResource );
-	glClientActiveTextureARB(m_textureResource);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glEnable( GL_TEXTURE_2D );
-	glBindTexture(GL_TEXTURE_2D, m_textureID);
-	glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+	GLCALL( glActiveTexture( m_textureResource ) );
+	GLCALL( glClientActiveTextureARB(m_textureResource) );
+	GLCALL( glEnableClientState(GL_TEXTURE_COORD_ARRAY) );
+	GLCALL( glEnable( GL_TEXTURE_2D ) );
+	GLCALL( glBindTexture(GL_TEXTURE_2D, m_textureID) );
+	GLCALL( glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE ) );
 	
 	GLERRORCHECK;
 	
@@ -125,10 +125,10 @@ void Texture::BindTexture()
 
 void Texture::UnbindTexture()
 {
-	glActiveTexture( m_textureResource );
-	glClientActiveTextureARB(m_textureResource);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glDisable( GL_TEXTURE_2D );
+	GLCALL( glActiveTexture( m_textureResource ) );
+	GLCALL( glClientActiveTextureARB(m_textureResource) );
+	GLCALL( glDisableClientState(GL_TEXTURE_COORD_ARRAY) );
+	GLCALL( glDisable( GL_TEXTURE_2D ) );
 	GLERRORCHECK;
 	
 	Shader::RemoveAttribute( ssprintf("HG_Texture%d", m_numActiveTextures) );
@@ -172,12 +172,12 @@ void Texture::MakeDynamic(uint16_t width, uint16_t height, ColorByteType cbt, co
 	m_path = "DYNATEXT"+name;
 	ADD_ASSET_INSTANCE(Texture, m_path, this);
 	
-	if (m_textureID == 0) glGenTextures( 1, &m_textureID );
-	glBindTexture( GL_TEXTURE_2D, m_textureID );
-	glCopyTexImage2D( GL_TEXTURE_2D, 0, ToGLColorType(cbt), 0, 0, width, height, 0 );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glBindTexture( GL_TEXTURE_2D, 0 );
+	if (m_textureID == 0) { GLCALL( glGenTextures( 1, &m_textureID ) ); }
+	GLCALL( glBindTexture( GL_TEXTURE_2D, m_textureID ) );
+	GLCALL( glCopyTexImage2D( GL_TEXTURE_2D, 0, ToGLColorType(cbt), 0, 0, width, height, 0 ) );
+	GLCALL( glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST ) );
+	GLCALL( glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST) );
+	GLCALL( glBindTexture( GL_TEXTURE_2D, 0 ) );
 
 	GLERRORCHECK;
 }

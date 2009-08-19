@@ -23,14 +23,14 @@ void Viewport::PreRender(const MercuryMatrix& matrix)
 	FRUSTUM = &m_frustum;
 	
 	MercuryWindow* w = MercuryWindow::GetCurrentWindow();
-	glViewport(m_minx, m_miny, (GLsizei)(w->Width()*m_xFactor), (GLsizei)(w->Height()*m_yFactor));
+	GLCALL( glViewport(m_minx, m_miny, (GLsizei)(w->Width()*m_xFactor), (GLsizei)(w->Height()*m_yFactor)) );
 
 	//Load the frustum into the projection
 	//"eye" position does not go into projection
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrix( m_frustum.GetMatrix() );
+	GLCALL( glMatrixMode(GL_PROJECTION) );
+	GLCALL( glLoadMatrix( m_frustum.GetMatrix() ) );
 	
-	glMatrixMode(GL_MODELVIEW);
+	GLCALL( glMatrixMode(GL_MODELVIEW) );
 	
 	//Sets up the clipping frustum
 	m_frustum.LookAt(EYE, LOOKAT, MercuryVertex(0,1,0));
@@ -41,18 +41,18 @@ void Viewport::Render(const MercuryMatrix& matrix)
 	FRUSTUM = &m_frustum;
 	
 	MercuryWindow* w = MercuryWindow::GetCurrentWindow();
-	glViewport(m_minx, m_miny, (GLsizei)(w->Width()*m_xFactor), (GLsizei)(w->Height()*m_yFactor));
+	GLCALL( glViewport(m_minx, m_miny, (GLsizei)(w->Width()*m_xFactor), (GLsizei)(w->Height()*m_yFactor)) );
 
 	//Load the frustum into the projection
 	//"eye" position does not go into projection
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrix( m_frustum.GetMatrix() );
+	GLCALL( glMatrixMode(GL_PROJECTION) );
+	GLCALL( glLoadMatrix( m_frustum.GetMatrix() ) );
 	
-	glMatrixMode(GL_MODELVIEW);
+	GLCALL( glMatrixMode(GL_MODELVIEW) );
 	
 	ShaderAttribute sa;
 	sa.type = ShaderAttribute::TYPE_INT4;
-	glGetIntegerv(GL_VIEWPORT, sa.value.iInts);
+	GLCALL( glGetIntegerv(GL_VIEWPORT, sa.value.iInts) );
 	Shader::SetAttribute("HG_ViewPort", sa);
 
 	sa.type = ShaderAttribute::TYPE_FLOATV4;
@@ -87,11 +87,11 @@ void Viewport::Render(const MercuryMatrix& matrix)
 
 void Viewport::PostRender(const MercuryMatrix& matrix)
 {
-	glPushMatrix();
-//	glLoadIdentity();
+	GLCALL( glPushMatrix() );
+//	GLCALL( glLoadIdentity() );
 	glLoadMatrix( matrix );
 	CURRENTRENDERGRAPH->RenderAlpha();
-	glPopMatrix();
+	GLCALL( glPopMatrix() );
 	MercuryNode::PostRender(matrix);
 }
 

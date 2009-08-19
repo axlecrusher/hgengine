@@ -24,8 +24,8 @@ MercuryFBO::~MercuryFBO()
 
 void MercuryFBO::Clean()
 {
-	if (m_fboID != 0) glDeleteFramebuffersEXT(1, &m_fboID);
-	if (m_depthBufferID != 0) glDeleteRenderbuffersEXT( 1, &m_depthBufferID );
+	if (m_fboID != 0) { GLCALL( glDeleteFramebuffersEXT(1, &m_fboID) ); }
+	if (m_depthBufferID != 0) { GLCALL( glDeleteRenderbuffersEXT( 1, &m_depthBufferID ) ); }
 	m_fboID = m_depthBufferID = 0;
 	m_initiated = false;
 	for (uint8_t i = 0; i < 4; ++i) m_textures[i] = NULL;
@@ -43,8 +43,8 @@ void MercuryFBO::Setup()
 
 void MercuryFBO::GenerateFBO()
 {
-	if( m_useDepth ) glGenRenderbuffersEXT( 1, &m_depthBufferID );
-	glGenFramebuffersEXT( 1, &m_fboID );
+	if( m_useDepth ) { GLCALL( glGenRenderbuffersEXT( 1, &m_depthBufferID ) ); }
+	GLCALL( glGenFramebuffersEXT( 1, &m_fboID ) );
 	
 	for (uint8_t i = 0; i < m_numTextures; ++i)
 	{
@@ -58,16 +58,20 @@ void MercuryFBO::Bind()
 {
 	if( m_useDepth )
 	{
-		glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, m_fboID );
-		glRenderbufferStorageEXT( GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24, m_width, m_height );
+		GLCALL( glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, m_fboID ) );
+		GLCALL( glRenderbufferStorageEXT( GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT24, m_width, m_height ) );
 	}
-	glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, m_fboID );
+	GLCALL( glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, m_fboID ) );
 	
 	for (uint8_t i = 0; i < m_numTextures; ++i)
-		glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, GL_TEXTURE_2D, m_textures[i]->TextureID(), 0 );
-
+	{
+		GLCALL( glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, GL_TEXTURE_2D, m_textures[i]->TextureID(), 0 ) );
+	}
+	
 	if( m_useDepth )
-		glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthBufferID );
+	{
+		GLCALL( glFramebufferRenderbufferEXT( GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, m_depthBufferID ) );
+	}
 }
 
 
@@ -75,7 +79,7 @@ void MercuryFBO::Bind()
 void MercuryFBO::InitFBOBeforeRender()
 {
 	m_initiated = true;
-	glGenFramebuffersEXT(1, &m_fboID);
+	GLCALL( glGenFramebuffersEXT(1, &m_fboID) );
 	CHECKFBO;
 	GLERRORCHECK;
 }
@@ -104,19 +108,19 @@ void MercuryFBO::Render(const MercuryMatrix& matrix)
 		GLERRORCHECK;
 	}
 	
-	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboID);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GLCALL( glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fboID) );
+	GLCALL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
 	GLERRORCHECK;
 
 	const GLenum buffers[8] = {   GL_COLOR_ATTACHMENT0_EXT, GL_COLOR_ATTACHMENT1_EXT, GL_COLOR_ATTACHMENT2_EXT,
 		GL_COLOR_ATTACHMENT3_EXT, GL_COLOR_ATTACHMENT4_EXT, GL_COLOR_ATTACHMENT5_EXT,
 		GL_COLOR_ATTACHMENT6_EXT, GL_COLOR_ATTACHMENT7_EXT };
 
-	glDrawBuffersARB( m_numTextures, buffers );
+	GLCALL( glDrawBuffersARB( m_numTextures, buffers ) );
 
-	glPushAttrib(GL_VIEWPORT_BIT);
+	GLCALL( glPushAttrib(GL_VIEWPORT_BIT) );
 	
-	if ( !m_useScreenSize ) glViewport(0,0,m_width, m_height);
+	if ( !m_useScreenSize ) { GLCALL( glViewport(0,0,m_width, m_height) ); }
 	
 	GLERRORCHECK;
 	MercuryNode::Render(matrix);
@@ -125,19 +129,19 @@ void MercuryFBO::Render(const MercuryMatrix& matrix)
 
 void MercuryFBO::PostRender(const MercuryMatrix& matrix)
 {
-	glPopAttrib();
+	GLCALL( glPopAttrib() );
 	
 	MercuryNode::PostRender(matrix);
 	
 //	for( uint8_t i = 0; i < m_numTextures; i++ )
 //	{
-//		glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, GL_TEXTURE_2D, 0, 0 );
-//		glActiveTextureARB( GL_TEXTURE0_ARB + i );
-//		glDisable( GL_TEXTURE_2D );
+//		GLCALL( glFramebufferTexture2DEXT( GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT + i, GL_TEXTURE_2D, 0, 0 ) );
+//		GLCALL( glActiveTextureARB( GL_TEXTURE0_ARB + i ) );
+//		GLCALL( glDisable( GL_TEXTURE_2D ) );
 //	}
 //	CURRENTRENDERGRAPH->DoDifferedLightPass();
-	glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 );
-//	glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, 0 );
+	GLCALL( glBindFramebufferEXT( GL_FRAMEBUFFER_EXT, 0 ) );
+//	GLCALL( glBindRenderbufferEXT( GL_RENDERBUFFER_EXT, 0 ) );
 //	CURRENTRENDERGRAPH->DoDifferedLightPass();
 
 	CHECKFBO;

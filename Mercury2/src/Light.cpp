@@ -131,7 +131,7 @@ void Light::BuildBoundingBox()
 
 void Light::DifferedRender()
 {
-	glLoadMatrix( m_worldPosition );
+	GLCALL( glLoadMatrix( m_worldPosition ) );
 	if ( !m_boundingVolume ) return;
 	
 	if ( m_shader.IsValid() )
@@ -169,9 +169,9 @@ void Light::DifferedRender()
 
 	if (m_fullscreen)
 	{
-		glCullFace(GL_BACK);
+		GLCALL( glCullFace(GL_BACK) );
 		m_fullScreenQuad.Render( this );
-		glCullFace(GL_FRONT);
+		GLCALL( glCullFace(GL_FRONT) );
 	}
 	else
 		bb->RenderFaces();

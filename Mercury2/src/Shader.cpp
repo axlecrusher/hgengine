@@ -193,16 +193,16 @@ bool Shader::LoadShaderFrag( const char * sShaderCode )
 
 	GLint bFragCompiled;
 	GLint stringLength;
-	fragmentShader = glCreateShaderObjectARB( GL_FRAGMENT_SHADER_ARB );
-	glShaderSourceARB( fragmentShader, 1, &sShaderCode, NULL );
-	glCompileShaderARB( fragmentShader );
+	fragmentShader = GLCALL( glCreateShaderObjectARB( GL_FRAGMENT_SHADER_ARB ) );
+	GLCALL( glShaderSourceARB( fragmentShader, 1, &sShaderCode, NULL ) );
+	GLCALL( glCompileShaderARB( fragmentShader ) );
 
-	glGetObjectParameterivARB( fragmentShader, GL_OBJECT_COMPILE_STATUS_ARB, &bFragCompiled );
-	glGetObjectParameterivARB( fragmentShader, GL_OBJECT_INFO_LOG_LENGTH_ARB, &stringLength );
+	GLCALL( glGetObjectParameterivARB( fragmentShader, GL_OBJECT_COMPILE_STATUS_ARB, &bFragCompiled ) );
+	GLCALL( glGetObjectParameterivARB( fragmentShader, GL_OBJECT_INFO_LOG_LENGTH_ARB, &stringLength ) );
 	if ( stringLength > 1 )
 	{
 		char * tmpstr = (char*)malloc( stringLength + 1 );
-		glGetInfoLogARB( fragmentShader, stringLength, NULL, tmpstr );
+		GLCALL( glGetInfoLogARB( fragmentShader, stringLength, NULL, tmpstr ) );
 		puts( "Compiling Fragment Shader response follows:" );
 		puts( tmpstr );
 		free( tmpstr );
@@ -219,18 +219,18 @@ bool Shader::LoadShaderVert( const char * sShaderCode )
 	GLint bVertCompiled;
 	GLint stringLength;
 	//Create a new vertex shader
-	vertexShader = glCreateShaderObjectARB( GL_VERTEX_SHADER_ARB );
+	vertexShader = GLCALL( glCreateShaderObjectARB( GL_VERTEX_SHADER_ARB ) );
 	//Bind the shader to the text, setting that to be its source.
-	glShaderSourceARB( vertexShader, 1, &sShaderCode, NULL );
+	GLCALL( glShaderSourceARB( vertexShader, 1, &sShaderCode, NULL ) );
 	//Compile the shader
-	glCompileShaderARB( vertexShader );
+	GLCALL( glCompileShaderARB( vertexShader ) );
 	//Did the shader compile?  Were there any errors?
-	glGetObjectParameterivARB( vertexShader, GL_OBJECT_COMPILE_STATUS_ARB, &bVertCompiled );
-	glGetObjectParameterivARB( vertexShader, GL_OBJECT_INFO_LOG_LENGTH_ARB, &stringLength );
+	GLCALL( glGetObjectParameterivARB( vertexShader, GL_OBJECT_COMPILE_STATUS_ARB, &bVertCompiled ) );
+	GLCALL( glGetObjectParameterivARB( vertexShader, GL_OBJECT_INFO_LOG_LENGTH_ARB, &stringLength ) );
 	if( stringLength > 1 )
 	{
 		char * tmpstr = (char*)malloc( stringLength + 1 );
-		glGetInfoLogARB( vertexShader, stringLength, NULL, tmpstr );
+		GLCALL( glGetInfoLogARB( vertexShader, stringLength, NULL, tmpstr ) );
 		puts( "Compiling Vertex Shader response follows:" );
 		puts( tmpstr );
 		free( tmpstr );
@@ -248,18 +248,18 @@ bool Shader::LoadShaderGeom( const char * sShaderCode )
 	GLint bGeomCompiled;
 	GLint stringLength;
 	//Create a new geometry shader
-	geometryShader = glCreateShaderObjectARB( GL_GEOMETRY_SHADER_EXT );
+	geometryShader = GLCALL( glCreateShaderObjectARB( GL_GEOMETRY_SHADER_EXT ) );
 	//Bind the shader to the text, setting that to be its source.
-	glShaderSourceARB( geometryShader, 1, &sShaderCode, NULL );
+	GLCALL( glShaderSourceARB( geometryShader, 1, &sShaderCode, NULL ) );
 	//Compile the shader
-	glCompileShaderARB( geometryShader );
+	GLCALL( glCompileShaderARB( geometryShader ) );
 	//Did the shader compile?  Were there any errors?
-	glGetObjectParameterivARB( geometryShader, GL_OBJECT_COMPILE_STATUS_ARB, &bGeomCompiled );
-	glGetObjectParameterivARB( geometryShader, GL_OBJECT_INFO_LOG_LENGTH_ARB, &stringLength );
+	GLCALL( glGetObjectParameterivARB( geometryShader, GL_OBJECT_COMPILE_STATUS_ARB, &bGeomCompiled ) );
+	GLCALL( glGetObjectParameterivARB( geometryShader, GL_OBJECT_INFO_LOG_LENGTH_ARB, &stringLength ) );
 	if( bGeomCompiled == 0 )
 	{
 		char * tmpstr = (char*)malloc( stringLength + 1 );
-		glGetInfoLogARB( geometryShader, stringLength, NULL, tmpstr );
+		GLCALL( glGetInfoLogARB( geometryShader, stringLength, NULL, tmpstr ) );
 		puts( "Compiling Geometry Shader response follows:" );
 		puts( tmpstr );
 		free( tmpstr );
@@ -273,16 +273,22 @@ bool Shader::LinkShaders()
 	GLint bLinked;
 	GLint stringLength;
 	//Create the actual shader prgoram
-	iProgramID = glCreateProgramObjectARB();
+	iProgramID = GLCALL( glCreateProgramObjectARB() );
 	//Attach the fragment/vertex shader to it.
 	if( vertexShader )
-		glAttachObjectARB( iProgramID, vertexShader );
+	{
+		GLCALL( glAttachObjectARB( iProgramID, vertexShader ) );
+	}
 	if( fragmentShader )
-		glAttachObjectARB( iProgramID, fragmentShader );
+	{
+		GLCALL( glAttachObjectARB( iProgramID, fragmentShader ) );
+	}
 	if( geometryShader )
-		glAttachObjectARB( iProgramID, geometryShader );
+	{
+		GLCALL( glAttachObjectARB( iProgramID, geometryShader ) );
+	}
 	//Attempt to link the shader
-	glLinkProgramARB( iProgramID );
+	GLCALL( glLinkProgramARB( iProgramID ) );
 
 	//If we're using a geometry shader, we have to do a little extra.
 	if( CustomGLProgramParI && geometryShader )
@@ -292,7 +298,7 @@ bool Shader::LinkShaders()
 
 		int ierror, i;
 		GLint imaxvert;
-		glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES_EXT,&imaxvert);
+		GLCALL( glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES_EXT,&imaxvert) );
 		if( (ierror = glGetError()) != 0 )
 		{
 			puts( "ERROR: You cannot load a geometry shader when there are still errors left in OpenGL." );
@@ -310,13 +316,13 @@ bool Shader::LinkShaders()
 
 
 	//See if there were any errors.
-	glGetObjectParameterivARB( iProgramID, GL_OBJECT_LINK_STATUS_ARB, &bLinked );
-	glGetObjectParameterivARB( iProgramID, GL_OBJECT_INFO_LOG_LENGTH_ARB, &stringLength );
+	GLCALL( glGetObjectParameterivARB( iProgramID, GL_OBJECT_LINK_STATUS_ARB, &bLinked ) );
+	GLCALL( glGetObjectParameterivARB( iProgramID, GL_OBJECT_INFO_LOG_LENGTH_ARB, &stringLength ) );
 
 	if ( stringLength > 1 || bLinked == 0 )
 	{
 		char * tmpstr = (char*)malloc( stringLength + 1 );
-		glGetInfoLogARB( iProgramID, stringLength, NULL, tmpstr );
+		GLCALL( glGetInfoLogARB( iProgramID, stringLength, NULL, tmpstr ) );
 		puts( "Linking shaders. response follows:" );
 		puts( tmpstr );
 		free( tmpstr );
@@ -326,7 +332,7 @@ bool Shader::LinkShaders()
 
 	//Build the list of uniform tabs.
 	int iNumUniforms;
-	glGetObjectParameterivARB( iProgramID, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &iNumUniforms );
+	GLCALL( glGetObjectParameterivARB( iProgramID, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &iNumUniforms ) );
 	m_uniforms.clear();
 	for( int i = 0; i < iNumUniforms; ++i )
 	{
@@ -334,10 +340,10 @@ bool Shader::LinkShaders()
 		int bufflen;
 		GLint size;
 		GLenum type;
-		glGetActiveUniformARB( iProgramID, i, 1024, &bufflen, &size, &type, buffer );
+		GLCALL( glGetActiveUniformARB( iProgramID, i, 1024, &bufflen, &size, &type, buffer ) );
 		buffer[bufflen] = 0;
-//		m_uniforms[buffer] = glGetUniformLocationARB( iProgramID, buffer );
-		int location = glGetUniformLocationARB( iProgramID, buffer );
+//		m_uniforms[buffer] = GLCALL( glGetUniformLocationARB( iProgramID, buffer ) );
+		int location = GLCALL( glGetUniformLocationARB( iProgramID, buffer ) );
 		m_uniforms.push_back( UniformMap(buffer, location) );
 	}
 	return true;
@@ -352,23 +358,23 @@ void Shader::DestroyShader()
 		return;
 
 	//If we can't destroy the object, then don't try.
-	glGetObjectParameterivARB(iProgramID, GL_OBJECT_ATTACHED_OBJECTS_ARB, &count);
+	GLCALL( glGetObjectParameterivARB(iProgramID, GL_OBJECT_ATTACHED_OBJECTS_ARB, &count) );
 
 	//Iterate through all children.
 	if (count > 0)
 	{
 		objects = (GLhandleARB *)malloc(count*sizeof(GLhandleARB));
-		glGetAttachedObjectsARB(iProgramID, count, NULL, objects);
+		GLCALL( glGetAttachedObjectsARB(iProgramID, count, NULL, objects) );
 	}
 	else
 		return;
 
 	for ( i = 0; i < count; ++i)
 	{
-		glDetachObjectARB(iProgramID, objects[i]);
+		GLCALL( glDetachObjectARB(iProgramID, objects[i]) );
 	}
 
-	glDeleteObjectARB(iProgramID);
+	GLCALL( glDeleteObjectARB(iProgramID) );
 	
 	iProgramID = 0;
 	free( objects );
@@ -418,7 +424,7 @@ void Shader::ActivateShader()
 {
 	if ( !iProgramID ) return;
 	
-	glUseProgramObjectARB( iProgramID );
+	GLCALL( glUseProgramObjectARB( iProgramID ) );
 	GLERRORCHECK;
 	
 	//set attributes here
@@ -433,7 +439,7 @@ void Shader::ActivateShader()
 
 void Shader::DeactivateShader()
 {
-	glUseProgramObjectARB( 0 );
+	GLCALL( glUseProgramObjectARB( 0 ) );
 	GLERRORCHECK;
 }
 
@@ -471,17 +477,17 @@ void Shader::SetAttributeInternal(const MString& name, const ShaderAttribute& x)
 		{
 			case ShaderAttribute::TYPE_INT:
 			case ShaderAttribute::TYPE_SAMPLER:
-				glUniform1iARB( location, x.value.iInt );
+				GLCALL( glUniform1iARB( location, x.value.iInt ) );
 				break;
 			case ShaderAttribute::TYPE_FLOAT:
 			case ShaderAttribute::TYPE_FLOATV4:
-				glUniform4fvARB( location, 1, &x.value.fFloatV4[0] );
+				GLCALL( glUniform4fvARB( location, 1, &x.value.fFloatV4[0] ) );
 				break;
 			case ShaderAttribute::TYPE_MATRIX:
-				glUniformMatrix4fvARB(location, 1, 1, x.value.matrix); //transpase too
+				GLCALL( glUniformMatrix4fvARB(location, 1, 1, x.value.matrix) ); //transpase too
 				break;
 			case ShaderAttribute::TYPE_INT4:
-				glUniform4ivARB( location, 1, x.value.iInts );
+				GLCALL( glUniform4ivARB( location, 1, x.value.iInts ) );
 				break;
 		};
 		GLERRORCHECK;

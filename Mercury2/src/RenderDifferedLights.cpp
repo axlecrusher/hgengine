@@ -23,21 +23,21 @@ void RenderDifferedLights::Render(const MercuryNode* node)
 	//apply all the active Textures
 	for (uint8_t i = 0; i < numTextures; ++i)
 	{
-		glActiveTexture( GL_TEXTURE0+i );
-		glClientActiveTextureARB(GL_TEXTURE0+i);
-		glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*0));
+		GLCALL( glActiveTexture( GL_TEXTURE0+i ) );
+		GLCALL( glClientActiveTextureARB(GL_TEXTURE0+i) );
+		GLCALL( glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*0)) );
 	}
 
-	glPushAttrib( GL_CURRENT_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_POLYGON_BIT);
-	glCullFace(GL_FRONT);
+	GLCALL( glPushAttrib( GL_CURRENT_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_POLYGON_BIT) );
+	GLCALL( glCullFace(GL_FRONT) );
 
-	glDisable(GL_DEPTH_TEST);
-	glDepthMask(false);
-	glBlendFunc(GL_ONE, GL_ONE);
+	GLCALL( glDisable(GL_DEPTH_TEST) );
+	GLCALL( glDepthMask(false) );
+	GLCALL( glBlendFunc(GL_ONE, GL_ONE) );
 
 	CURRENTRENDERGRAPH->DoDifferedLightPass();
 	
-	glPopAttrib( );
+	GLCALL( glPopAttrib( ) );
 }
 
 RenderDifferedLights* RenderDifferedLights::Generate()

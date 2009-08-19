@@ -14,28 +14,28 @@ RenderBuffer::RenderBuffer()
 
 RenderBuffer::~RenderBuffer()
 {
-	if (m_bufferID != 0) glDeleteRenderbuffersEXT(1, &m_bufferID);
+	if (m_bufferID != 0) { GLCALL( glDeleteRenderbuffersEXT(1, &m_bufferID) ); }
 }
 
 void RenderBuffer::Render(const MercuryNode* node)
 {
 	if ( !m_initiated ) InitRenderBuffer();
 	
-	glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_bufferID);
+	GLCALL( glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_bufferID) );
 	
 	if ( NeedResize() ) AllocateSpace();
 
 	if ( m_type == TEXTURE )
 	{
-		glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GLAttachPoint(), GL_TEXTURE_2D, m_textureID, 0);
+		GLCALL( glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GLAttachPoint(), GL_TEXTURE_2D, m_textureID, 0) );
 	}
 	else
 	{
-		glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GLAttachPoint(), GL_RENDERBUFFER_EXT, m_bufferID);
+		GLCALL( glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GLAttachPoint(), GL_RENDERBUFFER_EXT, m_bufferID) );
 	}
 	CHECKFBO;
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glClear(GL_COLOR_BUFFER_BIT );
+	GLCALL( glClearColor(0.0, 0.0, 0.0, 0.0) );
+	GLCALL( glClear(GL_COLOR_BUFFER_BIT ) );
 	GLERRORCHECK;
 }
 
@@ -44,57 +44,57 @@ void RenderBuffer::PostRender(const MercuryNode* node)
 	GLERRORCHECK;
 	if ( m_type == TEXTURE )
 	{
-		glMatrixMode(GL_MODELVIEW);
-		glPushMatrix();
-		glLoadIdentity();
+		GLCALL( glMatrixMode(GL_MODELVIEW) );
+		GLCALL( glPushMatrix() );
+		GLCALL( glLoadIdentity() );
 			
 		GLERRORCHECK;
 
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-		glLoadIdentity();
+		GLCALL( glMatrixMode(GL_PROJECTION) );
+		GLCALL( glPushMatrix() );
+		GLCALL( glLoadIdentity() );
 		
 		GLERRORCHECK;
 
 //		printf("active %d\n", Texture::NumberActiveTextures() );
 		
 		//this works with a "normal" texture, FBO texture is still white
-		glActiveTexture( GL_TEXTURE0 );
-		glClientActiveTextureARB(GL_TEXTURE0);
-		glEnable( GL_TEXTURE_2D );
-		glBindTexture(GL_TEXTURE_2D, m_textureID);
-		glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+		GLCALL( glActiveTexture( GL_TEXTURE0 ) );
+		GLCALL( glClientActiveTextureARB(GL_TEXTURE0) );
+		GLCALL( glEnable( GL_TEXTURE_2D ) );
+		GLCALL( glBindTexture(GL_TEXTURE_2D, m_textureID) );
+		GLCALL( glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE ) );
 
 		GLERRORCHECK;
 
-		glBegin(GL_QUADS);
-		glTexCoord2d(0,1);
-		glVertex3i(-1, -1, -1);
+		GLCALL( glBegin(GL_QUADS) );
+		GLCALL( glTexCoord2d(0,1) );
+		GLCALL( glVertex3i(-1, -1, -1) );
 		
-		glTexCoord2d(1,1);
-		glVertex3i(1, -1, -1);
+		GLCALL( glTexCoord2d(1,1) );
+		GLCALL( glVertex3i(1, -1, -1) );
 		
-		glTexCoord2d(1,0);
-		glVertex3i(1, 1, -1);
+		GLCALL( glTexCoord2d(1,0) );
+		GLCALL( glVertex3i(1, 1, -1) );
 		
-		glTexCoord2d(0,0);
-		glVertex3i(-1, 1, -1);
+		GLCALL( glTexCoord2d(0,0) );
+		GLCALL( glVertex3i(-1, 1, -1) );
 		
-		glEnd();
+		GLCALL( glEnd() );
 		
 		GLERRORCHECK;
 		
-		glBindTexture(GL_TEXTURE_2D, 0);
-//		glActiveTexture( GL_TEXTURE0 );
-//		glClientActiveTextureARB(GL_TEXTURE0);
-//		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-		glDisable( GL_TEXTURE_2D );
+		GLCALL( glBindTexture(GL_TEXTURE_2D, 0) );
+//		GLCALL( glActiveTexture( GL_TEXTURE0 ) );
+//		GLCALL( glClientActiveTextureARB(GL_TEXTURE0) );
+//		GLCALL( glDisableClientState(GL_TEXTURE_COORD_ARRAY) );
+		GLCALL( glDisable( GL_TEXTURE_2D ) );
 
 		GLERRORCHECK;
 
-		glPopMatrix();
-		glMatrixMode(GL_MODELVIEW);
-		glPopMatrix();
+		GLCALL( glPopMatrix() );
+		GLCALL( glMatrixMode(GL_MODELVIEW) );
+		GLCALL( glPopMatrix() );
 	
 		GLERRORCHECK;
 	}
@@ -103,10 +103,10 @@ void RenderBuffer::PostRender(const MercuryNode* node)
 void RenderBuffer::InitRenderBuffer()
 {
 	m_initiated = true;
-	glGenRenderbuffersEXT(1, &m_bufferID);
+	GLCALL( glGenRenderbuffersEXT(1, &m_bufferID) );
 	CHECKFBO;
 	GLERRORCHECK;
-	if (m_type == TEXTURE) glGenTextures(1, &m_textureID);
+	if (m_type == TEXTURE) { GLCALL( glGenTextures(1, &m_textureID) ); }
 	CHECKFBO;
 	GLERRORCHECK;
 }
@@ -120,11 +120,13 @@ void RenderBuffer::AllocateSpace()
 
 	if (m_type == TEXTURE)
 	{
-		glBindTexture(GL_TEXTURE_2D, m_textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,  m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		GLCALL( glBindTexture(GL_TEXTURE_2D, m_textureID) );
+		GLCALL( glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,  m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL) );
 	}
 	else
-		glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GLType(), m_width, m_height);
+	{
+		GLCALL( glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GLType(), m_width, m_height) );
+	}
 	GLERRORCHECK;
 }
 

@@ -13,20 +13,20 @@ FullscreenQuad::FullscreenQuad()
 
 void FullscreenQuad::Render(const MercuryNode* node)
 {
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-//	glLoadIdentity();
-	glLoadMatrixf( m_matrix.Ptr() ); //this is OK
+	GLCALL( glMatrixMode(GL_MODELVIEW) );
+	GLCALL( glPushMatrix() );
+//	GLCALL( glLoadIdentity() );
+	GLCALL( glLoadMatrixf( m_matrix.Ptr() ) ); //this is OK
 
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-//	glLoadIdentity();
+	GLCALL( glMatrixMode(GL_PROJECTION) );
+	GLCALL( glPushMatrix() );
+//	GLCALL( glLoadIdentity() );
 	
 	Quad::Render( node );
 	
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
+	GLCALL( glPopMatrix() );
+	GLCALL( glMatrixMode(GL_MODELVIEW) );
+	GLCALL( glPopMatrix() );
 }
 
 FullscreenQuad* FullscreenQuad::Generate()

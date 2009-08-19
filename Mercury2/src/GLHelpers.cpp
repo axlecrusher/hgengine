@@ -1,6 +1,8 @@
 #include <GLHeaders.h>
 #include <GLHelpers.h>
 
+uint32_t GLCALLCOUNT = 0;
+
 MString GlError2String(uint32_t e)
 {
 	switch (e)
@@ -63,13 +65,13 @@ MercuryVertex pointFromScreenLoc(int screen_x, int screen_y)
 	GLdouble modelview[16];
 	GLdouble projection[16];
 	
-	glGetIntegerv(GL_VIEWPORT, viewport);
-	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-	glGetDoublev(GL_PROJECTION_MATRIX, projection);
+	GLCALL( glGetIntegerv(GL_VIEWPORT, viewport) );
+	GLCALL( glGetDoublev(GL_MODELVIEW_MATRIX, modelview) );
+	GLCALL( glGetDoublev(GL_PROJECTION_MATRIX, projection) );
 	
 	winX = (float)screen_x;
 	winY = (float)viewport[3] - (float)screen_y;
-	glReadPixels( screen_x, (int)winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
+	GLCALL( glReadPixels( screen_x, (int)winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ ) );
 	
 	gluUnProject(
 		winX, winY, winZ,

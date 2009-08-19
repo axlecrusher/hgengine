@@ -23,7 +23,7 @@ void TransformNode::RecursivePreRender()
 	const MercuryMatrix& matrix = GetGlobalMatrix();
 	m_modelView = ManipulateMatrix( matrix );
 	
-	glLoadMatrix( m_modelView );
+	GLCALL( glLoadMatrix( m_modelView ) );
 
 	MercuryNode::RecursivePreRender();
 }
@@ -35,7 +35,7 @@ void TransformNode::HandleMatrixOperations()
 	const MercuryMatrix& matrix = GetGlobalMatrix();
 	m_modelView = ManipulateMatrix( matrix );
 	
-	glLoadMatrix( m_modelView );
+	GLCALL( glLoadMatrix( m_modelView ) );
 }
 
 

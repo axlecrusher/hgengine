@@ -14,7 +14,9 @@
 OcclusionResult::~OcclusionResult()
 {
 	if ( m_occlusionQuery != 0 )
-		glDeleteQueriesARB( 1, &m_occlusionQuery );
+	{
+		GLCALL( glDeleteQueriesARB( 1, &m_occlusionQuery ) );
+	}
 	m_occlusionQuery = 0;
 }
 
@@ -23,7 +25,7 @@ uint32_t OcclusionResult::GetSamples() const
 	if (m_occlusionQuery == 0) return ~0;
 	
 	uint32_t samples;
-	glGetQueryObjectuivARB(m_occlusionQuery, GL_QUERY_RESULT_ARB, &samples);
+	GLCALL( glGetQueryObjectuivARB(m_occlusionQuery, GL_QUERY_RESULT_ARB, &samples) );
 	return samples;
 }
 
@@ -144,36 +146,36 @@ void BoundingBox::DoOcclusionTest( OcclusionResult& result )
 	const float* center = GetCenter();
 	const float* extend = GetExtend();
 	
-	glPushAttrib( GL_CURRENT_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	glDisable(GL_CULL_FACE);
+	GLCALL( glPushAttrib( GL_CURRENT_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT) );
+	GLCALL( glDisable(GL_CULL_FACE) );
 	
-	glPushMatrix();
-	glTranslatef(center[0], center[1], center[2]);
-	glScalef(extend[0],extend[1],extend[2]);
+	GLCALL( glPushMatrix() );
+	GLCALL( glTranslatef(center[0], center[1], center[2]) );
+	GLCALL( glScalef(extend[0],extend[1],extend[2]) );
 	
 	if (m_vboID == 0) InitVBO();
 	
 	if ( MercuryVBO::m_lastVBOrendered != &m_vboID )
 	{
 		MercuryVBO::m_lastVBOrendered = &m_vboID;
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID); // once
-		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);  // once
-		glVertexPointer(3, GL_FLOAT, 0, 0);  // once
+		GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID) ); // once
+		GLCALL( glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );  // once
+		GLCALL( glVertexPointer(3, GL_FLOAT, 0, 0) );  // once
 	}
 	
-	if (result.GetQueryID() == 0) glGenQueriesARB(1, &result.GetQueryID());
-	glBeginQueryARB(GL_SAMPLES_PASSED_ARB, result.GetQueryID());
+	if (result.GetQueryID() == 0) { GLCALL( glGenQueriesARB(1, &result.GetQueryID()) ); }
+	GLCALL( glBeginQueryARB(GL_SAMPLES_PASSED_ARB, result.GetQueryID()) );
 
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	glDepthMask(GL_FALSE);
+	GLCALL( glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE) );
+	GLCALL( glDepthMask(GL_FALSE) );
 
-	glDrawArrays(GL_QUADS, 0, 24);
+	GLCALL( glDrawArrays(GL_QUADS, 0, 24) );
 	
-	glEndQueryARB(GL_SAMPLES_PASSED_ARB);
-//	glGetQueryObjectuivARB(q, GL_QUERY_RESULT_ARB, &samples);
+	GLCALL( glEndQueryARB(GL_SAMPLES_PASSED_ARB) );
+//	GLCALL( glGetQueryObjectuivARB(q, GL_QUERY_RESULT_ARB, &samples) );
 
-	glPopMatrix();
-	glPopAttrib( );
+	GLCALL( glPopMatrix() );
+	GLCALL( glPopAttrib( ) );
 }
 
 void BoundingBox::RenderFaces() const
@@ -181,22 +183,22 @@ void BoundingBox::RenderFaces() const
 	const float* center = GetCenter();
 	const float* extend = GetExtend();
 	
-	glPushMatrix();
-	glTranslatef(center[0], center[1], center[2]);
-	glScalef(extend[0],extend[1],extend[2]);
+	GLCALL( glPushMatrix() );
+	GLCALL( glTranslatef(center[0], center[1], center[2]) );
+	GLCALL( glScalef(extend[0],extend[1],extend[2]) );
 	
 	if (m_vboID == 0) InitVBO();
 	
 //	if ( MercuryVBO::m_lastVBOrendered != &m_vboID )
 	{
 		MercuryVBO::m_lastVBOrendered = &m_vboID;
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID); // once
-		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);  // once
-		glVertexPointer(3, GL_FLOAT, 0, 0);  // once
+		GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID) ); // once
+		GLCALL( glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );  // once
+		GLCALL( glVertexPointer(3, GL_FLOAT, 0, 0) );  // once
 	}
 	
-	glDrawArrays(GL_QUADS, 0, 24);
-	glPopMatrix();
+	GLCALL( glDrawArrays(GL_QUADS, 0, 24) );
+	GLCALL( glPopMatrix() );
 }
 
 void BoundingBox::Render()
@@ -209,85 +211,85 @@ void BoundingBox::Render()
 	const float* center = GetCenter();
 	const float* extend = GetExtend();
 	
-	glPushMatrix();
-//	glLoadIdentity();
-	glPushAttrib( GL_CURRENT_BIT  );
-	glBegin(GL_LINES);
-	glColor3f(0,1.0f,0);
+	GLCALL( glPushMatrix() );
+//	GLCALL( glLoadIdentity() );
+	GLCALL( glPushAttrib( GL_CURRENT_BIT  ) );
+	GLCALL( glBegin(GL_LINES) );
+	GLCALL( glColor3f(0,1.0f,0) );
 
 	//front
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
+	GLCALL( glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]) );
+	GLCALL( glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]) );
+	GLCALL( glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]) );
+	GLCALL( glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]) );
+	GLCALL( glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]) );
+	GLCALL( glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]) );
+	GLCALL( glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]) );
+	GLCALL( glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]) );
 
 	//back
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
+	GLCALL( glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]) );
+	GLCALL( glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]) );
+	GLCALL( glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]) );
+	GLCALL( glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]) );
+	GLCALL( glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]) );
+	GLCALL( glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]) );
+	GLCALL( glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]) );
+	GLCALL( glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]) );
 
 	//top
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+	GLCALL( glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]-extend[2]) );
+	GLCALL( glVertex3f(center[0]-extend[0], center[1]+extend[1], center[2]+extend[2]) );
+	GLCALL( glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]-extend[2]) );
+	GLCALL( glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]) );
 
 	//bottom
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]);
+	GLCALL( glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]) );
+	GLCALL( glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]+extend[2]) );
+	GLCALL( glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]-extend[2]) );
+	GLCALL( glVertex3f(center[0]+extend[0], center[1]-extend[1], center[2]+extend[2]) );
 
-	glEnd();
+	GLCALL( glEnd() );
 	
-	glPointSize(4);
-	glBegin(GL_POINTS);
+	GLCALL( glPointSize(4) );
+	GLCALL( glBegin(GL_POINTS) );
 	//center
-	glVertex3f(center[0], center[1], center[2]);
+	GLCALL( glVertex3f(center[0], center[1], center[2]) );
 	//max point
-	glColor3f(1,1,0);
-	glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]);
+	GLCALL( glColor3f(1,1,0) );
+	GLCALL( glVertex3f(center[0]+extend[0], center[1]+extend[1], center[2]+extend[2]) );
 	//min point
-//	glColor3f(1,0,0);
-	glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]);
-	glEnd();
+//	GLCALL( glColor3f(1,0,0) );
+	GLCALL( glVertex3f(center[0]-extend[0], center[1]-extend[1], center[2]-extend[2]) );
+	GLCALL( glEnd() );
 
 	
 	//normals
 	MercuryVertex c;
-	glBegin(GL_LINES);
+	GLCALL( glBegin(GL_LINES) );
 	
-	glColor3f(1.0f,0,0);
-	glVertex3f(center[0], center[1], center[2]);
+	GLCALL( glColor3f(1.0f,0,0) );
+	GLCALL( glVertex3f(center[0], center[1], center[2]) );
 	c = center;
 	c += m_normals[0];
-	glVertex3f(c.GetX(), c.GetY(), c.GetZ());
+	GLCALL( glVertex3f(c.GetX(), c.GetY(), c.GetZ()) );
 	
-	glColor3f(0,1.0f,0);
-	glVertex3f(center[0], center[1], center[2]);
+	GLCALL( glColor3f(0,1.0f,0) );
+	GLCALL( glVertex3f(center[0], center[1], center[2]) );
 	c = center;
 	c += m_normals[1];
-	glVertex3f(c.GetX(), c.GetY(), c.GetZ());
+	GLCALL( glVertex3f(c.GetX(), c.GetY(), c.GetZ()) );
 	
-	glColor3f(0,0,1.0f);
-	glVertex3f(center[0], center[1], center[2]);
+	GLCALL( glColor3f(0,0,1.0f) );
+	GLCALL( glVertex3f(center[0], center[1], center[2]) );
 	c = center;
 	c += m_normals[2];
-	glVertex3f(c.GetX(), c.GetY(), c.GetZ());
+	GLCALL( glVertex3f(c.GetX(), c.GetY(), c.GetZ()) );
 	
-	glEnd();
+	GLCALL( glEnd() );
 
-	glPopAttrib( );
-	glPopMatrix();
+	GLCALL( glPopAttrib( ) );
+	GLCALL( glPopMatrix() );
 }
 
 void BoundingBox::PopulateVertices()
@@ -336,11 +338,11 @@ void BoundingBox::PopulateVertices()
 
 void BoundingBox::InitVBO()
 {
-	glGenBuffersARB(1, &m_vboID);
+	GLCALL( glGenBuffersARB(1, &m_vboID) );
 	
 	//vertex VBO
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_vertexData.LengthInBytes(), m_vertexData.Buffer(), GL_STATIC_DRAW_ARB);
+	GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID) );
+	GLCALL( glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_vertexData.LengthInBytes(), m_vertexData.Buffer(), GL_STATIC_DRAW_ARB) );
 }
 
 AlignedBuffer<float> BoundingBox::m_vertexData;

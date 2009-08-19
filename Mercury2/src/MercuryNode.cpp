@@ -198,7 +198,7 @@ void MercuryNode::RecursiveRender()
 	//the alpha render path requires that all things things happen, so
 	//it is just easier to leave it here than to duplicate this code in
 	//RenderGraph::RenderAlpha
-	glLoadMatrix( modelView );
+	GLCALL( glLoadMatrix( modelView ) );
 		
 	ShaderAttribute sa;
 	sa.type = ShaderAttribute::TYPE_MATRIX;
@@ -216,7 +216,7 @@ void MercuryNode::RecursiveRender()
 			child->RecursiveRender();
 	}
 
-	glLoadMatrix( modelView );
+	GLCALL( glLoadMatrix( modelView ) );
 	Shader::SetAttribute("HG_ModelMatrix", sa);
 	PostRender( modelView );  //calls on children assets
 }

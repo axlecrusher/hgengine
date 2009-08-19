@@ -23,17 +23,19 @@
 
 #include <MercuryLog.h>
 
+#define GLCALL(x) x; ++GLCALLCOUNT;
+
 #define GLERRORCHECK { \
-uint32_t e = glGetError(); \
+uint32_t e = GLCALL( glGetError() ); \
 if ( e != GL_NO_ERROR ) { \
 LOG.Write(ssprintf("GL Error:%s", GlError2String(e).c_str())); \
 assert(0); } }
 
 #define CHECKFBO { \
-uint32_t e = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER); \
+uint32_t e = GLCALL( glCheckFramebufferStatusEXT(GL_FRAMEBUFFER) ); \
 if ( e != GL_FRAMEBUFFER_COMPLETE ) { \
 LOG.Write(ssprintf("GL FBO Error:%s", GlError2String(e).c_str())); \
 assert(0); } }
 
-
+extern uint32_t GLCALLCOUNT;
 #endif

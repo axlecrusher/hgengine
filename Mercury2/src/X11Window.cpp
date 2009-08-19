@@ -3,6 +3,8 @@
 #include <MercuryInput.h>
 #include <MercuryPrefs.h>
 
+#include <GLHeaders.h>
+
 #define MOUSE_BTN_LEFT 1
 #define MOUSE_BTN_RIGHT 3
 #define MOUSE_BTN_CENTER 2
@@ -186,18 +188,19 @@ X11Window::X11Window(const MString& title, int width, int height, int bits, int 
 	}
 
 	XMapWindow(m_display, win);
-	glXMakeCurrent(m_display, win, ctx);
+	GLCALL( glXMakeCurrent(m_display, win, ctx) );
 	
 	XFree(visinfo);
 
 	m_window = win;
 	m_renderCtx = ctx;
 	
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_NORMALIZE);
+	GLCALL( glEnable(GL_DEPTH_TEST) );
+	GLCALL( glEnable(GL_CULL_FACE) );
+	GLCALL( glEnable(GL_NORMALIZE) );
 	
-	glEnable (GL_BLEND); glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	GLCALL( glEnable (GL_BLEND); );
+	GLCALL( glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
 }
 
 X11Window::~X11Window()
@@ -363,7 +366,7 @@ bool X11Window::IsKeyRepeat(XKeyEvent* e)
 
 void X11Window::Clear()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	GLCALL( glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) );
 }
 
 void* X11Window::GetProcAddress(const MString& x)

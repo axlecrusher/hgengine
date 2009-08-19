@@ -19,7 +19,7 @@ MercuryVBO::MercuryVBO()
 
 MercuryVBO::~MercuryVBO()
 {
-	if (m_bufferIDs[0]) glDeleteBuffersARB(2, m_bufferIDs);
+	if (m_bufferIDs[0]) { GLCALL( glDeleteBuffersARB(2, m_bufferIDs) ); }
 	m_bufferIDs[0] = m_bufferIDs[1] = 0;
 }
 
@@ -39,24 +39,24 @@ void MercuryVBO::Render(const MercuryNode* node)
 		if( m_bDirtyIndices )
 			UpdateIndices();
 
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]);
-		glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]);
-		glVertexPointer(3, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*5));
+		GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]) );
+		GLCALL( glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]) );
+		GLCALL( glVertexPointer(3, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*5)) );
 		++m_vboBinds;
 	}
 	
 	//apply all the active Textures
 	for (uint8_t i = 0; i < numTextures; ++i)
 	{
-		glActiveTexture( GL_TEXTURE0+i );
-		glClientActiveTextureARB(GL_TEXTURE0+i);
-		glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*0));
+		GLCALL( glActiveTexture( GL_TEXTURE0+i ) );
+		GLCALL( glClientActiveTextureARB(GL_TEXTURE0+i) );
+		GLCALL( glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*0)) );
 	}
 	
-	glEnableClientState( GL_NORMAL_ARRAY );
-	glNormalPointer(GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*2));
+	GLCALL( glEnableClientState( GL_NORMAL_ARRAY ) );
+	GLCALL( glNormalPointer(GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*2)) );
 
-	glDrawRangeElements(GL_TRIANGLES, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL);
+	GLCALL( glDrawRangeElements(GL_TRIANGLES, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL) );
 	m_vboBatches++;
 		
 	if (m_boundingVolume && SHOWBOUNDINGVOLUME) m_boundingVolume->Render();
@@ -67,27 +67,27 @@ void MercuryVBO::InitVBO()
 {
 	if (!m_bufferIDs[0])
 	{
-		glGenBuffersARB(2, m_bufferIDs);
+		GLCALL( glGenBuffersARB(2, m_bufferIDs) );
 	}
 
 	UpdateIndices();
 	UpdateVertices();
-	glEnableClientState(GL_VERTEX_ARRAY);
+	GLCALL( glEnableClientState(GL_VERTEX_ARRAY) );
 
 	m_initiated = true;
 }
 
 void MercuryVBO::UpdateIndices()
 {
-	glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]);
-	glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_indexData.LengthInBytes(), m_indexData.Buffer(), GL_STATIC_DRAW_ARB);
+	GLCALL( glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]) );
+	GLCALL( glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_indexData.LengthInBytes(), m_indexData.Buffer(), GL_STATIC_DRAW_ARB) );
 	m_bDirtyIndices = 0;
 }
 
 void MercuryVBO::UpdateVertices()
 {
-	glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]);
-	glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_vertexData.LengthInBytes(), m_vertexData.Buffer(), GL_STATIC_DRAW_ARB);
+	GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]) );
+	GLCALL( glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_vertexData.LengthInBytes(), m_vertexData.Buffer(), GL_STATIC_DRAW_ARB) );
 	m_bDirtyVertices = 0;
 }
 
