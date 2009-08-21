@@ -23,8 +23,6 @@
 
 #include <MercuryLog.h>
 
-#define GLCALL(x) x; ++GLCALLCOUNT; GLFUNCTCOUNT[#x]++;
-
 #define GLERRORCHECK { \
 uint32_t e = GLCALL( glGetError() ); \
 if ( e != GL_NO_ERROR ) { \

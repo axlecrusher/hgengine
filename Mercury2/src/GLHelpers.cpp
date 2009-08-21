@@ -109,6 +109,12 @@ unsigned int ToGLColorType(ColorByteType cbt)
 
 }
 
+void ProfileGLCall(const MString& funcName)
+{
+	++GLCALLCOUNT;
+	GLFUNCTCOUNT[funcName]++;
+}
+
 void PrintGLFunctionCalls()
 {
 	std::map<MString,uint32_t>::iterator i;

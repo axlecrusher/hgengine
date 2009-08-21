@@ -1,3 +1,6 @@
+#ifndef GLHELPERS_H
+#define GLHELPERS_H
+
 #include <global.h>
 #include <MercuryUtil.h>
 #include <MercuryMatrix.h>
@@ -5,13 +8,18 @@
 
 #include <RawImageData.h>
 
+#define GLCALL(x) x; ProfileGLCall(#x);
+
 MString GlError2String(uint32_t e);
 void glLoadMatrix(const MercuryMatrix& m);
 MercuryMatrix glGetMatrix(unsigned int m);
 MercuryVertex pointFromScreenLoc(int screen_x, int screen_y);
 unsigned int ToGLColorType(ColorByteType cbt);
 
+void ProfileGLCall(const MString& funcName);
 void PrintGLFunctionCalls();
+
+#endif
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
