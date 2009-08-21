@@ -56,8 +56,8 @@ class MercuryAsset : public RefBase, MessageHandler
 		virtual bool DoCullingTests(OcclusionResult& occlusion, const MercuryMatrix& matrix);
 		void DrawAxes();
 		
-		inline void SetExcludeFromCull(bool t) { m_excludeFromCull = t; }
-		inline bool ExcludeFromCull() const { return m_excludeFromCull; }
+		inline void SetIgnoreCull(bool t) { m_ignoreCull = t; }
+		inline bool IgnoreCull() const { return m_ignoreCull; }
 	protected:
 		void SetLoadState(LoadState ls); //thread safe
 		LoadState GetLoadState(); //thread safe
@@ -68,7 +68,7 @@ class MercuryAsset : public RefBase, MessageHandler
 	private:
 		LoadState m_loadState;
 		MSemaphore m_lock;
-		bool m_excludeFromCull;
+		bool m_ignoreCull;
 };
 
 /** This holds the per-instance data for each asset instance.

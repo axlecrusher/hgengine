@@ -36,8 +36,6 @@ Quad::Quad()
 	m_indexData[1] = 1;
 	m_indexData[3] = m_indexData[2] = 2;
 	m_indexData[4] = 3;
-	
-	SetExcludeFromCull( true );
 }
 
 Quad::~Quad()

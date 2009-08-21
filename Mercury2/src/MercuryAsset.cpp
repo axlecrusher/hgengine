@@ -6,7 +6,7 @@
 extern bool DOOCCLUSIONCULL;
 
 MercuryAsset::MercuryAsset()
-	:m_isInstanced(false), m_boundingVolume(NULL), m_loadState(NONE), m_excludeFromCull(false)
+	:m_isInstanced(false), m_boundingVolume(NULL), m_loadState(NONE), m_ignoreCull(false)
 {
 }
 
@@ -63,9 +63,9 @@ void MercuryAsset::PreRender(const MercuryNode* node)
 void MercuryAsset::LoadFromXML(const XMLNode& node)
 {
 	
-	if ( !node.Attribute("nocull").empty() )
+	if ( !node.Attribute("ignorecull").empty() )
 	{
-		SetExcludeFromCull( node.Attribute("nocull")=="true" );
+		SetIgnoreCull( node.Attribute("ignorecull")=="true" );
 	}
 }
 
