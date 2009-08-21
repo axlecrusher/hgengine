@@ -331,20 +331,6 @@ const MercuryMatrix& MercuryNode::FindModelViewMatrix() const
 	return MercuryMatrix::Identity();
 }
 
-bool MercuryNode::IsCulled(const MercuryMatrix& matrix)
-{
-	bool clip = false;
-/*	
-	std::list< MAutoPtr< MercuryAsset > >::iterator i;
-	for (i = m_assets.begin(); i != m_assets.end(); ++i )
-	{
-		clip = (*i)->IsCulled( matrix );
-		if ( clip == false ) return false;
-	}
-	*/
-	return clip;
-}
-
 MercuryMatrix MercuryNode::ManipulateMatrix(const MercuryMatrix& matrix)
 {
 	return VIEWMATRIX * matrix;

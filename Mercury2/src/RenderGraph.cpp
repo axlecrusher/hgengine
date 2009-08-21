@@ -18,7 +18,7 @@ void RenderGraphEntry::Render()
 	{	
 		m_node->PreRender( *m_matrix ); //calls on children assets
 		modelView = m_node->ManipulateMatrix( *m_matrix );
-		if ( m_node->IsHidden() || m_node->IsCulled(modelView) ) return;
+		if ( m_node->IsHidden() || m_node->IsCulled() ) return;
 		
 		GLCALL( glLoadMatrix( modelView ) );
 		

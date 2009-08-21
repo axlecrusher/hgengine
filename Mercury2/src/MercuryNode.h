@@ -97,8 +97,7 @@ class MercuryNode : public MessageHandler
 		virtual void PreRender(const MercuryMatrix& matrix);
 		virtual void Render(const MercuryMatrix& matrix);
 		virtual void PostRender(const MercuryMatrix& matrix);
-				
-		virtual bool IsCulled(const MercuryMatrix& matrix);
+		
 		inline bool IsHidden() { return m_hidden; }
 		
 		inline void SetCulled(bool t) { m_culled = t; }
