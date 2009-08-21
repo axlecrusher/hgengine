@@ -23,7 +23,7 @@
 
 #include <MercuryLog.h>
 
-#define GLCALL(x) x; ++GLCALLCOUNT;
+#define GLCALL(x) x; ++GLCALLCOUNT; GLFUNCTCOUNT[#x]++;
 
 #define GLERRORCHECK { \
 uint32_t e = GLCALL( glGetError() ); \
@@ -37,5 +37,9 @@ if ( e != GL_FRAMEBUFFER_COMPLETE ) { \
 LOG.Write(ssprintf("GL FBO Error:%s", GlError2String(e).c_str())); \
 assert(0); } }
 
+#include <map>
+
 extern uint32_t GLCALLCOUNT;
+extern std::map<MString, uint32_t> GLFUNCTCOUNT;
+
 #endif

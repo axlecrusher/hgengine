@@ -2,6 +2,7 @@
 #include <GLHelpers.h>
 
 uint32_t GLCALLCOUNT = 0;
+std::map<MString, uint32_t> GLFUNCTCOUNT;
 
 MString GlError2String(uint32_t e)
 {
@@ -106,6 +107,18 @@ unsigned int ToGLColorType(ColorByteType cbt)
 			return GL_RGB;
 	}
 
+}
+
+void PrintGLFunctionCalls()
+{
+	std::map<MString,uint32_t>::iterator i;
+
+	for(i = GLFUNCTCOUNT.begin(); i != GLFUNCTCOUNT.end(); ++i)
+	{
+		LOG.Write(ssprintf( "%d ", i->second ) + i->first);
+	}
+	
+	GLFUNCTCOUNT.clear();
 }
 
 /****************************************************************************

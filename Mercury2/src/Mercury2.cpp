@@ -120,6 +120,8 @@ int main()
 //	UpdateLoopGo.Increment();
 //	updateThread.Wait();
 
+	PrintGLFunctionCalls();
+
 	SAFE_DELETE(root);
 	SAFE_DELETE(w);
 	

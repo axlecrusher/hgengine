@@ -11,6 +11,8 @@ MercuryMatrix glGetMatrix(unsigned int m);
 MercuryVertex pointFromScreenLoc(int screen_x, int screen_y);
 unsigned int ToGLColorType(ColorByteType cbt);
 
+void PrintGLFunctionCalls();
+
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
  *                                                                          *
