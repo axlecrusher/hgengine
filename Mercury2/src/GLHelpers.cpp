@@ -1,8 +1,9 @@
 #include <GLHeaders.h>
 #include <GLHelpers.h>
+#include <MercuryHash.h>
 
 uint32_t GLCALLCOUNT = 0;
-std::map<MString, uint32_t> GLFUNCTCOUNT;
+MHash< uint32_t> GLFUNCTCOUNT;
 
 MString GlError2String(uint32_t e)
 {
@@ -117,13 +118,12 @@ void ProfileGLCall(const MString& funcName)
 
 void PrintGLFunctionCalls()
 {
-	std::map<MString,uint32_t>::iterator i;
+	MVector < MString > v;
+	GLFUNCTCOUNT.VectorIndices( v );
+	//We now know all the names of the functions that were called.
+	for( unsigned i = 0; i < v.size(); i++ )
+		LOG.Write(ssprintf( "%d ", GLFUNCTCOUNT[v[i]] ) + v[i] );
 
-	for(i = GLFUNCTCOUNT.begin(); i != GLFUNCTCOUNT.end(); ++i)
-	{
-		LOG.Write(ssprintf( "%d ", i->second ) + i->first);
-	}
-	
 	GLFUNCTCOUNT.clear();
 }
 

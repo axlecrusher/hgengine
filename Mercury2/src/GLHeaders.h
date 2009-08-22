@@ -35,9 +35,8 @@ if ( e != GL_FRAMEBUFFER_COMPLETE ) { \
 LOG.Write(ssprintf("GL FBO Error:%s", GlError2String(e).c_str())); \
 assert(0); } }
 
-#include <map>
-
+#include <MercuryHash.h>
 extern uint32_t GLCALLCOUNT;
-extern std::map<MString, uint32_t> GLFUNCTCOUNT;
+extern MHash< uint32_t> GLFUNCTCOUNT;
 
 #endif
