@@ -311,7 +311,7 @@ bool Shader::LinkShaders()
 			if( glGetError() == 0 )
 				break;
 		}
-		LOG.Write(ssprintf( "Geometry Shader loaded with a total of %d max verticies.  Because there are %d max vertices, and %d preceived components per vert.", imaxvert/i, imaxvert, i ));
+		LOG.Write(ssprintf( "Geometry Shader loaded with a total of %d max vertices.  Because there are %d max vertices, and %d preceived components per vert.", imaxvert/i, imaxvert, i ));
 	}
 
 

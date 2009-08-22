@@ -190,7 +190,7 @@ public:
 		return false;
 	}
 
-	void VectorIndicies( MVector < MString > & vOut )
+	void VectorIndices( MVector < MString > & vOut )
 	{
 		unsigned int i;
 		MHashNode<T> * m_pTmp;
