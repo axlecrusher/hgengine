@@ -36,6 +36,7 @@ MString ToProper(const MString & s);
 
 float StrToFloat(const MString & s, float d = 0);
 int32_t StrToInt(const MString & s, int32_t d = 0);
+bool StrToBool( const MString & s, bool d = false );
 
 template<typename T>
 const T& MAX(const T& t1, const T& t2)

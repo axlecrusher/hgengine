@@ -151,6 +151,21 @@ int32_t StrToInt(const  MString & s, int32_t d)
 	return x;
 }
 
+bool StrToBool( const MString & s, bool d )
+{
+	MString tmpret = s;
+
+	tmpret = ToUpper( tmpret );
+	if( tmpret.compare( "TRUE" ) == 0 )	return 1;
+	if( tmpret.compare( "FALSE" ) == 0 )	return 0;
+	if( tmpret.compare( "ON" ) == 0 )	return 1;
+	if( tmpret.compare( "OFF" ) == 0 )	return 0;
+	if( tmpret.compare( "YES" ) == 0 )	return 1;
+	if( tmpret.compare( "NO" ) == 0 )	return 0;
+
+	return StrToInt( tmpret, d ) != 0;
+}
+
 
 void fail_m( const char * message, const char * file, int line )
 {
