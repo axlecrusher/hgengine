@@ -37,6 +37,8 @@ class Texture : public MercuryAsset
 		void BindTexture();
 		void UnbindTexture();
 		
+		void InitiateBindCache();
+		
 		const RawImageData* m_raw;
 		uint32_t m_textureID;
 		uint32_t m_textureResource;
@@ -46,7 +48,8 @@ class Texture : public MercuryAsset
 		static uint32_t m_textureBinds;
 		static std::list< Texture* > m_activeTextures;
 
-		
+		static uint8_t m_maxActiveTextures;
+		static Texture** m_lastBound;
 //		MString m_filename;
 };
 

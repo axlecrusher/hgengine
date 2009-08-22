@@ -102,12 +102,22 @@ void Texture::LoadFromXML(const XMLNode& node)
 
 void Texture::BindTexture()
 {
+	if ( !m_lastBound ) InitiateBindCache();
+	
+	if (m_numActiveTextures >= m_maxActiveTextures) return;
+	
 	m_textureResource = GL_TEXTURE0+m_numActiveTextures;
 	GLCALL( glActiveTexture( m_textureResource ) );
 	GLCALL( glClientActiveTextureARB(m_textureResource) );
 	GLCALL( glEnableClientState(GL_TEXTURE_COORD_ARRAY) );
 	GLCALL( glEnable( GL_TEXTURE_2D ) );
-	GLCALL( glBindTexture(GL_TEXTURE_2D, m_textureID) );
+	
+	if (m_lastBound[m_numActiveTextures] != this)
+	{
+		GLCALL( glBindTexture(GL_TEXTURE_2D, m_textureID) );
+		m_lastBound[m_numActiveTextures] = this;
+		++m_textureBinds;
+	}
 	GLCALL( glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE ) );
 	
 	GLERRORCHECK;
@@ -120,7 +130,6 @@ void Texture::BindTexture()
 	m_activeTextures.push_back(this);
 	
 	++m_numActiveTextures;
-	++m_textureBinds;
 }
 
 void Texture::UnbindTexture()
@@ -135,6 +144,17 @@ void Texture::UnbindTexture()
 	m_activeTextures.pop_back();
 	
 	--m_numActiveTextures;
+}
+
+void Texture::InitiateBindCache()
+{
+	GLint x;
+	GLCALL( glGetIntegerv( GL_MAX_TEXTURE_UNITS, &x ) );
+	m_lastBound = new Texture*[x];
+	m_maxActiveTextures = x;
+	
+	for ( x = 0; x < m_maxActiveTextures; ++x)
+		m_lastBound[x] = NULL;
 }
 
 void Texture::LoadImagePath(const MString& path)
@@ -207,6 +227,8 @@ bool Texture::m_initTextureSuccess = false;
 uint8_t Texture::m_numActiveTextures = 0;
 uint32_t Texture::m_textureBinds = 0;
 std::list< Texture* > Texture::m_activeTextures;
+Texture** Texture::m_lastBound = NULL;
+uint8_t Texture::m_maxActiveTextures = 0;
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
