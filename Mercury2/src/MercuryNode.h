@@ -30,8 +30,16 @@ while(tn) { if (typeid(x) == typeid(*tn)) return true; tn = *n; } \
 return false;}
 */
 
+
+#define STANDARD_PASS	7
+///Which passes, by default, should be run on all nodes.
+#define DEFAULT_PASSES ( (1<<STANDARD_PASS) )
+
 ///The Global Viewport ID for this thread (to enable multi-threaded functioning for Viewports)
 extern __thread int g_iViewportID;
+
+///The Global Pass Number (which Pass is currently doing Render)
+extern __thread int g_iPass;
 
 class MercuryNode : public MessageHandler
 {
@@ -106,6 +114,8 @@ class MercuryNode : public MessageHandler
 
 		const MercuryMatrix & GetGlobalMatrix() const { return m_pGlobalMatrix[g_iViewportID]; }
 		const MercuryMatrix & GetModelViewMatrix() const { return m_pModelViewMatrix[g_iViewportID]; }
+
+		inline unsigned short GetPasses() const { return m_iPasses; }
 	protected:
 		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
 		MercuryNode* m_parent;
@@ -119,6 +129,9 @@ class MercuryNode : public MessageHandler
 		bool m_useAlphaPath;
 		bool m_culled;
 		bool IsInAssetList(MercuryAsset* asset) const;
+
+		unsigned short m_iPasses;
+		unsigned short m_iForcePasses;	//If (1<<15) is set, then, we know the force is enabled.
 
 		//The asset is actually stored here
 		std::list< MercuryAssetInstance > m_assets;

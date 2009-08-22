@@ -6,7 +6,7 @@
 extern bool DOOCCLUSIONCULL;
 
 MercuryAsset::MercuryAsset()
-	:m_isInstanced(false), m_boundingVolume(NULL), m_loadState(NONE), m_ignoreCull(false)
+	:m_isInstanced(false), m_boundingVolume(NULL), m_loadState(NONE), m_ignoreCull(false), m_iPasses( DEFAULT_PASSES )
 {
 }
 
@@ -65,7 +65,15 @@ void MercuryAsset::LoadFromXML(const XMLNode& node)
 	
 	if ( !node.Attribute("ignorecull").empty() )
 	{
-		SetIgnoreCull( node.Attribute("ignorecull")=="true" );
+		SetIgnoreCull( StrToBool( node.Attribute("ignorecull") ) );
+	}
+	if ( !node.Attribute("setPasses").empty() )
+	{
+		MVector< MString > out;
+		SplitStrings( node.Attribute("setPasses"), out, ",+", " \t", 2, 2 );
+		m_iPasses = 0;
+		for( unsigned i = 0; i < out.size(); i++ )
+			m_iPasses = m_iPasses | (1<<StrToInt( out[i] ) );
 	}
 }
 
@@ -86,7 +94,7 @@ void MercuryAsset::DrawAxes()
 }
 
 MercuryAssetInstance::MercuryAssetInstance(MercuryAsset* asset)
-	:m_asset( asset ), m_isCulled( false )
+	:m_asset( asset ), m_isCulled( false ), m_iPasses( asset->GetPasses() )
 {
 }
 

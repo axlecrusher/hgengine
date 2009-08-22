@@ -186,10 +186,10 @@ void MercuryNode::RecursivePreRender()
 	}
 }
 
-void MercuryNode::RecursiveRender()
+void MercuryNode::RecursiveRender( )
 {
-	if ( IsHidden() || IsCulled() ) return;
-		
+	if ( IsHidden() || IsCulled() || (! (m_iPasses & (1<<g_iPass))) ) return;
+
 	const MercuryMatrix& matrix = GetGlobalMatrix();
 	const MercuryMatrix& modelView = GetModelViewMatrix(); //get the one computed in the last transform
 	ShaderAttribute sa;
@@ -262,6 +262,16 @@ void MercuryNode::LoadFromXML(const XMLNode& node)
 			}
 		}
 	}
+
+	if ( !node.Attribute("setPasses").empty() )
+	{
+		MVector< MString > out;
+		SplitStrings( node.Attribute("setPasses"), out, ",+", " \t", 2, 2 );
+		m_iForcePasses = (1<<15);
+		for( unsigned i = 0; i < out.size(); i++ )
+			m_iForcePasses = m_iForcePasses | (1<<StrToInt( out[i] ) );
+	}
+
 }
 
 
@@ -365,6 +375,8 @@ MercuryNode* NodeFactory::Generate(const MString& type)
 
 bool MercuryNode::m_rebuildRenderGraph = false;
 __thread int g_iViewportID;
+__thread int g_iPass;
+
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *

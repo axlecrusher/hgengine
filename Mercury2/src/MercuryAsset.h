@@ -58,6 +58,9 @@ class MercuryAsset : public RefBase, MessageHandler
 		
 		inline void SetIgnoreCull(bool t) { m_ignoreCull = t; }
 		inline bool IgnoreCull() const { return m_ignoreCull; }
+
+		inline unsigned short GetPasses() { return m_iPasses; }
+		inline void SetPasses( unsigned short p ) { m_iPasses = p; }
 	protected:
 		void SetLoadState(LoadState ls); //thread safe
 		LoadState GetLoadState(); //thread safe
@@ -69,6 +72,7 @@ class MercuryAsset : public RefBase, MessageHandler
 		LoadState m_loadState;
 		MSemaphore m_lock;
 		bool m_ignoreCull;
+		unsigned short m_iPasses;
 };
 
 /** This holds the per-instance data for each asset instance.
@@ -85,10 +89,16 @@ class MercuryAssetInstance
 		inline bool Culled(bool t) { m_isCulled = t; return m_isCulled; }
 		
 		inline OcclusionResult& GetOcclusionResult() { return m_occlusionResult; }
+
+		inline unsigned short GetPasses() { return m_iPasses; }
+		inline void SetPasses( unsigned short p ) { m_iPasses = p; }
 	private:
 		MAutoPtr< MercuryAsset > m_asset; //actual asset storage
 		OcclusionResult m_occlusionResult;
 		bool m_isCulled;
+
+		//We need to keep our own copy, since it may be changed in software from what the original one has.
+		unsigned short m_iPasses;
 };
 
 class LoaderThreadData

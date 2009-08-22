@@ -56,18 +56,32 @@ void RenderGraph::Build( MercuryNode* node, RenderGraphEntry& entry)
 
 	//Update the Matrices
 	node->m_pGlobalMatrix = &node->FindGlobalMatrix();
-	node->m_pModelViewMatrix = &node->FindModelViewMatrix();
-	
+	node->m_pModelViewMatrix = &node->FindModelViewMatrix();	
+
 	if ( node )
 	{
 		//found a new renderable
 		entry.m_children.push_back( RenderGraphEntry(&(node->FindGlobalMatrix()), node) );
 		lastEntry = &(entry.m_children.back());
 	}
+
+	unsigned short iPasses = 0;
 	
 	for (MercuryNode* child = node->FirstChild(); child != NULL; child = node->NextChild(child))
+	{
 		Build(child, *lastEntry);
-	
+		iPasses |= child->m_iPasses;
+	}
+
+	std::list< MercuryAssetInstance >::iterator i;
+	for (i = node->m_assets.begin(); i != node->m_assets.end(); ++i )
+		iPasses |= i->GetPasses();
+
+	if( node->m_iForcePasses & (1<<15 ) )
+		node->m_iPasses = node->m_iForcePasses;
+	else
+		node->m_iPasses = iPasses;
+
 	//coming back up the tree
 //	entry = lastEntry;
 }
