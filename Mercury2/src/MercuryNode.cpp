@@ -186,14 +186,28 @@ void MercuryNode::RecursivePreRender()
 	}
 }
 
+//#define WRITE_OUT_RENDERGARPH
+
 void MercuryNode::RecursiveRender( )
 {
-	if ( IsHidden() || IsCulled() || (! (m_iPasses & (1<<g_iPass))) ) return;
+#ifdef WRITE_OUT_RENDERGARPH
+	static int depth;
+	if ( IsHidden() || IsCulled() || (! (m_iPasses & (1<<g_iPass))) )
+	{
+		printf( "x%*c %p:%s (%d %d %d)\n", depth, 0, this, GetName().c_str(), IsHidden(), IsCulled(), (! (m_iPasses & (1<<g_iPass))) );
+		return;
+	}
+	printf( "1%*c %p:%s\n", depth, 0, this, GetName().c_str() );
+	depth++;
+#else
+	if ( IsHidden() || IsCulled() || (! (m_iPasses & (1<<g_iPass))) )
+		return;
+#endif
 
 	const MercuryMatrix& matrix = GetGlobalMatrix();
 	const MercuryMatrix& modelView = GetModelViewMatrix(); //get the one computed in the last transform
 	ShaderAttribute sa;
-	
+
 	//A lot of this stuff could be moved into the transform node, BUT
 	//the alpha render path requires that all things things happen, so
 	//it is just easier to leave it here than to duplicate this code in
@@ -219,6 +233,10 @@ void MercuryNode::RecursiveRender( )
 	Shader::SetAttribute("HG_ModelMatrix", sa);
 
 	PostRender( modelView );  //calls on children assets
+
+#ifdef WRITE_OUT_RENDERGARPH
+	depth--;
+#endif
 }
 
 void MercuryNode::ThreadedUpdate(float dTime)
