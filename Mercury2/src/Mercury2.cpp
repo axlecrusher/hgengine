@@ -46,11 +46,58 @@ int SignalHandler( int signal )
 	return 0;	//Continue regular crash.
 }
 
-int main()
+MString g_SceneGraphToLoad;
+void HandleCommandLineParameters( int argc, char ** argv )
+{
+	bool bPrintHelp = false;
+	for( int i = 1; i < argc; i++ )
+	{
+		MString sParameter = argv[i];
+		if( sParameter == "--help" || sParameter == "-h" )
+			bPrintHelp = true;
+		else if( sParameter.find( "--scenegraph=" ) == 0 )
+			g_SceneGraphToLoad = sParameter.substr( 13 );
+		else if( sParameter == "-s" )
+		{
+			i++;
+			if( i >= argc )
+			{
+				fprintf( stderr, "No scene graph following -s. Type -h for help.\n" );
+				exit(-1);
+			}
+			g_SceneGraphToLoad = argv[i];
+		}
+		else
+		{
+			fprintf( stderr, "Unknown command-line parameter: \"%s\" Type -h for help.\n", argv[i] );
+			exit(-1);
+		}
+	}
+
+	if( bPrintHelp )
+	{
+		printf( "\nMercury Game Engine 2.0 Copyright 2009 Joshua Allen and\n" );
+		printf( "  Charles Lohr under the NewBSD license.  Code contributed\n" );
+		printf( "  from other sources under the same license, contributers\n" );
+		printf( "  and other sources may be found in accompanying documents.\n" );
+		printf( "\n  Usage:  [mercury] [command-line parameters]\n\n" );
+		printf( "  [--scenegraph=x] | [-s x] Select scene graph to use.\n" );
+		printf( "    By default Mercury uses FILE:scenegraph.xml.  You may\n" );
+		printf( "    specify another one here.  This only changes the startup\n" );
+		printf( "    scene graph for debugging purposes.\n\n" );
+		exit(0);
+	}
+}
+
+int main( int argc, char** argv)
 {
 	unsigned long m_count = 0;
 
+	g_SceneGraphToLoad = "FILE:scenegraph.xml";
+
 	cnset_execute_on_crash( SignalHandler );
+
+	HandleCommandLineParameters( argc, argv );
 
 	MercuryWindow* w = MercuryWindow::MakeWindow();
 
@@ -62,7 +109,7 @@ int main()
 
 	MercuryNode* root = new MercuryNode();
 	
-	XMLDocument* doc = XMLDocument::Load("FILE:scenegraph.xml");
+	XMLDocument* doc = XMLDocument::Load(g_SceneGraphToLoad);
 	XMLNode r = doc->GetRootNode();
 	root->LoadFromXML( r );
 
