@@ -192,19 +192,18 @@ void MercuryNode::RecursiveRender()
 		
 	const MercuryMatrix& matrix = GetGlobalMatrix();
 	const MercuryMatrix& modelView = GetModelViewMatrix(); //get the one computed in the last transform
-		
+	ShaderAttribute sa;
 	
 	//A lot of this stuff could be moved into the transform node, BUT
 	//the alpha render path requires that all things things happen, so
 	//it is just easier to leave it here than to duplicate this code in
 	//RenderGraph::RenderAlpha
+
 	GLCALL( glLoadMatrix( modelView ) );
-		
-	ShaderAttribute sa;
 	sa.type = ShaderAttribute::TYPE_MATRIX;
 	sa.value.matrix = matrix.Ptr();
 	Shader::SetAttribute("HG_ModelMatrix", sa);
-	
+
 	Render( modelView ); //calls on children assets
 	
 	//call render on other render graph entries under me
@@ -218,6 +217,7 @@ void MercuryNode::RecursiveRender()
 
 	GLCALL( glLoadMatrix( modelView ) );
 	Shader::SetAttribute("HG_ModelMatrix", sa);
+
 	PostRender( modelView );  //calls on children assets
 }
 
@@ -236,10 +236,10 @@ void MercuryNode::LoadFromXML(const XMLNode& node)
 	SetName( node.Attribute("name") );
 	
 	if ( !node.Attribute("hidden").empty() )
-		m_hidden = node.Attribute("hidden")=="true"?true:false;
+		m_hidden = StrToBool( node.Attribute("hidden") );
 
 	if ( !node.Attribute("alphaPath").empty() )
-		m_useAlphaPath = node.Attribute("alphaPath")=="true"?true:false;
+		m_useAlphaPath = StrToBool( node.Attribute("alphaPath") );
 
 	//Not much to do here except run through all the children nodes
 	for (XMLNode child = node.Child(); child.IsValid(); child = child.NextNode())
