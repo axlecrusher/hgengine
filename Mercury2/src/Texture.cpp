@@ -127,10 +127,12 @@ void Texture::BindTexture()
 		Activate();
 		
 		GLCALL( glBindTexture(GL_TEXTURE_2D, m_textureID) );
+		
+		GLCALL( glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE ) );
+		
 		m_lastBound[m_numActiveTextures] = this;
 		++m_textureBinds;
 	}
-	GLCALL( glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE ) );
 	
 	GLERRORCHECK;
 	
