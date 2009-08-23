@@ -5,7 +5,6 @@
 #include <GLHeaders.h>
 
 REGISTER_ASSET_TYPE(RenderDifferedLights);
-#define BUFFER_OFFSET(i) ((char*)NULL + (i))
 
 RenderDifferedLights::RenderDifferedLights()
 {
@@ -20,13 +19,7 @@ void RenderDifferedLights::Render(const MercuryNode* node)
 	uint8_t numTextures = Texture::NumberActiveTextures();
 	uint16_t stride = sizeof(float)*8;
 	
-	//apply all the active Textures
-	for (uint8_t i = 0; i < numTextures; ++i)
-	{
-		GLCALL( glActiveTexture( GL_TEXTURE0+i ) );
-		GLCALL( glClientActiveTextureARB(GL_TEXTURE0+i) );
-		GLCALL( glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*0)) );
-	}
+	Texture::ApplyActiveTextures(stride);
 
 	GLCALL( glPushAttrib( GL_CURRENT_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_POLYGON_BIT) );
 	GLCALL( glCullFace(GL_FRONT) );

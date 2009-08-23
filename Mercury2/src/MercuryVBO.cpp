@@ -25,7 +25,6 @@ MercuryVBO::~MercuryVBO()
 
 void MercuryVBO::Render(const MercuryNode* node)
 {
-	uint8_t numTextures = Texture::NumberActiveTextures();
 	uint16_t stride = sizeof(float)*8;
 	
 	if ( !m_initiated ) InitVBO();
@@ -45,13 +44,7 @@ void MercuryVBO::Render(const MercuryNode* node)
 		++m_vboBinds;
 	}
 	
-	//apply all the active Textures
-	for (uint8_t i = 0; i < numTextures; ++i)
-	{
-		GLCALL( glActiveTexture( GL_TEXTURE0+i ) );
-		GLCALL( glClientActiveTextureARB(GL_TEXTURE0+i) );
-		GLCALL( glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*0)) );
-	}
+	Texture::ApplyActiveTextures(stride);
 	
 	GLCALL( glEnableClientState( GL_NORMAL_ARRAY ) );
 	GLCALL( glNormalPointer(GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*2)) );

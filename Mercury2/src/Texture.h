@@ -31,11 +31,17 @@ class Texture : public MercuryAsset
 		static const std::list< Texture* >& GetActiveTextures() { return m_activeTextures; }
 		
 		void SetRawData(RawImageData* raw);
+		
+		static void ApplyActiveTextures(uint16_t stride);
+		static void DisableUnusedTextures();
 	private:
 		void LoadImagePath(const MString& path);
 		
 		void BindTexture();
 		void UnbindTexture();
+		
+		void Activate();
+		void Deactivate();
 		
 		void InitiateBindCache();
 		
