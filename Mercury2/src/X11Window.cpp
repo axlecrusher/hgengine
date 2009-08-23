@@ -280,18 +280,14 @@ bool X11Window::PumpMessages()
 			{
 				XButtonEvent* e = (XButtonEvent*)&event;
 				uint8_t left, right, center, su, sd;
-				left   = (e->state & X11_MASK(MOUSE_BTN_LEFT))        ^ (e->button == MOUSE_BTN_LEFT);
-				right  = (e->state & X11_MASK(MOUSE_BTN_RIGHT))       ^ (e->button == MOUSE_BTN_RIGHT);
-				center = (e->state & X11_MASK(MOUSE_BTN_CENTER))      ^ (e->button == MOUSE_BTN_CENTER);
-				su     = (e->state & X11_MASK(MOUSE_BTN_SCROLL_UP))   ^ (e->button == MOUSE_BTN_SCROLL_UP);
-				sd     = (e->state & X11_MASK(MOUSE_BTN_SCROLL_DOWN)) ^ (e->button == MOUSE_BTN_SCROLL_DOWN);
-				
-				MouseInput::ProcessMouseInput(0, 0, 
-					e->state & X11_MASK(MOUSE_BTN_LEFT),
-					e->state & X11_MASK(MOUSE_BTN_RIGHT),
-					e->state & X11_MASK(MOUSE_BTN_CENTER),
-					e->state & X11_MASK(MOUSE_BTN_SCROLL_UP),
-					e->state & X11_MASK(MOUSE_BTN_SCROLL_DOWN));
+				left   = (e->state & X11_MASK(MOUSE_BTN_LEFT))!=0        ^ (e->button == MOUSE_BTN_LEFT);
+				right  = (e->state & X11_MASK(MOUSE_BTN_RIGHT))!=0       ^ (e->button == MOUSE_BTN_RIGHT);
+				center = (e->state & X11_MASK(MOUSE_BTN_CENTER))!=0      ^ (e->button == MOUSE_BTN_CENTER);
+				su     = (e->state & X11_MASK(MOUSE_BTN_SCROLL_UP))!=0   ^ (e->button == MOUSE_BTN_SCROLL_UP);
+				sd     = (e->state & X11_MASK(MOUSE_BTN_SCROLL_DOWN))!=0 ^ (e->button == MOUSE_BTN_SCROLL_DOWN);
+
+				MouseInput::ProcessMouseInput(e->x, e->y, 
+					left, right, center, su, sd);
 				break;
 			}
 			case KeyPress:
