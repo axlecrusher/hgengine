@@ -40,7 +40,7 @@ void Texture::Clean()
 	{
 		if (m_lastBound[i] == this)
 		{
-			Deactivate();
+			Deactivate(GL_TEXTURE0 + i);
 			m_lastBound[i] = 0;
 		}
 	}
@@ -55,6 +55,7 @@ void Texture::LoadFromRaw()
 //	m_raw = raw;
 	GLenum byteType = ToGLColorType( m_raw->m_ColorByteType );
 	
+	GLCALL( glPushAttrib( GL_TEXTURE_BIT ) );
 	GLCALL( glBindTexture(GL_TEXTURE_2D, m_textureID) );
 /*	
 	glTexImage2D(GL_TEXTURE_2D,
@@ -79,6 +80,9 @@ void Texture::LoadFromRaw()
 	
 //	GLCALL( gluBuild2DMipmaps( GL_TEXTURE_2D, 3, m_raw->m_width, m_raw->m_height, ByteType, GL_UNSIGNED_BYTE, m_raw->m_data ) );
 	SAFE_DELETE(m_raw);
+	
+	GLCALL( glPopAttrib() );
+
 };
 
 void Texture::Render(const MercuryNode* node)
@@ -116,15 +120,13 @@ void Texture::BindTexture()
 	
 	if (m_numActiveTextures >= m_maxActiveTextures) return;
 	
-	m_textureResource = GL_TEXTURE0+m_numActiveTextures;
-	
-//	if (m_lastBound[m_numActiveTextures] != this)
+	if (m_lastBound[m_numActiveTextures] != this)
 	{
 //		We don't really even have to disable old spots
 //		if ( m_lastBound[m_numActiveTextures] != NULL)
 //			m_lastBound[m_numActiveTextures]->Deactivate();
 		
-		Activate();
+		Activate(GL_TEXTURE0 + m_numActiveTextures);
 		
 		GLCALL( glBindTexture(GL_TEXTURE_2D, m_textureID) );
 		
@@ -148,15 +150,7 @@ void Texture::BindTexture()
 
 void Texture::UnbindTexture()
 {
-	/*
-	GLCALL( glActiveTexture( m_textureResource ) );
-	GLCALL( glClientActiveTextureARB(m_textureResource) );
-	GLCALL( glDisableClientState(GL_TEXTURE_COORD_ARRAY) );
-	GLCALL( glDisable( GL_TEXTURE_2D ) );
-	GLERRORCHECK;
-	*/
-	
-	Deactivate();
+//	Deactivate(m_textureResource);
 	
 	Shader::RemoveAttribute( ssprintf("HG_Texture%d", m_numActiveTextures) );
 	m_activeTextures.pop_back();
@@ -164,18 +158,18 @@ void Texture::UnbindTexture()
 	--m_numActiveTextures;
 }
 
-void Texture::Activate()
+void Texture::Activate(uint32_t textureResource)
 {
-	GLCALL( glActiveTexture( m_textureResource ) );
-	GLCALL( glClientActiveTextureARB(m_textureResource) );
+	GLCALL( glActiveTexture( textureResource ) );
+	GLCALL( glClientActiveTextureARB(textureResource) );
 	GLCALL( glEnableClientState(GL_TEXTURE_COORD_ARRAY) );
 	GLCALL( glEnable( GL_TEXTURE_2D ) );
 }
 
-void Texture::Deactivate()
+void Texture::Deactivate(uint32_t textureResource)
 {
-	GLCALL( glActiveTexture( m_textureResource ) );
-	GLCALL( glClientActiveTextureARB(m_textureResource) );
+	GLCALL( glActiveTexture( textureResource ) );
+	GLCALL( glClientActiveTextureARB(textureResource) );
 	GLCALL( glDisableClientState(GL_TEXTURE_COORD_ARRAY) );
 	GLCALL( glDisable( GL_TEXTURE_2D ) );
 	GLERRORCHECK;
@@ -190,7 +184,7 @@ void Texture::ApplyActiveTextures(uint16_t stride)
 		GLCALL( glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*0)) );
 	}
 	
-//	Texture::DisableUnusedTextures();
+	Texture::DisableUnusedTextures();
 }
 
 void Texture::DisableUnusedTextures()
@@ -199,7 +193,7 @@ void Texture::DisableUnusedTextures()
 	{
 		if (m_lastBound[m_numActiveTextures] != NULL)
 		{
-			m_lastBound[m_numActiveTextures]->Deactivate();
+			m_lastBound[m_numActiveTextures]->Deactivate(GL_TEXTURE0 + i);
 			m_lastBound[m_numActiveTextures] = NULL;
 		}
 	}

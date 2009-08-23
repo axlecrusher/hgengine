@@ -40,14 +40,13 @@ class Texture : public MercuryAsset
 		void BindTexture();
 		void UnbindTexture();
 		
-		void Activate();
-		void Deactivate();
+		void Activate(uint32_t textureResource);
+		void Deactivate(uint32_t textureResource);
 		
 		void InitiateBindCache();
 		
 		const RawImageData* m_raw;
 		uint32_t m_textureID;
-		uint32_t m_textureResource;
 		
 		static bool m_initTextureSuccess;
 		static uint8_t m_numActiveTextures;
