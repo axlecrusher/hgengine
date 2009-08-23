@@ -140,16 +140,19 @@ int main( int argc, char** argv)
 //		RenderableNode::RecursiveRender(root);
 //		printf("\n");
 
-
+/*
 		for( g_iPass = 2; g_iPass < 5; g_iPass++ )	//2,3,4
 			if( root->GetPasses() & (1<<g_iPass) )
 				root->RecursiveRender( );
-
+*/
 		root->RecursivePreRender();
-
-		for( g_iPass = 5; g_iPass < 15; g_iPass++ )	//5..15
+		root->RecursiveRender();
+		
+/*		for( g_iPass = 5; g_iPass < 15; g_iPass++ )	//5..15
 			if( root->GetPasses() & (1<<g_iPass) )
 				root->RecursiveRender( );
+		
+		*/
 //		renderGraph.RenderAlpha();
 		w->SwapBuffers();
 
