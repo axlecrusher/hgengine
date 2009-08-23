@@ -118,7 +118,7 @@ void Texture::BindTexture()
 	
 	m_textureResource = GL_TEXTURE0+m_numActiveTextures;
 	
-	if (m_lastBound[m_numActiveTextures] != this)
+//	if (m_lastBound[m_numActiveTextures] != this)
 	{
 //		We don't really even have to disable old spots
 //		if ( m_lastBound[m_numActiveTextures] != NULL)
@@ -156,6 +156,8 @@ void Texture::UnbindTexture()
 	GLERRORCHECK;
 	*/
 	
+	Deactivate();
+	
 	Shader::RemoveAttribute( ssprintf("HG_Texture%d", m_numActiveTextures) );
 	m_activeTextures.pop_back();
 	
@@ -188,7 +190,7 @@ void Texture::ApplyActiveTextures(uint16_t stride)
 		GLCALL( glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*0)) );
 	}
 	
-	Texture::DisableUnusedTextures();
+//	Texture::DisableUnusedTextures();
 }
 
 void Texture::DisableUnusedTextures()
