@@ -150,12 +150,13 @@ void Texture::BindTexture()
 
 void Texture::UnbindTexture()
 {
-//	Deactivate(m_textureResource);
+//Everything needs to be done in reverse of BindTexture()
+	--m_numActiveTextures;
 	
 	Shader::RemoveAttribute( ssprintf("HG_Texture%d", m_numActiveTextures) );
 	m_activeTextures.pop_back();
-	
-	--m_numActiveTextures;
+
+//	Deactivate(GL_TEXTURE0 + m_numActiveTextures);
 }
 
 void Texture::Activate(uint32_t textureResource)
