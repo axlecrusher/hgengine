@@ -6,6 +6,8 @@
 #include <Texture.h>
 #include <vector>
 
+#define BIG_NUMBER  1e20
+
 REGISTER_NODE_TYPE(TextNode);
 
 TextNode::TextNode()
@@ -13,7 +15,9 @@ TextNode::TextNode()
 	m_bDirty(false),m_pThisFont(NULL),
 	m_alignment( LEFT ),
 	m_fTextWidth( INFINITY ),
-	m_kVBO(0), m_kTEX(0)
+	m_kVBO(0), m_kTEX(0),
+	m_fRMinX(0),m_fRMinY(0),
+	m_fRMaxX(0),m_fRMaxY(0)
 {
 }
 
@@ -186,6 +190,8 @@ void TextNode::RenderText()
 				if( m_alignment == RIGHT )
 				{
 					float offset = m_fTextWidth - fEndOfLine;
+					if( m_fTextWidth > BIG_NUMBER )
+						offset = -fEndOfLine;
 					for( unsigned j = iLineStart; j < i; j++ )
 					{
 						chars[j].xps += offset;
@@ -194,14 +200,16 @@ void TextNode::RenderText()
 				{
 					float offset = m_fTextWidth - fEndOfLine;
 					offset/=2;
+					if( m_fTextWidth > BIG_NUMBER )
+						offset = -fEndOfLine/2.;
 					for( unsigned j = iLineStart; j < i; j++ )
-					{
 						chars[j].xps += offset;
-					}
 				} else if( m_alignment == FIT_FULL )
 				{
 					float offset = m_fTextWidth - fEndOfLine;
 					offset/=float(iLettersOnLine);
+					if( m_fTextWidth > BIG_NUMBER )
+						offset = 0;
 
 					float letter = 0;
 
@@ -213,6 +221,9 @@ void TextNode::RenderText()
 				} else if( m_alignment == FIT )
 				{
 					float offset = m_fTextWidth - fEndOfLine;
+
+					if( m_fTextWidth > BIG_NUMBER )
+						offset = 0;
 
 					if( iWordsOnLine != 0 )
 					{
@@ -240,6 +251,11 @@ void TextNode::RenderText()
 			}
 		}
 	}
+
+	m_fRMinX = 0;
+	m_fRMinY = 0;
+	m_fRMaxX = 0;
+	m_fRMaxY = 0;
 
 	//Stage 3: Actually generate the geometry.
 	((MercuryVBO*)m_kVBO.Ptr())->AllocateIndexSpace((unsigned)chars.size()*6);
@@ -303,7 +319,15 @@ void TextNode::RenderText()
 		id[i*6+3] = i * 4 + 0;
 		id[i*6+4] = i * 4 + 3;
 		id[i*6+5] = i * 4 + 2;
+
+		if( sy > m_fRMaxY ) m_fRMaxY = sy;
+		if( ex > m_fRMaxX ) m_fRMaxX = ex;
+		if( ey < m_fRMinY ) m_fRMinY = ey;
+		if( sx < m_fRMinX ) m_fRMinX = sx;
 	}
+
+	((MercuryVBO*)m_kVBO.Ptr())->DirtyVertices();
+	((MercuryVBO*)m_kVBO.Ptr())->DirtyIndices();
 
 	m_bDirty = false;
 }

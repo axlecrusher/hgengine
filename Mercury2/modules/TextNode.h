@@ -39,11 +39,17 @@ public:
 
 	inline const MString & GetText() { return m_sText; }
 	inline void SetDirtyText() { m_bDirty = true; }
-	
+
+	inline float GetRMinX() { return m_fRMinX; }
+	inline float GetRMinY() { return m_fRMinY; }
+	inline float GetRMaxX() { return m_fRMaxX; }
+	inline float GetRMaxY() { return m_fRMaxY; }
+
 	GENRTTI(TextNode);
 
 private:
 	class Font;
+
 
 	float 	m_fSize;
 	MString	m_sText;
@@ -52,10 +58,15 @@ private:
 	Font *	m_pThisFont;
 	TextAlignment m_alignment;
 	float m_fTextWidth;
-	
+
 
 	MAutoPtr< MercuryAsset > m_kVBO;
 	MAutoPtr< MercuryAsset > m_kTEX;
+
+	float m_fRMinX;
+	float m_fRMinY;
+	float m_fRMaxX;
+	float m_fRMaxY;
 
 	//Font-class specific stuff
 	class Glyph
