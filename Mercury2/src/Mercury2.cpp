@@ -21,6 +21,8 @@
 
 #include <MercuryLog.h>
 
+#define MULTIPASS
+
 bool SHOWBOUNDINGVOLUME = false;
 bool SHOWAXISES = false;
 bool DOOCCLUSIONCULL = false;
@@ -136,24 +138,22 @@ int main( int argc, char** argv)
 		}
 
 		w->Clear();
-//		renderGraph.Render();
-//		RenderableNode::RecursiveRender(root);
-//		printf("\n");
 
-/*
+#ifdef MULTIPASS
 		for( g_iPass = 2; g_iPass < 5; g_iPass++ )	//2,3,4
 			if( root->GetPasses() & (1<<g_iPass) )
 				root->RecursiveRender( );
-*/
+#endif
 		root->RecursivePreRender();
+
+#ifndef MULTIPASS
 		root->RecursiveRender();
-		
-/*		for( g_iPass = 5; g_iPass < 15; g_iPass++ )	//5..15
+#else		
+		for( g_iPass = 5; g_iPass < 15; g_iPass++ )	//5..15
 			if( root->GetPasses() & (1<<g_iPass) )
 				root->RecursiveRender( );
+#endif
 		
-		*/
-//		renderGraph.RenderAlpha();
 		w->SwapBuffers();
 
 

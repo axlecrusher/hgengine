@@ -201,8 +201,7 @@ void MercuryNode::RecursiveRender( )
 	printf( "1%*c %p:%s\n", depth, 0, this, GetName().c_str() );
 	depth++;
 #else
-//	if ( IsHidden() || IsCulled() || (! (m_iPasses & (1<<g_iPass))) )
-	if ( IsHidden() || IsCulled() )
+	if ( IsHidden() || IsCulled() || (! (m_iPasses & (1<<g_iPass))) )
 		return;
 #endif
 
