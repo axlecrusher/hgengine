@@ -16,7 +16,8 @@ REGISTER_NODE_TYPE(MercuryNode);
 MercuryNode::MercuryNode()
 	:m_parent(NULL), m_prevSibling(NULL),
 	m_nextSibling(NULL), m_hidden(false),
-	m_useAlphaPath(false), m_culled(false)
+	m_useAlphaPath(false), m_culled(false),
+	m_iPasses( DEFAULT_PASSES ), m_iForcePasses( 0 )
 {
 }
 
@@ -119,7 +120,7 @@ MercuryNode* MercuryNode::FindChild( const MString & sNameOfNode, int depth )
 			MercuryNode * ret;
 			if( ( ret = (*i)->FindChild( sNameOfNode, depth - 1 ) ) )
 			{
-				if( (*i)->GetName().compare( sNameOfNode ) == 0 )
+				if( ret )
 					return ret;
 			}
 		}
