@@ -74,3 +74,9 @@ if test $ISMAC = 1; then
 	CC_BASE="$CC_BASE -I"/System/Library/Frameworks/OpenGL.framework/Headers" -Isrc -I/usr/X11R6/include -I.  -Isrc/ode -Iode -Isrc/png -Ipng"
 	LD_BASE="-Lsrc/maclib -framework OpenGL -lobjc -framework GLUT -framework ApplicationServices"
 fi
+
+ARCH=`uname -m`
+
+if test $ARCH = "i686" || test $ARCH = "i586"; then
+	CC_BASE="$CC_BASE -march=pentium"
+fi
