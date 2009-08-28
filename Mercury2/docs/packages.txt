@@ -1,0 +1,6 @@
+Packages needed to build on Ubuntu 9.04:
+
+ v for subversion 
+apt-get install subversion
+
+apt-get install libglu1-mesa-dev libz1g-dev libpng12-dev libxml2-dev
