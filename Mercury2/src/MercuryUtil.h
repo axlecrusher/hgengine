@@ -131,6 +131,9 @@ MString	ConvertToCFormat( const MString & ncf );
 ///Convert a C-style formatted string into it's binary string equivalent.
 MString ConvertToUnformatted( const MString & cf );
 
+///millisecond sleep
+void msleep(uint32_t msec);
+
 #endif
 
 /* Copyright (c) 2009, Joshua Allen and Charles Lohr

@@ -15,7 +15,10 @@ typedef std::string MString;
 #else
 #include <kernel.h>
 #endif
+#define __ThreadLocalStore __thread
 #else
+#include <WIndows.h>
+#define __ThreadLocalStore __declspec(thread)
 class StartThreadData;
 #endif
 

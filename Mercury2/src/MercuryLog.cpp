@@ -11,7 +11,7 @@ void* MercuryLog::ThreadLoop(void* d)
 	{
 		log->CopyQueue();
 		log->WriteQueue();
-		usleep(100000); //10x/sec
+		msleep(100); //10x/sec
 	}
 }
 

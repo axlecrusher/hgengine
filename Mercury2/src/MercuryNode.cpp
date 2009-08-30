@@ -393,8 +393,8 @@ MercuryNode* NodeFactory::Generate(const MString& type)
 }
 
 bool MercuryNode::m_rebuildRenderGraph = false;
-__thread int g_iViewportID;
-__thread int g_iPass;
+__ThreadLocalStore int g_iViewportID;
+__ThreadLocalStore int g_iPass;
 
 
 /***************************************************************************

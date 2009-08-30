@@ -36,10 +36,10 @@ return false;}
 #define DEFAULT_PASSES ( (1<<STANDARD_PASS) )
 
 ///The Global Viewport ID for this thread (to enable multi-threaded functioning for Viewports)
-extern __thread int g_iViewportID;
+extern __ThreadLocalStore int g_iViewportID;
 
 ///The Global Pass Number (which Pass is currently doing Render)
-extern __thread int g_iPass;
+extern __ThreadLocalStore int g_iPass;
 
 class MercuryNode : public MessageHandler
 {

@@ -4,6 +4,10 @@
 #include <MercuryVector.h>
 #include <MercuryBacktrace.h>
 
+#ifdef WIN32
+#include <Windows.h>
+#endif
+
 MString	ConvertToCFormat( const MString & ncf )
 {
 	MString ret;
@@ -273,10 +277,14 @@ void	SplitStrings( const MString & in, MVector < MString > & out,
 	}
 }
 
-
-
-
-
+void msleep(uint32_t msec)
+{
+#ifdef WIN32
+	Sleep(msec);
+#else
+	usleep(msec*1000);
+#endif
+}
 
 /* Copyright (c) 2009, Joshua Allen and Charles Lohr
  * All rights reserved.
