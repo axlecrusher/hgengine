@@ -50,6 +50,8 @@ void main()
 	float att = HG_LightColor.a / (HG_LightAtten.x + HG_LightAtten.y * dist +
 	HG_LightAtten.z * dist * dist);
 
+//	att = 1.0;
+
 	vec3 diffuse = texture2D(HG_Texture1, coord).rgb;
 
 	vec3 R = reflect(-lightDir, norm);

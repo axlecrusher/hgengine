@@ -36,10 +36,10 @@ void main()
 	vec3 lightDir = ecLight - pos;
 
 	float dist = length(lightDir);
+	if( dist > HG_LightAtten.w ) discard;
+
 	lightDir /= dist; //normalize
 	float NdotL = max(dot(norm, lightDir),0.0);
-
-	if( dist > HG_LightAtten.w ) discard;
 
 //	float att = HG_LightColor.a / (HG_LightAtten.x + HG_LightAtten.y * dist+
 //	HG_LightAtten.z * dist * dist);
