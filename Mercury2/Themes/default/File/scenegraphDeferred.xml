@@ -18,7 +18,7 @@
 							<asset type="texture" file="MODEL:lamp.png"/>
 							<asset type="hgmdlmodel" file="MODEL:lampN.hgmdl" />
 						</node>
-						<node type="light" atten="0.7,0,30" power="4.0" shader="GRAPHIC:pointLight" />
+						<node type="light" atten="1.0,1,0" power="3.0" radius="1.25" shader="GRAPHIC:pointLight" />
 						<node type="billboardnode" billboardaxis="0,1,0" spheremode="true" >
 							<node type="transformnode" roty="180" scalex="0.1" scaley="0.1" alphaPath="true">
 								<asset type="texture" file="GRAPHIC:flame.png"/>
