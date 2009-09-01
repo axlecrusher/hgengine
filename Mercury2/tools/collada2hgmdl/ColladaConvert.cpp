@@ -88,11 +88,50 @@ int main( int argc, char ** argv )
 		{
 			string sSynonym = geoitem.leaves["name"];
 			//Information about how to map things toegether.
-			for( int i = 0; i < geoitem.children.size(); i++ )
+			for( unsigned i = 0; i < geoitem.children.size(); i++ )
 			{
 				XMLCog & idata = geoitem.children[i];
 				if( idata.data == "input" )
 					synonyms[sSynonym][idata.leaves["semantic"]] = idata.leaves["source"].substr(1);
+			}
+		}
+		else if( geoitem.data == "triangles" )
+		{
+			string matname = geoitem.leaves["material"];
+			//Find all the sources.
+			vector< string > vSources;
+			vector< string > vSemantics;
+
+			for( unsigned i = 0; i < geoitem.children.size(); i++ )
+			{
+				XMLCog & idata = geoitem.children[i];
+				if( idata.data == "input" )
+				{
+					int offset = atoi( idata.leaves["offset"].c_str() );
+					if( vSources.size() <= offset )
+					{
+						vSources.resize( offset+1 );
+						vSemantics.resize( offset+1 );
+					}
+					vSources[offset] = idata.leaves["source"].substr( 1 );
+					vSemantics[offset] = idata.leaves["semantic"];
+				}
+			}
+
+			//Extract actual indices
+			int p = geoitem.FindChild( "p" );
+			if( p == -1 )
+			{
+				fprintf( stderr, "Could not find list of indices for mesh with material \"%s\".", matname.c_str() );
+				exit( -3 );
+			}
+
+			string sList = geoitem.children[p].payload;
+
+			vector< vector< int > > m_vvLists;
+			for( unsigned i = 0; i < sList.length(); i++ )
+			{
+				
 			}
 		}
 	}
