@@ -22,7 +22,7 @@ void IntParse( const string & sData, vector< int > & is )
 	string stmp = "";
 	for( unsigned i = 0; i <= sData.length(); i++ )
 	{
-		if( c[i] == ' ' )
+		if( c[i] == ' ' || i == sData.length() )
 		{
 			is.push_back( atoi( stmp.c_str() ) );
 			stmp = "";
@@ -37,7 +37,7 @@ void FloatParse( const string & sData, vector< float > & is )
 	string stmp = "";
 	for( unsigned i = 0; i <= sData.length(); i++ )
 	{
-		if( c[i] == ' ' )
+		if( c[i] == ' '  || i == sData.length() )
 		{
 			is.push_back( atof( stmp.c_str() ) );
 			stmp = "";
@@ -162,23 +162,8 @@ int main( int argc, char ** argv )
 				return -3;
 			}
 
-			const char * payload = geoitem.children[floatvalspos].payload.c_str();
-			int payloadlen = geoitem.children[floatvalspos].payload.length();
-			vector < float > & out = sourcevalues[name];
-			string thisval = "";
-			for( unsigned i = 0; i < payloadlen; i++ )
-			{
-				if( payload[i] == ' ' )
-				{
-					out.push_back( atof( thisval.c_str() ) );
-					thisval = "";
-				}
-				else
-					thisval += payload[i];
-			}
-			if( thisval.length() )
-				out.push_back( atof( thisval.c_str() ) );
-			printf( "%d values (%d verts) read for %s\n", out.size(), out.size()/3, name.c_str() );
+			FloatParse( geoitem.children[floatvalspos].payload, sourcevalues[name] );
+			printf( "%d values (%d verts) read for %s\n", sourcevalues[name].size(), sourcevalues[name].size()/3, name.c_str() );
 		}
 		else if( geoitem.data == "vertices" )
 		{
@@ -358,6 +343,7 @@ int main( int argc, char ** argv )
 				}
 			}
 
+			printf( "Adding new mesh: %d\n", mout.vMeshes.size() + 1 );
 			mout.vMeshes.resize( mout.vMeshes.size() + 1 );
 			Mesh & tm = mout.vMeshes[mout.vMeshes.size() - 1];
 			tm.sName = matname;
@@ -392,12 +378,14 @@ int main( int argc, char ** argv )
 		}
 	}
 
+
+	vector< Bone > & bl = mout.vBones;
+
 	if( lcontrol != -1 )
 	{
 		XMLCog & skin = c.children[lcontrol].children[0].children[0];
 		XMLCog & lv = c.children[lvscenes].children[0].children[0];
 		//Setup all the bones now...
-		vector< Bone > & bl = mout.vBones;
 
 		//Enumerate All Bones
 		for( unsigned i = 0; i < skin.children.size(); i++ )
@@ -537,8 +525,116 @@ int main( int argc, char ** argv )
 				}
 			}
 		}
+
+		//Gotta load the animations...
+		if( lvanimations == -1 )
+			fprintf( stderr, "Could not find library_animations.  No animations to load.\n" );
+		else
+		{
+			float fMaxTime = 0.0;
+			map< string, vector< AnimationKey > > mKeys;
+			map< string, vector< float > > mTimes;
+			map< string, vector< float > > mvVals;
+
+			for( unsigned i = 0; i < c.children[lvanimations].children.size(); i++ )
+			{
+				XMLCog & bt = c.children[lvanimations].children[i];
+				if( bt.data == "animation" )
+				{
+					map< string, vector< float > > mvVals;
+					string sAnimation = "";
+					for( unsigned i = 0; i < bt.leaves["id"].length(); i++ )
+					{
+						if( bt.leaves["id"].c_str()[i] == '.' )
+							break;
+						else
+							sAnimation += bt.leaves["id"].c_str()[i];
+					}
+
+					printf( "Animation: %s : ", sAnimation.c_str() );
+					if( FindBone( bl, sAnimation ) == -1 )
+					{
+						printf( "Ignore.\n" );
+						continue;
+					}
+					else
+					{
+						printf( "Use.\n" );
+					}
+
+					for( unsigned i = 0; i < bt.children.size(); i++ )
+					{
+						XMLCog & dt = bt.children[i];
+						if( dt.data == "source" )
+						{
+							int Technique = dt.FindChild( "technique_common" );
+							int FloatArray = dt.FindChild( "float_array" );
+							if( Technique == -1 || FloatArray == -1 )
+								continue;
+							XMLCog & Tech = dt.children[Technique].children[0];
+							XMLCog & Data = dt.children[FloatArray];
+							string sName = Tech.children[0].leaves["name"];
+							string sData = Data.payload;
+							FloatParse( sData, mvVals[sName] );
+						}
+					}
+
+					if( mvVals["TIME"].size() == 0 || mvVals["TRANSFORM"].size() == 0 )
+					{
+						fprintf( stderr, "Error: Missing Time or Transform for Animation: %s\n", sAnimation.c_str() );
+						exit( -3 );
+					}
+
+					mTimes[sAnimation] = mvVals["TIME"];
+					vector< AnimationKey > & k = mKeys[sAnimation];
+					int keys = mvVals["TIME"].size();
+					k.resize( keys );
+					for( unsigned i = 0; i < keys; i++ )
+					{
+						if( mvVals["TIME"][i] > fMaxTime )
+							fMaxTime = mvVals["TIME"][i];
+						float * fd = &mvVals["TRANSFORM"][i*12];
+						AnimationKey & tk = k[i];
+						
+						tk.pPos.x = fd[3];
+						tk.pPos.y = fd[7];
+						tk.pPos.z = fd[11];
+				
+						tk.qRot.w = sqrtf( 1.0 + fd[0] + fd[5] + fd[10] );
+						float w4 = ( 4.0 * tk.qRot.w );
+						tk.qRot.x = (fd[6] - fd[9]) / w4;
+						tk.qRot.y = (fd[8] - fd[2]) / w4;
+						tk.qRot.z = (fd[1] - fd[4]) / w4;
+						tk.fTime = mvVals["TIME"][i];
+					}
+				}
+			}
+
+//			map< string, vector< AnimationKey > > mKeys;
+//			map< string, vector< float > > mTimes;
+
+			//mTimes and mKeys is filled out, use them!
+
+			mout.vAnimations.resize(mout.vAnimations.size()+1);
+			Animation & RootAnimation = mout.vAnimations[0];
+
+			RootAnimation.sName = "default";
+			RootAnimation.fDuration = fMaxTime;
+
+			for( map< string, vector< AnimationKey > >::iterator i = mKeys.begin(); i != mKeys.end(); i++ )
+			{
+				string sBone = i->first;
+
+				RootAnimation.vTracks.resize( RootAnimation.vTracks.size() + 1 );
+				AnimationTrack & at = RootAnimation.vTracks[ RootAnimation.vTracks.size() - 1 ];
+
+				at.iBone = FindBone( bl, sBone );
+
+				at.vKeys = i->second;
+			}
+			printf( "Animations found, animations are %f long.\n", fMaxTime );
+		}
 	}
-	
 
 
 	printf( "Extents: %f %f %f -> %f %f %f\n", minx, miny, minz, maxx, maxy, maxz );
