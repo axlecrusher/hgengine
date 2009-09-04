@@ -5,13 +5,25 @@
 
 Model mout;
 
+#define m00 fd[0]
+#define m01 fd[1]
+#define m02 fd[2]
+
+#define m10 fd[4]
+#define m11 fd[5]
+#define m12 fd[6]
+
+#define m20 fd[8]
+#define m21 fd[9]
+#define m22 fd[10]
+
 int FindBone( vector< Bone > & bl, const string & sName )
 {
 	for( unsigned i = 0; i < bl.size(); i++ )
 		if( bl[i].sName == sName )
 			return i;
 
-	fprintf( stderr, "Warning: Could not find bone with name \"%s\".", sName.c_str() );
+//	fprintf( stderr, "Warning: Could not find bone with name \"%s\".", sName.c_str() );
 	return -1;
 }
 
@@ -68,7 +80,6 @@ void SetupBone( XMLCog * tp, XMLCog * tc, vector< Bone > & bl )
 	bl[oThis].iParentIndex = oParent;
 	bl[oThis].iAssociatedMesh = -1;
 
-
 	//Setup all children bones.
 	for( unsigned i = 0; i < tc->children.size(); i++ )
 	{
@@ -79,15 +90,55 @@ void SetupBone( XMLCog * tp, XMLCog * tc, vector< Bone > & bl )
 			string sMatrix = tc->children[i].payload;
 			vector< float > fd;
 			FloatParse( sMatrix, fd );
+
 			bl[oThis].pJointPos.x = fd[3];
 			bl[oThis].pJointPos.y = fd[7];
 			bl[oThis].pJointPos.z = fd[11];
 
-			bl[oThis].qJointRot.w = sqrtf( 1.0 + fd[0] + fd[5] + fd[10] );
-			float w4 = ( 4.0 * bl[oThis].qJointRot.w );
-			bl[oThis].qJointRot.x = (fd[6] - fd[9]) / w4;
-			bl[oThis].qJointRot.y = (fd[8] - fd[2]) / w4;
-			bl[oThis].qJointRot.z = (fd[1] - fd[4]) / w4;
+
+//http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
+			float qw, qx, qy, qz;
+			float tr = m00 + m11 + m22;
+
+			if (tr > 0) { 
+				float S = sqrt(tr+1.0) * 2; // S=4*qw 
+				qw = 0.25 * S;
+				qx = (m21 - m12) / S;
+				qy = (m02 - m20) / S; 
+				qz = (m10 - m01) / S; 
+			} else if ((m00 > m11)&(m00 > m22)) { 
+				float S = sqrt(1.0 + m00 - m11 - m22) * 2; // S=4*qx 
+				qw = (m21 - m12) / S;
+				qx = 0.25 * S;
+				qy = (m01 + m10) / S; 
+				qz = (m02 + m20) / S; 
+			} else if (m11 > m22) { 
+				float S = sqrt(1.0 + m11 - m00 - m22) * 2; // S=4*qy
+				qw = (m02 - m20) / S;
+				qx = (m01 + m10) / S; 
+				qy = 0.25 * S;
+				qz = (m12 + m21) / S; 
+			} else { 
+				float S = sqrt(1.0 + m22 - m00 - m11) * 2; // S=4*qz
+				qw = (m10 - m01) / S;
+				qx = (m02 + m20) / S;
+				qy = (m12 + m21) / S;
+				qz = 0.25 * S;
+			}
+
+			bl[oThis].qJointRot.w = qw;
+			bl[oThis].qJointRot.x = qx;
+			bl[oThis].qJointRot.y = qy;
+			bl[oThis].qJointRot.z = qz;
+
+//			for( unsigned i = 0; i < 4; i++ )
+//				printf( "%f %f %f %f\n", fd[i*4+0], fd[i*4+1], fd[i*4+2], fd[i*4+3] );
+//
+//			printf( "Bone: %s : %f %f %f   %f %f %f %f\n",
+//				tc->leaves["name"].c_str(), bl[oThis].pJointPos.x,
+//				bl[oThis].pJointPos.y, bl[oThis].pJointPos.z,
+//				bl[oThis].qJointRot.w, bl[oThis].qJointRot.x,
+//				bl[oThis].qJointRot.y, bl[oThis].qJointRot.z );
 		}
 	}
 }
@@ -384,7 +435,7 @@ int main( int argc, char ** argv )
 	if( lcontrol != -1 )
 	{
 		XMLCog & skin = c.children[lcontrol].children[0].children[0];
-		XMLCog & lv = c.children[lvscenes].children[0].children[0];
+		XMLCog & lv = c.children[lvscenes].children[0];
 		//Setup all the bones now...
 
 		//Enumerate All Bones
@@ -418,7 +469,7 @@ int main( int argc, char ** argv )
 
 		printf( "Bones found: %d\n", bl.size() );
 
-		for( unsigned i = 0; i < lv.children.size(); i++ )
+		for( unsigned i = 0; i <  lv.children.size(); i++ )
 		{
 			if( lv.children[i].data == "node" && lv.children[i].leaves["type"] == "JOINT" )
 			{
@@ -426,7 +477,8 @@ int main( int argc, char ** argv )
 			}
 		}
 
-		map< string, vector< int > > sources;
+		map< string, vector< float > > sources;
+		string sTransforms = "";
 
 		for( unsigned i = 0; i < skin.children.size(); i++ )
 		{
@@ -454,9 +506,69 @@ int main( int argc, char ** argv )
 							}
 						}
 					}
+					if( sid.data == "technique_common" )
+					{
+						string sPName = sid.children[0].children[0].leaves["name"];
+						if( sPName == "TRANSFORM" )
+						{
+							sTransforms = sName;
+						}
+					}
 				}
 			}
 		}
+
+/*
+		//Try setting up bones here...
+		if( sources[sTransforms].size() == 0 )
+		{
+			fprintf( stderr, "Error: You do not appear to have any bone matrices that are valid.\n" );
+			exit( -3 );
+		}
+		for( unsigned i = 0; i < bl.size(); i++ )
+		{
+			float * fd = &sources[sTransforms][i*16];
+			Bone & tk = bl[i];
+			
+			tk.pJointPos.x = fd[3];
+			tk.pJointPos.y = fd[7];
+			tk.pJointPos.z = fd[11];
+
+			float qw, qx, qy, qz;
+			float tr = m00 + m11 + m22;
+
+			if (tr > 0) { 
+				float S = sqrt(tr+1.0) * 2; // S=4*qw 
+				qw = 0.25 * S;
+				qx = (m21 - m12) / S;
+				qy = (m02 - m20) / S; 
+				qz = (m10 - m01) / S; 
+			} else if ((m00 > m11)&(m00 > m22)) { 
+				float S = sqrt(1.0 + m00 - m11 - m22) * 2; // S=4*qx 
+				qw = (m21 - m12) / S;
+				qx = 0.25 * S;
+				qy = (m01 + m10) / S; 
+				qz = (m02 + m20) / S; 
+			} else if (m11 > m22) { 
+				float S = sqrt(1.0 + m11 - m00 - m22) * 2; // S=4*qy
+				qw = (m02 - m20) / S;
+				qx = (m01 + m10) / S; 
+				qy = 0.25 * S;
+				qz = (m12 + m21) / S; 
+			} else { 
+				float S = sqrt(1.0 + m22 - m00 - m11) * 2; // S=4*qz
+				qw = (m10 - m01) / S;
+				qx = (m02 + m20) / S;
+				qy = (m12 + m21) / S;
+				qz = 0.25 * S;
+			}
+
+			tk.qJointRot.w = qw;
+			tk.qJointRot.x = qx;
+			tk.qJointRot.y = qy;
+			tk.qJointRot.z = qz;
+		}
+*/
 
 		//Sources is now filled out, go find the vertex weight
 		for( unsigned i = 0; i < skin.children.size(); i++ )
@@ -505,7 +617,7 @@ int main( int argc, char ** argv )
 					if( vcount[iCurVertex] < iTC )
 					{
 						iCurVertex++;
-						iTC = 0;
+						iTC = 1;
 					}
 
 					int iJoint = vs[i*2+jido];
@@ -521,6 +633,7 @@ int main( int argc, char ** argv )
 						bl[iJoint].vAssignments[bl[iJoint].vAssignments.size()-1].iMesh = 0;
 						bl[iJoint].vAssignments[bl[iJoint].vAssignments.size()-1].iVertex = iCurVertex;
 						bl[iJoint].vAssignments[bl[iJoint].vAssignments.size()-1].fWeight = sources[wid][iWeight];
+						printf( "(%d) %s - %d %f\n", iCurVertex, bl[iJoint].sName.c_str(), iJoint, sources[wid][iWeight] );
 					}
 				}
 			}
@@ -551,16 +664,19 @@ int main( int argc, char ** argv )
 							sAnimation += bt.leaves["id"].c_str()[i];
 					}
 
-					printf( "Animation: %s : ", sAnimation.c_str() );
-					if( FindBone( bl, sAnimation ) == -1 )
+					int boneid = 0;
+//					printf( "Animation: %s : ", sAnimation.c_str() );
+					if( ( boneid = FindBone( bl, sAnimation ) ) == -1 )
 					{
-						printf( "Ignore.\n" );
+//						printf( "Ignore.\n" );
 						continue;
 					}
 					else
 					{
-						printf( "Use.\n" );
+//						printf( "Use.\n" );
 					}
+
+					Bone & sourcebone = bl[boneid];
 
 					for( unsigned i = 0; i < bt.children.size(); i++ )
 					{
@@ -589,23 +705,65 @@ int main( int argc, char ** argv )
 					vector< AnimationKey > & k = mKeys[sAnimation];
 					int keys = mvVals["TIME"].size();
 					k.resize( keys );
+
 					for( unsigned i = 0; i < keys; i++ )
 					{
-						if( mvVals["TIME"][i] > fMaxTime )
-							fMaxTime = mvVals["TIME"][i];
-						float * fd = &mvVals["TRANSFORM"][i*12];
+						float * fd = &mvVals["TRANSFORM"][i*16];
 						AnimationKey & tk = k[i];
-						
-						tk.pPos.x = fd[3];
-						tk.pPos.y = fd[7];
-						tk.pPos.z = fd[11];
-				
-						tk.qRot.w = sqrtf( 1.0 + fd[0] + fd[5] + fd[10] );
-						float w4 = ( 4.0 * tk.qRot.w );
-						tk.qRot.x = (fd[6] - fd[9]) / w4;
-						tk.qRot.y = (fd[8] - fd[2]) / w4;
-						tk.qRot.z = (fd[1] - fd[4]) / w4;
-						tk.fTime = mvVals["TIME"][i];
+
+						tk.pPos.x = fd[3] - sourcebone.pJointPos.x;
+						tk.pPos.y = fd[7] - sourcebone.pJointPos.y;
+						tk.pPos.z = fd[11] - sourcebone.pJointPos.z;
+			
+						float qw, qx, qy, qz;
+						float tr = m00 + m11 + m22;
+			
+						if (tr > 0) { 
+							float S = sqrt(tr+1.0) * 2; // S=4*qw 
+							qw = 0.25 * S;
+							qx = (m21 - m12) / S;
+							qy = (m02 - m20) / S; 
+							qz = (m10 - m01) / S; 
+						} else if ((m00 > m11)&(m00 > m22)) { 
+							float S = sqrt(1.0 + m00 - m11 - m22) * 2; // S=4*qx 
+							qw = (m21 - m12) / S;
+							qx = 0.25 * S;
+							qy = (m01 + m10) / S; 
+							qz = (m02 + m20) / S; 
+						} else if (m11 > m22) { 
+							float S = sqrt(1.0 + m11 - m00 - m22) * 2; // S=4*qy
+							qw = (m02 - m20) / S;
+							qx = (m01 + m10) / S; 
+							qy = 0.25 * S;
+							qz = (m12 + m21) / S; 
+						} else { 
+							float S = sqrt(1.0 + m22 - m00 - m11) * 2; // S=4*qz
+							qw = (m10 - m01) / S;
+							qx = (m02 + m20) / S;
+							qy = (m12 + m21) / S;
+							qz = 0.25 * S;
+						}
+			
+						tk.qRot.w = qw;
+						tk.qRot.x = qx;
+						tk.qRot.y = qy;
+						tk.qRot.z = qz;
+
+						//We actually need to un-rotate tk around the original axis...
+//						printf( "QOrig: %f %f %f %f\n", qw, qx, qy, qz );
+//						printf( "QBone: %f %f %f %f\n", sourcebone.qJointRot.w, sourcebone.qJointRot.x, sourcebone.qJointRot.y, sourcebone.qJointRot.z );
+
+						MQuaternion tdiff = sourcebone.qJointRot.reciprocal();//SLERP( norotation, sourcebone.qJointRot, -1. );
+
+						tk.qRot =  tdiff * tk.qRot;
+
+//						printf( "QFinl: %f %f %f %f\n", tk.qRot.w, tk.qRot.x, tk.qRot.y, tk.qRot.z );
+
+						tk.fTime = mvVals["TIME"][i]*10.;
+
+						if( tk.fTime > fMaxTime )
+							fMaxTime = tk.fTime;
+
 					}
 				}
 			}
@@ -634,6 +792,14 @@ int main( int argc, char ** argv )
 			}
 			printf( "Animations found, animations are %f long.\n", fMaxTime );
 		}
+
+		//Move bones around...
+		bl[0].pJointPos.x+=0;
+		bl[0].pJointPos.y+=-13.5;
+		bl[0].pJointPos.z+=0;
+
+		for( unsigned i = 0; i < bl.size(); i++ )
+			printf( ": %s\n", bl[i].sName.c_str() );
 	}
 
 
