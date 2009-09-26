@@ -1,20 +1,25 @@
 #ifndef MERCURYMESSAGEMANAGER_H
 #define MERCURYMESSAGEMANAGER_H
 
+
+#include <PriorityQueue.h>
 #include <Callback.h>
 #include <MessageHandler.h>
-#include <map>
-#include <PriorityQueue.h>
+#include <MercuryHash.h>
+#include <list>
 #include <MercuryString.h>
 #include <MercuryUtil.h>
 #include <Mint.h>
+#include <MAutoPtr.h>
 
-class MessageHolder
+class MessageHolder : public RefBase
 {
 	public:
 		MessageHolder();
 		MString message;
 		MessageData* data;
+		uint64_t when;
+		static bool Compare( void * left, void * right );
 };
 
 /* This message system uses absolute integer time values to fire off events.
@@ -25,18 +30,19 @@ from the beginning of the queue." */
 class MercuryMessageManager
 {
 	public:
+		MercuryMessageManager() : m_messageQueue( MessageHolder::Compare ) { }
 		void PostMessage(const MString& message, MessageData* data, float delay);
 		void PumpMessages(const uint64_t& currTime);
 		void RegisterForMessage(const MString& message, MessageHandler* ptr);
 		
 		static MercuryMessageManager& GetInstance();
 	private:
-		void FireOffMessage(const MessageHolder& message);
+		void FireOffMessage( const MessageHolder & message );
 		
-		PriorityQueue<uint64_t, MessageHolder> m_messageQueue;
+		PriorityQueue m_messageQueue;
 		uint64_t m_currTime; //microseconds
 		
-		std::map< MString, std::list< MessageHandler* > > m_messageRecipients;
+		MHash< std::list< MessageHandler* > > m_messageRecipients;
 };
 
 static InstanceCounter<MercuryMessageManager> MMcounter("MessageManager");

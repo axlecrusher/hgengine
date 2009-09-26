@@ -1,13 +1,17 @@
 #include <MercuryMatrix.h>
 #include <RenderGraph.h>
-
+#include <MercuryCTA.h>
 #include <GLHeaders.h>
 
 #include <Shader.h>
 #include <Viewport.h>
 #include <Texture.h>
 
+MercuryCTA AlphaHolderAllocator( sizeof(StoreRenderState), 8 );
+
 RenderGraph* CURRENTRENDERGRAPH = NULL;
+
+
 
 void RenderGraphEntry::Render()
 {
@@ -88,37 +92,40 @@ void RenderGraph::Build( MercuryNode* node, RenderGraphEntry& entry)
 
 void RenderGraph::AddAlphaNode( MercuryNode* node )
 {
-	StoreRenderState srs;
-	srs.Save();
-	srs.Matrix = node->GetGlobalMatrix();
-	srs.Node = node;
-	
-	MercuryVertex p = srs.Matrix * MercuryVertex(0,0,0,1);
+	StoreRenderState * srs = new(AlphaHolderAllocator.Malloc()) StoreRenderState();
 
+	srs->Save();
+	srs->Matrix = node->GetGlobalMatrix();
+	MercuryVertex p = srs->Matrix * MercuryVertex(0,0,0,1);
+	srs->Node = node;
 	//order from back to front (ensure furthest has lowest number and is first)
-	float length = (p - EYE).Length() * -1;
-	m_alphaNodesQueue.Insert(length, srs);
+	srs->fDistance = (p - EYE).Length() * -1;
+
+	//This makes the insertion linear time.  We fix this up before rendering.
+	m_alphaNodesQueue.PushRaw( srs );
 }
 
 void RenderGraph::RenderAlpha()
 {
-	while ( !m_alphaNodesQueue.empty() )
+	m_alphaNodesQueue.Fixup();
+
+	while ( !m_alphaNodesQueue.Empty() )
 	{
-		StoreRenderState& srs = m_alphaNodesQueue.GetNext();
-		
-		std::list< MercuryAsset* >::iterator i = srs.Assets.begin();
-		for (;i != srs.Assets.end(); ++i)
+		StoreRenderState * srs = (StoreRenderState *)m_alphaNodesQueue.Pop();
+
+		std::list< MercuryAsset* >::iterator i = srs->Assets.begin();
+		for (;i != srs->Assets.end(); ++i)
 		{
-			(*i)->PreRender(srs.Node);
-			(*i)->Render(srs.Node);
+			(*i)->PreRender(srs->Node);
+			(*i)->Render(srs->Node);
 		}
 		
-		srs.Node->RecursiveRender();
+		srs->Node->RecursiveRender();
 	
-		for (i = srs.Assets.begin();i != srs.Assets.end(); ++i)
-			(*i)->PostRender(srs.Node);
+		for (i = srs->Assets.begin();i != srs->Assets.end(); ++i)
+			(*i)->PostRender(srs->Node);
 		
-		m_alphaNodesQueue.PopNext();
+		AlphaHolderAllocator.Free( srs );
 	}
 }
 
@@ -136,9 +143,15 @@ void RenderGraph::DoDifferedLightPass()
 	m_lights.clear();
 }
 
+
 StoreRenderState::StoreRenderState()
 	:Node(NULL)
 {
+}
+
+bool StoreRenderState::Compare( void * Left, void * Right )
+{
+	return ((StoreRenderState*)Left)->fDistance < ((StoreRenderState*)Right)->fDistance;
 }
 
 void StoreRenderState::Save()

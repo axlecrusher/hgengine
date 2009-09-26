@@ -1,30 +1,39 @@
 #include <MercuryMessageManager.h>
+#include <MercuryCTA.h>
+
+MercuryCTA HolderAllocator( sizeof(MessageHolder), 8 );
+
 
 MessageHolder::MessageHolder()
-	:data(NULL)
+	:data(NULL),when(0)
 {
+}
+
+bool MessageHolder::Compare( void * left, void * right )
+{
+	return (((MessageHolder*)left)->when) < (((MessageHolder*)right)->when);
 }
 
 void MercuryMessageManager::PostMessage(const MString& message, MessageData* data, float delay)
 {
-	MessageHolder m;
-	m.message = message;
-	m.data = data;
-	uint64_t fireTime = m_currTime + uint64_t(delay*1000000);
-	m_messageQueue.Insert(fireTime, m);
+	MessageHolder * m = new(HolderAllocator.Malloc()) MessageHolder();
+	m->message = message;
+	m->data = data;
+	m->when = m_currTime + uint64_t(delay*1000000);
+	m_messageQueue.Push( m );
 }
 
 void MercuryMessageManager::PumpMessages(const uint64_t& currTime)
 {
 	m_currTime = currTime;
-	while ( !m_messageQueue.empty() )
+	while ( !m_messageQueue.Empty() )
 	{
-		if ( m_messageQueue.PeekNextPriority() > m_currTime ) return;
+		if ( ((MessageHolder *)m_messageQueue.Peek())->when > m_currTime ) return;
 		
-		MessageHolder& message = m_messageQueue.GetNext();
-		FireOffMessage( message );
-		SAFE_DELETE( message.data );
-		m_messageQueue.PopNext();
+		MessageHolder * message = (MessageHolder *)m_messageQueue.Pop();
+		FireOffMessage( *message );
+		SAFE_DELETE( message->data );
+		HolderAllocator.Free(message);
 	}
 }
 
@@ -33,15 +42,15 @@ void MercuryMessageManager::RegisterForMessage(const MString& message, MessageHa
 	m_messageRecipients[message].push_back(ptr);
 }
 
-void MercuryMessageManager::FireOffMessage(const MessageHolder& message)
+void MercuryMessageManager::FireOffMessage( const MessageHolder & message )
 {
-	std::map< MString, std::list< MessageHandler* > >::iterator i = m_messageRecipients.find(message.message);
-	
-	if ( i != m_messageRecipients.end() )
+//	std::map< MString, std::list< MessageHandler* > >::iterator i = m_messageRecipients.find(message.message);
+	std::list< MessageHandler* > * ref = m_messageRecipients.get( message.message );
+	if ( ref )
 	{
-		std::list< MessageHandler* >::iterator recipients = i->second.begin();
+		std::list< MessageHandler* >::iterator recipients = ref->begin();
 	
-		for (; recipients != i->second.end(); ++recipients)
+		for (; recipients != ref->end(); ++recipients)
 			(*recipients)->HandleMessage(message.message, message.data);
 	}
 }

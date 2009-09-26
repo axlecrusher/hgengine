@@ -39,6 +39,8 @@ class StoreRenderState
 		void Save();
 		MercuryNode* Node;
 		MercuryMatrix Matrix;
+		float fDistance;
+		static bool Compare( void * Left, void * Right );
 //	private:
 		std::list< MercuryAsset* > Assets;
 };
@@ -46,6 +48,7 @@ class StoreRenderState
 class RenderGraph
 {
 	public:
+		RenderGraph() : m_alphaNodesQueue( &StoreRenderState::Compare ) { }
 		void Build( MercuryNode* node );
 		inline void Render() { m_root.Render(); }
 		
@@ -59,7 +62,7 @@ class RenderGraph
 		RenderGraphEntry m_root;
 		
 		//nodes that use alpha, ordered from farthest to nearest from the camera
-		PriorityQueue<float, StoreRenderState > m_alphaNodesQueue;
+		PriorityQueue m_alphaNodesQueue;
 		std::list< Light* > m_lights;
 };
 
