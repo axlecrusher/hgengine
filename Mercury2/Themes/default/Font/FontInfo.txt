@@ -1,0 +1,21 @@
+Fonts are from:
+Freetype-ttf (From http://savannah.nongnu.org/projects/freefont/)
+FreeMonoBold.ttf
+FreeSansBold.ttf
+
+The fonts, themselves are under the GPL-2.  Because the fonts are
+being rastered and no information about the fonts beyond actual
+rasterized images are used, most countries, including the USA do
+not hold this as copyrightable.
+
+When operating within the US, the fonts are made public domain by
+federal law. (Code of Federal Regulations, Ch 37, Sec. 202.1(e))
+
+§202.1 Material not subject to copyright.
+The following are examples of works not subject to copyright and applications for registration of such works cannot be entertained:
+...
+(e)
+Typeface as typeface.
+
+We give credit and encourage all people who use these font images
+to give credit to the Free Font group.
