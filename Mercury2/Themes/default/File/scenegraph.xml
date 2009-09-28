@@ -1,8 +1,11 @@
 <SceneGraph name="root">
 	<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100" name="vp">
 		<node type="cameranode" movx="0" movz="0" movy="0" rotx="0" roty="0" rotz="0" name="camera">
-			<node type="transformnode" movz="-5" >
-				<node type="TextNode" text="test font 123 HELLO WORLD!!! WOOT!" font="FONT:testfont.hgfont" size=".01" width="300" alphaPath="true" alignment="FIT_FULL" />
+			<node type="transformnode" movz="-5"  movy="2">
+				<node type="TextNode" text="test font 123 HELLO WORLD!!! WOOT!" font="FONT:FreeSans.hgfont" size=".01" width="300" alphaPath="true" alignment="FIT_FULL" />
+			</node>
+			<node type="transformnode" movz="-5" movx="-4" movy="2">
+				<node type="TextNode" text="Another test!" font="FONT:FreeMonoBold.hgfont" size=".01" width="300" alphaPath="true" alignment="LEFT" />
 			</node>
 			<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
 				<asset type="texture" file="MODEL:map.png"/>
