@@ -8,11 +8,12 @@ if test $OSTYPE = "darwin8.0"; then
 	ISMAC=1; fi
 
 
-OPTIONS="X11 libxml OGL sse"
+OPTIONS="X11 libxml OGL sse gprof"
 OPT_X11=1
 OPT_OGL=1
 OPT_libxml=1
 OPT_sse=1
+OPT_gprof=0
 
 DEFINES="WAS_CONFIGURED USE_MSTRING"
 CC_BASE="-O2 -g0 -Wall"
@@ -59,6 +60,11 @@ if test $OPT_X11 = 1; then
 	NEED_H="$NEED_H X11/Xlib.h"
 	NEED_H="$NEED_H GL/glx.h"
 	DEFINES="$DEFINES USE_X11"
+fi
+
+if test $OPT_gprof = 1; then
+	CC_BASE="$CC_BASE -pg"
+	LD_BASE="$LD_BASE -pg"
 fi
 
 if test $OPT_OGL = 1; then
