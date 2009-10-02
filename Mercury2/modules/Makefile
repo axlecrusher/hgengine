@@ -1,4 +1,4 @@
-CFLAGS=-O2 -g0 -Wall -I/usr/include/libxml2  -DHAVE_CONFIG -DHGENGINE -fno-exceptions -fPIC -I../src -g 
+CFLAGS=-O2 -g0 -Wall -I/usr/include/libxml2 -I.. -msse2 -DHAVE_CONFIG -DHGENGINE -fno-exceptions -fPIC -I../src -g 
 CXXFLAGS=${CFLAGS}
 LDFLAGS=-shared
 

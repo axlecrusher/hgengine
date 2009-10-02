@@ -8,12 +8,13 @@ if test $OSTYPE = "darwin8.0"; then
 	ISMAC=1; fi
 
 
-OPTIONS="X11 libxml OGL sse gprof"
+OPTIONS="X11 libxml OGL sse gprof glprofile"
 OPT_X11=1
 OPT_OGL=1
 OPT_libxml=1
-OPT_sse=1
+OPT_sse=0
 OPT_gprof=0
+OPT_glprofile=0
 
 DEFINES="WAS_CONFIGURED USE_MSTRING"
 CC_BASE="-O2 -g0 -Wall"
@@ -44,8 +45,10 @@ done
 
 NEED_H="stdio.h stdlib.h"
 WANT_H="time.h"
+CC_BASE="$CC_BASE -I."
 
 NEED_L="m c z pthread png pthread";
+
 
 if test $OPT_libxml = 1; then
 	CC_BASE="$CC_BASE -I/usr/include/libxml2"
@@ -67,6 +70,10 @@ if test $OPT_gprof = 1; then
 	LD_BASE="$LD_BASE -pg"
 fi
 
+if test $OPT_glprofile = 1; then
+	DEFINES="$DEFINES GL_PROFILE"
+fi
+
 if test $OPT_OGL = 1; then
 	NEED_H="GL/gl.h"
 	NEED_L="$NEED_L GL GLU"
@@ -84,5 +91,9 @@ fi
 ARCH=`uname -m`
 
 if test $ARCH = "i686" || test $ARCH = "i586"; then
-	CC_BASE="$CC_BASE -march=pentium"
+	if test $OPT_sse = 1; then
+		CC_BASE="$CC_BASE -march=pentium3"
+	else
+		CC_BASE="$CC_BASE -march=pentium"
+	fi
 fi
