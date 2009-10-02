@@ -8,7 +8,11 @@
 
 #include <RawImageData.h>
 
+#ifdef GL_PROFILE
 #define GLCALL(x) x; ProfileGLCall(#x);
+#else
+#define GLCALL(x) x;
+#endif
 
 MString GlError2String(uint32_t e);
 void glLoadMatrix(const MercuryMatrix& m);
@@ -16,7 +20,9 @@ MercuryMatrix glGetMatrix(unsigned int m);
 MercuryVertex pointFromScreenLoc(int screen_x, int screen_y);
 unsigned int ToGLColorType(ColorByteType cbt);
 
+#ifdef GL_PROFILE
 void ProfileGLCall(const MString& funcName);
+#endif
 void PrintGLFunctionCalls();
 
 #endif
