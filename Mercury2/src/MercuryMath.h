@@ -2,6 +2,9 @@
 #define _MERCURYMATH_H
 
 #include <math.h>
+#ifdef HGENGINE
+#include <configuration.h>
+#endif
 
 #ifdef USE_SSE
 #include <xmmintrin.h>

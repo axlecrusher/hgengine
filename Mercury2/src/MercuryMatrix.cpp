@@ -1,9 +1,22 @@
 #include "MercuryMatrix.h"
 #include <MercuryLog.h>
 
+float base_matrix_identity[16] = {
+	1.0f, 0.0f, 0.0f, 0.0f,
+	0.0f, 1.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 1.0f, 0.0f,
+	0.0f, 0.0f, 0.0f, 1.0f };
+
 MercuryMatrix::MercuryMatrix()
 {
-	*this = Identity();
+#ifdef USE_SSE
+	m_matrix[0] = _mm_load1_ps( &base_matrix_identity[0] );
+	m_matrix[1] = _mm_load1_ps( &base_matrix_identity[4] );
+	m_matrix[2] = _mm_load1_ps( &base_matrix_identity[8] );
+	m_matrix[3] = _mm_load1_ps( &base_matrix_identity[12] );
+#else
+	Copy16f(m_matrix[0], base_matrix_identity );
+#endif
 }
 
 const MercuryMatrix& MercuryMatrix::operator=(const MercuryMatrix& m)
@@ -28,14 +41,19 @@ void MercuryMatrix::Zero()
 
 const MercuryMatrix& MercuryMatrix::Identity()
 {
-	if (IdentityMatrix.m_matrix[0][0] != 1.0f)
+	static bool bSetIdentity = false;
+
+	if (!bSetIdentity)
 	{
-		float identity[16] = {
-			1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f };
-		Copy16f(MercuryMatrix::IdentityMatrix.m_matrix[0], identity );
+		bSetIdentity = true;
+#ifdef USE_SSE
+		MercuryMatrix::IdentityMatrix.m_matrix[0] = _mm_load1_ps( &base_matrix_identity[0] );
+		MercuryMatrix::IdentityMatrix.m_matrix[1] = _mm_load1_ps( &base_matrix_identity[4] );
+		MercuryMatrix::IdentityMatrix.m_matrix[2] = _mm_load1_ps( &base_matrix_identity[8] );
+		MercuryMatrix::IdentityMatrix.m_matrix[3] = _mm_load1_ps( &base_matrix_identity[12] );
+#else
+		Copy16f(MercuryMatrix::IdentityMatrix.m_matrix[0], base_matrix_identity );
+#endif
 	}
 	
 	return IdentityMatrix;
@@ -212,7 +230,8 @@ MercuryVector MercuryMatrix::operator*(const MercuryVector& v) const
 MercuryMatrix MercuryMatrix::IdentityMatrix;
 
 /* 
- * Copyright (c) 2006 Joshua Allen
+ * Copyright (c) 2006-2009 Joshua Allen
+ *                         Charles Lohr
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
