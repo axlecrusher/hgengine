@@ -73,7 +73,10 @@ class MQuaternion {
 		inline float& Z() { return m_wxyz[3]; }
 		
 //	private:
-		FloatRow m_wxyz;
+		//Tricky: This cannot be a float row, otherwise all references cease to operate as one would expect.
+		//Also, for most operations, it appeared to go slower.  All the moving in and out of these variables
+		//is disadvantagious.
+		float m_wxyz[4];
 } M_ALIGN(32);
 
 ///Produce a matrix out of a rotation x, then y then z (how Mercury does it)
