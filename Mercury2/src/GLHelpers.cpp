@@ -2,8 +2,6 @@
 #include <GLHelpers.h>
 #include <MercuryHash.h>
 
-uint32_t GLCALLCOUNT = 0;
-MHash< uint32_t> GLFUNCTCOUNT;
 
 MString GlError2String(uint32_t e)
 {
@@ -110,6 +108,10 @@ unsigned int ToGLColorType(ColorByteType cbt)
 
 }
 
+#ifdef GL_PROFILE
+uint32_t GLCALLCOUNT = 0;
+MHash< uint32_t> GLFUNCTCOUNT;
+
 void ProfileGLCall(const MString& funcName)
 {
 	++GLCALLCOUNT;
@@ -126,6 +128,12 @@ void PrintGLFunctionCalls()
 
 	GLFUNCTCOUNT.clear();
 }
+#else
+void PrintGLFunctionCalls()
+{
+	LOG.Write( "No profiling performed on data set because it was configrued off." );
+}
+#endif
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *

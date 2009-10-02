@@ -165,11 +165,13 @@ int main( int argc, char** argv)
 			float batches = MercuryVBO::ResetBatchCount()/(float)m_count;
 			float VBinds = MercuryVBO::ResetBindCount()/(float)m_count;
 			float Tbinds = Texture::ReadAndResetBindCount()/(float)m_count;
-			float GLcalls = GLCALLCOUNT/(float)m_count;
 			LOG.Write( ssprintf("FPS: %f, VBO batches %f, TBinds %f, VBinds %f", m_count/fpsTimer.Age(), batches, Tbinds, VBinds) );
-			LOG.Write( ssprintf("GL/f: %f", GLcalls) );
-			m_count = 0;
+#ifdef GL_PROFILE
+			float GLcalls = GLCALLCOUNT/(float)m_count;
 			GLCALLCOUNT = 0;
+			LOG.Write( ssprintf("GL/f: %f", GLcalls) );
+#endif
+			m_count = 0;
 			fpsTimer = timer;
 		}
 	}
