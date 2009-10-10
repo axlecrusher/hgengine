@@ -25,7 +25,6 @@ MercuryVBO::~MercuryVBO()
 
 void MercuryVBO::Render(const MercuryNode* node)
 {
-	uint16_t stride = sizeof(float)*8;
 	
 	if ( !m_initiated ) InitVBO();
 
@@ -40,14 +39,14 @@ void MercuryVBO::Render(const MercuryNode* node)
 
 		GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]) );
 		GLCALL( glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]) );
-		GLCALL( glVertexPointer(3, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*5)) );
+		GLCALL( glVertexPointer(3, GL_FLOAT, STRIDE*sizeof(float), BUFFER_OFFSET( VERTEX_OFFSET*sizeof(float) ) ) );
 		++m_vboBinds;
 	}
 	
-	Texture::ApplyActiveTextures(stride);
+	Texture::ApplyActiveTextures(STRIDE*sizeof(float));
 	
 	GLCALL( glEnableClientState( GL_NORMAL_ARRAY ) );
-	GLCALL( glNormalPointer(GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*2)) );
+	GLCALL( glNormalPointer(GL_FLOAT, STRIDE*sizeof(float), BUFFER_OFFSET(sizeof(float)*2)) );
 
 	GLCALL( glDrawRangeElements(GL_TRIANGLES, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL) );
 	m_vboBatches++;

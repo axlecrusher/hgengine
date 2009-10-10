@@ -10,6 +10,9 @@
 class MercuryVBO : public MercuryAsset
 {
 	public:
+		static const uint16_t STRIDE = 8;
+		static const uint16_t VERTEX_OFFSET = 5;
+		
 		MercuryVBO();
 		virtual ~MercuryVBO();
 		
@@ -22,9 +25,14 @@ class MercuryVBO : public MercuryAsset
 		static uint32_t ResetBatchCount() { uint32_t t = m_vboBatches; m_vboBatches = 0; return t; }
 		static uint32_t ResetBindCount() { uint32_t t = m_vboBinds; m_vboBinds = 0; return t; }
 
-		float * GetVertexHandle() { return &m_vertexData[0]; }
-		short unsigned int * GetIndexHandle() { return &m_indexData[0]; }
+		const float* GetVertexHandle() const { return m_vertexData.Buffer(); }
+		float* GetVertexHandle() { return m_vertexData.Buffer(); }
+		
+		const short unsigned int* GetIndexHandle() const { return m_indexData.Buffer(); }
+		short unsigned int* GetIndexHandle() { return m_indexData.Buffer(); }
 	
+		inline uint16_t IndiceCount() const { return m_indexData.Length(); }
+		
 		static void* m_lastVBOrendered;
 
 		void DirtyVertices() { m_bDirtyVertices = 1; }
