@@ -32,12 +32,14 @@ class AlignedBuffer
 			m_length = 0;
 		}
 		
-		inline unsigned long Length() { return m_length; }
-		inline unsigned long LengthInBytes() { return m_length*sizeof(T); }
+		inline unsigned long Length() const { return m_length; }
+		inline unsigned long LengthInBytes() const { return m_length*sizeof(T); }
 		
 		inline T* Buffer() { return m_data; }
+		inline const T* Buffer() const { return m_data; }
 		
 		inline T& operator[](unsigned long x) { return m_data[x]; }
+		inline const T& operator[](unsigned long x) const { return m_data[x]; }
 		
 	private:
 		unsigned long m_length;
