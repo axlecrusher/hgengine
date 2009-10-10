@@ -23,11 +23,13 @@ class HGMDLModel : public MercuryAsset
 		virtual void PreRender(const MercuryNode* node);
 		virtual void Render(const MercuryNode* node);
 
+	protected:
+		std::vector< MAutoPtr< HGMDLMesh > > m_meshes;
+
 	private:
+		CLASS_HELPERS( MercuryAsset );
 		void LoadHGMDL( const MString& path );
 		static void* LoaderThread(void* d);
-		
-		std::vector< MAutoPtr< HGMDLMesh > > m_meshes;
 };
 
 

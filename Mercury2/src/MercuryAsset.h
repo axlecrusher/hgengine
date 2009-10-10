@@ -146,6 +146,9 @@ static InstanceCounter<AssetFactory> AFcounter("AssetFactory");
 #define REMOVE_ASSET_INSTANCE(class, key)\
 		AssetFactory::GetInstance().RemoveAssetInstance( ToUpper(#class)+key );
 
+#define CLASS_HELPERS(baseClass)\
+		typedef baseClass base;
+
 #endif
 
 /***************************************************************************
