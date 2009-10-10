@@ -2,7 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <stdint.h>
-#include <MercuryPoint.h>
+#include <MercuryVertex.h>
 #include <map>
 #include <math.h>
 
@@ -11,17 +11,17 @@ using namespace std;
 float min(float x, float y) { return x<y?x:y; }
 float max(float x, float y) { return x>y?x:y; }
 
-vector< MercuryPoint > v;
-vector< MercuryPoint > vt;
-vector< MercuryPoint > vn;
+vector< MercuryVertex > v;
+vector< MercuryVertex > vt;
+vector< MercuryVertex > vn;
 
 float minX, maxX, minY, maxY, minZ, maxZ;
 
 struct Vertex
 {
-	MercuryPoint uv;
-	MercuryPoint normal;
-	MercuryPoint position;
+	MercuryVertex uv;
+	MercuryVertex normal;
+	MercuryVertex position;
 	
 	inline bool operator==(const Vertex& rhs)
 	{
@@ -38,29 +38,29 @@ void LineParser(const string &line)
 	string token = line.substr(0,2);
 	if (token == "v ")
 	{
-		MercuryPoint tv;
-		sscanf(line.c_str(), "v %f %f %f", &tv.x, &tv.y, &tv.z);
+		MercuryVertex tv;
+		sscanf(line.c_str(), "v %f %f %f", &tv[0], &tv[1], &tv[2]);
 		v.push_back(tv);
 		
-		minX = min(minX, tv.x);
-		minY = min(minY, tv.y);
-		minZ = min(minZ, tv.z);
+		minX = min(minX, tv[0]);
+		minY = min(minY, tv[1]);
+		minZ = min(minZ, tv[2]);
 
-		maxX = max(maxX, tv.x);
-		maxY = max(maxY, tv.y);
-		maxZ = max(maxZ, tv.z);
+		maxX = max(maxX, tv[0]);
+		maxY = max(maxY, tv[1]);
+		maxZ = max(maxZ, tv[2]);
 	}
 	else if (token == "vt")
 	{
-		MercuryPoint tv;
-		sscanf(line.c_str(), "vt %f %f", &tv.x, &tv.y);
-		tv.y = 1 - tv.y; //XXX reverse
+		MercuryVertex tv;
+		sscanf(line.c_str(), "vt %f %f", &tv[0], &tv[1]);
+		tv[1] = 1 - tv[1]; //XXX reverse
 		vt.push_back(tv);
 	}
 	else if (token == "vn")
 	{
-		MercuryPoint tv;
-		sscanf(line.c_str(), "vn %f %f %f", &tv.x, &tv.y, &tv.z);
+		MercuryVertex tv;
+		sscanf(line.c_str(), "vn %f %f %f", &tv[0], &tv[1], &tv[2]);
 		vn.push_back(tv);
 	}
 	else if (token == "f ")
@@ -74,7 +74,7 @@ void LineParser(const string &line)
 		{
 			r = sscanf(line.c_str(), "f %d/%d %d/%d %d/%d", &iv[0], &ivt[0], &iv[1], &ivt[1], &iv[2], &ivt[2]);
 			ivn[0] = ivn[1] = ivn[2] = 1;
-			MercuryPoint tv;
+			MercuryVertex tv;
 			vn.push_back(tv);
 		}
 		
@@ -86,7 +86,7 @@ void LineParser(const string &line)
 			tv[i].position = v[ iv[i]-1 ];
 			tv[i].normal = vn[ ivn[i]-1 ];
 			tv[i].uv = vt[ ivt[i]-1 ];
-			
+		
 			for (unsigned long j = 0; j < vertice.size(); ++j)
 			{
 				if (tv[i] == vertice[j])
@@ -153,13 +153,16 @@ void WriteMBMF( FILE *mbmf )
 		for (uint32_t i = 0; i < vertice.size(); ++i)
 		{
 			fwrite(&vertice[i].uv, sizeof(float)*2, 1, mbmf);
-			fwrite(&vertice[i].normal, sizeof(MercuryPoint), 1, mbmf);
-			fwrite(&vertice[i].position, sizeof(MercuryPoint), 1, mbmf);
+			fwrite(&vertice[i].normal, sizeof(float)*3, 1, mbmf);
+			fwrite(&vertice[i].position, sizeof(float)*3, 1, mbmf);
 		}
 	
 		tmp16 = indice.size(); fwrite(&tmp16, sizeof(uint16_t), 1, mbmf);
 		for (uint16_t i = 0; i < indice.size(); ++i)
+		{
 			fwrite(&indice[i], sizeof(uint16_t), 1, mbmf);
+			printf("%f %f %f\n", vertice[indice[i]].position.GetX(), vertice[indice[i]].position.GetY(), vertice[indice[i]].position.GetZ() );
+		}
 		
 		tmp32 = 1; fwrite(&tmp32, sizeof(uint32_t), 1, mbmf);
 		WriteOBB(mbmf);
@@ -190,6 +193,7 @@ int main(int argc, char** argv)
 	{
 		if (line.length() > 0) LineParser(line);
 	}
+	printf("Loaded\n");
 		
 	WriteMBMF( mbmf );
 	
