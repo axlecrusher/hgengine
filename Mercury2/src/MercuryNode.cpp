@@ -34,7 +34,7 @@ MercuryNode::~MercuryNode()
 
 void MercuryNode::AddAsset(MercuryAsset* asset)
 {
-	m_assets.push_back( MercuryAssetInstance(asset) );
+	m_assets.push_back( MercuryAssetInstance(asset, this) );
 }
 
 void MercuryNode::AddChild(MercuryNode* n)

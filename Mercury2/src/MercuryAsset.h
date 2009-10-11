@@ -25,7 +25,7 @@ class MercuryNode;
 /* Assets are stored in renderable nodes with MAuto pointers.
 The renderable nodes handle the memory management
 */
-class MercuryAsset : public RefBase, MessageHandler
+class MercuryAsset : public RefBase, public MessageHandler
 {
 	public:
 		MercuryAsset();
@@ -80,7 +80,7 @@ Used in MercuryNode. */
 class MercuryAssetInstance
 {
 	public:
-		MercuryAssetInstance(MercuryAsset* asset);
+		MercuryAssetInstance(MercuryAsset* asset, MercuryNode* parentNode);
 		inline MercuryAsset& Asset() { return *m_asset; }
 		inline const MercuryAsset& Asset() const { return *m_asset; }
 		inline const MercuryAsset* AssetPtr() const { return m_asset; }
@@ -93,6 +93,7 @@ class MercuryAssetInstance
 		inline unsigned short GetPasses() { return m_iPasses; }
 		inline void SetPasses( unsigned short p ) { m_iPasses = p; }
 	private:
+		MercuryNode* m_parentNode;
 		MAutoPtr< MercuryAsset > m_asset; //actual asset storage
 		OcclusionResult m_occlusionResult;
 		bool m_isCulled;
