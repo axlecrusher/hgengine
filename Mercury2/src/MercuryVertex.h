@@ -11,6 +11,7 @@
 #endif
 
 class MQuaternion;
+class MercuryMatrix;
 
 class MercuryVertex
 {
@@ -32,9 +33,11 @@ class MercuryVertex
 		inline float GetX() const { return (*this)[0]; }
 		inline float GetY() const { return (*this)[1]; }
 		inline float GetZ() const { return (*this)[2]; }
+		inline float GetW() const { return (*this)[3]; }
 		inline void SetX(const float ix) { (*this)[0] = ix; }
 		inline void SetY(const float iy) { (*this)[1] = iy; }
 		inline void SetZ(const float iz) { (*this)[2] = iz; }
+		inline void SetW(const float iw) { (*this)[3] = iw; }
 		
 		inline void Zero() { (*this)[0] = 0; (*this)[1] = 0; (*this)[2] = 0; }
 
@@ -59,6 +62,9 @@ class MercuryVertex
 		inline MercuryVertex operator * (const MercuryVertex& p) const { MercuryVertex r(*this); r*=p; return r; }
 		inline MercuryVertex operator / (const MercuryVertex& p) const { MercuryVertex r(*this); r/=p; return r; }
 
+		MercuryVertex operator*(const MercuryMatrix& m) const;
+
+		
 		inline MercuryVertex& operator += ( const MercuryVertex& other )		{ (*this)[0]+=other[0]; (*this)[1]+=other[1]; (*this)[2]+=other[2]; return *this; }
 		inline MercuryVertex& operator -= ( const MercuryVertex& other )		{ (*this)[0]-=other[0]; (*this)[1]-=other[1]; (*this)[2]-=other[2]; return *this; }
 		inline MercuryVertex& operator *= ( float f ) { (*this)[0]*=f; (*this)[1]*=f; (*this)[2]*=f; return *this; }
@@ -84,6 +90,8 @@ class MercuryVertex
 		void Print(const MString& s = "Vertex") const;
 		
 		MercuryVertex Rotate(const MQuaternion& q) const;
+		
+		float AddComponents() const;
 		
 		static MercuryVertex CreateFromString(const MString& s);
 
