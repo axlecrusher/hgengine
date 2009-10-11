@@ -127,7 +127,7 @@ MercuryVertex MercuryVertex::operator*(const MercuryMatrix& m) const
 	MercuryVertex v1(m[0][0], m[1][0], m[2][0], m[3][0]);
 	MercuryVertex v2(m[0][1], m[1][1], m[2][1], m[3][1]);
 	MercuryVertex v3(m[0][2], m[1][2], m[2][2], m[3][2]);
-	MercuryVertex v4(m[0][3], m[1][4], m[1][4], m[1][4]);
+	MercuryVertex v4(m[0][3], m[1][3], m[2][3], m[3][3]);
 	
 	r[0] = ((*this)*v1).AddComponents();
 	r[1] = ((*this)*v2).AddComponents();
