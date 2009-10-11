@@ -21,6 +21,7 @@ enum LoadState
 };
 
 class MercuryNode;
+class MercuryAssetInstance;
 
 /* Assets are stored in renderable nodes with MAuto pointers.
 The renderable nodes handle the memory management
@@ -61,6 +62,8 @@ class MercuryAsset : public RefBase, public MessageHandler
 
 		inline unsigned short GetPasses() { return m_iPasses; }
 		inline void SetPasses( unsigned short p ) { m_iPasses = p; }
+		
+		virtual MercuryAssetInstance* GenerateInstanceData(MercuryNode* parentNode);
 	protected:
 		void SetLoadState(LoadState ls); //thread safe
 		LoadState GetLoadState(); //thread safe
@@ -77,10 +80,12 @@ class MercuryAsset : public RefBase, public MessageHandler
 
 /** This holds the per-instance data for each asset instance.
 Used in MercuryNode. */
-class MercuryAssetInstance
+class MercuryAssetInstance : public MessageHandler
 {
 	public:
 		MercuryAssetInstance(MercuryAsset* asset, MercuryNode* parentNode);
+		virtual ~MercuryAssetInstance() {};
+		
 		inline MercuryAsset& Asset() { return *m_asset; }
 		inline const MercuryAsset& Asset() const { return *m_asset; }
 		inline const MercuryAsset* AssetPtr() const { return m_asset; }
@@ -92,8 +97,9 @@ class MercuryAssetInstance
 
 		inline unsigned short GetPasses() { return m_iPasses; }
 		inline void SetPasses( unsigned short p ) { m_iPasses = p; }
-	private:
+	protected:
 		MercuryNode* m_parentNode;
+	private:
 		MAutoPtr< MercuryAsset > m_asset; //actual asset storage
 		OcclusionResult m_occlusionResult;
 		bool m_isCulled;

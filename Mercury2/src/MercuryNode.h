@@ -101,6 +101,7 @@ class MercuryNode : public MessageHandler
 		inline MString GetName() const { return m_name; }
 		
 		void AddAsset(MercuryAsset* asset);
+		void ClearAssets();
 		
 		virtual void PreRender(const MercuryMatrix& matrix);
 		virtual void Render(const MercuryMatrix& matrix);
@@ -134,7 +135,7 @@ class MercuryNode : public MessageHandler
 		unsigned short m_iForcePasses;	//If (1<<15) is set, then, we know the force is enabled.
 
 		//The asset is actually stored here
-		std::list< MercuryAssetInstance > m_assets;
+		std::list< MercuryAssetInstance* > m_assets;
 		
 		//we will just use normal pointers here because we don't want to waste too much time
 		//dereferencing the autopointer. As a precaution when assets are added to these lists,

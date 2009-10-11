@@ -93,6 +93,11 @@ void MercuryAsset::DrawAxes()
 	GLCALL( glEnd() );
 }
 
+MercuryAssetInstance* MercuryAsset::GenerateInstanceData(MercuryNode* parentNode)
+{
+	return new MercuryAssetInstance(this, parentNode);
+}
+
 MercuryAssetInstance::MercuryAssetInstance(MercuryAsset* asset, MercuryNode* parentNode)
 	:m_parentNode(parentNode), m_asset( asset ), m_isCulled( false ), m_iPasses( asset->GetPasses() )
 {

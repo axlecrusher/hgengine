@@ -30,11 +30,20 @@ MercuryNode::~MercuryNode()
 		SAFE_DELETE(*i);
 	
 	m_children.clear();
+	
+	ClearAssets();
 }
 
 void MercuryNode::AddAsset(MercuryAsset* asset)
 {
-	m_assets.push_back( MercuryAssetInstance(asset, this) );
+	m_assets.push_back( asset->GenerateInstanceData(this) );
+}
+
+void MercuryNode::ClearAssets()
+{
+	list< MercuryAssetInstance* >::iterator i;
+	for (i = m_assets.begin(); i != m_assets.end(); ++i )
+		SAFE_DELETE(*i);
 }
 
 void MercuryNode::AddChild(MercuryNode* n)
@@ -299,36 +308,39 @@ void MercuryNode::PreRender(const MercuryMatrix& matrix)
 	SetCulled( false );
 	bool culled = true;
 	
-	std::list< MercuryAssetInstance >::iterator i;
+	std::list< MercuryAssetInstance* >::iterator i;
 	for (i = m_assets.begin(); i != m_assets.end(); ++i )
 	{
-		MercuryAssetInstance& mai = *i;
-		MercuryAsset& a = mai.Asset();
+		MercuryAssetInstance* mai = *i;
+		MercuryAsset& a = mai->Asset();
 		
 		///NOTE: Things that ignore culling do not affect culling one way or the other
 		if ( !a.IgnoreCull() )
 		{
-			mai.Culled( a.DoCullingTests( mai.GetOcclusionResult(), matrix ) );
-			culled = culled && mai.Culled();
+			mai->Culled( a.DoCullingTests( mai->GetOcclusionResult(), matrix ) );
+			culled = culled && mai->Culled();
 		}
 		
-		if ( !mai.Culled() ) a.PreRender(this);
+		if ( !mai->Culled() ) a.PreRender(this);
 	}
 	SetCulled( culled );
 }
 
 void MercuryNode::Render(const MercuryMatrix& matrix)
 {
-	std::list< MercuryAssetInstance >::iterator i;
+	std::list< MercuryAssetInstance* >::iterator i;
 	for (i = m_assets.begin(); i != m_assets.end(); ++i )
-		if ( !(i->Culled() || i->GetOcclusionResult().IsOccluded()) ) i->Asset().Render(this);
+	{
+		MercuryAssetInstance* mai = *i;
+		if ( !(mai->Culled() || mai->GetOcclusionResult().IsOccluded()) ) mai->Asset().Render(this);
+	}
 }
 
 void MercuryNode::PostRender(const MercuryMatrix& matrix)
 {
-	std::list< MercuryAssetInstance >::iterator i;
+	std::list< MercuryAssetInstance* >::iterator i;
 	for (i = m_assets.begin(); i != m_assets.end(); ++i )
-		i->Asset().PostRender(this);
+		(*i)->Asset().PostRender(this);
 }
 
 const MercuryMatrix& MercuryNode::FindGlobalMatrix() const
