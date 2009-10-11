@@ -13,9 +13,10 @@ class MTriangle
 		bool IsInTriangle( const MercuryVertex& p );
 	
 		float Area();
-		
+		MercuryVertex InterpolatePosition(const MercuryVertex& barycentric);
+				
 		bool operator == (const MTriangle& rhs);
-	private:
+//	private:
 		
 		MercuryVertex m_verts[3];
 };

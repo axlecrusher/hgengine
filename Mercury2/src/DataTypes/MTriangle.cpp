@@ -35,6 +35,23 @@ MercuryVertex MTriangle::Barycentric(const MercuryVertex& p)
 	return MercuryVertex(ru, rv, 1-(ru+rv));
 }
 
+MercuryVertex MTriangle::InterpolatePosition(const MercuryVertex& barycentric)
+{
+	MercuryVertex result( m_verts[0] );
+		
+	barycentric.Print();
+	
+	result += (m_verts[1] - m_verts[0])*barycentric;
+	result += (m_verts[2] - m_verts[0])*barycentric;
+	
+//	result.Print();
+	
+	result[3] = 0;
+	
+	result.Print();
+	return result;
+}
+
 bool MTriangle::IsInTriangle(const MercuryVertex& p)
 {
 	MercuryVertex v = Barycentric(p);
