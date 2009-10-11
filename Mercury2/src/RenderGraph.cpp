@@ -77,9 +77,9 @@ void RenderGraph::Build( MercuryNode* node, RenderGraphEntry& entry)
 		iPasses |= child->m_iPasses;
 	}
 
-	std::list< MercuryAssetInstance >::iterator i;
+	std::list< MercuryAssetInstance* >::iterator i;
 	for (i = node->m_assets.begin(); i != node->m_assets.end(); ++i )
-		iPasses |= i->GetPasses();
+		iPasses |= (*i)->GetPasses();
 
 	if( node->m_iForcePasses & (1<<15 ) )
 		node->m_iPasses = node->m_iForcePasses;
