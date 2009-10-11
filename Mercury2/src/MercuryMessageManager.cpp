@@ -42,6 +42,23 @@ void MercuryMessageManager::RegisterForMessage(const MString& message, MessageHa
 	m_messageRecipients[message].push_back(ptr);
 }
 
+void MercuryMessageManager::UnRegisterForMessage(const MString& message, MessageHandler* ptr)
+{
+	std::list< MessageHandler* >& subscriptions = m_messageRecipients[message];
+	std::list< MessageHandler* >::iterator i = subscriptions.begin();
+	
+	for (;i != subscriptions.end(); ++i)
+	{
+		if (*i == ptr)
+		{
+			printf("Deleted subscription\n");
+			subscriptions.erase( i );
+			return;
+		}
+	}
+	
+}
+
 void MercuryMessageManager::FireOffMessage( const MessageHolder & message )
 {
 //	std::map< MString, std::list< MessageHandler* > >::iterator i = m_messageRecipients.find(message.message);

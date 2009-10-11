@@ -33,7 +33,9 @@ class MercuryMessageManager
 		MercuryMessageManager() : m_messageQueue( MessageHolder::Compare ) { }
 		void PostMessage(const MString& message, MessageData* data, float delay);
 		void PumpMessages(const uint64_t& currTime);
+		
 		void RegisterForMessage(const MString& message, MessageHandler* ptr);
+		void UnRegisterForMessage(const MString& message, MessageHandler* ptr);
 		
 		static MercuryMessageManager& GetInstance();
 	private:
@@ -49,6 +51,7 @@ static InstanceCounter<MercuryMessageManager> MMcounter("MessageManager");
 
 #define MESSAGEMAN MercuryMessageManager
 #define REGISTER_FOR_MESSAGE(x) MESSAGEMAN::GetInstance().RegisterForMessage(x, this)
+#define UNREGISTER_FOR_MESSAGE(x) MESSAGEMAN::GetInstance().UnRegisterForMessage(x, this)
 #define POST_MESSAGE(x,data,delay) MESSAGEMAN::GetInstance().PostMessage(x, data, delay)
 
 #endif
