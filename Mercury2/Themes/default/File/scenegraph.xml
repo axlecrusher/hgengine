@@ -9,7 +9,7 @@
 			</node>
 			<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
 				<asset type="texture" file="MODEL:map.png"/>
-				<asset type="hgmdlmodel" file="MODEL:map.hgmdl" />
+				<asset type="terrain" file="MODEL:map.hgmdl" />
 			</node>
 			<node type="mercurynode" name="lampForest" >
 				<node type="transformnode" movz="-5" movx="0" movy="0" name="lamprow" >
@@ -41,7 +41,9 @@
 			</node>
 		</node>
 	</node>
+	<!--
 	<node type="orthographic" left="0" right="1" top="1" bottom="0" near="-1" far="1">
 		<asset type="quad"/>
 	</node>
+	-->
 </SceneGraph>
