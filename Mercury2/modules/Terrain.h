@@ -17,6 +17,10 @@ class Terrain : public HGMDLModel
 		static Terrain* Generate();
 		virtual void LoadedCallback(); //thread safe
 	
+		virtual MercuryAssetInstance* GenerateInstanceData(MercuryNode* parentNode);
+		MercuryVertex ComputePosition(const MercuryVertex& p);
+		MercuryVertex ComputePositionLinear(const MercuryVertex& p);
+		
 	private:
 		CLASS_HELPERS( HGMDLModel );
 		void BuildHash();
@@ -27,6 +31,16 @@ class Terrain : public HGMDLModel
 //		static void* LoaderThread(void* d);
 		
 //		std::vector< MAutoPtr< HGMDLMesh > > m_meshes;
+};
+
+class TerrainAssetInstance : public MercuryAssetInstance
+{
+	public:
+		TerrainAssetInstance(MercuryAsset* asset, MercuryNode* parentNode);
+		~TerrainAssetInstance();
+		virtual void HandleMessage(const MString& message, const MessageData* data);
+	private:
+		CLASS_HELPERS( MercuryAssetInstance );
 };
 
 #endif

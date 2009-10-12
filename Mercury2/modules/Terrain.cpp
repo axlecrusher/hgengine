@@ -1,4 +1,6 @@
 #include "Terrain.h"
+#include <MercuryMessageManager.h>
+#include <MercuryNode.h>
 
 REGISTER_ASSET_TYPE(Terrain);
 
@@ -15,6 +17,11 @@ Terrain* Terrain::Generate()
 {
 	LOG.Write( "new Terrain" );
 	return new Terrain();
+}
+
+MercuryAssetInstance* Terrain::GenerateInstanceData(MercuryNode* parentNode)
+{
+	return new TerrainAssetInstance(this, parentNode);
 }
 
 void Terrain::LoadedCallback()
@@ -64,6 +71,121 @@ void Terrain::ImportMeshToHash(const HGMDLMesh& mesh)
 		m_hash.Insert( v1.GetX(), v1.GetY(), v1.GetZ(), t );
 		m_hash.Insert( v2.GetX(), v2.GetY(), v2.GetZ(), t );
 		m_hash.Insert( v3.GetX(), v3.GetY(), v3.GetZ(), t );
+	}
+}
+
+MercuryVertex Terrain::ComputePositionLinear(const MercuryVertex& p)
+{
+	HGMDLMesh& mesh = *m_meshes[0];
+	const float* vertice = mesh.GetVertexHandle() + MercuryVBO::VERTEX_OFFSET;
+	const short unsigned int* indice = mesh.GetIndexHandle();
+	
+	MercuryVertex l( p );
+	l[2] = 0;
+	
+	MercuryVector result = l;
+	
+	uint16_t length = mesh.IndiceCount();
+	uint16_t foundCount = 0;
+	for(uint16_t i = 0; i < length; i+=3)
+	{
+		MercuryVertex v1(vertice+(indice[i]*HGMDLMesh::STRIDE));
+		MercuryVertex v2(vertice+(indice[i+1]*HGMDLMesh::STRIDE));
+		MercuryVertex v3(vertice+(indice[i+2]*HGMDLMesh::STRIDE));
+		
+		MTriangle t( v1, v2, v3 );
+		MTriangle tflat(t);
+		
+		tflat.m_verts[0][2] = 0;
+		tflat.m_verts[1][2] = 0;
+		tflat.m_verts[2][2] = 0;
+
+		if ( tflat.IsInTriangle(l) )
+		{
+			++foundCount;
+			MercuryVector b = tflat.Barycentric(l);
+			
+			MercuryVector pos( t.InterpolatePosition(b) );
+			result = pos;
+//			return result;
+		}
+	}
+	
+	if (foundCount > 1) LOG.Write( ssprintf("!!!!!! Found %d triangles !!!!!!", foundCount) );
+	return result;
+}
+/*
+MercuryVertex Terrain::ComputePosition(const MercuryVertex& p)
+{
+	MercuryVertex l( p );
+	l[2] = 0;
+	
+	std::list<MTriangle> triangles = m_hash.FindByXY(p[0], p[1]);
+	LOG.Write( ssprintf("%d", triangles.size()) );
+	
+	MercuryVector result = l;
+
+	if (!triangles.empty())
+	{
+		std::list<MTriangle>::iterator i = triangles.begin();
+		for(;i != triangles.end(); ++i)
+		{
+			MTriangle t = *i;
+			t.m_verts[0][2] = 0;
+			t.m_verts[1][2] = 0;
+			t.m_verts[2][2] = 0;
+			if ( t.IsInTriangle(l) )
+			{
+				MercuryVector b = t.Barycentric(l);
+				t = *i;
+				
+				MercuryVector pos;//(t.m_verts[0]);
+				
+				pos = t.m_verts[0]*b[0] + t.m_verts[1]*b[1] + t.m_verts[2]*b[2];
+//				pos.Print();
+//				pos += (t.m_verts[0] - t.m_verts[1]) * b;
+//				pos += (t.m_verts[0] - t.m_verts[2]) * b;
+
+				
+//				pos.Print();
+				LOG.Write("Found");
+				result[2] = result[2]<pos[2]?pos[2]:result[2];
+//				return pos;
+			}
+		}
+	}
+	
+	return result;
+}
+*/
+
+TerrainAssetInstance::TerrainAssetInstance(MercuryAsset* asset, MercuryNode* parentNode)
+	:base(asset, parentNode)
+{
+	REGISTER_FOR_MESSAGE("QueryTerrainPoint");
+}
+
+TerrainAssetInstance::~TerrainAssetInstance()
+{
+	UNREGISTER_FOR_MESSAGE("QueryTerrainPoint");
+}
+
+void TerrainAssetInstance::HandleMessage(const MString& message, const MessageData* data)
+{
+	if (message == "QueryTerrainPoint")
+	{
+		VertexDataMessage* v = (VertexDataMessage*)data;
+		
+		//compute local space position
+		MercuryVertex local = v->Vertex * m_parentNode->GetGlobalMatrix();
+		local[3] = 1; //no W
+		
+		Terrain* t = (Terrain*)m_asset.Ptr();
+		local = t->ComputePositionLinear( local );
+		local[2] += 0.5; //height of player
+		
+		local = m_parentNode->GetGlobalMatrix() * local;
+		POST_MESSAGE("SetCameraPosition", new VertexDataMessage(local), 0);
 	}
 }
 
