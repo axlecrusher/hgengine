@@ -45,7 +45,7 @@ MercuryVertex MTriangle::InterpolatePosition(const MercuryVertex& barycentric)
 	tmp = m_verts[2] - m_verts[0];
 	result += tmp.Normalize()*(barycentric[1] * tmp.Length());
 	
-	result[3] = 0;
+	result[3] = 1;
 	
 	return result;
 }
