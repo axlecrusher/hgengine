@@ -99,8 +99,9 @@ class MercuryAssetInstance : public MessageHandler
 		inline void SetPasses( unsigned short p ) { m_iPasses = p; }
 	protected:
 		MercuryNode* m_parentNode;
-	private:
 		MAutoPtr< MercuryAsset > m_asset; //actual asset storage
+		
+	private:
 		OcclusionResult m_occlusionResult;
 		bool m_isCulled;
 

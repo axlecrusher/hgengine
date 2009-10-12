@@ -16,6 +16,7 @@ class CameraNode : public TransformNode
 
 		GENRTTI(CameraNode);
 	private:
+		MercuryVertex m_origionalPosition;
 		MercuryVector m_lookAt;
 		float m_x, m_y;
 		MercuryMatrix m_viewMatrix;

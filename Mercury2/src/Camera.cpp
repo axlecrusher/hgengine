@@ -12,6 +12,7 @@ CameraNode::CameraNode()
 {
 	m_lookAt = MercuryVector(0,0,-1);
 	REGISTER_FOR_MESSAGE( INPUTEVENT_MOUSE );
+	REGISTER_FOR_MESSAGE( "SetCameraPosition" );
 }
 
 void CameraNode::PreRender(const MercuryMatrix& matrix)
@@ -99,12 +100,24 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 		
 		SetRotation(qUpDown*qLeftRight);
 //		GetRotation().Print();
+//		POST_MESSAGE("QueryTerrainPoint", new MessageData(), 0);
+
+	}
+	else if (message == "SetCameraPosition")
+	{
+//		LOG.Write("SetCamPosition");
+		VertexDataMessage* m = (VertexDataMessage*)data;
+		SetPosition(m->Vertex);
+//		Update(0);
+//		ComputeMatrix();
+//		m->Vertex.Print();
 	}
 }
 
 void CameraNode::Update(float dTime)
 {
-	MercuryVector p = GetPosition();
+//	MercuryVector p = GetPosition();
+	MercuryVector p = m_origionalPosition;
 	float a = 0;
 	float b = 0;
 	
@@ -120,9 +133,15 @@ void CameraNode::Update(float dTime)
 	p += m_lookAt * a;
 	p += Xaxis * b;
 //	p.SetY(0); //lock to ground
-	SetPosition( p );
-
+//	SetPosition( p );
+	m_origionalPosition = p;
 	TransformNode::Update( dTime );
+	
+	if (a != 0 || b != 0)
+	{
+		POST_MESSAGE("QueryTerrainPoint", new VertexDataMessage(p), 0);
+	}
+
 }
 
 /****************************************************************************

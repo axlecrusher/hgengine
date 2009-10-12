@@ -4,10 +4,21 @@
 #include <MercuryString.h>
 #include <global.h>
 
+#include <MercuryVertex.h>
+
 class MessageData
 {
 	public:
 		virtual ~MessageData() {};
+};
+
+class VertexDataMessage : public MessageData
+{
+	public:
+		VertexDataMessage(const MercuryVertex& v)
+			:Vertex(v)
+		{}
+		MercuryVertex Vertex;
 };
 
 class MessageHandler
