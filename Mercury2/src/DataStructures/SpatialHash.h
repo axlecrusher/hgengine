@@ -57,13 +57,32 @@ class SpatialHash
 		
 		std::list<T> FindByXY(float x, float y)
 		{
-			int ix = x / m_spacing;
-			int iy = y / m_spacing;
+			unsigned int ix = abs(x) / m_spacing;
+			unsigned int iy = abs(y) / m_spacing;
 
 			std::list<T> r;
 			
-			for (uint32_t iz = 0; iz < m_zSize; ++iz)
-				CopyIntoList(m_hashTable[Index(ix, iy, iz)], r);
+			if (ix < m_xSize || iy < m_ySize )
+			{
+				for (uint32_t iz = 0; iz < m_zSize; ++iz)
+					CopyIntoList(m_hashTable[Index(ix, iy, iz)], r);
+			}
+			
+			return r;
+		}
+	
+		std::list<T> FindByXZ(float x, float z)
+		{
+			unsigned int ix = abs(x) / m_spacing;
+			unsigned int iz = abs(z) / m_spacing;
+
+			std::list<T> r;
+			
+			if (ix < m_xSize || iz < m_zSize )
+			{
+				for (uint32_t iy = 0; iy < m_ySize; ++iy)
+					CopyIntoList(m_hashTable[Index(ix, iy, iz)], r);
+			}
 			
 			return r;
 		}
@@ -82,6 +101,7 @@ class SpatialHash
 		
 		void CopyIntoList(std::list<T>& in, std::list<T>& r)
 		{
+			if ( in.empty() ) return;
 			typename std::list<T>::iterator i = in.begin();
 			for (;i != in.end(); ++i) r.push_back(*i);
 		}
