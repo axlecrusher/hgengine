@@ -14,7 +14,7 @@ SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp src/MercuryNode.cpp \
 	src/Camera.cpp src/MercuryInput.cpp src/MQuaternion.cpp src/ModuleManager.cpp src/MercuryFBO.cpp \
 	src/GLHelpers.cpp src/FullscreenQuad.cpp src/MercuryNamedResource.cpp src/MercuryPrefs.cpp \
 	src/MercuryTheme.cpp src/Orthographic.cpp src/Light.cpp src/RenderDifferedLights.cpp \
-	src/MercuryLog.cpp src/MercuryCTA.cpp"
+	src/MercuryLog.cpp src/MercuryCTA.cpp src/DataTypes/MTriangle.cpp"
 
 SOURCES="$SOURCES src/MercuryFileDriverDirect.cpp src/MercuryFileDriverMem.cpp \
 	src/MercuryFileDriverPacked.cpp src/MercuryFileDriverZipped.cpp"
@@ -31,7 +31,7 @@ SOURCES="$SOURCES src/X11Window.cpp"
 #endif
 
 PROJ="mercury"
-CFLAGS="$CFLAGS -DHAVE_CONFIG -DHGENGINE -fno-exceptions -fPIC -Isrc -g "
+CFLAGS="$CFLAGS -DHAVE_CONFIG -DHGENGINE -fno-exceptions -fPIC -Isrc -Isrc/DataStructures -Isrc/DataTypes -g "
 LDFLAGS="$LDFLAGS -rdynamic -g -fPIC "
 
 /*

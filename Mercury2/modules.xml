@@ -1,4 +1,5 @@
 <Modules>
 	<Module src="modules/TextNode.cpp" obj="modules/TextNode" func="InstallTextNode" />
 	<Module src="modules/BillboardNode.cpp" obj="modules/BillboardNode" func="InstallBillboardNode"/>
+	<Module src="modules/Terrain.cpp" obj="modules/Terrain" func="InstallTerrainNode"/>
 </Modules>
