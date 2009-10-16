@@ -182,7 +182,7 @@ void TerrainAssetInstance::HandleMessage(const MString& message, const MessageDa
 		
 		Terrain* t = (Terrain*)m_asset.Ptr();
 		local = t->ComputePositionLinear( local );
-		local[2] += 0.5; //height of player
+		local[2] += 0.75; //height of player
 		
 		local = m_parentNode->GetGlobalMatrix() * local;
 		POST_MESSAGE("SetCameraPosition", new VertexDataMessage(local), 0);

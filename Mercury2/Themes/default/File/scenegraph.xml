@@ -7,7 +7,7 @@
 			<node type="transformnode" movz="-5" movx="-4" movy="2">
 				<node type="TextNode" text="Another test!" font="FONT:FreeMonoBold.hgfont" size=".01" width="300" alphaPath="true" alignment="LEFT" />
 			</node>
-			<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-5">
+			<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-0.99">
 				<asset type="texture" file="MODEL:map.png"/>
 				<asset type="terrain" file="MODEL:map.hgmdl" />
 			</node>
