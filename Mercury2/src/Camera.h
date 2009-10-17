@@ -9,7 +9,7 @@ class CameraNode : public TransformNode
 	public:
 		CameraNode();
 		virtual void ComputeMatrix();
-		virtual void HandleMessage(const MString& message, const MessageData* data);
+		virtual void HandleMessage(const MString& message, const MessageData& data);
 		virtual void Update(float dTime);
 		virtual void PreRender(const MercuryMatrix& matrix);
 		virtual void Render(const MercuryMatrix& matrix);

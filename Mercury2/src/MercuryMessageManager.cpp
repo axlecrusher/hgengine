@@ -68,7 +68,7 @@ void MercuryMessageManager::FireOffMessage( const MessageHolder & message )
 		std::list< MessageHandler* >::iterator recipients = ref->begin();
 	
 		for (; recipients != ref->end(); ++recipients)
-			(*recipients)->HandleMessage(message.message, message.data);
+			(*recipients)->HandleMessage(message.message, *(message.data) );
 	}
 }
 

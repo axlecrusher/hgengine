@@ -25,7 +25,7 @@ class MessageHandler
 {
 	public:
 		virtual ~MessageHandler() {};
-		virtual void HandleMessage(const MString& message, const MessageData* data) {};
+		virtual void HandleMessage(const MString& message, const MessageData& data) {};
 };
 
 #endif

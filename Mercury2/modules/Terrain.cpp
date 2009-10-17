@@ -170,14 +170,14 @@ TerrainAssetInstance::~TerrainAssetInstance()
 	UNREGISTER_FOR_MESSAGE("QueryTerrainPoint");
 }
 
-void TerrainAssetInstance::HandleMessage(const MString& message, const MessageData* data)
+void TerrainAssetInstance::HandleMessage(const MString& message, const MessageData& data)
 {
 	if (message == "QueryTerrainPoint")
 	{
-		VertexDataMessage* v = (VertexDataMessage*)data;
+		const VertexDataMessage& v( dynamic_cast<const VertexDataMessage&>(data) );
 		
 		//compute local space position
-		MercuryVertex local = v->Vertex * m_parentNode->GetGlobalMatrix();
+		MercuryVertex local = v.Vertex * m_parentNode->GetGlobalMatrix();
 		local[3] = 1; //no W
 		
 		Terrain* t = (Terrain*)m_asset.Ptr();

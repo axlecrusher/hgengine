@@ -38,7 +38,7 @@ class TerrainAssetInstance : public MercuryAssetInstance
 	public:
 		TerrainAssetInstance(MercuryAsset* asset, MercuryNode* parentNode);
 		~TerrainAssetInstance();
-		virtual void HandleMessage(const MString& message, const MessageData* data);
+		virtual void HandleMessage(const MString& message, const MessageData& data);
 	private:
 		CLASS_HELPERS( MercuryAssetInstance );
 };

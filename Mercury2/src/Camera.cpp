@@ -79,14 +79,14 @@ void CameraNode::ComputeMatrix()
 //	EYE.Print();
 }
 
-void CameraNode::HandleMessage(const MString& message, const MessageData* data)
+void CameraNode::HandleMessage(const MString& message, const MessageData& data)
 {
 	if (message == INPUTEVENT_MOUSE)
 	{
-		MouseInput* m = (MouseInput*)data;
+		const MouseInput& m( dynamic_cast<const MouseInput&>( data ) );
 		
-		m_y += m->dy/1200.0f;
-		m_x += m->dx/1200.0f;
+		m_y += m.dy/1200.0f;
+		m_x += m.dx/1200.0f;
 		
 		m_y = Clamp((-Q_PI/2.0f)+0.00001f, (Q_PI/2.0f)-0.00001f, m_y);
 
@@ -106,8 +106,8 @@ void CameraNode::HandleMessage(const MString& message, const MessageData* data)
 	else if (message == "SetCameraPosition")
 	{
 //		LOG.Write("SetCamPosition");
-		VertexDataMessage* m = (VertexDataMessage*)data;
-		SetPosition(m->Vertex);
+		const VertexDataMessage& m( dynamic_cast<const VertexDataMessage&>( data ) );
+		SetPosition(m.Vertex);
 //		Update(0);
 //		ComputeMatrix();
 //		m->Vertex.Print();
