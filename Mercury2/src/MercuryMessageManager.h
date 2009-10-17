@@ -12,6 +12,8 @@
 #include <Mint.h>
 #include <MAutoPtr.h>
 
+#include <MSemaphore.h>
+
 class MessageHolder : public RefBase
 {
 	public:
@@ -40,11 +42,16 @@ class MercuryMessageManager
 		static MercuryMessageManager& GetInstance();
 	private:
 		void FireOffMessage( const MessageHolder & message );
+		MessageHolder* GetNextMessageFromQueue();
 		
 		PriorityQueue m_messageQueue;
 		uint64_t m_currTime; //microseconds
 		
 		MHash< std::list< MessageHandler* > > m_messageRecipients;
+		
+//		MercuryMutex m_lock;
+		MSemaphore m_queueLock;
+		MSemaphore m_recipientLock;
 };
 
 static InstanceCounter<MercuryMessageManager> MMcounter("MessageManager");
