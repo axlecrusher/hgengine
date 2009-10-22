@@ -12,6 +12,8 @@
 
 FILE * fontfile;
 
+int iForceWidth = -1;
+
 int my_write_png( const char * fname, unsigned char * imagedata, int x, int y );
 int my_read_font( const char * fname, unsigned char * imagedata, int xpp, int ypp, int xq, int yq );
 
@@ -20,11 +22,16 @@ int main( int argc, char ** argv )
 	unsigned char imagedata[1024*1024*4];
 	int x, y;
 
-	if( argc != 3 )
+	if( argc != 3 && argc != 4 )
 	{
 		fprintf( stderr, "Mercury Fonter\n" );
-		fprintf( stderr, "Usage: %s [font file] [font name]\n", argv[0] );
+		fprintf( stderr, "Usage: %s [font file] [font name] [forced with (optional)]\n", argv[0] );
 		exit( -1 );
+	}
+
+	if( argc == 4 )
+	{
+		iForceWidth = atoi( argv[3] );
 	}
 
 	for( int x = 0; x < 1024; x++ )
@@ -114,10 +121,14 @@ int my_read_font( const char * fname, unsigned char * imagedata, int xpp, int yp
 
 		int goffx = (xpp*(ch%xq));
 		int goffy = (ypp*(ch/xq));
+
+		int localoffx = 0;
+		if( iForceWidth > 0 )
+			localoffx += (iForceWidth - l_bitmap.width) / 2;
 		for( int x = 0; x < xpp; x++ )
 			for( int y = 0; y < ypp; y++ )
 			{
-				int offx = x+goffx;
+				int offx = x+goffx + localoffx;
 				int offy = y+goffy;
 
 				if( x >= l_bitmap.width  ) continue;
@@ -131,13 +142,21 @@ int my_read_font( const char * fname, unsigned char * imagedata, int xpp, int yp
 
 			}
 
-		float loffx = float(goffx)/float(xpp*xq);
+		int iW = l_bitmap.width;
+		if( iForceWidth > 0 )
+		{
+			iW = iForceWidth;
+		}
+
+		float xppoffset = 0;
+
+		float loffx = float(goffx+xppoffset)/float(xpp*xq);
 		float loffy = float(goffy)/float(ypp*yq);
-		float loffxe = float(goffx+l_bitmap.width)/float(xpp*xq);
+		float loffxe = float(goffx+iW+xppoffset)/float(xpp*xq);
 		float loffye = float(goffy+l_bitmap.rows)/float(ypp*yq);
 
 		fprintf( fontfile, "%d %f %f %f %f  %d %d %d %d\n", actualchar, loffx, loffy, loffxe, loffye,
-			l_bitmap.width, l_bitmap.rows, face->glyph->bitmap_left, face->glyph->bitmap_top );
+			iW, l_bitmap.rows, face->glyph->bitmap_left, face->glyph->bitmap_top );
 
 		actualchar++;
 	}
