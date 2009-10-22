@@ -12,10 +12,25 @@ When operating within the US, the fonts are made public domain by
 federal law. (Code of Federal Regulations, Ch 37, Sec. 202.1(e))
 
 §202.1 Material not subject to copyright.
-The following are examples of works not subject to copyright and applications for registration of such works cannot be entertained:
+The following are examples of works not subject to copyright and
+ applications for registration of such works cannot be entertained:
 ...
 (e)
 Typeface as typeface.
 
 We give credit and encourage all people who use these font images
 to give credit to the Free Font group.
+
+Information about the hgfont file:
+[Address to image of font]
+[m_fHeight, m_fBlank, m_fSpace, m_fTab]
+[g.fsx, g.fsy, g.fex, g.fey] ... [&g.ilx, &g.ily, &g.iox, &g.ioy]
+
+...xps += g.ilx+m_pThisFont->m_fBlank (For positioning)
+
+Positioning:
+		float sx = (-g->iox       + dc.xps)*m_fSize;
+		float sy = -(-g->ioy        + dc.yps)*m_fSize;
+		float ex = (g->ilx-g->iox + dc.xps)*m_fSize;
+		float ey = -(g->ily-g->ioy + dc.yps)*m_fSize;
+
