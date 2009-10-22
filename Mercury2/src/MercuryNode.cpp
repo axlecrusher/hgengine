@@ -9,12 +9,14 @@
 #include <Shader.h>
 #include <RenderGraph.h>
 
+#include <ModuleManager.h>
+
 using namespace std;
 
 REGISTER_NODE_TYPE(MercuryNode);
 
 MercuryNode::MercuryNode()
-	:m_parent(NULL), m_prevSibling(NULL),
+	:Type( 0 ), m_parent(NULL), m_prevSibling(NULL),
 	m_nextSibling(NULL), m_hidden(false),
 	m_useAlphaPath(false), m_culled(false),
 	m_iPasses( DEFAULT_PASSES ), m_iForcePasses( 0 )
@@ -23,6 +25,12 @@ MercuryNode::MercuryNode()
 
 MercuryNode::~MercuryNode()
 {
+
+#ifdef INSTANCE_WATCH
+	if( Type )
+		DEL_INSTANCE(this, Type);
+#endif
+
 	m_parent = NULL;
 	
 	list< MercuryNode* >::iterator i;
@@ -399,7 +407,14 @@ MercuryNode* NodeFactory::Generate(const MString& type)
 	MString t = ToUpper( type );
 	std::list< std::pair< MString, Callback0R<MercuryNode*> > >::iterator i;
 	for (i = m_factoryCallbacks.begin(); i != m_factoryCallbacks.end(); ++i)
-		if (i->first == t) return i->second();
+		if (i->first == t)
+		{
+			MercuryNode * n = i->second();
+#ifdef INSTANCE_WATCH
+			NEW_INSTANCE(n, n->GetType());
+#endif
+			return n;
+		}
 	LOG.Write( "WARNING: Node type " + type + " not found." );
 	return NULL;
 }

@@ -8,13 +8,14 @@ if test $OSTYPE = "darwin8.0"; then
 	ISMAC=1; fi
 
 
-OPTIONS="X11 libxml OGL sse gprof glprofile"
+OPTIONS="X11 libxml OGL sse gprof glprofile instancewatch"
 OPT_X11=1
 OPT_OGL=1
 OPT_libxml=1
 OPT_sse=0
 OPT_gprof=0
 OPT_glprofile=0
+OPT_instancewatch=1
 
 DEFINES="WAS_CONFIGURED USE_MSTRING"
 CC_BASE="-O2 -g0 -Wall"
@@ -86,6 +87,10 @@ fi
 if test $ISMAC = 1; then
 	CC_BASE="$CC_BASE -I"/System/Library/Frameworks/OpenGL.framework/Headers" -Isrc -I/usr/X11R6/include -I.  -Isrc/ode -Iode -Isrc/png -Ipng"
 	LD_BASE="-Lsrc/maclib -framework OpenGL -lobjc -framework GLUT -framework ApplicationServices"
+fi
+
+if test $OPT_instancewatch = 1; then
+	DEFINES="$DEFINES INSTANCE_WATCH"
 fi
 
 ARCH=`uname -m`

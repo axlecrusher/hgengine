@@ -19,7 +19,7 @@ void * dlsym( void * handle, const char * sym ) { return GetProcAddress( (HMODUL
 
 extern "C"
 {
-typedef int (*LoaderFunction)();
+typedef void * (*LoaderFunction)();	//Returns vtable pointer
 };
 
 ModuleManager::ModuleManager()
@@ -37,6 +37,7 @@ ModuleManager & ModuleManager::GetInstance()
 
 void ModuleManager::InitializeAllModules()
 {
+	m_mHandleMutex.Wait();
 	XMLDocument* doc = XMLDocument::Load("modules.xml");
 	XMLNode r = doc->GetRootNode();
 	for (XMLNode child = r.Child(); child.IsValid(); child = child.NextNode())
@@ -51,9 +52,15 @@ void ModuleManager::InitializeAllModules()
 #else
 		MString ModuleName = child.Attribute( "obj" ) + ".so";
 #endif
+
 		MString LoadFunct = child.Attribute( "func" );
+
+		m_hModuleMatching[child.Attribute( "obj" )] = child.Attribute( "class" );
+		m_hClassMatching[child.Attribute( "class" )] = ModuleName;
+		m_hClassMFunction[child.Attribute( "class" )] = LoadFunct;
 		LoadModule( ModuleName, LoadFunct );
 	}
+	m_mHandleMutex.UnLock();
 	delete doc;
 }
 
@@ -63,8 +70,10 @@ void ModuleManager::UnloadModule( const MString & ModuleName )
 		dlclose( m_hAllHandles[ModuleName] );
 }
 
-bool ModuleManager::LoadModule( const MString & ModuleName, const MString & LoadFunction )
+void * ModuleManager::LoadModule( const MString & ModuleName, const MString & LoadFunction )
 {
+	m_mHandleMutex.Wait();
+
 	if( m_hAllHandles[ModuleName] ) UnloadModule( ModuleName );
 
 	void * v = dlopen( ModuleName.c_str(), RTLD_NOW | RTLD_GLOBAL );
@@ -81,9 +90,11 @@ bool ModuleManager::LoadModule( const MString & ModuleName, const MString & Load
 		return false;
 	}
 
+	m_mHandleMutex.UnLock();
+
 	//If no load funct, just exit early.
 	if( LoadFunction == "" )
-		return true;
+		return 0;
 
 	LoaderFunction T = (LoaderFunction)dlsym( m_hAllHandles[ModuleName], LoadFunction.c_str() );
 	if( !T )
@@ -92,15 +103,49 @@ bool ModuleManager::LoadModule( const MString & ModuleName, const MString & Load
 		return false;
 	}
 
-	int ret = T();
-	if( ret )
+	void * ret = T();
+	if( !ret )
 	{
-		fprintf( stderr, "Error executing (Returned error %d): %s() in %s\n", ret, LoadFunction.c_str(), ModuleName.c_str() );
+		fprintf( stderr, "Error executing (Returned error %p): %s() in %s\n", ret, LoadFunction.c_str(), ModuleName.c_str() );
 		return false;
 	}
 
-	return true;
+	return ret;
 }
+
+
+#ifdef INSTANCE_WATCH
+
+void ModuleManager::ReloadModule( const MString & sClass )
+{
+	m_mHandleMutex.Wait();
+
+	std::set< void * > & s = m_hAllInstances[sClass];
+	std::set< void * >::iterator i = s.begin();
+
+	void * newvtable = LoadModule( m_hClassMatching[sClass], m_hClassMFunction[sClass] );
+
+	for( ; i != s.end(); i++ )
+		*((void**)(*i)) = newvtable;
+
+	m_mHandleMutex.UnLock();
+}
+
+void ModuleManager::RegisterInstance( void * instance, const char * sClass )
+{
+	m_hAllInstances[sClass].insert( instance );
+}
+
+void ModuleManager::UnregisterInstance( void * instance, const char * sClass )
+{
+	std::set< void * > & s = m_hAllInstances[sClass];
+	std::set< void * >::iterator i = s.find( instance );
+
+	if( i != s.end() )
+		s.erase( i );
+}
+
+#endif
 
 /****************************************************************************
  *   Copyright (C) 2009 by Charles Lohr                                     *

@@ -3,6 +3,8 @@
 
 #include <MercuryUtil.h>
 #include <MercuryHash.h>
+#include <MercuryThreads.h>
+#include <set>
 
 /* This is the module loader mechanism.  This allows for run-time loading of
    new modules.  Eventually, it will allow for run-time re-loading of modules.
@@ -15,14 +17,43 @@ public:
 	static ModuleManager & GetInstance();
 	void InitializeAllModules();
 
-	bool LoadModule( const MString & ModuleName, const MString & LoadFunction );
+	void * LoadModule( const MString & ModuleName, const MString & LoadFunction );
 	void UnloadModule( const MString & ModuleName );
+
+#ifdef INSTANCE_WATCH
+	void ReloadModule( const MString & sClass );
+
+	void RegisterInstance( void * instance, const char * sClass );
+	void UnregisterInstance( void * instance, const char * sClass );
+#endif
+
+private:
+
+	MercuryMutex m_mHandleMutex;
+
+#ifdef INSTANCE_WATCH
+	MHash< std::set< void * > > m_hAllInstances;
+#endif
+
 	MHash< void * > m_hAllHandles;
+	MHash< MString > m_hModuleMatching;
+	MHash< MString > m_hClassMatching;
+	MHash< MString > m_hClassMFunction;
 };
 
 static InstanceCounter<ModuleManager> ModMancounter("ModuleManager");
 
+#ifdef INSTANCE_WATCH
 
+#define NEW_INSTANCE( node, t ) ModuleManager::GetInstance().RegisterInstance( node, t );
+#define DEL_INSTANCE( node, t ) ModuleManager::GetInstance().UnregisterInstance( node, t );
+
+#else
+
+#define NEW_INSTANCE( t )
+#define DEL_INSTANCE( t )
+
+#endif
 
 /****************************************************************************
  *   Copyright (C) 2009 by Charles Lohr                                     *

@@ -21,7 +21,7 @@
 { if (n==NULL) return NULL; return dynamic_cast<const x*>(n); } \
 static x* Cast(MercuryNode* n) \
 { if (n==NULL) return NULL; return dynamic_cast<x*>(n); } \
-virtual const  char * GetType() { return #x; }
+virtual const char * GetType() { if( !Type ) Type = #x;  return #x; }
 
 /*
 #define GENRTTI(x) static bool IsMyType(const MercuryNode* n) \
@@ -117,6 +117,8 @@ class MercuryNode : public MessageHandler
 		const MercuryMatrix & GetModelViewMatrix() const { return m_pModelViewMatrix[g_iViewportID]; }
 
 		inline unsigned short GetPasses() const { return m_iPasses; }
+
+		const char * Type;
 	protected:
 		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
 		MercuryNode* m_parent;
@@ -171,7 +173,13 @@ static InstanceCounter<NodeFactory> NFcounter("NodeFactory");
 	MercuryNode* FactoryFunct##class() { return new class(); } \
 	Callback0R<MercuryNode*> factoryclbk##class( FactoryFunct##class ); \
 	bool GlobalRegisterSuccess##class = NodeFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class); \
-	extern "C" { int Install##class() { LOG.Write("Installing "#class ); NodeFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class); return 0; } }
+	extern "C" { void * Install##class() { LOG.Write("Installing "#class ); \
+		NodeFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class); \
+		class * t = new class(); \
+		void * vtable = *((void**)t); \
+		delete t; \
+		return vtable; \
+	 } }
 
 
 #endif
