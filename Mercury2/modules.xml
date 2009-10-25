@@ -2,4 +2,5 @@
 	<Module src="modules/TextNode.cpp" obj="modules/TextNode" func="InstallTextNode" class="TextNode" />
 	<Module src="modules/BillboardNode.cpp" obj="modules/BillboardNode" func="InstallBillboardNode" class="BillboardNode" />
 	<Module src="modules/Terrain.cpp" obj="modules/Terrain" func="InstallTerrainNode" class="TerrainNode"/>
+	<Module src="modules/TextPlate.cpp" obj="modules/TextPlate" func="InstallTextPlate" class="TextPlate"/>
 </Modules>

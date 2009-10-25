@@ -1,75 +1,26 @@
-#include "BillboardNode.h"
+#ifndef TextPlate_H
+#define TextPlate_H
+
+#include <TransformNode.h>
+#include <BillboardNode.h>
 #include <MercuryVertex.h>
-#include <Viewport.h>
 
-REGISTER_NODE_TYPE(BillboardNode);
+class TextNode;
 
-BillboardNode::BillboardNode()
-	:TransformNode(), m_sphere(false)
+class TextPlate : public BillboardNode
 {
-}
+public:
+	TextPlate();
+	virtual void Update(float dTime);
+	virtual void LoadFromXML(const XMLNode& node);
+	GENRTTI(TextPlate);
+private:
+	MercuryVector m_fvOffset;
+	TextNode * m_TextNode;
+};
 
-void BillboardNode::Update(float dTime)
-{
-	TransformNode::Update( dTime );
-	
-	//Compute the object's center point (position?) in world space
-	MercuryVertex center(0,0,0,1);
-	center = TransformNode::GetGlobalMatrix() * center;
+#endif
 
-	MercuryVector objToEye = (EYE - center);
-	MercuryVector objToEyeProj( objToEye );
-	
-	//vector from object to eye projected on XZ
-	objToEyeProj[1] = 0; objToEyeProj.NormalizeSelf();
-	
-	MercuryVector objLookAt(0,0,-1); //origional look vector of object
-	
-	MercuryVector up = objLookAt.CrossProduct(objToEyeProj);
-	float angleCos = objLookAt.DotProduct(objToEyeProj);
-
-	float f = ACOS(angleCos);//*RADDEG;
-	if (up[1] < 0) f *= -1;
-
-	bool bFlip = m_billboardAxis.DotProduct( MercuryVector(1,1,1) ) < 0 ;
-
-	//needs to be the local axis to rotate around
-	MercuryMatrix global( TransformNode::GetGlobalMatrix() );
-	MQuaternion mtmp = MQuaternion::CreateFromAxisAngle(m_billboardAxis, ((bFlip)?(Q_PI-f):f) );
-	
-	//spherical below
-	if ( m_sphere )
-	{
-		objToEye.NormalizeSelf();
-		angleCos = objToEyeProj.DotProduct( objToEye );
-		f = ACOS(angleCos);
-		if (objToEye[1] < 0) f *= -1;
-		if (angleCos < 0.99999) mtmp *= MQuaternion::CreateFromAxisAngle(MercuryVector(1,0,0), (bFlip)?-f:f );
-	}
-		
-	global.Rotate( mtmp );
-	
-	m_billboardMatrix = global;
-	
-	//notify children that our global matrix has changed
-	SetTaint(true);
-}
-
-const MercuryMatrix& BillboardNode::GetGlobalMatrix() const
-{
-	return m_billboardMatrix;
-}
-
-void BillboardNode::LoadFromXML(const XMLNode& node)
-{
-	TransformNode::LoadFromXML(node);
-	
-	if ( !node.Attribute("billboardaxis").empty() )
-		m_billboardAxis = MercuryVector::CreateFromString( node.Attribute("billboardaxis") );
-	
-	if ( !node.Attribute("spheremode").empty() )
-		m_sphere = node.Attribute("spheremode") == "true"?true:false;
-}
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *

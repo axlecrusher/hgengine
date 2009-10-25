@@ -18,7 +18,7 @@ class BillboardNode : public TransformNode
 
 		GENRTTI(BillboardNode);
 
-	private:
+	protected:
 		MercuryVector m_billboardAxis;
 		bool m_sphere;
 		MercuryMatrix m_billboardMatrix;
