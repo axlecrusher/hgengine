@@ -4,7 +4,11 @@
 #include <MercuryUtil.h>
 #include <MercuryHash.h>
 #include <MercuryThreads.h>
+
+#ifdef INSTANCE_WATCH
 #include <set>
+#include <map>
+#endif
 
 /* This is the module loader mechanism.  This allows for run-time loading of
    new modules.  Eventually, it will allow for run-time re-loading of modules.
@@ -24,7 +28,7 @@ public:
 	void ReloadModule( const MString & sClass );
 
 	void RegisterInstance( void * instance, const char * sClass );
-	void UnregisterInstance( void * instance, const char * sClass );
+	void UnregisterInstance( void * instance );
 #endif
 
 private:
@@ -33,6 +37,7 @@ private:
 
 #ifdef INSTANCE_WATCH
 	MHash< std::set< void * > > m_hAllInstances;
+	std::map< void *, const char * > m_pAllInstanceTypes;
 #endif
 
 	MHash< void * > m_hAllHandles;
@@ -46,7 +51,7 @@ static InstanceCounter<ModuleManager> ModMancounter("ModuleManager");
 #ifdef INSTANCE_WATCH
 
 #define NEW_INSTANCE( node, t ) ModuleManager::GetInstance().RegisterInstance( node, t );
-#define DEL_INSTANCE( node, t ) ModuleManager::GetInstance().UnregisterInstance( node, t );
+#define DEL_INSTANCE( node ) ModuleManager::GetInstance().UnregisterInstance( node );
 
 #else
 

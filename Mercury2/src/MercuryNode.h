@@ -21,7 +21,7 @@
 { if (n==NULL) return NULL; return dynamic_cast<const x*>(n); } \
 static x* Cast(MercuryNode* n) \
 { if (n==NULL) return NULL; return dynamic_cast<x*>(n); } \
-virtual const char * GetType() { if( !Type ) Type = #x;  return #x; }
+virtual const char * GetType() { return #x; }
 
 /*
 #define GENRTTI(x) static bool IsMyType(const MercuryNode* n) \
@@ -117,8 +117,6 @@ class MercuryNode : public MessageHandler
 		const MercuryMatrix & GetModelViewMatrix() const { return m_pModelViewMatrix[g_iViewportID]; }
 
 		inline unsigned short GetPasses() const { return m_iPasses; }
-
-		const char * Type;
 	protected:
 		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
 		MercuryNode* m_parent;
@@ -166,6 +164,8 @@ class NodeFactory
 	private:
 		std::list< std::pair< MString, Callback0R<MercuryNode*> > > m_factoryCallbacks;
 };
+
+#define NODEFACTORY NodeFactory::GetInstance()
 
 static InstanceCounter<NodeFactory> NFcounter("NodeFactory");
 

@@ -16,7 +16,7 @@ using namespace std;
 REGISTER_NODE_TYPE(MercuryNode);
 
 MercuryNode::MercuryNode()
-	:Type( 0 ), m_parent(NULL), m_prevSibling(NULL),
+	:m_parent(NULL), m_prevSibling(NULL),
 	m_nextSibling(NULL), m_hidden(false),
 	m_useAlphaPath(false), m_culled(false),
 	m_iPasses( DEFAULT_PASSES ), m_iForcePasses( 0 )
@@ -27,8 +27,7 @@ MercuryNode::~MercuryNode()
 {
 
 #ifdef INSTANCE_WATCH
-	if( Type )
-		DEL_INSTANCE(this, Type);
+	DEL_INSTANCE(this);
 #endif
 
 	m_parent = NULL;

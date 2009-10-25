@@ -134,10 +134,12 @@ void ModuleManager::ReloadModule( const MString & sClass )
 void ModuleManager::RegisterInstance( void * instance, const char * sClass )
 {
 	m_hAllInstances[sClass].insert( instance );
+	m_pAllInstanceTypes[instance] = sClass;
 }
 
-void ModuleManager::UnregisterInstance( void * instance, const char * sClass )
+void ModuleManager::UnregisterInstance( void * instance )
 {
+	const char * sClass = m_pAllInstanceTypes[instance];
 	std::set< void * > & s = m_hAllInstances[sClass];
 	std::set< void * >::iterator i = s.find( instance );
 
