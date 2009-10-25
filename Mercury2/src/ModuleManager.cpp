@@ -139,7 +139,13 @@ void ModuleManager::RegisterInstance( void * instance, const char * sClass )
 
 void ModuleManager::UnregisterInstance( void * instance )
 {
-	const char * sClass = m_pAllInstanceTypes[instance];
+	std::map< void *, const char * >::iterator ni = m_pAllInstanceTypes.find( instance );
+
+	//Object was never registered.
+	if( ni == m_pAllInstanceTypes.end() )
+		return;
+
+	const char * sClass = ni->second;
 	std::set< void * > & s = m_hAllInstances[sClass];
 	std::set< void * >::iterator i = s.find( instance );
 
