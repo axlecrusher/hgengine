@@ -11,8 +11,8 @@ CameraNode::CameraNode()
 	:TransformNode(), m_x(0), m_y(0)
 {
 	m_lookAt = MercuryVector(0,0,-1);
-	REGISTER_FOR_MESSAGE( INPUTEVENT_MOUSE );
-	REGISTER_FOR_MESSAGE( "SetCameraPosition" );
+	REGISTER_MESSAGE_WITH_DELEGATE( INPUTEVENT_MOUSE, &CameraNode::HandleMouseInput );
+	REGISTER_MESSAGE_WITH_DELEGATE( "SetCameraPosition", &CameraNode::SetCameraPosition );
 	POST_MESSAGE("QueryTerrainPoint", new VertexDataMessage(m_origionalPosition), 0.00001);
 }
 
@@ -80,39 +80,28 @@ void CameraNode::ComputeMatrix()
 //	EYE.Print();
 }
 
-void CameraNode::HandleMessage(const MString& message, const MessageData& data)
+void CameraNode::HandleMouseInput(const MessageData& data)
 {
-	if (message == INPUTEVENT_MOUSE)
-	{
-		const MouseInput& m( dynamic_cast<const MouseInput&>( data ) );
-		
-		m_y += m.dy/1200.0f;
-		m_x += m.dx/1200.0f;
-		
-		m_y = Clamp((-Q_PI/2.0f)+0.00001f, (Q_PI/2.0f)-0.00001f, m_y);
+	const MouseInput& m( dynamic_cast<const MouseInput&>( data ) );
+	
+	m_y += m.dy/1200.0f;
+	m_x += m.dx/1200.0f;
+	
+	m_y = Clamp((-Q_PI/2.0f)+0.00001f, (Q_PI/2.0f)-0.00001f, m_y);
 
-		MQuaternion qLeftRight = MQuaternion::CreateFromAxisAngle(MercuryVector(0,1,0), m_x);
-		MercuryVector LocalX = MercuryVector( 1, 0, 0 );
-		LocalX = LocalX.Rotate( qLeftRight );
-		
-		MQuaternion qUpDown = MQuaternion::CreateFromAxisAngle(LocalX, m_y);
-		
-//		qLeftRight.Print();
-		
-		SetRotation(qUpDown*qLeftRight);
-//		GetRotation().Print();
-//		POST_MESSAGE("QueryTerrainPoint", new MessageData(), 0);
+	MQuaternion qLeftRight = MQuaternion::CreateFromAxisAngle(MercuryVector(0,1,0), m_x);
+	MercuryVector LocalX = MercuryVector( 1, 0, 0 );
+	LocalX = LocalX.Rotate( qLeftRight );
+	
+	MQuaternion qUpDown = MQuaternion::CreateFromAxisAngle(LocalX, m_y);
+	
+	SetRotation(qUpDown*qLeftRight);
+}
 
-	}
-	else if (message == "SetCameraPosition")
-	{
-//		LOG.Write("SetCamPosition");
-		const VertexDataMessage& m( dynamic_cast<const VertexDataMessage&>( data ) );
-		SetPosition(m.Vertex);
-//		Update(0);
-//		ComputeMatrix();
-//		m->Vertex.Print();
-	}
+void CameraNode::SetCameraPosition(const MessageData& data)
+{
+	const VertexDataMessage& m( dynamic_cast<const VertexDataMessage&>( data ) );
+	SetPosition(m.Vertex);
 }
 
 void CameraNode::Update(float dTime)

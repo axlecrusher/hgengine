@@ -24,6 +24,8 @@ class MessageHolder : public RefBase
 		static bool Compare( void * left, void * right );
 };
 
+typedef void (MessageHandler::*Delegate)(const MessageData&);
+
 /* This message system uses absolute integer time values to fire off events.
 This ensures accuarate firing times while eliminating floating point error.
 Because we use absolute times in the queue we do not need to "count down" the
@@ -36,7 +38,7 @@ class MercuryMessageManager
 		void PostMessage(const MString& message, MessageData* data, float delay);
 		void PumpMessages(const uint64_t& currTime);
 		
-		void RegisterForMessage(const MString& message, MessageHandler* ptr);
+		void RegisterForMessage(const MString& message, MessageHandler* ptr,  Delegate d = 0 );
 		void UnRegisterForMessage(const MString& message, MessageHandler* ptr);
 		
 		static MercuryMessageManager& GetInstance();
@@ -46,8 +48,15 @@ class MercuryMessageManager
 		
 		PriorityQueue m_messageQueue;
 		uint64_t m_currTime; //microseconds
-		
-		MHash< std::list< MessageHandler* > > m_messageRecipients;
+
+		struct MessagePair
+		{
+			MessagePair( MessageHandler * th, Delegate td ) : h(th), d(td) { }
+			MessageHandler * h;
+			Delegate d;
+		};
+
+		MHash< std::list< MessagePair > > m_messageRecipients;
 		
 //		MercuryMutex m_lock;
 		MSemaphore m_queueLock;
@@ -57,6 +66,7 @@ class MercuryMessageManager
 static InstanceCounter<MercuryMessageManager> MMcounter("MessageManager");
 
 #define MESSAGEMAN MercuryMessageManager
+#define REGISTER_MESSAGE_WITH_DELEGATE(x, d) MESSAGEMAN::GetInstance().RegisterForMessage(x, this, (Delegate)d)
 #define REGISTER_FOR_MESSAGE(x) MESSAGEMAN::GetInstance().RegisterForMessage(x, this)
 #define UNREGISTER_FOR_MESSAGE(x) MESSAGEMAN::GetInstance().UnRegisterForMessage(x, this)
 #define POST_MESSAGE(x,data,delay) MESSAGEMAN::GetInstance().PostMessage(x, data, delay)

@@ -29,6 +29,7 @@ public:
 
 	void RegisterInstance( void * instance, const char * sClass );
 	void UnregisterInstance( void * instance );
+	const char * GetInstanceType( void * inst ) { return m_pAllInstanceTypes[inst]; }
 #endif
 
 private:

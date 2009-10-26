@@ -46,24 +46,17 @@ void MercuryMessageManager::PumpMessages(const uint64_t& currTime)
 	}
 }
 
-void MercuryMessageManager::RegisterForMessage(const MString& message, MessageHandler* ptr)
-{
-	MSemaphoreLock lock(&m_recipientLock);
-	m_messageRecipients[message].push_back(ptr);
-}
-
 void MercuryMessageManager::UnRegisterForMessage(const MString& message, MessageHandler* ptr)
 {
 	MSemaphoreLock lock(&m_recipientLock);
 
-	std::list< MessageHandler* >& subscriptions = m_messageRecipients[message];
-	std::list< MessageHandler* >::iterator i = subscriptions.begin();
+	std::list< MessagePair >& subscriptions = m_messageRecipients[message];
+	std::list< MessagePair >::iterator i = subscriptions.begin();
 	
 	for (;i != subscriptions.end(); ++i)
 	{
-		if (*i == ptr)
+		if ((*i).h == ptr)
 		{
-			printf("Deleted subscription\n");
 			subscriptions.erase( i );
 			return;
 		}
@@ -71,22 +64,39 @@ void MercuryMessageManager::UnRegisterForMessage(const MString& message, Message
 	
 }
 
+void MercuryMessageManager::RegisterForMessage(const MString& message, MessageHandler* ptr,  Delegate d )
+{
+	MSemaphoreLock lock(&m_recipientLock);
+	m_messageRecipients[message].push_back(MessagePair(ptr, d));
+	
+}
+
+
 void MercuryMessageManager::FireOffMessage( const MessageHolder & message )
 {
-	std::list< MessageHandler* > recipients;
+	std::list< MessagePair > recipients;
 	{
 		//copy list first (quick lock)
 		MSemaphoreLock lock(&m_recipientLock);
-		std::list< MessageHandler* > * r = m_messageRecipients.get( message.message );
+		std::list< MessagePair > * r = m_messageRecipients.get( message.message );
 		if ( r ) recipients = *r;
 	}
 
 	if ( !recipients.empty() )
 	{
-		std::list< MessageHandler* >::iterator recipient = recipients.begin();
+		std::list< MessagePair >::iterator recipient = recipients.begin();
 		for (; recipient != recipients.end(); ++recipient)
 		{
-			(*recipient)->HandleMessage(message.message, *(message.data) );
+			MessagePair & mp = *recipient;
+			//Okay, the following lines look horrible.  Reason is we're using
+			//a horrible horrible c++ construct from the anals of pointerdom.
+			//The idea is we're using a delegate.  If we have a delegate, use it.
+			//If you are receiving a delegate, you do not need the message name.
+			//Otherwise, send a standard message through the old interface.
+			if( mp.d )
+				(mp.h->*(mp.d))( *(message.data) );
+			else
+				mp.h->HandleMessage(message.message, *(message.data) );
 		}
 	}
 }
