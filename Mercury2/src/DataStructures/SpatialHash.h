@@ -12,7 +12,7 @@ class SpatialHash
 		SpatialHash()
 			:m_hashTable(NULL), m_spacing(1.0f)
 		{
-			m_xSize = m_ySize = m_zSize = 0;
+			m_cellCount = 0;
 		}
 		
 		~SpatialHash()
@@ -20,31 +20,29 @@ class SpatialHash
 			DeleteHash();
 		}
 		
-		void Allocate(uint32_t xmax, uint32_t ymax, uint32_t zmax, uint32_t spacing)
+		void Allocate(uint32_t cellCount, float spacing)
 		{
 			DeleteHash();
 			
 			m_spacing = spacing;
 			
-			m_xSize = (abs(xmax)/m_spacing) + 1;
-			m_ySize = (abs(ymax)/m_spacing) + 1;
-			m_zSize = (abs(zmax)/m_spacing) + 1;
+			cellCount = cellCount==0?1:cellCount;
+			m_cellCount = cellCount;
 			
-			uint32_t size = m_xSize*m_ySize*m_zSize;
+			uint32_t size = cellCount*cellCount*cellCount;
 			m_hashTable = new std::list<T>[size];
 		}
 		
 		void Insert(float x, float y, float z, const T& d)
 		{
-			unsigned int ix = abs(x) / m_spacing;
-			unsigned int iy = abs(y) / m_spacing;
-			unsigned int iz = abs(z) / m_spacing;
+			float s = 1.0f/m_spacing;
+			uint32_t ix = (uint32_t)(abs(x)*s);
+			uint32_t iy = (uint32_t)(abs(y)*s);
+			uint32_t iz = (uint32_t)(abs(z)*s);
 			
-			if (ix >= m_xSize || iy >= m_ySize || iz >= m_zSize)
-			{
-				printf("%d >= %d || %d >= %d || %d >= %d\n", ix, m_xSize, iy, m_ySize, iz, m_zSize);
-				return;
-			}
+			ix = ix % m_cellCount;
+			iy = iy % m_cellCount;
+			iz = iz % m_cellCount;
 			
 			//check for and skip duplicate
 			std::list<T>& cell = m_hashTable[ Index( ix, iy, iz ) ];
@@ -57,46 +55,48 @@ class SpatialHash
 		
 		std::list<T> FindByXY(float x, float y)
 		{
-			unsigned int ix = abs(x) / m_spacing;
-			unsigned int iy = abs(y) / m_spacing;
+			float s = 1.0f/m_spacing;
+			uint32_t ix = (uint32_t)(abs(x)*s);
+			uint32_t iy = (uint32_t)(abs(y)*s);
+
+			ix = ix % m_cellCount;
+			iy = iy % m_cellCount;
 
 			std::list<T> r;
 			
-			if (ix < m_xSize || iy < m_ySize )
-			{
-				for (uint32_t iz = 0; iz < m_zSize; ++iz)
-					CopyIntoList(m_hashTable[Index(ix, iy, iz)], r);
-			}
+			for (uint32_t iz = 0; iz < m_cellCount; ++iz)
+				CopyIntoList(m_hashTable[Index(ix, iy, iz)], r);
 			
 			return r;
 		}
 	
 		std::list<T> FindByXZ(float x, float z)
 		{
-			unsigned int ix = abs(x) / m_spacing;
-			unsigned int iz = abs(z) / m_spacing;
+			float s = 1.0f/m_spacing;
+			uint32_t ix = (uint32_t)(abs(x)*s);
+			uint32_t iz = (uint32_t)(abs(z)*s);
+
+			ix = ix % m_cellCount;
+			iz = iz % m_cellCount;
 
 			std::list<T> r;
 			
-			if (ix < m_xSize || iz < m_zSize )
-			{
-				for (uint32_t iy = 0; iy < m_ySize; ++iy)
-					CopyIntoList(m_hashTable[Index(ix, iy, iz)], r);
-			}
+			for (uint32_t iy = 0; iy < m_cellCount; ++iy)
+				CopyIntoList(m_hashTable[Index(ix, iy, iz)], r);
 			
 			return r;
 		}
 	private:
 		inline uint32_t Index(uint32_t x, uint32_t y, uint32_t z)
 		{
-			return x + (m_xSize * y) + (m_xSize * m_ySize * z);
+			return x + (m_cellCount * y) + (m_cellCount * m_cellCount * z);
 		}
 		
 		void DeleteHash()
 		{
 			if (m_hashTable) delete[] m_hashTable;
 			m_spacing = 1;
-			m_xSize = m_ySize = m_zSize = 0;
+			m_cellCount = 0;
 		}
 		
 		void CopyIntoList(std::list<T>& in, std::list<T>& r)
@@ -108,7 +108,7 @@ class SpatialHash
 		
 		std::list<T>* m_hashTable;
 		uint32_t m_spacing;
-		uint32_t m_xSize, m_ySize, m_zSize;
+		uint32_t m_cellCount;
 };
 
 #endif

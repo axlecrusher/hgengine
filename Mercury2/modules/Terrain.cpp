@@ -59,7 +59,7 @@ void Terrain::ImportMeshToHash(const HGMDLMesh& mesh)
 	}
 	
 	printf("%f %f %f\n", xMax, yMax, zMax);
-	m_hash.Allocate(xMax, yMax, zMax, 1);
+	m_hash.Allocate(10, 1);
 	
 	for(uint16_t i = 0; i < length; i+=3)
 	{
@@ -114,14 +114,14 @@ MercuryVertex Terrain::ComputePositionLinear(const MercuryVertex& p)
 	if (foundCount > 1) LOG.Write( ssprintf("!!!!!! Found %d triangles !!!!!!", foundCount) );
 	return result;
 }
-/*
+
 MercuryVertex Terrain::ComputePosition(const MercuryVertex& p)
 {
+	//discard camera height
 	MercuryVertex l( p );
 	l[2] = 0;
 	
 	std::list<MTriangle> triangles = m_hash.FindByXY(p[0], p[1]);
-	LOG.Write( ssprintf("%d", triangles.size()) );
 	
 	MercuryVector result = l;
 
@@ -130,34 +130,23 @@ MercuryVertex Terrain::ComputePosition(const MercuryVertex& p)
 		std::list<MTriangle>::iterator i = triangles.begin();
 		for(;i != triangles.end(); ++i)
 		{
-			MTriangle t = *i;
-			t.m_verts[0][2] = 0;
-			t.m_verts[1][2] = 0;
-			t.m_verts[2][2] = 0;
-			if ( t.IsInTriangle(l) )
+			//comput against a flat triangle since we don't care if we are at the correct height.
+			MTriangle flatTriangle = *i;
+			flatTriangle.m_verts[0][2] = 0;
+			flatTriangle.m_verts[1][2] = 0;
+			flatTriangle.m_verts[2][2] = 0;
+			if ( flatTriangle.IsInTriangle(l) )
 			{
-				MercuryVector b = t.Barycentric(l);
-				t = *i;
-				
-				MercuryVector pos;//(t.m_verts[0]);
-				
-				pos = t.m_verts[0]*b[0] + t.m_verts[1]*b[1] + t.m_verts[2]*b[2];
-//				pos.Print();
-//				pos += (t.m_verts[0] - t.m_verts[1]) * b;
-//				pos += (t.m_verts[0] - t.m_verts[2]) * b;
-
-				
-//				pos.Print();
-				LOG.Write("Found");
-				result[2] = result[2]<pos[2]?pos[2]:result[2];
-//				return pos;
+				MercuryVector b = flatTriangle.Barycentric(l);
+				MercuryVector pos( i->InterpolatePosition(b) );
+				return pos;
 			}
 		}
 	}
 	
 	return result;
 }
-*/
+
 
 TerrainAssetInstance::TerrainAssetInstance(MercuryAsset* asset, MercuryNode* parentNode)
 	:base(asset, parentNode)
@@ -181,7 +170,8 @@ void TerrainAssetInstance::HandleMessage(const MString& message, const MessageDa
 		local[3] = 1; //no W
 		
 		Terrain* t = (Terrain*)m_asset.Ptr();
-		local = t->ComputePositionLinear( local );
+//		local = t->ComputePositionLinear( local );
+		local = t->ComputePosition( local );
 		local[2] += 0.75; //height of player
 		
 		local = m_parentNode->GetGlobalMatrix() * local;
