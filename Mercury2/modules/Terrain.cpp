@@ -57,8 +57,6 @@ void Terrain::ImportMeshToHash(const HGMDLMesh& mesh)
 		yMax = MAX<float>(v.GetY(),yMax);
 		zMax = MAX<float>(v.GetZ(),zMax);
 	}
-	
-	printf("%f %f %f\n", xMax, yMax, zMax);
 	m_hash.Allocate(10, 1);
 	
 	for(uint16_t i = 0; i < length; i+=3)
@@ -163,6 +161,11 @@ void TerrainAssetInstance::HandleMessage(const MString& message, const MessageDa
 {
 	if (message == "QueryTerrainPoint")
 	{
+		if( Asset().GetLoadState() == LOADING )
+		{
+			POST_MESSAGE( "QueryTerrainPoint", new VertexDataMessage( dynamic_cast<const VertexDataMessage&>(data) ), 0.0001 );
+			return;
+		}
 		const VertexDataMessage& v( dynamic_cast<const VertexDataMessage&>(data) );
 		
 		//compute local space position

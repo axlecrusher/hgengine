@@ -64,9 +64,10 @@ class MercuryAsset : public RefBase, public MessageHandler
 		inline void SetPasses( unsigned short p ) { m_iPasses = p; }
 		
 		virtual MercuryAssetInstance* GenerateInstanceData(MercuryNode* parentNode);
+
+		LoadState GetLoadState(); //thread safe
 	protected:
 		void SetLoadState(LoadState ls); //thread safe
-		LoadState GetLoadState(); //thread safe
 		
 		bool m_isInstanced;
 		BoundingVolume* m_boundingVolume;

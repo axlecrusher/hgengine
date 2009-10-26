@@ -13,6 +13,7 @@ CameraNode::CameraNode()
 	m_lookAt = MercuryVector(0,0,-1);
 	REGISTER_FOR_MESSAGE( INPUTEVENT_MOUSE );
 	REGISTER_FOR_MESSAGE( "SetCameraPosition" );
+	POST_MESSAGE("QueryTerrainPoint", new VertexDataMessage(m_origionalPosition), 0.00001);
 }
 
 void CameraNode::PreRender(const MercuryMatrix& matrix)
