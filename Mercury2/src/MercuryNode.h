@@ -17,12 +17,6 @@
 	Each node exists as a single entity in the scene graph.
 **/
 
-#define GENRTTI(x) static const x* Cast(const MercuryNode* n) \
-{ if (n==NULL) return NULL; return dynamic_cast<const x*>(n); } \
-static x* Cast(MercuryNode* n) \
-{ if (n==NULL) return NULL; return dynamic_cast<x*>(n); } \
-virtual const char * GetType() { return #x; }
-
 /*
 #define GENRTTI(x) static bool IsMyType(const MercuryNode* n) \
 { const MercuryNode* tn = n; \
@@ -87,7 +81,22 @@ class MercuryNode : public MessageHandler
 		
 		///Loads a node from an XMLNode representing itself
 		virtual void LoadFromXML(const XMLNode& node);
-		
+
+		///Saves the main body of an XML node.
+		/** This, in the base class sets up the stream (i.e. <node and invokes the
+		    SaveToXML tag then outputs the termination  (i.e. /> or > ) it then outputs
+		    all of the various Assets and Nodes that are attached as children.  It handles
+		    closing the argument as well.  Unless you intend to modify the behavior, do not
+		    override this.  In addition, it is generally best to completely re-write it if
+		    you intend to modify the behavior. */
+		virtual void SaveToXML( MString & sXMLStream, int depth = 0 );
+
+		///Saves just the tag portion of an XML node.
+		/** The update process here is tricky.  This is invoked by the base
+		    MercuryNode class.  It does not handle setting it up, i.e. type=... name=...
+		    The various abstracted classes must append on arguments they require. */
+		virtual void SaveToXMLTag( MString & sXMLStream );
+
 		///Run on a child when added to a parent
 		virtual void OnAdded() {};
 	

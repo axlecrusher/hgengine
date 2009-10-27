@@ -45,7 +45,15 @@ class MercuryAsset : public RefBase, public MessageHandler
 		
 		///Loads an asset from an XMLAsset representing itself
 		virtual void LoadFromXML(const XMLNode& node);
-		
+
+		///Saves the main body of an XML node.
+		/** This behaves very similarly to MercuryNode::SaveToXML
+		    The most notable difference is it doesn't handle children.*/
+		virtual void SaveToXML( MString & sXMLStream, int depth = 0 );
+
+		///Saves individual portions into the tag.
+		virtual void SaveToXMLTag( MString & sXMLStream );
+
 		virtual void LoadedCallback(); //thread safe
 		
 		inline void IsInstanced(bool b) { m_isInstanced = b; }
@@ -66,6 +74,8 @@ class MercuryAsset : public RefBase, public MessageHandler
 		virtual MercuryAssetInstance* GenerateInstanceData(MercuryNode* parentNode);
 
 		LoadState GetLoadState(); //thread safe
+
+		GENRTTI( MercuryAsset );
 	protected:
 		void SetLoadState(LoadState ls); //thread safe
 		

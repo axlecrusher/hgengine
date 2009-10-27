@@ -3,8 +3,13 @@
 
 #include <MercuryString.h>
 #include <global.h>
-
 #include <MercuryVertex.h>
+
+#define GENRTTI(x) static const x* Cast(const MessageHandler* n) \
+{ if (!n) return 0; return dynamic_cast<const x*>(n); } \
+static x* Cast(MessageHandler* n) \
+{ if (!n) return 0; return dynamic_cast<x*>(n); } \
+virtual const char * GetType() { return #x; }
 
 class MessageData
 {
@@ -23,9 +28,10 @@ class VertexDataMessage : public MessageData
 
 class MessageHandler
 {
-	public:
-		virtual ~MessageHandler() {};
-		virtual void HandleMessage(const MString& message, const MessageData& data) {};
+public:
+	virtual ~MessageHandler() {};
+	virtual void HandleMessage(const MString& message, const MessageData& data) {};
+	GENRTTI( MessageHandler );
 };
 
 #endif

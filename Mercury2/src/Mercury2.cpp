@@ -43,6 +43,8 @@ int SignalHandler( int signal )
 	char buffer[2048];
 	LOG.Write(ssprintf( "Fatal error encountered in Mercury 2:  %s", cn_get_crash_description( signal ) ));
 	cnget_backtrace( 1, buffer, 2047 );
+
+	//XXX: Sometimes we produce a crash, we get the crash report, and the next line doesn't work... This should be examined.
 	LOG.Write( buffer );
 
 	return 0;	//Continue regular crash.
@@ -174,6 +176,10 @@ int main( int argc, char** argv)
 			m_count = 0;
 			fpsTimer = timer;
 		}
+
+		MString st;
+		root->SaveToXML( st );
+		StringToFile( "test.xml", st );
 	}
 	while ( w->PumpMessages() );
 	

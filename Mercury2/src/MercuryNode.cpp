@@ -306,9 +306,48 @@ void MercuryNode::LoadFromXML(const XMLNode& node)
 		for( unsigned i = 0; i < out.size(); i++ )
 			m_iForcePasses = m_iForcePasses | (1<<StrToInt( out[i] ) );
 	}
-
 }
 
+void MercuryNode::SaveToXML( MString & sXMLStream, int depth )
+{
+	sXMLStream += ssprintf( "%*c<node type=\"%s\" ", depth*3, 32, GetType() );
+	if( GetName().length() )
+		sXMLStream += ssprintf( "name=\"%s\" ", GetName().c_str() );
+
+	SaveToXMLTag( sXMLStream );
+
+	bool bNoChildren = true;
+	if( !m_assets.empty() )
+	{
+		//No children yet (but we have them, so terminate (>) )
+		if( bNoChildren )
+			sXMLStream += ">\n";
+		bNoChildren = false;
+
+		for( std::list< MercuryAssetInstance * >::iterator i = m_assets.begin(); i != m_assets.end(); i++ )
+			(*i)->Asset().SaveToXML( sXMLStream, depth + 1 );
+	}
+
+	if( ! m_children.empty() )
+	{
+		//No children yet (but we have them, so terminate (>) )
+		if( bNoChildren )
+			sXMLStream += ">\n";
+		bNoChildren = false;
+		for( std::list< MercuryNode * >::iterator i = m_children.begin(); i != m_children.end(); i++ )
+			(*i)->SaveToXML( sXMLStream, depth + 1 );
+	}
+
+	if( bNoChildren )
+		sXMLStream += "/>\n";
+	else
+		sXMLStream += ssprintf( "%*c</node>\n", depth * 3, 32 );
+}
+
+void MercuryNode::SaveToXMLTag( MString & sXMLStream )
+{
+	//MercuryNodes do not have anything else to save.	
+}
 
 void MercuryNode::PreRender(const MercuryMatrix& matrix)
 {

@@ -77,6 +77,22 @@ void MercuryAsset::LoadFromXML(const XMLNode& node)
 	}
 }
 
+void MercuryAsset::SaveToXML( MString & sXMLStream, int depth )
+{
+	sXMLStream += ssprintf( "%*c<node type=\"%s\" ", depth*3, 32, GetType() );
+	if( m_path.length() )
+		sXMLStream += ssprintf( "file=\"%s\" ", m_path.c_str() );
+
+	SaveToXMLTag( sXMLStream );
+	sXMLStream += "/>\n";
+}
+
+void MercuryAsset::SaveToXMLTag( MString & sXMLStream )
+{
+	//Assets, generally do not actually have anything else to save...
+}
+
+
 void MercuryAsset::DrawAxes()
 {
 	GLCALL( glBegin(GL_LINES) );
