@@ -29,7 +29,10 @@
 #ifdef _CLINUX
 #include <malloc.h>
 #include <execinfo.h>
-#define HAVE_EXECINFO
+
+//The following is commented out, since I am having trouble with it.  It also would not
+//make it possible to blame modules (Which I would like to implement in the near future)
+//#define HAVE_EXECINFO
 #endif
 
 
