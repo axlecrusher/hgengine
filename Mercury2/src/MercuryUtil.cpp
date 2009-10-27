@@ -228,6 +228,15 @@ long FileToString( const MString & sFileName, char * & data )
 	return length;
 }
 
+bool StringToFile( const MString & sFileName, const MString & data )
+{
+	MercuryFile * f = FILEMAN.Open( sFileName, MFP_WRITE_ONLY );
+	if( !f ) return false;
+	f->Write( data.c_str(), data.length() );
+	delete f;
+}
+
+
 int GeneralUsePrimes[] = { 3, 13, 37, 73, 131, 229, 337, 821, 2477, 4594, 8941, 14797, 24953, 39041, 60811, 104729 };
 
 int GetAPrime( int ith )

@@ -97,6 +97,9 @@ template<typename T>
 ///The return value is -1 if there was an issue, otherwise it is valid.
 long FileToString( const MString & sFileName, char * & data );
 
+///Take a string and write it to the hard drive as a file. True indicates everything is okay.
+bool StringToFile( const MString & sFileName, const MString & data );
+
 /*  These two functions are very different */
 /// nextPow2 will go to the NEXT power of 2 even if x is already a power of 2.
 inline int nextPow2(int x) { int num = 1; while(num <= x) num <<= 1; return num; }
