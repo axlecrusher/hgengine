@@ -23,6 +23,9 @@ class MQuaternion {
 		static MQuaternion CreateFromAxisAngle(const MercuryVertex& p, const float radians);
 		void FromAxisAngle(const MercuryVertex& p, const float radians);
 		void ToAxisAngle(float& angle, float& x, float& y, float& z) const;
+
+		//Convert the quaternion back into euler angles (mathematically doesn't always work)
+		void ToEuler(MercuryVertex&angles) const;
 	
 		///Access a component of the quaternion with the [] operator
 		inline float & operator[] ( const WXYZ i ) { return m_wxyz[i]; }

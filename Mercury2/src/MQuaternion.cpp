@@ -52,6 +52,14 @@ void MQuaternion::SetEuler(const MercuryVertex& angles)
 	*this = this->normalize();
 }
 
+void MQuaternion::ToEuler(MercuryVertex&angles) const
+{
+	//According to http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles (Oct 26, 2009)
+	angles[0] = atan2( 2 * (m_wxyz[0]*m_wxyz[1] + m_wxyz[2]*m_wxyz[3]), 1 - 2 * (m_wxyz[1]*m_wxyz[1] + m_wxyz[2]*m_wxyz[2] ) );
+	angles[1] = asin( 2 * (m_wxyz[0] *m_wxyz[2] - m_wxyz[3]*m_wxyz[1] ) );
+	angles[2] = atan2( 2 * (m_wxyz[0]*m_wxyz[3] + m_wxyz[1]*m_wxyz[2]), 1 - 2 * (m_wxyz[2]*m_wxyz[2] + m_wxyz[3]*m_wxyz[3] ) );
+}
+
 MQuaternion MQuaternion::CreateFromAxisAngle(const MercuryVertex& p, const float radians)
 {
 	MQuaternion q;
