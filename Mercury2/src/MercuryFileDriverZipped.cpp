@@ -121,7 +121,7 @@ unsigned long MercuryFileObjectZipped::Length()
 	return m_size;
 }
 
-bool MercuryFileObjectZipped::Write( void * data, unsigned long length )
+bool MercuryFileObjectZipped::Write( const void * data, unsigned long length )
 {
 	//You cannot write to a zipped file in the store form.
 	return false;

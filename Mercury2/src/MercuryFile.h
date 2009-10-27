@@ -34,7 +34,7 @@ public:
 	///Return the length of the file (in bytes)
 	virtual unsigned long Length() = 0;
 	///Writes length bytes, returns true if it wrote successfully
-	virtual bool Write( void * data, unsigned long length ) = 0;
+	virtual bool Write( const void * data, unsigned long length ) = 0;
 	///Returns the number of bytes read
 	virtual unsigned long Read( void * data, unsigned long length ) = 0;
 	///Reads one line from the file.

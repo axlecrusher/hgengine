@@ -15,7 +15,7 @@ public:
 	virtual void Close();
 	virtual unsigned long Tell();
 	virtual unsigned long Length();
-	virtual bool Write( void * data, unsigned long length );
+	virtual bool Write( const void * data, unsigned long length );
 	virtual unsigned long Read( void * data, unsigned long length );
 	virtual bool Check();
 	virtual bool Eof();

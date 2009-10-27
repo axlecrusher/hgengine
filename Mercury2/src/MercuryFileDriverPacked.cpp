@@ -48,7 +48,7 @@ unsigned long MercuryFileObjectPacked::Length()
 	return m_size;
 }
 
-bool MercuryFileObjectPacked::Write( void * data, unsigned long length )
+bool MercuryFileObjectPacked::Write( const void * data, unsigned long length )
 {
 	//First make sure we won't over-write good data.
 	if ( length >= ( m_size - m_location ) )

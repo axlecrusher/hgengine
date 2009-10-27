@@ -139,7 +139,7 @@ unsigned long MercuryFileObjectDirect::Length()
 	return ret;
 }
 
-bool MercuryFileObjectDirect::Write( void * data, unsigned long length )
+bool MercuryFileObjectDirect::Write( const void * data, unsigned long length )
 {
 	if ( m_fF == NULL )
 		return false;
