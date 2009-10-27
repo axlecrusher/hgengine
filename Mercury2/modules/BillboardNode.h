@@ -15,6 +15,7 @@ class BillboardNode : public TransformNode
 		virtual const MercuryMatrix& GetGlobalMatrix() const;
 		
 		virtual void LoadFromXML(const XMLNode& node);
+		virtual void SaveToXMLTag( MString & sXMLStream );
 
 		GENRTTI(BillboardNode);
 

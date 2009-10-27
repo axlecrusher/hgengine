@@ -121,6 +121,28 @@ void TransformNode::RippleTaintDown(MercuryNode* node)
 	}
 }
 
+void TransformNode::SaveToXMLTag( MString & sXMLStream )
+{
+	MercuryNode::SaveToXMLTag( sXMLStream );
+
+	const MercuryVertex & scale = GetScale();
+	if( scale[0] != 1 ) sXMLStream += ssprintf( "scalex=\"%f\" ", scale[0] );
+	if( scale[1] != 1 ) sXMLStream += ssprintf( "scaley=\"%f\" ", scale[1] );
+	if( scale[2] != 1 ) sXMLStream += ssprintf( "scalez=\"%f\" ", scale[2] );
+
+	const MercuryVertex & pos = GetPosition();
+	if( pos[0] != 0 ) sXMLStream += ssprintf( "movx=\"%f\" ", pos[0] );
+	if( pos[1] != 0 ) sXMLStream += ssprintf( "movy=\"%f\" ", pos[1] );
+	if( pos[2] != 0 ) sXMLStream += ssprintf( "movz=\"%f\" ", pos[2] );
+
+	MercuryVertex r;
+	GetRotation().ToEuler( r );
+	if( r[0] != 0 ) sXMLStream += ssprintf( "rotx=\"%f\" ", r[0] * RADDEG );
+	if( r[1] != 0 ) sXMLStream += ssprintf( "roty=\"%f\" ", r[1] * RADDEG );
+	if( r[2] != 0 ) sXMLStream += ssprintf( "rotz=\"%f\" ", r[2] * RADDEG );
+
+}
+
 void TransformNode::LoadFromXML(const XMLNode& node)
 {
 	MercuryVertex pos(m_position), scale(m_scale);

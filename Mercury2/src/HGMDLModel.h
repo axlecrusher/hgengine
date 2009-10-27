@@ -22,7 +22,7 @@ class HGMDLModel : public MercuryAsset
 		virtual bool DoCullingTests(OcclusionResult& occlusion, const MercuryMatrix& matrix);
 		virtual void PreRender(const MercuryNode* node);
 		virtual void Render(const MercuryNode* node);
-
+		GENRTTI( HGMDLModel );
 	protected:
 		std::vector< MAutoPtr< HGMDLMesh > > m_meshes;
 

@@ -13,6 +13,11 @@ public:
 	TextPlate();
 	virtual void Update(float dTime);
 	virtual void LoadFromXML(const XMLNode& node);
+
+	//Because this is a virtual node, we have to abstract from SaveToXML as well.
+	virtual void SaveToXML( MString & sXMLStream, int depth = 0 );
+	virtual void SaveToXMLTag( MString & sXMLStream );
+
 	GENRTTI(TextPlate);
 private:
 	MercuryVector m_fvOffset;

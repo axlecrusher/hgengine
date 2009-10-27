@@ -31,6 +31,49 @@ void TextNode::Update(float dTime)
 	MercuryNode::Update( dTime );
 }
 
+void TextNode::SaveToXML( MString & sXMLStream, int depth )
+{
+	sXMLStream += ssprintf( "%*c<node ", depth*3, 32 );
+
+	SaveBaseXMLTag( sXMLStream );
+	SaveToXMLTag( sXMLStream );
+
+	sXMLStream += "/>\n";
+}
+
+void TextNode::SaveToXMLTag( MString & sXMLStream )
+{
+	MercuryNode::SaveToXMLTag( sXMLStream );
+	if( m_sFont.length() )
+		sXMLStream += ssprintf( "font=\"%s\" ", m_sFont.c_str() );
+	sXMLStream += ssprintf( "size=\"%f\" ", m_fSize );
+	if( m_sText.length() )
+		sXMLStream += ssprintf( "text=\"%s\" ", m_sText.c_str() );
+
+	if( m_fTextWidth < 1e9 )
+		sXMLStream += ssprintf( "width=\"%f\" ", m_fTextWidth );
+
+	sXMLStream += "alignment=\"";
+	switch( m_alignment )
+	{
+		case LEFT:
+			sXMLStream += "LEFT\" ";
+			break;
+		case RIGHT:
+			sXMLStream += "RIGHT\" ";
+			break;
+		case CENTER:
+			sXMLStream += "CENTER\" ";
+			break;
+		case FIT:
+			sXMLStream += "FIT\" ";
+			break;
+		case FIT_FULL:
+			sXMLStream += "FIT_FULL\" ";
+			break;
+	}
+}
+
 void TextNode::LoadFromXML(const XMLNode& node)
 {
 	MercuryNode::LoadFromXML(node);
@@ -348,7 +391,7 @@ bool TextNode::LoadFont( const MString & sFont )
 	} else
 		m_pThisFont = &g_AllFonts[sFont];
 	SetDirtyText();
-
+	m_sFont = sFont;
 	return true;
 }
 

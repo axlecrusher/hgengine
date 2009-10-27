@@ -17,12 +17,13 @@ class Viewport : public MercuryNode
 		virtual void PostRender(const MercuryMatrix& matrix);
 		
 		virtual void LoadFromXML(const XMLNode& node);
-	
+		virtual void SaveToXMLTag( MString & sXMLStream );
 		GENRTTI(Viewport);
 	private:
 		Frustum m_frustum;
 		float m_xFactor, m_yFactor;
 		int m_minx, m_miny;
+		float m_fov;
 };
 
 #endif

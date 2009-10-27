@@ -60,6 +60,13 @@ const MercuryMatrix& BillboardNode::GetGlobalMatrix() const
 	return m_billboardMatrix;
 }
 
+void BillboardNode::SaveToXMLTag( MString & sXMLStream )
+{
+	TransformNode::SaveToXMLTag( sXMLStream );
+	sXMLStream += ssprintf( "billboardaxis=\"%f,%f,%f\" spheremode=\"%d\" ", 
+		m_billboardAxis[0], m_billboardAxis[1], m_billboardAxis[2], m_sphere );
+}
+
 void BillboardNode::LoadFromXML(const XMLNode& node)
 {
 	TransformNode::LoadFromXML(node);
@@ -68,7 +75,7 @@ void BillboardNode::LoadFromXML(const XMLNode& node)
 		m_billboardAxis = MercuryVector::CreateFromString( node.Attribute("billboardaxis") );
 	
 	if ( !node.Attribute("spheremode").empty() )
-		m_sphere = node.Attribute("spheremode") == "true"?true:false;
+		m_sphere = StrToBool( node.Attribute("spheremode") );
 }
 
 /****************************************************************************

@@ -34,6 +34,7 @@ class Texture : public MercuryAsset
 		
 		static void ApplyActiveTextures(uint16_t stride);
 		static void DisableUnusedTextures();
+		GENRTTI( Texture );
 	private:
 		void LoadImagePath(const MString& path);
 		

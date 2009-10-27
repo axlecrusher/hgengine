@@ -177,6 +177,7 @@ int main( int argc, char** argv)
 			fpsTimer = timer;
 		}
 
+//Uncomment to enable scenegraph saving.
 		MString st;
 		root->SaveToXML( st );
 		StringToFile( "test.xml", st );

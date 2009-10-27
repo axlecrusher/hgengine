@@ -97,6 +97,8 @@ class MercuryNode : public MessageHandler
 		    The various abstracted classes must append on arguments they require. */
 		virtual void SaveToXMLTag( MString & sXMLStream );
 
+		void SaveBaseXMLTag( MString & sXMLStream );
+
 		///Run on a child when added to a parent
 		virtual void OnAdded() {};
 	

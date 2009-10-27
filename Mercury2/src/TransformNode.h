@@ -33,7 +33,8 @@ class TransformNode : public MercuryNode
 		virtual void ComputeMatrix();
 		
 		virtual void LoadFromXML(const XMLNode& node);
-		
+		virtual void SaveToXMLTag( MString & sXMLStream );
+
 		virtual void OnAdded();
 		
 		virtual void RecursivePreRender();

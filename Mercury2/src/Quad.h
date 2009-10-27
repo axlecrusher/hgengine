@@ -11,7 +11,7 @@ class Quad : public MercuryVBO
 		~Quad();
 		
 		static Quad* Generate();
-	
+		GENRTTI( Quad );
 	private:
 };
 

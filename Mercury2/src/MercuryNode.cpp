@@ -310,10 +310,9 @@ void MercuryNode::LoadFromXML(const XMLNode& node)
 
 void MercuryNode::SaveToXML( MString & sXMLStream, int depth )
 {
-	sXMLStream += ssprintf( "%*c<node type=\"%s\" ", depth*3, 32, GetType() );
-	if( GetName().length() )
-		sXMLStream += ssprintf( "name=\"%s\" ", GetName().c_str() );
+	sXMLStream += ssprintf( "%*c<node ", depth * 3, 32 );
 
+	SaveBaseXMLTag( sXMLStream );
 	SaveToXMLTag( sXMLStream );
 
 	bool bNoChildren = true;
@@ -346,7 +345,16 @@ void MercuryNode::SaveToXML( MString & sXMLStream, int depth )
 
 void MercuryNode::SaveToXMLTag( MString & sXMLStream )
 {
-	//MercuryNodes do not have anything else to save.	
+	//Don't actually do anything here
+}
+
+void MercuryNode::SaveBaseXMLTag( MString & sXMLStream )
+{
+	sXMLStream+= ssprintf( "type=\"%s\" ", GetType() );
+	if( GetName().length() )
+		sXMLStream += ssprintf( "name=\"%s\" ", GetName().c_str() );
+	if( m_useAlphaPath )
+		sXMLStream += "alphaPath=\"true\" ";
 }
 
 void MercuryNode::PreRender(const MercuryMatrix& matrix)

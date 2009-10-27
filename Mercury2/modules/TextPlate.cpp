@@ -19,6 +19,24 @@ void TextPlate::Update(float dTime)
 }
 
 
+void TextPlate::SaveToXML( MString & sXMLStream, int depth )
+{
+	sXMLStream += ssprintf( "%*c<node ", depth*3, 32 );
+
+	SaveBaseXMLTag( sXMLStream );
+	SaveToXMLTag( sXMLStream );
+	m_TextNode->SaveToXMLTag( sXMLStream );
+
+	sXMLStream += "/>\n";
+}
+
+void TextPlate::SaveToXMLTag( MString & sXMLStream )
+{
+	BillboardNode::SaveToXMLTag( sXMLStream );
+	if( m_fvOffset.Length() > 1e-9 )
+		sXMLStream += ssprintf( "offset=\"%f,%f,%f\" ", m_fvOffset[0], m_fvOffset[1], m_fvOffset[2] );
+}
+
 void TextPlate::LoadFromXML(const XMLNode& node)
 {
 	BillboardNode::LoadFromXML(node);

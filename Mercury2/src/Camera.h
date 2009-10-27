@@ -14,6 +14,8 @@ class CameraNode : public TransformNode
 		virtual void PreRender(const MercuryMatrix& matrix);
 		virtual void Render(const MercuryMatrix& matrix);
 		virtual void SetCameraPosition(const MessageData& data);
+		virtual void LoadFromXML(const XMLNode& node);
+		virtual void SaveToXMLTag( MString & sXMLStream );
 
 		GENRTTI(CameraNode);
 	private:

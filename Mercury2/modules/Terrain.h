@@ -20,7 +20,7 @@ class Terrain : public HGMDLModel
 		virtual MercuryAssetInstance* GenerateInstanceData(MercuryNode* parentNode);
 		MercuryVertex ComputePosition(const MercuryVertex& p);
 		MercuryVertex ComputePositionLinear(const MercuryVertex& p);
-		
+		GENRTTI( Terrain );
 	private:
 		CLASS_HELPERS( HGMDLModel );
 		void BuildHash();

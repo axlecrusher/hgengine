@@ -13,7 +13,6 @@ CameraNode::CameraNode()
 	m_lookAt = MercuryVector(0,0,-1);
 	REGISTER_MESSAGE_WITH_DELEGATE( INPUTEVENT_MOUSE, &CameraNode::HandleMouseInput );
 	REGISTER_MESSAGE_WITH_DELEGATE( "SetCameraPosition", &CameraNode::SetCameraPosition );
-	POST_MESSAGE("QueryTerrainPoint", new VertexDataMessage(m_origionalPosition), 0.00001);
 }
 
 void CameraNode::PreRender(const MercuryMatrix& matrix)
@@ -101,6 +100,7 @@ void CameraNode::HandleMouseInput(const MessageData& data)
 void CameraNode::SetCameraPosition(const MessageData& data)
 {
 	const VertexDataMessage& m( dynamic_cast<const VertexDataMessage&>( data ) );
+
 	SetPosition(m.Vertex);
 }
 
@@ -126,13 +126,32 @@ void CameraNode::Update(float dTime)
 //	SetPosition( p );
 	m_origionalPosition = p;
 	TransformNode::Update( dTime );
-	
+
+
 	if (a != 0 || b != 0)
 	{
 		POST_MESSAGE("QueryTerrainPoint", new VertexDataMessage(p), 0);
 	}
 
 }
+
+void CameraNode::SaveToXMLTag( MString & sXMLStream )
+{
+	//Tricky - we want to save where we think we are, not where the camera is.
+	//That way when we get re-opened, we are where we should be.
+	MercuryVertex OrigPos = GetPosition();
+	SetPosition( m_origionalPosition );
+	TransformNode::SaveToXMLTag( sXMLStream );
+	SetPosition( OrigPos );
+}
+
+void CameraNode::LoadFromXML(const XMLNode& node)
+{
+	TransformNode::LoadFromXML( node );
+	m_origionalPosition = GetPosition();
+	POST_MESSAGE("QueryTerrainPoint", new VertexDataMessage(GetPosition()), 0.00001);
+}
+
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *

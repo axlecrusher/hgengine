@@ -95,6 +95,13 @@ void Viewport::PostRender(const MercuryMatrix& matrix)
 	MercuryNode::PostRender(matrix);
 }
 
+void Viewport::SaveToXMLTag( MString & sXMLStream )
+{
+	MercuryNode::SaveToXMLTag( sXMLStream );
+	sXMLStream += ssprintf( "xfactor=\"%f\" yfactor=\"%f\" minx=\"%d\" miny=\"%d\" fov=\"%f\" near=\"%f\" far=\"%f\" ",
+		m_xFactor, m_yFactor, m_minx, m_miny, m_fov, m_frustum.ZNear(), m_frustum.ZFar() );
+}
+
 void Viewport::LoadFromXML(const XMLNode& node)
 {
 	m_xFactor = StrToFloat(node.Attribute("xfactor"), 1.0f);
@@ -104,7 +111,8 @@ void Viewport::LoadFromXML(const XMLNode& node)
 
 	MercuryWindow* w = MercuryWindow::GetCurrentWindow();
 
-	m_frustum.SetPerspective( StrToFloat(node.Attribute("fov")),
+	m_fov = StrToFloat(node.Attribute("fov"), 60.f);
+	m_frustum.SetPerspective( m_fov,
 				  (w->Width()*m_xFactor)/(w->Height()*m_yFactor),
 //							  StrToFloat(node.Attribute("aspect")),
 							  StrToFloat(node.Attribute("near")),

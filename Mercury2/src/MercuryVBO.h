@@ -37,6 +37,7 @@ class MercuryVBO : public MercuryAsset
 
 		void DirtyVertices() { m_bDirtyVertices = 1; }
 		void DirtyIndices() { m_bDirtyIndices = 1; }
+		GENRTTI( MercuryVBO );
 	private:
 		virtual void InitVBO();
 	
