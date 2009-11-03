@@ -178,9 +178,9 @@ int main( int argc, char** argv)
 		}
 
 //Uncomment to enable scenegraph saving.
-		MString st;
-		root->SaveToXML( st );
-		StringToFile( "test.xml", st );
+//		MString st;
+//		root->SaveToXML( st );
+//		StringToFile( "test.xml", st );
 	}
 	while ( w->PumpMessages() );
 	
