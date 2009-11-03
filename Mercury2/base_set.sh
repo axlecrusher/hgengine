@@ -46,6 +46,7 @@ done
 
 NEED_H="stdio.h stdlib.h"
 WANT_H="time.h"
+WANT_L="iberty"
 CC_BASE="$CC_BASE -I."
 
 NEED_L="m c z pthread png pthread";

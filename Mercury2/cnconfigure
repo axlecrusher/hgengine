@@ -100,7 +100,7 @@ for i in $NEED_L; do
 done
 
 for i in $WANT_L; do
-	if CheckForLib "$i"; then echo "#define _HAVE_LIB_$i" >> configuration.h; fi
+	if CheckForLib "$i"; then echo "#define _HAVE_LIB_$i" >> configuration.h; LDFLAGS="$LDFLAGS -l$i"; fi
 done
 
 
