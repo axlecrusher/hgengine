@@ -6,6 +6,8 @@
 #include <MercuryVertex.h>
 
 class TextNode;
+class Quad;
+class StateChanger;
 
 class TextPlate : public BillboardNode
 {
@@ -18,10 +20,14 @@ public:
 	virtual void SaveToXML( MString & sXMLStream, int depth = 0 );
 	virtual void SaveToXMLTag( MString & sXMLStream );
 
+	void SetText( const MString & sText );
+
 	GENRTTI(TextPlate);
 private:
 	MercuryVector m_fvOffset;
 	TextNode * m_TextNode;
+	MAutoPtr< MercuryAsset > m_BackgroundColor;
+	MAutoPtr< MercuryAsset > m_BackPlane;
 };
 
 #endif
@@ -58,3 +64,4 @@ private:
  *   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  *
  *   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   *
  ***************************************************************************/
+

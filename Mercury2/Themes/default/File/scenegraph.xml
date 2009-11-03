@@ -1,8 +1,12 @@
 <SceneGraph name="root">
+	<!--We have to put all states that are the generic state up here.  This way, the states will fall back to these -->
+	<asset type="StateChanger" file="ColorChange:1,1,1,1" />
 	<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100" name="vp">
 		<node type="cameranode" movx="0" movz="0" movy="0" rotx="0" roty="0" rotz="0" name="camera">
-			<node type="transformnode" movz="-5"  movy="2">
-				<node type="TextPlate" text="test font 123 HELLO WORLD!!! WOOT!" font="FONT:FreeSans.hgfont" size=".01" width="400" alphaPath="true" billboardaxis="0,-1,0" offset="-2,0,0" spheremode="false" />
+			<node type="transformnode" movz="-5"  movy=".2">
+				<node type="TextPlate" text="x=3.14159" font="FONT:FreeSans.hgfont" size=".002" alphaPath="true" billboardaxis="0,-1,0" spheremode="false" alignment="CENTER" >
+					<asset type="StateChanger" file="ColorChange:0,0,0,1" />
+				</node>
 			</node>
 			<node type="transformnode" movz="-5" movx="-4" movy="2">
 				<node type="TextNode" text="Another test!" font="FONT:FreeMonoBold.hgfont" size=".01" width="300" alphaPath="true" alignment="LEFT" />
@@ -20,6 +24,7 @@
 						</node>
 						<node type="billboardnode" billboardaxis="0,-1,0" spheremode="true" >
 							<node type="transformnode" scalex="0.1" scaley="0.1" alphaPath="true">
+								<asset type="StateChanger" file="ColorChange:1,0,1,1" />
 								<asset type="texture" file="GRAPHIC:flame.png"/>
 								<asset type="quad"/>
 							</node>

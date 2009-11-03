@@ -2,6 +2,9 @@
 #include <TextNode.h>
 #include <MercuryVertex.h>
 #include <Viewport.h>
+#include <Quad.h>
+#include <GLHeaders.h>
+#include <StateChanger.h>
 
 REGISTER_NODE_TYPE(TextPlate);
 
@@ -10,6 +13,13 @@ TextPlate::TextPlate()
 {
 	m_TextNode = (TextNode*)NODEFACTORY.Generate( "TextNode" );
 	AddChild( m_TextNode );
+
+	m_BackgroundColor = ASSETFACTORY.Generate( "StateChanger", "ColorChange:1,1,0,1" );
+	((StateChanger*)m_BackgroundColor.Ptr())->LoadFromString( "ColorChange:1,1,0,1" );
+	AddAsset( m_BackgroundColor );
+
+	m_BackPlane = ASSETFACTORY.Generate( "Quad", "TBQ" );
+	AddAsset( m_BackPlane );
 }
 
 void TextPlate::Update(float dTime)
@@ -17,7 +27,6 @@ void TextPlate::Update(float dTime)
 	BillboardNode::Update( dTime );
 	m_billboardMatrix.Translate( m_fvOffset );
 }
-
 
 void TextPlate::SaveToXML( MString & sXMLStream, int depth )
 {
@@ -43,7 +52,22 @@ void TextPlate::LoadFromXML(const XMLNode& node)
 	if ( !node.Attribute("offset").empty() )
 		m_fvOffset = MercuryVector::CreateFromString( node.Attribute("offset") );
 	m_TextNode->LoadFromXML(node);
+	if ( !node.Attribute("text").empty() )
+		SetText( node.Attribute("text") );
 }
+
+void TextPlate::SetText( const MString & sText )
+{
+	m_TextNode->SetText(sText);
+	m_TextNode->RenderText();
+
+	((Quad*)m_BackPlane.Ptr())->LoadFromString( ssprintf( "%f,%f,%f,%f,-.01",
+		m_TextNode->GetRMinX() * 1.1 ,
+		m_TextNode->GetRMinY() * 1.1 ,
+		m_TextNode->GetRMaxX() * 1.1 ,
+		m_TextNode->GetRMaxY() * 1.1 ) );
+}
+
 
 /****************************************************************************
  *   Copyright (C) 2009 by Charles Lohr                                     *
