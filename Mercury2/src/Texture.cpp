@@ -12,8 +12,8 @@ REGISTER_ASSET_TYPE(Texture);
 
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 
-Texture::Texture()
-	:MercuryAsset(), m_raw(NULL),m_textureID(0)
+Texture::Texture( const MString & key, bool bInstanced )
+	:MercuryAsset( key, bInstanced ), m_raw(NULL),m_textureID(0),m_dynamic(false)
 {
 	if (!m_initTextureSuccess)
 	{
@@ -26,10 +26,7 @@ Texture::Texture()
 
 Texture::~Texture()
 {
-	REMOVE_ASSET_INSTANCE(TEXTURE, m_path);
-	
-	Clean();
-	
+	Clean();	
 	SAFE_DELETE(m_raw);
 }
 
@@ -89,6 +86,7 @@ void Texture::Render(const MercuryNode* node)
 {
 	if (GetLoadState() == LOADED)
 	{
+	printf( "Rendering Texture (%s), but state is: %d\n", m_path.c_str(), GetLoadState() );
 		LoadFromRaw();
 		SetLoadState(NONE);
 	}
@@ -102,16 +100,27 @@ void Texture::PostRender(const MercuryNode* node)
 
 void Texture::LoadFromXML(const XMLNode& node)
 {
-	bool dynamic = false;
 	if ( !node.Attribute("dynamic").empty() )
-		dynamic = node.Attribute("dynamic")=="true"?true:false;
+		m_dynamic = node.Attribute("dynamic")=="true"?true:false;
 	
 	MString file = node.Attribute("file");
-	
-	if ( dynamic )
-		MakeDynamic( 0, 0, RGBA, file );
+
+	ChangeKey( file );
+}
+
+bool Texture::ChangeKey( const MString & sNewKey )
+{
+	if( sNewKey == m_path && GetLoadState() != NONE )
+		return true;
+
+	if ( m_dynamic )
+		MakeDynamic( 0, 0, RGBA, sNewKey );
 	else
-		LoadImagePath( file );
+		LoadImagePath( sNewKey );
+
+	if( sNewKey != m_path )
+		return MercuryAsset::ChangeKey( sNewKey );
+	return true;
 }
 
 void Texture::BindTexture()
@@ -213,13 +222,10 @@ void Texture::InitiateBindCache()
 
 void Texture::LoadImagePath(const MString& path)
 {
-	if (m_isInstanced) return;
 	if ( !path.empty() )
 	{
 		SetLoadState(LOADING);
-		ADD_ASSET_INSTANCE(Texture, path, this);
-		m_path = path;
-		
+		m_path = path;		
 //		MercuryThread loaderThread;
 //		ImageLoader::LoadImageThreaded(this, m_filename );
 		ImageLoader::GetInstance().LoadImageThreaded(this);
@@ -241,10 +247,8 @@ void Texture::MakeDynamic(uint16_t width, uint16_t height, ColorByteType cbt, co
 //	Clean();
 
 	SetLoadState(LOADED);
-	
-	REMOVE_ASSET_INSTANCE(TEXTURE, m_path);
+
 	m_path = "DYNATEXT"+name;
-	ADD_ASSET_INSTANCE(Texture, m_path, this);
 	
 	if (m_textureID == 0) { GLCALL( glGenTextures( 1, &m_textureID ) ); }
 	GLCALL( glBindTexture( GL_TEXTURE_2D, m_textureID ) );
@@ -254,11 +258,6 @@ void Texture::MakeDynamic(uint16_t width, uint16_t height, ColorByteType cbt, co
 	GLCALL( glBindTexture( GL_TEXTURE_2D, 0 ) );
 
 	GLERRORCHECK;
-}
-
-Texture* Texture::Generate()
-{
-	return new Texture();
 }
 
 MAutoPtr< Texture > Texture::LoadFromFile(const MString& path)

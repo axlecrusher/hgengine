@@ -13,13 +13,6 @@ TextPlate::TextPlate()
 {
 	m_TextNode = (TextNode*)NODEFACTORY.Generate( "TextNode" );
 	AddChild( m_TextNode );
-
-	m_BackgroundColor = ASSETFACTORY.Generate( "StateChanger", "ColorChange:1,1,0,1" );
-	((StateChanger*)m_BackgroundColor.Ptr())->LoadFromString( "ColorChange:1,1,0,1" );
-	AddAsset( m_BackgroundColor );
-
-	m_BackPlane = ASSETFACTORY.Generate( "Quad", "TBQ" );
-	AddAsset( m_BackPlane );
 }
 
 void TextPlate::Update(float dTime)
@@ -61,11 +54,23 @@ void TextPlate::SetText( const MString & sText )
 	m_TextNode->SetText(sText);
 	m_TextNode->RenderText();
 
-	((Quad*)m_BackPlane.Ptr())->LoadFromString( ssprintf( "%f,%f,%f,%f,-.01",
+	MString quadstr = ssprintf( "%f,%f,%f,%f,-.01",
 		m_TextNode->GetRMinX() * 1.1 ,
 		m_TextNode->GetRMinY() * 1.1 ,
 		m_TextNode->GetRMaxX() * 1.1 ,
-		m_TextNode->GetRMaxY() * 1.1 ) );
+		m_TextNode->GetRMaxY() * 1.1 );
+	if( !m_BackPlane )
+	{
+
+		m_BackgroundColor = ASSETFACTORY.Generate( "StateChanger", "ColorChange:1,1,0,1" );
+		((StateChanger*)m_BackgroundColor.Ptr())->ChangeKey( "ColorChange:1,1,0,1" );
+		AddAsset( m_BackgroundColor );
+
+		m_BackPlane = ASSETFACTORY.Generate( "Quad", quadstr );
+		AddAsset( m_BackPlane );
+	}
+	else
+		((Quad*)m_BackPlane.Ptr())->ChangeKey( quadstr );
 }
 
 

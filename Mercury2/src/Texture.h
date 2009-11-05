@@ -7,7 +7,7 @@
 class Texture : public MercuryAsset
 {
 	public:
-		Texture();
+		Texture( const MString & key, bool bInstanced );
 		virtual ~Texture();
 		
 		void Clean();
@@ -16,7 +16,9 @@ class Texture : public MercuryAsset
 		virtual void PostRender(const MercuryNode* node);
 			
 		virtual void LoadFromXML(const XMLNode& node);
-		
+
+		virtual bool ChangeKey( const MString & sNewKey );
+
 		void LoadFromRaw();
 		
 		inline static uint8_t NumberActiveTextures() { return m_numActiveTextures; }
@@ -25,7 +27,6 @@ class Texture : public MercuryAsset
 		
 		void MakeDynamic(uint16_t width, uint16_t height, ColorByteType cbt, const MString& name);
 
-		static Texture* Generate();
 		static MAutoPtr< Texture > LoadFromFile(const MString& path);
 		static MAutoPtr< Texture > LoadDynamicTexture(const MString& name);
 		static const std::list< Texture* >& GetActiveTextures() { return m_activeTextures; }
@@ -56,6 +57,8 @@ class Texture : public MercuryAsset
 
 		static uint8_t m_maxActiveTextures;
 		static Texture** m_lastBound;
+
+		bool m_dynamic;
 //		MString m_filename;
 };
 

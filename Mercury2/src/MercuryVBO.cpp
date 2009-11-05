@@ -10,8 +10,8 @@
 extern bool SHOWBOUNDINGVOLUME;
 extern bool SHOWAXISES;
 
-MercuryVBO::MercuryVBO()
-	:MercuryAsset(), m_initiated(false)
+MercuryVBO::MercuryVBO( const MString & key, bool bInstanced )
+	:MercuryAsset( key,  bInstanced ), m_initiated(false)
 {
 	m_bufferIDs[0] = m_bufferIDs[1] = 0;
 	m_bDirtyIndices = m_bDirtyVertices = 0;

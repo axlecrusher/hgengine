@@ -11,15 +11,15 @@
 class Terrain : public HGMDLModel
 {
 	public:
-		Terrain();
+		Terrain( const MString & key, bool bInstanced );
 		~Terrain();
 
-		static Terrain* Generate();
 		virtual void LoadedCallback(); //thread safe
 	
-		virtual MercuryAssetInstance* GenerateInstanceData(MercuryNode* parentNode);
 		MercuryVertex ComputePosition(const MercuryVertex& p);
 		MercuryVertex ComputePositionLinear(const MercuryVertex& p);
+		virtual bool ChangeKey( const MString & sNewKey );
+		virtual MercuryAssetInstance * MakeAssetInstance( MercuryNode * ParentNode );
 		GENRTTI( Terrain );
 	private:
 		CLASS_HELPERS( HGMDLModel );

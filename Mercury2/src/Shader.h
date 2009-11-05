@@ -74,21 +74,22 @@ class UniformMap
 class Shader : public MercuryAsset
 {
 public:
-	Shader();
+	Shader( const MString & key, bool bInstanced );
 	virtual ~Shader();
 		
 	virtual void Render(const MercuryNode* node);
 	virtual void PostRender(const MercuryNode* node);
-	static Shader* Generate() { return new Shader; }
+
 	virtual void LoadFromXML(const XMLNode& node);
 	
 	static void SetAttribute(const MString& name, const ShaderAttribute& x);
 	static void RemoveAttribute(const MString& name);
 
+	virtual bool ChangeKey( const MString & sNewKey );
+
 	///Explicitly get the OpenGL ProgramID in the event you need it for advanced techniques
 	unsigned int	GetProgramID() { return iProgramID; }
 	inline static Shader* GetCurrentShader() { return CurrentShader; }
-	void LoadShader( const MString& path, float priority );
 private:
 	
 	int32_t GetUniformLocation(const MString& n);

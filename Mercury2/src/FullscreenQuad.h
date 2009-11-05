@@ -7,12 +7,11 @@
 class FullscreenQuad : public Quad
 {
 	public:
-		FullscreenQuad();
+		FullscreenQuad( const MString & key, bool bInstanced );
 //		virtual ~FullscreenQuad();
 		
 		virtual void Render(const MercuryNode* node);
-		
-		static FullscreenQuad* Generate();
+
 		GENRTTI( FullscreenQuad );
 	private:
 		MercuryMatrix m_matrix;

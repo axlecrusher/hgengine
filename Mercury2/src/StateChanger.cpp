@@ -85,17 +85,18 @@ int StateChangeRegister::GetStateID( const MString & spar )
 
 REGISTER_ASSET_TYPE(StateChanger);
 
-StateChanger::StateChanger()
-	:MercuryAsset()
+StateChanger::StateChanger( const MString & key, bool bInstanced )
+	:MercuryAsset( key, bInstanced )
 {
 	//Make sure our state stack is correctly sized
 	if( m_StateSet.size() < (unsigned)StateChangeRegister::Instance().GetStateCount() )
 		m_StateSet.resize( StateChangeRegister::Instance().GetStateCount() );
+
+	LoadInternal( key );
 }
 
 StateChanger::~StateChanger()
 {
-	REMOVE_ASSET_INSTANCE(TEXTURE, m_path);
 }
 
 void StateChanger::Render(const MercuryNode* node)
@@ -127,7 +128,17 @@ void StateChanger::PostRender(const MercuryNode* node)
 	}
 }
 
-bool StateChanger::LoadFromString( const MString & sFile )
+bool StateChanger::ChangeKey( const MString & sFile )
+{
+	if( m_path == sFile )
+		return true;
+
+	LoadInternal( sFile );
+
+	return MercuryAsset::ChangeKey( sFile );
+}
+
+bool StateChanger::LoadInternal( const MString & sFile )
 {
 	int f = sFile.find( ":", 0 );
 	if( f <= 0 )
@@ -151,7 +162,6 @@ bool StateChanger::LoadFromString( const MString & sFile )
 		return false;
 	}
 
-
 	return true;
 }
 
@@ -161,7 +171,7 @@ void StateChanger::LoadFromXML(const XMLNode& node)
 	if ( !node.Attribute("file").empty() )
 	{
 		MString sFile = node.Attribute("file");
-		LoadFromString( sFile );
+		ChangeKey( sFile );
 	}
 }
 
@@ -175,11 +185,6 @@ void StateChanger::SaveToXMLTag( MString & sXMLStream )
 	}
 
 	MercuryAsset::SaveToXMLTag( sXMLStream );
-}
-
-StateChanger* StateChanger::Generate()
-{
-	return new StateChanger();
 }
 
 MVector< MVector< MAutoPtr< StateChange > > > StateChanger::m_StateSet;

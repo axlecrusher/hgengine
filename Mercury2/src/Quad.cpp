@@ -5,49 +5,39 @@
 
 REGISTER_ASSET_TYPE(Quad);
 
-Quad::Quad()
-	:MercuryVBO()
+Quad::Quad( const MString & key, bool bInstanced )
+	:MercuryVBO( key, bInstanced )
 {
+	ChangeKey( key );
 }
 
 Quad::~Quad()
 {
-	REMOVE_ASSET_INSTANCE(Quad,m_path);
-}
-
-Quad* Quad::Generate()
-{
-	Quad *asset = new Quad();
-	ADD_ASSET_INSTANCE(Quad,"",asset);
-	return asset;
 }
 
 void Quad::LoadFromXML(const XMLNode& node)
 {
-	LoadFromString( node.Attribute("file") );
+	//If we've already started with the same key - this function will just return.
+	ChangeKey( node.Attribute("file") );
 
 	MercuryAsset::LoadFromXML( node );
 }
 
 
 
-bool Quad::LoadFromString( const MString & sDescription )
+bool Quad::ChangeKey( const MString & sDescription )
 {
+	if( sDescription == m_path && GetLoadState() != NONE )
+		return true;
+
 	float lX = -0.5;
 	float lY = -0.5;
 	float hX = 0.5;
 	float hY = 0.5;
 	float zp = 0;
-	bool bResetRegistration = sDescription != m_path;
 
 	AllocateIndexSpace(6);
 	AllocateVertexSpace(4);
-
-	if( bResetRegistration )
-		REMOVE_ASSET_INSTANCE(Quad,m_path);
-	m_path = sDescription;
-	if( bResetRegistration )
-		ADD_ASSET_INSTANCE(Quad,m_path,this);
 
 	MVector< MString > vsDescription;
 	SplitStrings( sDescription, vsDescription, ",", " ", 1, 1 );
@@ -75,6 +65,7 @@ bool Quad::LoadFromString( const MString & sDescription )
 	else
 	{
 		LOG.Write( ssprintf( "Invalid number of parameters passed into new Quad:  \"%s\"", sDescription.c_str() ) );
+		return false;
 	}
 	
 //	float* buffer = m_vertexData.m_vertexData();
@@ -103,9 +94,9 @@ bool Quad::LoadFromString( const MString & sDescription )
 	m_indexData[3] = m_indexData[2] = 2;
 	m_indexData[4] = 3;
 
-	m_path = sDescription;
+	SetLoadState( LOADED );
 
-	return true;
+	return MercuryVBO::ChangeKey( sDescription );
 }
 
 

@@ -7,6 +7,8 @@
 class HGMDLMesh : public MercuryVBO
 {
 	public:
+		HGMDLMesh( const MString & key, bool bInstanced ) : MercuryVBO( key, bInstanced ), m_cachable( true ) { }
+
 		void LoadFromFile(MercuryFile* hgmdl);
 		void ReadExtraData(MercuryFile* hgmdl);
 		void LoadOBB(MercuryFile* hgmdl);

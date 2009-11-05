@@ -6,20 +6,19 @@ REGISTER_ASSET_TYPE(HGMDLModel);
 const uint16_t EXPCTMJRV = 2;
 const uint16_t EXPCTMNRV = 3;
 
-HGMDLModel::HGMDLModel()
-	:MercuryAsset()
+HGMDLModel::HGMDLModel( const MString & key, bool bInstanced )
+	:MercuryAsset( key, bInstanced )
 {
 }
 
 HGMDLModel::~HGMDLModel()
 {
-	REMOVE_ASSET_INSTANCE(HGMDLModel, m_path);
 }
 
 void HGMDLModel::LoadFromXML(const XMLNode& node)
 {
 	MString path = node.Attribute("file");
-	LoadHGMDL( path );
+	ChangeKey( path );
 	
 	MercuryAsset::LoadFromXML( node );
 }
@@ -55,7 +54,7 @@ void HGMDLModel::LoadModel(MercuryFile* hgmdl, HGMDLModel* model)
 	hgmdl->Read( &numMeshes, sizeof( uint16_t ) );
 	for (uint16_t i = 0; i < numMeshes; ++i)
 	{
-		MAutoPtr< HGMDLMesh > mesh( new HGMDLMesh() );
+		MAutoPtr< HGMDLMesh > mesh = new HGMDLMesh( model->m_path + "MODEL", model->GetIsInstanced() );
 		mesh->LoadFromFile( hgmdl );
 		model->m_meshes.push_back(mesh);
 	}
@@ -92,26 +91,21 @@ void HGMDLModel::Render(const MercuryNode* node)
 	}
 }
 
-void HGMDLModel::LoadHGMDL( const MString& path )
+bool HGMDLModel::ChangeKey( const MString & sNewKey )
 {
-	if ( m_isInstanced ) return;
-	if ( !path.empty() )
+	if( GetLoadState() != NONE && sNewKey == m_path )
+		return true;
+
+	if ( !sNewKey.empty() )
 	{
 		SetLoadState(LOADING);
-		ADD_ASSET_INSTANCE(HGMDLModel, path, this);
-		m_path = path;
 		
 		LoaderThreadData* ltd = new LoaderThreadData( this );
 		MercuryThread loaderThread;
 		loaderThread.HaltOnDestroy(false);
 		loaderThread.Create( LoaderThread, ltd );
 	}
-}
-
-HGMDLModel* HGMDLModel::Generate()
-{
-	LOG.Write( "new HGMDL" );
-	return new HGMDLModel();
+	return MercuryAsset::ChangeKey( sNewKey );
 }
 
 void* HGMDLModel::LoaderThread(void* d)

@@ -106,8 +106,6 @@ void TextNode::RenderText()
 	if( !m_pThisFont )
 		return;
 
-//	AddAsset( AssetFactory::GetInstance().Generate( "Quad", "MyQuad" ) );
-
 	if( !m_kTEX )
 	{
 		m_kTEX = MAutoPtr< MercuryAsset >( Texture::LoadFromFile( m_pThisFont->m_sImage ) );
@@ -122,7 +120,7 @@ void TextNode::RenderText()
 	//Setup FBO and Texture
 	if( !m_kVBO )
 	{
-		m_kVBO = new MercuryVBO;
+		m_kVBO = new MercuryVBO( GetName() + "VBO", true );
 		if( !m_kVBO )
 		{
 			fprintf( stderr, "Could not create VBO for text.\n" );

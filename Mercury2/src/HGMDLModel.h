@@ -5,30 +5,26 @@
 #include <HGMDLMesh.h>
 #include <MercuryFile.h>
 
-#include <vector>
-
 class HGMDLModel : public MercuryAsset
 {
 	public:
-		HGMDLModel();
+		HGMDLModel( const MString & key, bool bInstanced );
 		~HGMDLModel();
 		
 		virtual void LoadFromXML(const XMLNode& node);
 
 		static void LoadModel(MercuryFile* hgmdl, HGMDLModel* model);
-		
-		static HGMDLModel* Generate();
-		
+
 		virtual bool DoCullingTests(OcclusionResult& occlusion, const MercuryMatrix& matrix);
 		virtual void PreRender(const MercuryNode* node);
+		virtual bool ChangeKey( const MString & sNewKey );
 		virtual void Render(const MercuryNode* node);
 		GENRTTI( HGMDLModel );
 	protected:
-		std::vector< MAutoPtr< HGMDLMesh > > m_meshes;
+		MVector< MAutoPtr< HGMDLMesh > > m_meshes;
 
 	private:
 		CLASS_HELPERS( MercuryAsset );
-		void LoadHGMDL( const MString& path );
 		static void* LoaderThread(void* d);
 };
 

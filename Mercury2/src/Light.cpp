@@ -10,7 +10,7 @@
 REGISTER_NODE_TYPE(Light);
 
 Light::Light()
-	:MercuryNode(), m_boundingVolume( NULL )
+	:MercuryNode(),  m_fullScreenQuad( "", true ), m_boundingVolume( NULL )
 {
 	m_atten[0] = m_atten[1] = m_atten[2] = 0.0f;
 	m_color[0] = m_color[1] = m_color[2] = 1.0f;
@@ -60,8 +60,7 @@ void Light::LoadFromXML(const XMLNode& node)
 		if ( asset.IsValid() )
 		{
 			Shader* shader = dynamic_cast<Shader*>( asset.Ptr() );
-//			shader->LoadFromXML( node );
-			shader->LoadShader(key, 0);
+			shader->ChangeKey(key);
 			SetShader( shader );
 		}
 

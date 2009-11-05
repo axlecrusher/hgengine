@@ -7,13 +7,12 @@
 class Quad : public MercuryVBO
 {
 	public:
-		Quad();
+		Quad( const MString & key, bool bInstanced );
 		~Quad();
 		
-		void LoadFromXML(const XMLNode& node );
-		bool LoadFromString( const MString & sDescription );
+		virtual void LoadFromXML(const XMLNode& node );
+		virtual bool ChangeKey( const MString & sDescription );
 
-		static Quad* Generate();
 		GENRTTI( Quad );
 	private:
 };

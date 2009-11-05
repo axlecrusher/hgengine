@@ -13,7 +13,7 @@ class MercuryVBO : public MercuryAsset
 		static const uint16_t STRIDE = 8;
 		static const uint16_t VERTEX_OFFSET = 5;
 		
-		MercuryVBO();
+		MercuryVBO( const MString & key, bool bInstanced );
 		virtual ~MercuryVBO();
 		
 		virtual void Render(const MercuryNode* node);

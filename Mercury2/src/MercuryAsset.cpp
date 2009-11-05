@@ -5,13 +5,18 @@
 
 extern bool DOOCCLUSIONCULL;
 
-MercuryAsset::MercuryAsset()
-	:m_isInstanced(false), m_boundingVolume(NULL), m_loadState(NONE), m_ignoreCull(false), m_iPasses( DEFAULT_PASSES )
+MercuryAsset::MercuryAsset( const MString & key, bool bInstanced )
+	:m_isInstanced(bInstanced), m_boundingVolume(NULL),
+	 m_path( key ), m_loadState(NONE), m_ignoreCull(false), m_iPasses( DEFAULT_PASSES ), slType( 0 )
 {
 }
 
 MercuryAsset::~MercuryAsset()
 {
+	//If this isn't set, we were never a registered instance to begin with, so, don't unregister.
+	if( slType )
+		AssetFactory::GetInstance().RemoveAssetInstance( ToUpper(slType)+m_path );
+
 	SAFE_DELETE(m_boundingVolume);
 }
 
@@ -109,9 +114,22 @@ void MercuryAsset::DrawAxes()
 	GLCALL( glEnd() );
 }
 
-MercuryAssetInstance* MercuryAsset::GenerateInstanceData(MercuryNode* parentNode)
+bool MercuryAsset::ChangeKey( const MString & sNewKey )
 {
-	return new MercuryAssetInstance(this, parentNode);
+	if( m_path == sNewKey ) return true;
+
+	AssetFactory::GetInstance().AddAssetInstance( ToUpper(GetType())+m_path, this );
+
+	m_path = sNewKey;
+
+	AssetFactory::GetInstance().RemoveAssetInstance( ToUpper(GetType())+m_path );
+
+	return true;
+}
+
+MercuryAssetInstance * MercuryAsset::MakeAssetInstance( MercuryNode * ParentNode )
+{
+	return new MercuryAssetInstance( this, ParentNode ); 
 }
 
 MercuryAssetInstance::MercuryAssetInstance(MercuryAsset* asset, MercuryNode* parentNode)
@@ -127,44 +145,51 @@ AssetFactory& AssetFactory::GetInstance()
 	return *instance;
 }
 
-bool AssetFactory::RegisterFactoryCallback(const MString & type, Callback0R< MAutoPtr<MercuryAsset> > functor)
+bool AssetFactory::RegisterFactoryCallback(const MString & type, MAutoPtr< MercuryAsset > (*functor)( const MString &, bool ) )
 {
 	MString t = ToUpper( type );
-	std::pair<MString , Callback0R< MAutoPtr<MercuryAsset> > > pp(t, functor);
-	m_factoryCallbacks.push_back( pp );
+	m_factoryCallbacks[t] = functor;
 	return true;
 }
 
-MAutoPtr<MercuryAsset> AssetFactory::Generate(const MString& type, const MString& key)
+MAutoPtr<MercuryAsset> AssetFactory::Generate(const MString& type, const MString& key, bool bInstanced )
 {
 	MString t = ToUpper( type );
 
-	MercuryAsset *asset = LocateAsset(t+key);
-	if ( asset ) return asset;
+	if( bInstanced )
+	{
+		MercuryAsset *asset = LocateAsset(t+key);
+		if ( asset ) return asset;
+	}
+	printf( "Asset (%s) not found, generating\n", (t+key).c_str() );
 
-	std::list< std::pair< MString, Callback0R< MAutoPtr<MercuryAsset> > > >::iterator i;
-	for (i = m_factoryCallbacks.begin(); i != m_factoryCallbacks.end(); ++i)
-		if (i->first == t) return i->second();
+	MAutoPtr< MercuryAsset > (**generator)( const MString &, bool ) = m_factoryCallbacks.get( t );
+
+	if( generator )
+	{
+		MAutoPtr< MercuryAsset > g = (**generator)(key, bInstanced);
+		AddAssetInstance( t+key, g.Ptr() );
+		g->slType = g->GetType();
+		return g;
+	}
+
 	LOG.Write( "WARNING: Asset type " + type + " not found." );
 	return NULL;
 }
 
 void AssetFactory::AddAssetInstance(const MString& key, MercuryAsset* asset)
 {
-	asset->IsInstanced(true);
 	m_assetInstances[key] = asset;
 }
 
 void AssetFactory::RemoveAssetInstance(const MString& key)
 {
 	m_assetInstances.remove( key );
-	LOG.Write( "removed asset "+key );
+	puts( "removed asset "+key );
 }
 
-MHash< MercuryAsset*> AssetFactory::m_assetInstances;
-
 /****************************************************************************
- *   Copyright (C) 2009 - 2009 by Joshua Allen                              *
+ *   Copyright (C) 2008 - 2009 by Joshua Allen                              *
  *                                Charles Lohr                              *
  *                                                                          *
  *                                                                          *

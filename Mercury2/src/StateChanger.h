@@ -49,7 +49,7 @@ private:
 class StateChanger : public MercuryAsset
 {
 public:
-	StateChanger();
+	StateChanger( const MString & key, bool bInstanced );
 	virtual ~StateChanger();
 
 	virtual void Render(const MercuryNode* node);
@@ -57,10 +57,9 @@ public:
 
 	virtual void LoadFromXML(const XMLNode& node);
 	virtual void SaveToXMLTag( MString & sXMLStream );
-	static StateChanger* Generate();
 
-	bool LoadFromString( const MString & sDescription );
-
+	virtual bool ChangeKey( const MString & sNewKey );
+	virtual bool LoadInternal( const MString & sFile );
 	GENRTTI( StateChanger );
 private:
 

@@ -3,7 +3,8 @@
 
 REGISTER_ASSET_TYPE(FullscreenQuad);
 
-FullscreenQuad::FullscreenQuad()
+FullscreenQuad::FullscreenQuad( const MString & key, bool bInstanced )
+	: Quad( key, bInstanced )
 {
 	m_matrix = MercuryMatrix::Identity();
 	m_matrix.Transotale(0,0,-1,0,0,0,2,2,0.01);
@@ -27,11 +28,6 @@ void FullscreenQuad::Render(const MercuryNode* node)
 	GLCALL( glPopMatrix() );
 	GLCALL( glMatrixMode(GL_MODELVIEW) );
 	GLCALL( glPopMatrix() );
-}
-
-FullscreenQuad* FullscreenQuad::Generate()
-{
-	return new FullscreenQuad();
 }
 
 /****************************************************************************

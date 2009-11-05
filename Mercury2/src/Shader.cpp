@@ -32,7 +32,8 @@ ShaderAttribute * ShaderAttributesSet::GetHandle( const MString & sName )
 	return ret;
 }
 
-Shader::Shader()
+Shader::Shader( const MString & key, bool bInstanced ) :
+	MercuryAsset( key, bInstanced ), fPriority( 0 )
 {
 	iProgramID = (GLhandleARB)NULL; 
 	vertexShader = (GLhandleARB)NULL;
@@ -89,17 +90,21 @@ void Shader::PostRender(const MercuryNode* node)
 
 void Shader::LoadFromXML(const XMLNode& node)
 {
-	LoadShader( node.Attribute("file"), StrToFloat( node.Attribute("priority") ) );
+	//LoadShader( node.Attribute("file"), ) ) );
+
+	fPriority = StrToFloat( node.Attribute("priority" ) );
+	ChangeKey( node.Attribute("file") );
 }
 
-void Shader::LoadShader( const MString& path, float priority )
+bool Shader::ChangeKey( const MString& path )
 {
-	if (m_isInstanced) return;
+	if( GetLoadState() != NONE && path == m_path )
+		return true;
 	
 	sShaderName = path;
-	fPriority = priority;
-	ADD_ASSET_INSTANCE(Shader, sShaderName, this);
 	LoadShader( );
+
+	return MercuryAsset::ChangeKey( path );
 }
 
 bool Shader::LoadShader( )

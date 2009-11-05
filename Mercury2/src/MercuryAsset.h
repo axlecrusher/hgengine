@@ -29,7 +29,7 @@ The renderable nodes handle the memory management
 class MercuryAsset : public RefBase, public MessageHandler
 {
 	public:
-		MercuryAsset();
+		MercuryAsset( const MString & key, bool bInstanced );
 		virtual ~MercuryAsset();
 		
 		virtual void Init();
@@ -56,7 +56,8 @@ class MercuryAsset : public RefBase, public MessageHandler
 
 		virtual void LoadedCallback(); //thread safe
 		
-		inline void IsInstanced(bool b) { m_isInstanced = b; }
+		inline void SetIsInstanced(bool b) { m_isInstanced = b; }
+		inline bool GetIsInstanced() { return m_isInstanced; }
 
 		inline BoundingVolume* GetBoundingVolume() const { return m_boundingVolume; }
 		inline const MString& Path() const { return m_path; }
@@ -70,12 +71,16 @@ class MercuryAsset : public RefBase, public MessageHandler
 
 		inline unsigned short GetPasses() { return m_iPasses; }
 		inline void SetPasses( unsigned short p ) { m_iPasses = p; }
-		
-		virtual MercuryAssetInstance* GenerateInstanceData(MercuryNode* parentNode);
+
+		virtual bool ChangeKey( const MString & sNewKey );
 
 		LoadState GetLoadState(); //thread safe
 
+		virtual MercuryAssetInstance * MakeAssetInstance( MercuryNode * ParentNode );
+
+
 		GENRTTI( MercuryAsset );
+		const char * slType;	//Tricky - we need to know our type in the destructor. Don't touch this.
 	protected:
 		void SetLoadState(LoadState ls); //thread safe
 		
@@ -123,10 +128,7 @@ class MercuryAssetInstance : public MessageHandler
 class LoaderThreadData
 {
 	public:
-		LoaderThreadData(MercuryAsset* a)
-		{
-			asset = a;
-		}
+		LoaderThreadData(MercuryAsset* a) : asset( a ) { }
 		
 		//use and autoptr here to prevent crashes if asset is removed during load
 		MAutoPtr< MercuryAsset > asset;
@@ -136,19 +138,20 @@ class AssetFactory
 {
 	public:
 		static AssetFactory& GetInstance();
-		bool RegisterFactoryCallback(const MString& type, Callback0R< MAutoPtr<MercuryAsset> >);
-		MAutoPtr<MercuryAsset> Generate(const MString& type, const MString& key);
-		
+		bool RegisterFactoryCallback(const MString& type, MAutoPtr< MercuryAsset > (*)( const MString &, bool ) );
+
+		MAutoPtr<MercuryAsset> Generate(const MString& type, const MString& key, bool bInstanced = true );
+
 		void AddAssetInstance(const MString& key, MercuryAsset* asset);
 		void RemoveAssetInstance(const MString& key);
 
 	private:
-		MercuryAsset* LocateAsset( const MString& key ) { MercuryAsset ** a = m_assetInstances.get( key ); return a?(*a):0; }
+		MAutoPtr< MercuryAsset > LocateAsset( const MString& key ) { MAutoPtr< MercuryAsset > * a = m_assetInstances.get( key ); return a?(*a):0; }
 
-		std::list< std::pair< MString, Callback0R< MAutoPtr<MercuryAsset> > > > m_factoryCallbacks;
+		MHash< MAutoPtr< MercuryAsset > (*)( const MString &, bool ) > m_factoryCallbacks;
 		
 		//the actual storage point is in MercuryAssetInstance
-		static MHash< MercuryAsset*> m_assetInstances;
+		MHash< MAutoPtr< MercuryAsset > > m_assetInstances;
 
 };
 
@@ -157,15 +160,8 @@ class AssetFactory
 static InstanceCounter<AssetFactory> AFcounter("AssetFactory");
 
 #define REGISTER_ASSET_TYPE(class)\
-	MAutoPtr<MercuryAsset> FactoryFunct##class() { return MAutoPtr<MercuryAsset>(class::Generate()); } \
-	Callback0R< MAutoPtr<MercuryAsset> > factoryclbk##class( FactoryFunct##class ); \
-	bool GlobalRegisterSuccess##class = AssetFactory::GetInstance().RegisterFactoryCallback(#class, factoryclbk##class);
-
-#define ADD_ASSET_INSTANCE(class, key, ptr)\
-		AssetFactory::GetInstance().AddAssetInstance( ToUpper(#class)+key, ptr );
-
-#define REMOVE_ASSET_INSTANCE(class, key)\
-		AssetFactory::GetInstance().RemoveAssetInstance( ToUpper(#class)+key );
+	MAutoPtr<MercuryAsset> FactoryFunct##class( const MString & key, bool bInstanced ) { return new class( key, bInstanced ); } \
+	bool GlobalRegisterSuccess##class = AssetFactory::GetInstance().RegisterFactoryCallback(#class, FactoryFunct##class);
 
 #define CLASS_HELPERS(baseClass)\
 		typedef baseClass base;
@@ -173,7 +169,7 @@ static InstanceCounter<AssetFactory> AFcounter("AssetFactory");
 #endif
 
 /****************************************************************************
- *   Copyright (C) 2009 - 2009 by Joshua Allen                              *
+ *   Copyright (C) 2008 - 2009 by Joshua Allen                              *
  *                                Charles Lohr                              *
  *                                                                          *
  *                                                                          *

@@ -43,7 +43,7 @@ MercuryNode::~MercuryNode()
 
 void MercuryNode::AddAsset(MercuryAsset* asset)
 {
-	m_assets.push_back( asset->GenerateInstanceData(this) );
+	m_assets.push_back( asset->MakeAssetInstance( this ) );
 }
 
 void MercuryNode::ClearAssets()
@@ -51,6 +51,8 @@ void MercuryNode::ClearAssets()
 	list< MercuryAssetInstance* >::iterator i;
 	for (i = m_assets.begin(); i != m_assets.end(); ++i )
 		SAFE_DELETE(*i);
+
+	m_assets.clear( );
 }
 
 void MercuryNode::AddChild(MercuryNode* n)
@@ -374,6 +376,7 @@ void MercuryNode::PreRender(const MercuryMatrix& matrix)
 			mai->Culled( a.DoCullingTests( mai->GetOcclusionResult(), matrix ) );
 			culled = culled && mai->Culled();
 		}
+		printf( "CULL: %s (%d) %d\n", mai->Asset().GetType(), a.IgnoreCull(), mai->Culled() );
 		
 		if ( !mai->Culled() ) a.PreRender(this);
 	}

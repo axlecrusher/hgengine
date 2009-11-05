@@ -4,8 +4,8 @@
 
 REGISTER_ASSET_TYPE(Terrain);
 
-Terrain::Terrain()
-	:base()
+Terrain::Terrain( const MString & key, bool bInstanced )
+	: base( key, bInstanced )
 {
 }
 
@@ -13,21 +13,10 @@ Terrain::~Terrain()
 {
 }
 
-Terrain* Terrain::Generate()
-{
-	LOG.Write( "new Terrain" );
-	return new Terrain();
-}
-
-MercuryAssetInstance* Terrain::GenerateInstanceData(MercuryNode* parentNode)
-{
-	return new TerrainAssetInstance(this, parentNode);
-}
-
 void Terrain::LoadedCallback()
 {
-	BuildHash();
 	base::LoadedCallback();
+	BuildHash();
 }
 
 void Terrain::BuildHash()
@@ -39,6 +28,16 @@ void Terrain::BuildHash()
 		ImportMeshToHash( m );
 	}
 }
+
+bool Terrain::ChangeKey( const MString & sNewKey )
+{
+	HGMDLModel::ChangeKey( sNewKey );
+	if( GetLoadState() == LOADED )
+		BuildHash();
+
+	return true;
+}
+
 
 void Terrain::ImportMeshToHash(const HGMDLMesh& mesh)
 {
@@ -143,6 +142,11 @@ MercuryVertex Terrain::ComputePosition(const MercuryVertex& p)
 	}
 	
 	return result;
+}
+
+MercuryAssetInstance * Terrain::MakeAssetInstance( MercuryNode * ParentNode )
+{
+	return new TerrainAssetInstance( this, ParentNode );
 }
 
 
