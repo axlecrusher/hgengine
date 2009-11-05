@@ -1,17 +1,16 @@
-#ifndef RENDERDIFFEREDLIGHTS_H
-#define RENDERDIFFEREDLIGHTS_H
+#ifndef RENDERDEFERREDLIGHTS_H
+#define RENDERDEFERREDLIGHTS_H
 
 #include <MercuryAsset.h>
 
-class RenderDifferedLights : public MercuryAsset
+class RenderDeferredLights : public MercuryAsset
 {
 	public:
-		RenderDifferedLights();
-		virtual ~RenderDifferedLights();
+		RenderDeferredLights( const MString & key, bool bInstanced );
+		virtual ~RenderDeferredLights();
 		
 		virtual void Render(const MercuryNode* node);
-		static RenderDifferedLights* Generate();
-
+		GENRTTI( RenderDeferredLights );
 };
 
 #endif

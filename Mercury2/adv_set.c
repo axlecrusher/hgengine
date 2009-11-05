@@ -13,7 +13,7 @@ SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp src/MercuryNode.cpp \
 	src/MercuryPlane.cpp src/BoundingBox.cpp src/Shader.cpp src/RenderGraph.cpp src/Frustum.cpp \
 	src/Camera.cpp src/MercuryInput.cpp src/MQuaternion.cpp src/ModuleManager.cpp src/MercuryFBO.cpp \
 	src/GLHelpers.cpp src/FullscreenQuad.cpp src/MercuryNamedResource.cpp src/MercuryPrefs.cpp \
-	src/MercuryTheme.cpp src/Orthographic.cpp src/Light.cpp src/RenderDifferedLights.cpp \
+	src/MercuryTheme.cpp src/Orthographic.cpp src/Light.cpp src/RenderDeferredLights.cpp \
 	src/MercuryLog.cpp src/MercuryCTA.cpp src/DataTypes/MTriangle.cpp src/StateChanger.cpp"
 
 SOURCES="$SOURCES src/MercuryFileDriverDirect.cpp src/MercuryFileDriverMem.cpp \

@@ -1,22 +1,23 @@
-#include <RenderDifferedLights.h>
+#include <RenderDeferredLights.h>
 #include <RenderGraph.h>
 
 #include <Texture.h>
 #include <GLHeaders.h>
 
-REGISTER_ASSET_TYPE(RenderDifferedLights);
+REGISTER_ASSET_TYPE(RenderDeferredLights);
 
-RenderDifferedLights::RenderDifferedLights()
+RenderDeferredLights::RenderDeferredLights( const MString & key, bool bInstanced ) :
+	MercuryAsset( key, bInstanced )
 {
 }
 
-RenderDifferedLights::~RenderDifferedLights()
+RenderDeferredLights::~RenderDeferredLights()
 {
 }
 
-void RenderDifferedLights::Render(const MercuryNode* node)
+void RenderDeferredLights::Render(const MercuryNode* node)
 {
-	uint8_t numTextures = Texture::NumberActiveTextures();
+//	uint8_t numTextures = Texture::NumberActiveTextures();
 	uint16_t stride = sizeof(float)*8;
 	
 	Texture::ApplyActiveTextures(stride);
@@ -31,11 +32,6 @@ void RenderDifferedLights::Render(const MercuryNode* node)
 	CURRENTRENDERGRAPH->DoDifferedLightPass();
 	
 	GLCALL( glPopAttrib( ) );
-}
-
-RenderDifferedLights* RenderDifferedLights::Generate()
-{
-	return new RenderDifferedLights();
 }
 
 
