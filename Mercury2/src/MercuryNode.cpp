@@ -376,7 +376,6 @@ void MercuryNode::PreRender(const MercuryMatrix& matrix)
 			mai->Culled( a.DoCullingTests( mai->GetOcclusionResult(), matrix ) );
 			culled = culled && mai->Culled();
 		}
-		printf( "CULL: %s (%d) %d\n", mai->Asset().GetType(), a.IgnoreCull(), mai->Culled() );
 		
 		if ( !mai->Culled() ) a.PreRender(this);
 	}
