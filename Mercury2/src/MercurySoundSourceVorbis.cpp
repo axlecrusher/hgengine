@@ -70,12 +70,11 @@ bool MercurySoundSourceVorbisRAM::Load( const MString & sDescriptor )
 	vorbisCallbacks.close_func = vorbis_close_func;
 	vorbisCallbacks.tell_func  = vorbis_tell_func;
 
-	int ret = ov_open_callbacks( f, vorbisFile, NULL, 0, vorbisCallbacks );
+	ov_open_callbacks( f, vorbisFile, NULL, 0, vorbisCallbacks );
 
 	vorbis_info* info = ov_info(vorbisFile, -1);
 	unsigned VorbisChannels = info->channels;
-	unsigned VorbisSamplerate = info->rate;
-
+//	unsigned VorbisSamplerate = info->rate;
 	unsigned VorbisSamples = ov_pcm_total( vorbisFile, 0 );
 
 	unsigned Vorbisbytes_read;	
@@ -116,19 +115,19 @@ MHash< MAutoPtr< HGRawSound > > MercurySoundSourceVorbisRAM::g_SoundLibrary;
 
 
 //Now, the section on the regular MercurySoundSource
-/*
 REGISTER_SOUND_SOURCE( MercurySoundSourceVorbis, "Vorbis" );
 
 MercurySoundSourceVorbis::MercurySoundSourceVorbis( MercurySoundSource * chain ) :
-	MercurySoundSource( chain )
+	MercurySoundSource( chain ), iBufferSize( 32768 ), iBufferLoad(1), iBufferPlay(0)
 {
+	iBuffer = (short*)malloc( sizeof( short ) * iBufferSize * 2 );
 }
 
-void MercurySoundSourceVorbis::~MercurySoundSourceVorbis()
+MercurySoundSourceVorbis::~MercurySoundSourceVorbis()
 {
-	SAFE_DELETE(m_File);
-	SAFE_DELETE(f);
-	SAFE_DELETE(vorbisFile);
+	delete m_File;
+	delete iBuffer;
+	delete vorbisFile;
 
 }
 
@@ -136,15 +135,10 @@ bool MercurySoundSourceVorbis::Load( const MString & sDescriptor )
 {
 	MAutoPtr< HGRawSound > r;
 	MAutoPtr< HGRawSound > * g;
-	if( ( g = g_SoundLibrary.get( sDescriptor ) ) )
-	{
-		m_Sound = *g;
-		return true;
-	}
 
 	m_File = FILEMAN.Open( sDescriptor );
 	
-	OggVorbis_File * vorbisFile = new OggVorbis_File;
+	vorbisFile = new OggVorbis_File;
 
 	ov_callbacks vorbisCallbacks;
 	vorbisCallbacks.read_func  = vorbis_read_func;
@@ -152,19 +146,18 @@ bool MercurySoundSourceVorbis::Load( const MString & sDescriptor )
 	vorbisCallbacks.close_func = vorbis_close_func;
 	vorbisCallbacks.tell_func  = vorbis_tell_func;
 
-	int ret = ov_open_callbacks( f, vorbisFile, NULL, 0, vorbisCallbacks );
+	ov_open_callbacks( m_File, vorbisFile, NULL, 0, vorbisCallbacks );
 
 	vorbis_info* info = ov_info(vorbisFile, -1);
-	unsigned VorbisChannels = info->channels;
-	unsigned VorbisSamplerate = info->rate;
-
+//	unsigned VorbisChannels = info->channels;
+//	unsigned VorbisSamplerate = info->rate;
 	unsigned VorbisSamples = ov_pcm_total( vorbisFile, 0 );
 
 	unsigned Vorbisbytes_read;	
 
 	if( VorbisSamples <= 0 )
 	{
-		delete f;
+		delete m_File;
 		delete vorbisFile;
 		return false;
 
@@ -175,40 +168,50 @@ bool MercurySoundSourceVorbis::Load( const MString & sDescriptor )
 
 void MercurySoundSourceVorbis::FillBuffer( float * cBufferToFill, int iCount )
 {
+	//Don't worry our circular queue is threadsafe.
+	for( unsigned i = 0; i < iCount; i++ )
+	{
+		if( PlayLeft() <= 2 ) break;
+		cBufferToFill[i*2+0] = float(iBuffer[iBufferPlay*2+0])/32768.;
+		cBufferToFill[i*2+1] = float(iBuffer[iBufferPlay*2+1])/32768.;
+		iBufferPlay=(iBufferPlay+1)%iBufferSize;
+	}
+	//If we run out... that's okay.  It'll just be silent and have time to fill.
 }
 
 bool MercurySoundSourceVorbis::PostFill()
 {
 	unsigned Vorbistotal_bytes_read = 0;
+	unsigned Vorbisbytes_read;
 	int VorbisAbstream;
 
-	short * VorbisData = new short[VorbisSamples*VorbisChannels];
+	unsigned long BF = BufferFree();
+	unsigned long BFL = BF;
+	short tibuf[BF * 2];
 
-	while( (Vorbisbytes_read = ov_read(vorbisFile, ((char*)VorbisData) +
-		Vorbistotal_bytes_read, VorbisSamples*VorbisChannels*2 - 
-		Vorbistotal_bytes_read, 0, 2, 1, &VorbisAbstream)) > 0 )
+	do
 	{
-		if( VorbisAbstream == 0 )
-			Vorbistotal_bytes_read+= Vorbisbytes_read;
+		Vorbisbytes_read = ov_read(vorbisFile, ((char*)&(tibuf[0]) + Vorbistotal_bytes_read), 
+			BFL * 4, 0, 2, 1, &VorbisAbstream);
+		BFL -= Vorbisbytes_read / 4;
+		Vorbistotal_bytes_read += Vorbisbytes_read;
+	} while( Vorbisbytes_read > 0 && BFL );
+	if( Vorbisbytes_read < 0 )
+		return false;
+
+	for( unsigned i = 0; i < BF; i++ )
+	{
+		iBuffer[iBufferLoad*2+0] = tibuf[i*2+0];
+		iBuffer[iBufferLoad*2+1] = tibuf[i*2+1];
+		iBufferLoad=(iBufferLoad+1)%iBufferSize;
 	}
 
-	r = new HGRawSound(new float[VorbisSamples*VorbisChannels],VorbisSamples);
-
-	for( unsigned i = 0; i < VorbisSamples*VorbisChannels; i++ )
-	{
-		r->fSound[i] = ((float)VorbisData[i])/32768.0;
-	}
-
-	delete vorbisFile;
-	delete f;
-
-	m_Sound = r;
-	g_SoundLibrary[sDescriptor] = r;
-	return true;
+	if( Vorbisbytes_read == 0 && PlayLeft() == 0 )
+		return false;
+	else
+		return true;
 }
 
-
-*/
 
 
 

@@ -11,7 +11,7 @@
 #include <MercuryCrash.h>
 #include <MercuryBacktrace.h>
 #include <MercuryMessageManager.h>
-
+#include <MercurySound.h>
 #include <MercuryTimer.h>
 #include <RenderGraph.h>
 #include <Texture.h>
@@ -103,6 +103,8 @@ int main( int argc, char** argv)
 
 	HandleCommandLineParameters( argc, argv );
 
+	//Sound first.
+	SOUNDMAN->Init( "" );
 	MercuryWindow* w = MercuryWindow::MakeWindow();
 
 #ifdef WIN32

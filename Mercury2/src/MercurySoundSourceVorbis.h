@@ -15,7 +15,6 @@ protected:
 	static MHash< MAutoPtr< HGRawSound > > g_SoundLibrary;
 };
 
-/*
 class OggVorbis_File;
 class vorbis_info;
 class MercuryFile;
@@ -34,9 +33,16 @@ public:
 protected:
 	MercuryFile * m_File;
 	OggVorbis_File * vorbisFile;
-	vorbis_info * info
+	vorbis_info * info;
+
+	unsigned BufferFree() { return ((iBufferPlay + iBufferSize) - iBufferLoad )%iBufferSize; }
+	unsigned PlayLeft() { return ((iBufferLoad + iBufferSize) - iBufferPlay - 1 )%iBufferSize; }
+	unsigned iBufferSize;
+	unsigned iBufferPlay;
+	unsigned iBufferLoad;
+	short * iBuffer;
 };
-*/
+
 
 #endif
 

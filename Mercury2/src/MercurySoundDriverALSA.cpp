@@ -4,7 +4,7 @@
 #include "MercurySound.h"
 #include <alsa/asoundlib.h>
 
-#define LOW_LATENCY
+//#define LOW_LATENCY
 
 class MercurySoundDriverALSA
 {

@@ -136,8 +136,6 @@ void MercurySoundManager::FillBuffer( float * cBufferToFill, int iCount )
 
 		pc->FillBuffer( cBufferToFill, iCount );
 	}
-
-	printf( "%f %p\n", cBufferToFill[44], & cBufferToFill[44]  );
 }
 
 void MercurySoundManager::PostFill()

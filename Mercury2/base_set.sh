@@ -8,7 +8,7 @@ if test $OSTYPE = "darwin8.0"; then
 	ISMAC=1; fi
 
 
-OPTIONS="X11 libxml OGL sse gprof glprofile instancewatch"
+OPTIONS="X11 libxml OGL sse gprof glprofile instancewatch alsa ogg"
 OPT_X11=1
 OPT_OGL=1
 OPT_libxml=1
@@ -16,6 +16,9 @@ OPT_sse=0
 OPT_gprof=0
 OPT_glprofile=0
 OPT_instancewatch=1
+OPT_alsa=1
+OPT_ogg=1
+
 
 DEFINES="WAS_CONFIGURED USE_MSTRING"
 CC_BASE="-O2 -g0 -Wall"
@@ -77,7 +80,7 @@ if test $OPT_glprofile = 1; then
 fi
 
 if test $OPT_OGL = 1; then
-	NEED_H="GL/gl.h"
+	NEED_H="$NEED_H GL/gl.h"
 	NEED_L="$NEED_L GL GLU"
 fi
 
@@ -92,6 +95,17 @@ fi
 
 if test $OPT_instancewatch = 1; then
 	DEFINES="$DEFINES INSTANCE_WATCH"
+fi
+
+if test $OPT_alsa = 1; then
+	NEED_L="$NEED_L asound"
+	NEED_H="$NEED_H alsa/asoundlib.h"
+	DEFINES="$DEFINES USE_ALSA"
+fi
+
+if test $OPT_ogg = 1; then
+	NEED_H="$NEED_H ogg/ogg.h"
+	NEED_L="$NEED_L vorbisfile ogg"
 fi
 
 ARCH=`uname -m`

@@ -14,7 +14,8 @@ SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp src/MercuryNode.cpp \
 	src/Camera.cpp src/MercuryInput.cpp src/MQuaternion.cpp src/ModuleManager.cpp src/MercuryFBO.cpp \
 	src/GLHelpers.cpp src/FullscreenQuad.cpp src/MercuryNamedResource.cpp src/MercuryPrefs.cpp \
 	src/MercuryTheme.cpp src/Orthographic.cpp src/Light.cpp src/RenderDeferredLights.cpp \
-	src/MercuryLog.cpp src/MercuryCTA.cpp src/DataTypes/MTriangle.cpp src/StateChanger.cpp"
+	src/MercuryLog.cpp src/MercuryCTA.cpp src/DataTypes/MTriangle.cpp src/StateChanger.cpp \
+	src/MercurySound.cpp src/MercurySoundSourceRAM.cpp "
 
 SOURCES="$SOURCES src/MercuryFileDriverDirect.cpp src/MercuryFileDriverMem.cpp \
 	src/MercuryFileDriverPacked.cpp src/MercuryFileDriverZipped.cpp"
@@ -28,6 +29,14 @@ SOURCES="$SOURCES src/XMLParser.cpp"
 
 #ifdef USE_X11
 SOURCES="$SOURCES src/X11Window.cpp"
+#endif
+
+#ifdef USE_ALSA
+SOURCES="$SOURCES src/MercurySoundDriverALSA.cpp"
+#endif
+
+#ifdef _HAVE_LIB_ogg
+SOURCES="$SOURCES  src/MercurySoundSourceVorbis.cpp"
 #endif
 
 PROJ="mercury"
