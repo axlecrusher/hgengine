@@ -1,9 +1,8 @@
 #include <MercuryVBO.h>
-
 #include <GLHeaders.h>
-
-
 #include <Texture.h>
+
+REGISTER_ASSET_TYPE(MercuryVBO);
 
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 
