@@ -286,7 +286,7 @@ bool X11Window::PumpMessages()
 				su     = ((e->state & X11_MASK(MOUSE_BTN_SCROLL_UP))!=0)   ^ (e->button == MOUSE_BTN_SCROLL_UP);
 				sd     = ((e->state & X11_MASK(MOUSE_BTN_SCROLL_DOWN))!=0) ^ (e->button == MOUSE_BTN_SCROLL_DOWN);
 
-				MouseInput::ProcessMouseInput(e->x, e->y, 
+				MouseInput::ProcessMouseInput(0, 0, 
 					left, right, center, su, sd);
 				break;
 			}
