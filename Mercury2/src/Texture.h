@@ -64,6 +64,7 @@ class Texture : public MercuryAsset
 
 		bool m_bDeleteRaw;
 		bool m_dynamic;
+		bool m_bClamp;
 //		MString m_filename;
 };
 

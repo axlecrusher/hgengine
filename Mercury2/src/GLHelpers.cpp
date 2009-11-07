@@ -91,6 +91,41 @@ MercuryVertex pointFromScreenLoc(int screen_x, int screen_y )
 	return pointFromScreenLoc( screen_x, screen_y, winZ );
 }
 
+void CameraPointAndRay(int screen_x, int screen_y, MercuryVertex & p, MercuryVertex & r)
+{
+	GLfloat winX, winY, winZ;
+	GLdouble dox = 0, doy = 0, doz = 0;
+	GLint viewport[4];
+	GLdouble modelview[16];
+	GLdouble projection[16];
+	
+	GLCALL( glGetIntegerv(GL_VIEWPORT, viewport) );
+	GLCALL( glGetDoublev(GL_MODELVIEW_MATRIX, modelview) );
+	GLCALL( glGetDoublev(GL_PROJECTION_MATRIX, projection) );
+	
+	winX = (float)screen_x;
+	winY = (float)viewport[3] - (float)screen_y;
+	
+	gluUnProject(
+		winX, winY, -1000,
+		modelview, projection, viewport,
+		&dox, &doy, &doz);
+
+	p = MercuryVertex( dox, doy, doz );
+
+	gluUnProject(
+		winX, winY, 1,
+		modelview, projection, viewport,
+		&dox, &doy, &doz );
+	r = MercuryVertex( dox, doy, doz ) - p;
+
+	r.NormalizeSelf();
+
+	return;
+
+}
+
+
 unsigned int ToGLColorType(ColorByteType cbt)
 {
 	switch (cbt)

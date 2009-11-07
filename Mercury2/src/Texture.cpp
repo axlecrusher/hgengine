@@ -13,7 +13,7 @@ REGISTER_ASSET_TYPE(Texture);
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 
 Texture::Texture( const MString & key, bool bInstanced )
-	:MercuryAsset( key, bInstanced ), m_raw(NULL),m_textureID(0),m_bDeleteRaw(true),m_dynamic(false)
+	:MercuryAsset( key, bInstanced ), m_raw(NULL),m_textureID(0),m_bDeleteRaw(true),m_dynamic(false), m_bClamp(true)
 {
 	if (!m_initTextureSuccess)
 	{
@@ -72,8 +72,11 @@ void Texture::LoadFromRaw()
 
 //	GLCALL( glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE ) );
 	
-	GLCALL( glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP) );
-	GLCALL( glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP) );
+	if( m_bClamp )
+	{
+		GLCALL( glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP) );
+		GLCALL( glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP) );
+	}
 	
 //	GLCALL( gluBuild2DMipmaps( GL_TEXTURE_2D, 3, m_raw->m_width, m_raw->m_height, ByteType, GL_UNSIGNED_BYTE, m_raw->m_data ) );
 	if( m_bDeleteRaw )
@@ -102,8 +105,10 @@ void Texture::PostRender(const MercuryNode* node)
 void Texture::LoadFromXML(const XMLNode& node)
 {
 	if ( !node.Attribute("dynamic").empty() )
-		m_dynamic = node.Attribute("dynamic")=="true"?true:false;
-	
+		m_dynamic = StrToBool( node.Attribute("dynamic") );
+	if( !node.Attribute( "clamp" ).empty() )
+		m_bClamp = StrToBool( node.Attribute("clamp" ) );
+
 	MString file = node.Attribute("file");
 
 	ChangeKey( file );

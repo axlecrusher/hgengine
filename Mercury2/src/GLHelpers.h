@@ -19,6 +19,7 @@ void glLoadMatrix(const MercuryMatrix& m);
 MercuryMatrix glGetMatrix(unsigned int m);
 MercuryVertex pointFromScreenLoc(int screen_x, int screen_y);
 MercuryVertex pointFromScreenLoc(int screen_x, int screen_y, float fForceDepth);
+void CameraPointAndRay(int screen_x, int screen_y, MercuryVertex & p, MercuryVertex & r);
 unsigned int ToGLColorType(ColorByteType cbt);
 
 #ifdef GL_PROFILE
