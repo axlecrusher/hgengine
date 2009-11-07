@@ -57,7 +57,7 @@ MercuryMatrix glGetMatrix(unsigned int m)
 	return mm;
 }
 
-MercuryVertex pointFromScreenLoc(int screen_x, int screen_y)
+MercuryVertex pointFromScreenLoc(int screen_x, int screen_y, float fForceDepth)
 {
 	GLfloat winX, winY, winZ;
 	GLdouble mouseX = 0, mouseY = 0, mouseZ = 0;
@@ -71,13 +71,24 @@ MercuryVertex pointFromScreenLoc(int screen_x, int screen_y)
 	
 	winX = (float)screen_x;
 	winY = (float)viewport[3] - (float)screen_y;
-	GLCALL( glReadPixels( screen_x, (int)winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ ) );
 	
 	gluUnProject(
-		winX, winY, winZ,
+		winX, winY, fForceDepth,
 		modelview, projection, viewport,
 		&mouseX, &mouseY, &mouseZ);
 	return MercuryVertex( (float)mouseX, (float)mouseY, (float)mouseZ );
+}
+
+MercuryVertex pointFromScreenLoc(int screen_x, int screen_y )
+{
+	GLint viewport[4];
+	GLCALL( glGetIntegerv(GL_VIEWPORT, viewport) );
+
+	float winY = (float)viewport[3] - (float)screen_y;
+
+	float winZ;
+	GLCALL( glReadPixels( screen_x, (int)winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ ) );
+	return pointFromScreenLoc( screen_x, screen_y, winZ );
 }
 
 unsigned int ToGLColorType(ColorByteType cbt)

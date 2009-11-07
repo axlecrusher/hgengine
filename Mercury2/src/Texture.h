@@ -20,7 +20,10 @@ class Texture : public MercuryAsset
 		virtual bool ChangeKey( const MString & sNewKey );
 
 		void LoadFromRaw();
-		
+
+		void SetDeleteRawData( bool bDelete = true ) { m_bDeleteRaw = bDelete; }
+		RawImageData * GetRawImageDataHandle() { return m_raw; }
+
 		inline static uint8_t NumberActiveTextures() { return m_numActiveTextures; }
 		inline static uint32_t ReadAndResetBindCount() { uint32_t t = m_textureBinds; m_textureBinds = 0; return t; }
 		inline uint32_t TextureID() const { return m_textureID; }
@@ -35,6 +38,7 @@ class Texture : public MercuryAsset
 		
 		static void ApplyActiveTextures(uint16_t stride);
 		static void DisableUnusedTextures();
+
 		GENRTTI( Texture );
 	private:
 		void LoadImagePath(const MString& path);
@@ -47,7 +51,7 @@ class Texture : public MercuryAsset
 		
 		void InitiateBindCache();
 		
-		const RawImageData* m_raw;
+		RawImageData* m_raw;
 		uint32_t m_textureID;
 		
 		static bool m_initTextureSuccess;
@@ -58,6 +62,7 @@ class Texture : public MercuryAsset
 		static uint8_t m_maxActiveTextures;
 		static Texture** m_lastBound;
 
+		bool m_bDeleteRaw;
 		bool m_dynamic;
 //		MString m_filename;
 };

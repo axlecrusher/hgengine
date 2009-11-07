@@ -44,6 +44,40 @@ public:
 
 REGISTER_STATECHANGE( ColorChange );
 
+///State changer for enabling/disabling lighting
+class LightingSwitch : public StateChange
+{
+public:
+	LightingSwitch( const MVector< MString > & sParameters ) : StateChange( sParameters )
+	{
+		if( sParameters.size() < 1 )
+		{
+			LOG.Write( ssprintf( "Error: ColorChange state has invalid number of parameters(%d).", sParameters.size() ) );
+			return;
+		}
+
+		bEnable = StrToBool( sParameters[0] );
+	}
+
+	void Stringify( MString & sOut )
+	{
+		sOut = ssprintf( "%f", bEnable );
+	}
+
+	void Activate()
+	{
+		if( bEnable )
+			glEnable( GL_LIGHTING );
+		else
+			glDisable( GL_LIGHTING );
+	}
+
+	STATECHANGE_RTTI( LightingSwitch );
+	bool bEnable;
+};
+
+REGISTER_STATECHANGE( LightingSwitch );
+
 
 //////////////////////////////////////STATE CHANGE CHUNK//////////////////////////////////////
 StateChangeRegister * StateChangeRegister::m_Instance;

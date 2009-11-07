@@ -13,7 +13,7 @@ REGISTER_ASSET_TYPE(Texture);
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 
 Texture::Texture( const MString & key, bool bInstanced )
-	:MercuryAsset( key, bInstanced ), m_raw(NULL),m_textureID(0),m_dynamic(false)
+	:MercuryAsset( key, bInstanced ), m_raw(NULL),m_textureID(0),m_bDeleteRaw(true),m_dynamic(false)
 {
 	if (!m_initTextureSuccess)
 	{
@@ -76,7 +76,8 @@ void Texture::LoadFromRaw()
 	GLCALL( glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP) );
 	
 //	GLCALL( gluBuild2DMipmaps( GL_TEXTURE_2D, 3, m_raw->m_width, m_raw->m_height, ByteType, GL_UNSIGNED_BYTE, m_raw->m_data ) );
-	SAFE_DELETE(m_raw);
+	if( m_bDeleteRaw )
+		SAFE_DELETE(m_raw);
 	
 	GLCALL( glPopAttrib() );
 

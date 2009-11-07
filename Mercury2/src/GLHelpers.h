@@ -18,6 +18,7 @@ MString GlError2String(uint32_t e);
 void glLoadMatrix(const MercuryMatrix& m);
 MercuryMatrix glGetMatrix(unsigned int m);
 MercuryVertex pointFromScreenLoc(int screen_x, int screen_y);
+MercuryVertex pointFromScreenLoc(int screen_x, int screen_y, float fForceDepth);
 unsigned int ToGLColorType(ColorByteType cbt);
 
 #ifdef GL_PROFILE
