@@ -6,7 +6,7 @@
 REGISTER_ASSET_TYPE(Quad);
 
 Quad::Quad( const MString & key, bool bInstanced )
-	:MercuryVBO( key, bInstanced )
+	:MercuryVBO( key, bInstanced ), m_bFlipV( true )
 {
 	ChangeKey( key );
 }
@@ -35,12 +35,27 @@ bool Quad::ChangeKey( const MString & sDescription )
 	float hX = 0.5;
 	float hY = 0.5;
 	float zp = 0;
+	m_bFlipV = true;
 
 	AllocateIndexSpace(6);
 	AllocateVertexSpace(4);
 
 	MVector< MString > vsDescription;
 	SplitStrings( sDescription, vsDescription, ",", " ", 1, 1 );
+
+	//First, check for known attributes...
+	do
+	{
+		if( !vsDescription.size() )
+			break;
+
+		if( vsDescription[0] == "straightv" )
+		{
+			m_bFlipV = false;
+			vsDescription.remove( 0 );
+		}
+
+	} while(1);
 
 	if( vsDescription.size() == 0 )
 	{
@@ -73,19 +88,19 @@ bool Quad::ChangeKey( const MString & sDescription )
 	
 	//UV oriented so 0,0 is lower left and 1,0 upper right.
 	//this makes it so FBO images render correctly right out of the buffer, no flip needed
-	m_vertexData[i++] = 0; m_vertexData[i++] = 0;
+	m_vertexData[i++] = 0; m_vertexData[i++] = (m_bFlipV)?0:1;
 	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
 	m_vertexData[i++] = lX; m_vertexData[i++] = lY; m_vertexData[i++] = zp;
 	
-	m_vertexData[i++] = 1; m_vertexData[i++] = 0;
+	m_vertexData[i++] = 1; m_vertexData[i++] = (m_bFlipV)?0:1;
 	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
 	m_vertexData[i++] = hX; m_vertexData[i++] = lY; m_vertexData[i++] = zp;
 	
-	m_vertexData[i++] = 1; m_vertexData[i++] = 1;
+	m_vertexData[i++] = 1; m_vertexData[i++] = (m_bFlipV)?1:0;
 	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
 	m_vertexData[i++] = hX; m_vertexData[i++] = hY; m_vertexData[i++] = zp;
 	
-	m_vertexData[i++] = 0; m_vertexData[i++] = 1;
+	m_vertexData[i++] = 0; m_vertexData[i++] = (m_bFlipV)?1:0;
 	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
 	m_vertexData[i++] = lX; m_vertexData[i++] = hY; m_vertexData[i++] = zp;
 	
