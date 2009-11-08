@@ -9,17 +9,18 @@ REGISTER_ASSET_TYPE(MercuryVBO);
 extern bool SHOWBOUNDINGVOLUME;
 extern bool SHOWAXISES;
 
-MercuryVBO::MercuryVBO( const MString & key, bool bInstanced )
-	:MercuryAsset( key,  bInstanced ), m_initiated(false)
+MercuryVBO::MercuryVBO( const MString & key, bool bInstanced, bool useVertexColor )
+	:MercuryAsset( key,  bInstanced ), m_initiated(false), m_useVertexColor(useVertexColor)
 {
-	m_bufferIDs[0] = m_bufferIDs[1] = 0;
-	m_bDirtyIndices = m_bDirtyVertices = 0;
+	m_bufferIDs[0] = m_bufferIDs[1] = m_bufferIDs[2] = 0;
+	m_bDirtyIndices = m_bDirtyVertices = m_bDirtyVertexColor = false;
 }
 
 MercuryVBO::~MercuryVBO()
 {
-	if (m_bufferIDs[0]) { GLCALL( glDeleteBuffersARB(2, m_bufferIDs) ); }
-	m_bufferIDs[0] = m_bufferIDs[1] = 0;
+	if (m_bufferIDs[0] > 0) { GLCALL( glDeleteBuffersARB(2, m_bufferIDs) ); }
+	if (m_bufferIDs[2] > 0) { GLCALL( glDeleteBuffersARB(1, &m_bufferIDs[2]) ); }
+	m_bufferIDs[0] = m_bufferIDs[1] = m_bufferIDs[2] = 0;
 }
 
 void MercuryVBO::Render(const MercuryNode* node)
@@ -31,16 +32,26 @@ void MercuryVBO::Render(const MercuryNode* node)
 	{
 		m_lastVBOrendered = this;
 
-		if ( m_bDirtyVertices )
-			UpdateVertices();
-		if( m_bDirtyIndices )
-			UpdateIndices();
+		if ( m_bDirtyVertices ) UpdateVertices();
+		if( m_bDirtyIndices ) UpdateIndices();
+		if( m_bDirtyVertexColor ) UpdateVertexColor();
 
 		GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]) );
 		GLCALL( glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]) );
 		GLCALL( glVertexPointer(3, GL_FLOAT, STRIDE*sizeof(float), BUFFER_OFFSET( VERTEX_OFFSET*sizeof(float) ) ) );
+
+		if (m_useVertexColor)
+		{
+			GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[2]) );
+			GLCALL( glColorPointer(4, GL_FLOAT, 0, 0 ) );
+		}
+
 		++m_vboBinds;
 	}
+	
+	GLCALL( glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT) );
+
+	if (m_useVertexColor) { GLCALL( glEnableClientState( GL_COLOR_ARRAY ) ); }
 	
 	Texture::ApplyActiveTextures(STRIDE*sizeof(float));
 	
@@ -48,21 +59,24 @@ void MercuryVBO::Render(const MercuryNode* node)
 	GLCALL( glNormalPointer(GL_FLOAT, STRIDE*sizeof(float), BUFFER_OFFSET(sizeof(float)*2)) );
 
 	GLCALL( glDrawRangeElements(GL_TRIANGLES, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL) );
-	m_vboBatches++;
+	++m_vboBatches;
 		
 	if (m_boundingVolume && SHOWBOUNDINGVOLUME) m_boundingVolume->Render();
+
+	GLCALL( glPopClientAttrib() );
+
 	if ( SHOWAXISES ) DrawAxes();
 }
 
 void MercuryVBO::InitVBO()
 {
-	if (!m_bufferIDs[0])
-	{
-		GLCALL( glGenBuffersARB(2, m_bufferIDs) );
-	}
+	if (!m_bufferIDs[0]) { GLCALL( glGenBuffersARB(2, m_bufferIDs) ); }
+	if (m_useVertexColor) { GLCALL( glGenBuffersARB(1, &m_bufferIDs[2]) ); }
 
 	UpdateIndices();
 	UpdateVertices();
+	UpdateVertexColor();
+
 	GLCALL( glEnableClientState(GL_VERTEX_ARRAY) );
 
 	m_initiated = true;
@@ -72,19 +86,30 @@ void MercuryVBO::UpdateIndices()
 {
 	GLCALL( glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferIDs[1]) );
 	GLCALL( glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_indexData.LengthInBytes(), m_indexData.Buffer(), GL_STATIC_DRAW_ARB) );
-	m_bDirtyIndices = 0;
+	m_bDirtyIndices = false;
 }
 
 void MercuryVBO::UpdateVertices()
 {
 	GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[0]) );
 	GLCALL( glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_vertexData.LengthInBytes(), m_vertexData.Buffer(), GL_STATIC_DRAW_ARB) );
-	m_bDirtyVertices = 0;
+	m_bDirtyVertices = false;
+}
+
+void MercuryVBO::UpdateVertexColor()
+{
+	if (m_useVertexColor)
+	{
+		GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferIDs[2]) );
+		GLCALL( glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_vertexColorData.LengthInBytes(), m_vertexColorData.Buffer(), GL_STATIC_DRAW_ARB) );
+	}
+	m_bDirtyVertexColor = false;
 }
 
 void MercuryVBO::AllocateVertexSpace(unsigned int count)
 {
 	m_vertexData.Allocate(count*8);
+	if (m_useVertexColor) m_vertexColorData.Allocate(count*4);
 }
 
 void MercuryVBO::AllocateIndexSpace(unsigned int count)

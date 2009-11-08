@@ -13,7 +13,7 @@ class MercuryVBO : public MercuryAsset
 		static const uint16_t STRIDE = 8;
 		static const uint16_t VERTEX_OFFSET = 5;
 		
-		MercuryVBO( const MString & key, bool bInstanced );
+		MercuryVBO( const MString & key, bool bInstanced, bool useVertexColor = false );
 		virtual ~MercuryVBO();
 		
 		virtual void Render(const MercuryNode* node);
@@ -27,7 +27,10 @@ class MercuryVBO : public MercuryAsset
 
 		const float* GetVertexHandle() const { return m_vertexData.Buffer(); }
 		float* GetVertexHandle() { return m_vertexData.Buffer(); }
-		
+
+		const float* GetVertexColorHandle() const { return m_vertexColorData.Buffer(); }
+		float* GetVertexColorHandle() { return m_vertexColorData.Buffer(); }
+
 		const short unsigned int* GetIndexHandle() const { return m_indexData.Buffer(); }
 		short unsigned int* GetIndexHandle() { return m_indexData.Buffer(); }
 	
@@ -35,22 +38,29 @@ class MercuryVBO : public MercuryAsset
 		
 		static void* m_lastVBOrendered;
 
-		void DirtyVertices() { m_bDirtyVertices = 1; }
-		void DirtyIndices() { m_bDirtyIndices = 1; }
+		inline void DirtyVertices() { m_bDirtyVertices = true; }
+		inline void DirtyVerexColor() { m_bDirtyVertexColor = true; }
+		inline void DirtyIndices() { m_bDirtyIndices = true; }
+
 		GENRTTI( MercuryVBO );
 	private:
 		virtual void InitVBO();
 	
-		unsigned int m_bufferIDs[2];
+		unsigned int m_bufferIDs[3];
 		bool m_initiated;
 	
 		bool m_bDirtyIndices;
 		bool m_bDirtyVertices;
+		bool m_bDirtyVertexColor;
+		
+		bool m_useVertexColor;
 
 		void UpdateVertices();
+		void UpdateVertexColor();
 		void UpdateIndices();
 	protected:
 		AlignedBuffer<float> m_vertexData;
+		AlignedBuffer<float> m_vertexColorData;
 		AlignedBuffer<uint16_t> m_indexData;
 
 		static uint32_t m_vboBatches;
