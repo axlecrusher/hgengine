@@ -21,6 +21,8 @@ MercuryNode::MercuryNode()
 	m_useAlphaPath(false), m_culled(false),
 	m_iPasses( DEFAULT_PASSES ), m_iForcePasses( 0 )
 {
+	m_pGlobalMatrix = &MercuryMatrix::Identity();
+	m_pModelViewMatrix = &MercuryMatrix::Identity();
 }
 
 MercuryNode::~MercuryNode()
@@ -468,7 +470,7 @@ MercuryNode* NodeFactory::Generate(const MString& type)
 }
 
 bool MercuryNode::m_rebuildRenderGraph = false;
-__ThreadLocalStore int g_iViewportID;
+__ThreadLocalStore int g_iViewportID = 0;
 __ThreadLocalStore int g_iPass;
 
 /****************************************************************************
