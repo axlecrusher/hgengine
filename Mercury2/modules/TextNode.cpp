@@ -19,6 +19,8 @@ TextNode::TextNode()
 	m_fRMinX(0),m_fRMinY(0),
 	m_fRMaxX(0),m_fRMaxY(0)
 {
+	//Disabling saving of children... As, we create many temporary children.
+	m_bEnableSaveChildren = false;
 }
 
 void TextNode::Update(float dTime)
@@ -29,16 +31,6 @@ void TextNode::Update(float dTime)
 	}
 
 	MercuryNode::Update( dTime );
-}
-
-void TextNode::SaveToXML( MString & sXMLStream, int depth )
-{
-	sXMLStream += ssprintf( "%*c<node ", depth*3, 32 );
-
-	SaveBaseXMLTag( sXMLStream );
-	SaveToXMLTag( sXMLStream );
-
-	sXMLStream += "/>\n";
 }
 
 void TextNode::SaveToXMLTag( MString & sXMLStream )

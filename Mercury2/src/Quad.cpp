@@ -54,7 +54,8 @@ bool Quad::ChangeKey( const MString & sDescription )
 			m_bFlipV = false;
 			vsDescription.remove( 0 );
 		}
-
+		else
+			break;
 	} while(1);
 
 	if( vsDescription.size() == 0 )

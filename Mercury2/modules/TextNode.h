@@ -45,8 +45,6 @@ public:
 	inline float GetRMaxX() { return m_fRMaxX; }
 	inline float GetRMaxY() { return m_fRMaxY; }
 
-	///Careful, Text node is a virtual node - it doesn't actually recurse into children.
-	virtual void SaveToXML( MString & sXMLStream, int depth = 0 );
 	virtual void SaveToXMLTag( MString & sXMLStream );
 
 	GENRTTI(TextNode);

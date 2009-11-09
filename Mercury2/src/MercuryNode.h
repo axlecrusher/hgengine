@@ -140,6 +140,8 @@ class MercuryNode : public MessageHandler
 		bool m_hidden;		
 		bool m_useAlphaPath;
 		bool m_culled;
+		bool m_bEnableSave;
+		bool m_bEnableSaveChildren;
 		bool IsInAssetList(MercuryAsset* asset) const;
 
 		unsigned short m_iPasses;

@@ -19,6 +19,7 @@ MercuryNode::MercuryNode()
 	:m_parent(NULL), m_prevSibling(NULL),
 	m_nextSibling(NULL), m_hidden(false),
 	m_useAlphaPath(false), m_culled(false),
+	m_bEnableSave(true), m_bEnableSaveChildren(true),
 	m_iPasses( DEFAULT_PASSES ), m_iForcePasses( 0 )
 {
 	m_pGlobalMatrix = &MercuryMatrix::Identity();
@@ -314,31 +315,41 @@ void MercuryNode::LoadFromXML(const XMLNode& node)
 
 void MercuryNode::SaveToXML( MString & sXMLStream, int depth )
 {
+	if( !m_bEnableSave ) return;
 	sXMLStream += ssprintf( "%*c<node ", depth * 3, 32 );
 
 	SaveBaseXMLTag( sXMLStream );
 	SaveToXMLTag( sXMLStream );
 
 	bool bNoChildren = true;
-	if( !m_assets.empty() )
-	{
-		//No children yet (but we have them, so terminate (>) )
-		if( bNoChildren )
-			sXMLStream += ">\n";
-		bNoChildren = false;
 
-		for( std::list< MercuryAssetInstance * >::iterator i = m_assets.begin(); i != m_assets.end(); i++ )
-			(*i)->Asset().SaveToXML( sXMLStream, depth + 1 );
-	}
-
-	if( ! m_children.empty() )
+	if( m_bEnableSaveChildren )
 	{
-		//No children yet (but we have them, so terminate (>) )
-		if( bNoChildren )
-			sXMLStream += ">\n";
-		bNoChildren = false;
-		for( std::list< MercuryNode * >::iterator i = m_children.begin(); i != m_children.end(); i++ )
-			(*i)->SaveToXML( sXMLStream, depth + 1 );
+		if( !m_assets.empty() )
+		{
+			//No children yet (but we have them, so terminate (>) )
+			if( bNoChildren )
+				sXMLStream += ">\n";
+			bNoChildren = false;
+
+			for( std::list< MercuryAssetInstance * >::iterator i = m_assets.begin(); i != m_assets.end(); i++ )
+				(*i)->Asset().SaveToXML( sXMLStream, depth + 1 );
+		}
+
+		if( ! m_children.empty() )
+		{
+			//No children yet (but we have them, so terminate (>) )
+			for( std::list< MercuryNode * >::iterator i = m_children.begin(); i != m_children.end(); i++ )
+			{
+				if( (*i)->m_bEnableSave )
+				{
+					if( bNoChildren )
+						sXMLStream += ">\n";
+					bNoChildren = false;
+					(*i)->SaveToXML( sXMLStream, depth + 1 );
+				}
+			}
+		}
 	}
 
 	if( bNoChildren )

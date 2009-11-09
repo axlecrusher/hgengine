@@ -100,7 +100,6 @@ int main( int argc, char** argv)
 	g_SceneGraphToLoad = "FILE:scenegraph.xml";
 
 	cnset_execute_on_crash( SignalHandler );
-
 	HandleCommandLineParameters( argc, argv );
 
 	//Sound first.
