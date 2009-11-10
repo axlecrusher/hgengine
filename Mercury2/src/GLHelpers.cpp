@@ -177,7 +177,7 @@ void PrintGLFunctionCalls()
 #else
 void PrintGLFunctionCalls()
 {
-	LOG.Write( "No profiling performed on data set because it was configrued off." );
+	LOG.Write( "No profiling performed on data set because it was configured off." );
 }
 #endif
 
