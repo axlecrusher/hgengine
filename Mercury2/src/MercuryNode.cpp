@@ -275,11 +275,11 @@ void MercuryNode::LoadFromXML(const XMLNode& node)
 {
 	SetName( node.Attribute("name") );
 	
-	if ( !node.Attribute("hidden").empty() )
-		m_hidden = StrToBool( node.Attribute("hidden") );
+	LOAD_FROM_XML( "hidden", m_hidden, StrToBool );
+	LOAD_FROM_XML( "alphaPath", m_useAlphaPath, StrToBool );
+	LOAD_FROM_XML( "enableSave", m_bEnableSave, StrToBool );
+	LOAD_FROM_XML( "enableSaveChildren", m_bEnableSaveChildren, StrToBool );
 
-	if ( !node.Attribute("alphaPath").empty() )
-		m_useAlphaPath = StrToBool( node.Attribute("alphaPath") );
 
 	//Not much to do here except run through all the children nodes
 	for (XMLNode child = node.Child(); child.IsValid(); child = child.NextNode())

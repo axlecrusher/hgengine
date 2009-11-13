@@ -17,13 +17,6 @@
 	Each node exists as a single entity in the scene graph.
 **/
 
-/*
-#define GENRTTI(x) static bool IsMyType(const MercuryNode* n) \
-{ const MercuryNode* tn = n; \
-while(tn) { if (typeid(x) == typeid(*tn)) return true; tn = *n; } \
-return false;}
-*/
-
 
 #define STANDARD_PASS	7
 ///Which passes, by default, should be run on all nodes.
@@ -41,8 +34,8 @@ class MercuryNode : public MessageHandler
 		MercuryNode();
 		virtual ~MercuryNode();
 		
-		void AddChild(MercuryNode* n);
-		void RemoveChild(MercuryNode* n);
+		virtual void AddChild(MercuryNode* n);
+		virtual void RemoveChild(MercuryNode* n);
 				
 		inline MercuryNode* Parent() const { return m_parent; }
 		inline MercuryNode* NextSibling() const { return m_nextSibling; }
@@ -128,6 +121,8 @@ class MercuryNode : public MessageHandler
 		const MercuryMatrix & GetModelViewMatrix() const { return m_pModelViewMatrix[g_iViewportID]; }
 
 		inline unsigned short GetPasses() const { return m_iPasses; }
+
+		virtual void SetHidden( bool bHide ) { m_hidden = bHide; }
 	protected:
 		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
 		MercuryNode* m_parent;
@@ -182,6 +177,8 @@ class NodeFactory
 
 static InstanceCounter<NodeFactory> NFcounter("NodeFactory");
 
+
+///Register a new instance of the node with the main Mercury Node Registration System.
 #define REGISTER_NODE_TYPE(class)\
 	MercuryNode* FactoryFunct##class() { return new class(); } \
 	Callback0R<MercuryNode*> factoryclbk##class( FactoryFunct##class ); \
@@ -193,6 +190,17 @@ static InstanceCounter<NodeFactory> NFcounter("NodeFactory");
 		delete t; \
 		return vtable; \
 	 } }
+
+
+///Load a variable from XML (safely) - this loads a variable of type name into variable using the transform function.
+#define LOAD_FROM_XML( name, variable, function ) \
+	if ( !node.Attribute( name ).empty() ) \
+		variable = function ( node.Attribute(name) ); 
+
+///Call callee if attribute name exists in XML - attribute can be transformed using function
+#define LOAD_FROM_XML_CALL( name, callee, function ) \
+	if ( !node.Attribute( name ).empty() ) \
+		callee( function ( node.Attribute(name) ) );
 
 
 #endif
