@@ -13,7 +13,7 @@ REGISTER_ASSET_TYPE(Texture);
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 
 Texture::Texture( const MString & key, bool bInstanced )
-	:MercuryAsset( key, bInstanced ), m_raw(NULL),m_textureID(0),m_bDeleteRaw(true),m_dynamic(false), m_bClamp(true)
+	:MercuryAsset( key, bInstanced ), m_raw(NULL),m_textureID(0),m_bDeleteRaw(true),m_dynamic(false), m_bClamp(true), m_tFilterMode(TF_LINEAR_MIPS)
 {
 	if (!m_initTextureSuccess)
 	{
@@ -65,10 +65,24 @@ void Texture::LoadFromRaw()
 				GL_UNSIGNED_BYTE,
 				m_raw->m_data);
 */
-	GLCALL( gluBuild2DMipmaps( GL_TEXTURE_2D, byteType, m_raw->m_width, m_raw->m_height, byteType, GL_UNSIGNED_BYTE, m_raw->m_data ) );
-	
-	GLCALL( glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST) );
-	GLCALL( glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR) );
+	if( m_tFilterMode == TF_NONE )
+	{
+		GLCALL( glTexImage2D(GL_TEXTURE_2D, 0, byteType, m_raw->m_width, m_raw->m_height, 0, byteType, GL_UNSIGNED_BYTE, m_raw->m_data) );
+		GLCALL( glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST) );
+		GLCALL( glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST) );
+	}
+	else if( m_tFilterMode == TF_LINEAR )
+	{
+		GLCALL( glTexImage2D(GL_TEXTURE_2D, 0, byteType, m_raw->m_width, m_raw->m_height, 0, byteType, GL_UNSIGNED_BYTE, m_raw->m_data) );
+		GLCALL( glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR) );
+		GLCALL( glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR) );
+	}
+	else
+	{
+		GLCALL( gluBuild2DMipmaps( GL_TEXTURE_2D, byteType, m_raw->m_width, m_raw->m_height, byteType, GL_UNSIGNED_BYTE, m_raw->m_data ) );	
+		GLCALL( glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR) );
+		GLCALL( glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR) );
+	}
 
 //	GLCALL( glTexEnvi( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE ) );
 	
@@ -104,10 +118,22 @@ void Texture::PostRender(const MercuryNode* node)
 
 void Texture::LoadFromXML(const XMLNode& node)
 {
-	if ( !node.Attribute("dynamic").empty() )
-		m_dynamic = StrToBool( node.Attribute("dynamic") );
-	if( !node.Attribute( "clamp" ).empty() )
-		m_bClamp = StrToBool( node.Attribute("clamp" ) );
+	LOAD_FROM_XML( "dynamic", m_dynamic, StrToBool );
+	LOAD_FROM_XML( "clamp", m_bClamp, StrToBool );
+	
+	MString filter = node.Attribute( "filter" );
+	if( !filter.empty() )
+	{
+		if( filter == "none" )
+		{
+			m_tFilterMode = TF_NONE;
+		}
+		else if( filter == "linear" )
+		{
+			m_tFilterMode = TF_LINEAR;
+		}
+	}
+
 
 	MString file = node.Attribute("file");
 

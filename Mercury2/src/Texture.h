@@ -4,6 +4,13 @@
 #include <MercuryAsset.h>
 #include <RawImageData.h>
 
+enum TextureFilterMode
+{
+	TF_NONE,
+	TF_LINEAR,
+	TF_LINEAR_MIPS,
+};
+
 class Texture : public MercuryAsset
 {
 	public:
@@ -39,6 +46,8 @@ class Texture : public MercuryAsset
 		static void ApplyActiveTextures(uint16_t stride);
 		static void DisableUnusedTextures();
 
+		void SetFilter( TextureFilterMode t ) { m_tFilterMode = t; }
+
 		GENRTTI( Texture );
 	private:
 		void LoadImagePath(const MString& path);
@@ -65,7 +74,8 @@ class Texture : public MercuryAsset
 		bool m_bDeleteRaw;
 		bool m_dynamic;
 		bool m_bClamp;
-//		MString m_filename;
+		TextureFilterMode m_tFilterMode;
+		
 };
 
 #endif
