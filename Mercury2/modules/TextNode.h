@@ -45,6 +45,12 @@ public:
 	inline float GetRMaxX() { return m_fRMaxX; }
 	inline float GetRMaxY() { return m_fRMaxY; }
 
+	inline float GetShiftX() { return m_fShiftX; }
+	inline float GetShiftY() { return m_fShiftY; }
+	inline void SetShiftX( float fX ) { m_fShiftX = fX; }
+	inline void SetShiftY( float fY ) { m_fShiftY = fY; }
+	inline void SetShiftAbsolute( bool bAbs ) { m_bShiftAbsolute = bAbs; }
+
 	virtual void SaveToXMLTag( MString & sXMLStream );
 
 	GENRTTI(TextNode);
@@ -69,6 +75,11 @@ private:
 	float m_fRMinY;
 	float m_fRMaxX;
 	float m_fRMaxY;
+
+	float m_fShiftX;
+	float m_fShiftY;
+
+	bool m_bShiftAbsolute;
 
 	//Font-class specific stuff
 	class Glyph

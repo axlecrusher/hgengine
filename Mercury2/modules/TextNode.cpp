@@ -17,7 +17,9 @@ TextNode::TextNode()
 	m_fTextWidth( INFINITY ),
 	m_kVBO(0), m_kTEX(0),
 	m_fRMinX(0),m_fRMinY(0),
-	m_fRMaxX(0),m_fRMaxY(0)
+	m_fRMaxX(0),m_fRMaxY(0),
+	m_fShiftX(0),m_fShiftY(0),
+	m_bShiftAbsolute(false)
 {
 	//Disabling saving of children... As, we create many temporary children.
 	m_bEnableSaveChildren = false;
@@ -45,6 +47,13 @@ void TextNode::SaveToXMLTag( MString & sXMLStream )
 	if( m_fTextWidth < 1e9 )
 		sXMLStream += ssprintf( "width=\"%f\" ", m_fTextWidth );
 
+	if( ABS(m_fShiftX) >  1e-9 )
+		sXMLStream += ssprintf( "shiftx=\"%f\" ", m_fShiftX );
+	if( ABS(m_fShiftY) >  1e-9 )
+		sXMLStream += ssprintf( "shifty=\"%f\" ", m_fShiftY );
+	if( m_bShiftAbsolute )
+		sXMLStream += ssprintf( "shiftAbsolute=\"%d\" ", m_bShiftAbsolute );
+
 	sXMLStream += "alignment=\"";
 	switch( m_alignment )
 	{
@@ -69,6 +78,10 @@ void TextNode::SaveToXMLTag( MString & sXMLStream )
 void TextNode::LoadFromXML(const XMLNode& node)
 {
 	MercuryNode::LoadFromXML(node);
+
+	LOAD_FROM_XML( "shiftx", m_fShiftX, StrToFloat );
+	LOAD_FROM_XML( "shifty", m_fShiftY, StrToFloat );
+	LOAD_FROM_XML( "shiftAbsolute", m_bShiftAbsolute, StrToBool );
 
 	if ( !node.Attribute("font").empty() )
 		LoadFont( node.Attribute("font") );
@@ -100,12 +113,14 @@ void TextNode::RenderText()
 
 	if( !m_kTEX )
 	{
-		m_kTEX = MAutoPtr< MercuryAsset >( Texture::LoadFromFile( m_pThisFont->m_sImage ) );
+
+		m_kTEX = ASSETFACTORY.Generate( "Texture", m_pThisFont->m_sImage );
 		if( !m_kTEX )
 		{
 			fprintf( stderr, "Could not create Texture for text.\n" );
 			return;
 		}
+		m_kTEX->ChangeKey( m_pThisFont->m_sImage );
 		AddAsset( m_kTEX );
 	}
 
@@ -294,12 +309,13 @@ void TextNode::RenderText()
 	((MercuryVBO*)m_kVBO.Ptr())->AllocateIndexSpace((unsigned)chars.size()*6);
 	((MercuryVBO*)m_kVBO.Ptr())->AllocateVertexSpace((unsigned)chars.size()*4);
 
+	float * vd = ((MercuryVBO*)m_kVBO.Ptr())->GetVertexHandle();
+	short unsigned int * id = ((MercuryVBO*)m_kVBO.Ptr())->GetIndexHandle();
+
 	for( unsigned i = 0; i < chars.size(); i++ )
 	{
 		DChar & dc = chars[i];
 		Glyph * g = dc.glyph;
-		float * vd = ((MercuryVBO*)m_kVBO.Ptr())->GetVertexHandle();
-		short unsigned int * id = ((MercuryVBO*)m_kVBO.Ptr())->GetIndexHandle();
 
 		float sx = (-g->iox       + dc.xps)*m_fSize;
 		float sy = -(-g->ioy        + dc.yps)*m_fSize;
@@ -357,6 +373,23 @@ void TextNode::RenderText()
 		if( ex > m_fRMaxX ) m_fRMaxX = ex;
 		if( ey < m_fRMinY ) m_fRMinY = ey;
 		if( sx < m_fRMinX ) m_fRMinX = sx;
+	}
+
+	if( ABS(m_fShiftX) > 1e-9 || ABS(m_fShiftY) > 1e-9 || m_bShiftAbsolute )
+	{
+		for( unsigned i = 0; i < chars.size(); i++ )
+		{
+			for( unsigned j = 0; j < 4; j++ )
+			{
+				vd[(i*4+j)*8+5] += ((m_bShiftAbsolute)?-m_fRMinX:0) + m_fShiftX;
+				vd[(i*4+j)*8+6] += ((m_bShiftAbsolute)?-m_fRMinY:0) + m_fShiftY;
+			}
+		}
+
+		m_fRMaxX += ((m_bShiftAbsolute)?-m_fRMinX:0) + m_fShiftX;
+		m_fRMaxY += ((m_bShiftAbsolute)?-m_fRMinY:0) + m_fShiftY;
+		m_fRMinX += ((m_bShiftAbsolute)?-m_fRMinX:0) + m_fShiftX;
+		m_fRMinY += ((m_bShiftAbsolute)?-m_fRMinY:0) + m_fShiftY;
 	}
 
 	((MercuryVBO*)m_kVBO.Ptr())->DirtyVertices();
