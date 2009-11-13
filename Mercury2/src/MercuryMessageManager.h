@@ -35,7 +35,13 @@ class MercuryMessageManager
 {
 	public:
 		MercuryMessageManager() : m_messageQueue( MessageHolder::Compare ) { }
+
+		///Dispatch message whenever the message manager gets control again; delay after now.
 		void PostMessage(const MString& message, MessageData* data, float delay);
+
+		///Immediately dispatch message
+		void BroadcastMessage( const MString & message, MessageData * data );
+
 		void PumpMessages(const uint64_t& currTime);
 		
 		void RegisterForMessage(const MString& message, MessageHandler* ptr,  Delegate d = 0 );
@@ -65,11 +71,11 @@ class MercuryMessageManager
 
 static InstanceCounter<MercuryMessageManager> MMcounter("MessageManager");
 
-#define MESSAGEMAN MercuryMessageManager
-#define REGISTER_MESSAGE_WITH_DELEGATE(x, d) MESSAGEMAN::GetInstance().RegisterForMessage(x, this, (Delegate)d)
-#define REGISTER_FOR_MESSAGE(x) MESSAGEMAN::GetInstance().RegisterForMessage(x, this)
-#define UNREGISTER_FOR_MESSAGE(x) MESSAGEMAN::GetInstance().UnRegisterForMessage(x, this)
-#define POST_MESSAGE(x,data,delay) MESSAGEMAN::GetInstance().PostMessage(x, data, delay)
+#define MESSAGEMAN MercuryMessageManager::GetInstance()
+#define REGISTER_MESSAGE_WITH_DELEGATE(x, d) MESSAGEMAN.RegisterForMessage(x, this, (Delegate)d)
+#define REGISTER_FOR_MESSAGE(x) MESSAGEMAN.RegisterForMessage(x, this)
+#define UNREGISTER_FOR_MESSAGE(x) MESSAGEMAN.UnRegisterForMessage(x, this)
+#define POST_MESSAGE(x,data,delay) MESSAGEMAN.PostMessage(x, data, delay)
 
 #endif
 

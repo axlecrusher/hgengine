@@ -130,7 +130,7 @@ int main( int argc, char** argv)
 	do
 	{
 		timer.Touch();
-		MESSAGEMAN::GetInstance().PumpMessages( timer.MicrosecondsSinceInit() );
+		MESSAGEMAN.PumpMessages( timer.MicrosecondsSinceInit() );
 
 		root->RecursiveUpdate( timer.Age() ); //comment to use threads
 	

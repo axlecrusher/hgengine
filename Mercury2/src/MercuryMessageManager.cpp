@@ -46,6 +46,36 @@ void MercuryMessageManager::PumpMessages(const uint64_t& currTime)
 	}
 }
 
+void MercuryMessageManager::BroadcastMessage( const MString & message, MessageData * data )
+{
+	std::list< MessagePair > recipients;
+	{
+		//copy list first (quick lock)
+		MSemaphoreLock lock(&m_recipientLock);
+		std::list< MessagePair > * r = m_messageRecipients.get( message );
+		if ( r ) recipients = *r;
+	}
+
+	if ( !recipients.empty() )
+	{
+		std::list< MessagePair >::iterator recipient = recipients.begin();
+		for (; recipient != recipients.end(); ++recipient)
+		{
+			MessagePair & mp = *recipient;
+			//Okay, the following lines look horrible.  Reason is we're using
+			//a horrible horrible c++ construct from the anals of pointerdom.
+			//The idea is we're using a delegate.  If we have a delegate, use it.
+			//If you are receiving a delegate, you do not need the message name.
+			//Otherwise, send a standard message through the old interface.
+			if( mp.d )
+				(mp.h->*(mp.d))( *(data) );
+			else
+				mp.h->HandleMessage(message, *(data) );
+		}
+	}
+	
+}
+
 void MercuryMessageManager::UnRegisterForMessage(const MString& message, MessageHandler* ptr)
 {
 	MSemaphoreLock lock(&m_recipientLock);
