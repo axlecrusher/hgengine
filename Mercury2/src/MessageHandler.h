@@ -9,7 +9,7 @@
 { if (!n) return 0; return dynamic_cast<const x*>(n); } \
 static x* Cast(MessageHandler* n) \
 { if (!n) return 0; return dynamic_cast<x*>(n); } \
-virtual const char * GetType() { return #x; }
+virtual const char * GetType() { return #x; } \
 
 class MessageData
 {
@@ -24,6 +24,24 @@ class VertexDataMessage : public MessageData
 			:Vertex(v)
 		{}
 		MercuryVertex Vertex;
+};
+
+class StringDataMessage : public MessageData
+{
+	public:
+		StringDataMessage(const MString& s)
+			:String(s)
+		{}
+		MString String;
+};
+
+class PointerDataMessage : public MessageData
+{
+	public:
+		PointerDataMessage(void * s)
+			:Pointer(s)
+		{}
+		void * Pointer;
 };
 
 class MessageHandler
