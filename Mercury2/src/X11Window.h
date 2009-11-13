@@ -28,6 +28,9 @@ class X11Window : public MercuryWindow
 		GLXContext m_renderCtx;
 		Window m_window;
 		Atom m_wmDeleteMessage;
+
+		int m_iLastMouseX;
+		int m_iLastMouseY;
 };
 
 #endif

@@ -286,7 +286,7 @@ bool X11Window::PumpMessages()
 				su     = ((e->state & X11_MASK(MOUSE_BTN_SCROLL_UP))!=0)   ^ (e->button == MOUSE_BTN_SCROLL_UP);
 				sd     = ((e->state & X11_MASK(MOUSE_BTN_SCROLL_DOWN))!=0) ^ (e->button == MOUSE_BTN_SCROLL_DOWN);
 
-				MouseInput::ProcessMouseInput(0, 0, 
+				MouseInput::ProcessMouseInput(m_iLastMouseX, m_iLastMouseY , 
 					left, right, center, su, sd);
 				break;
 			}
@@ -323,12 +323,16 @@ bool X11Window::PumpMessages()
 					y = m_height/2 - e->y;
 					if (x!=0 || y!=0) //prevent recursive XWarp
 					{
+						m_iLastMouseX = x;
+						m_iLastMouseY = y;
 						MouseInput::ProcessMouseInput(x, y, left, right, center, su, sd);
 						XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
 					}
 				}
 				else
 				{
+					m_iLastMouseX = e->x;
+					m_iLastMouseY = e->y;
 					MouseInput::ProcessMouseInput(e->x, e->y, left, right, center, su, sd);
 				}
 				break;
