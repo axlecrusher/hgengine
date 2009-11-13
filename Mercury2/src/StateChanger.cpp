@@ -78,6 +78,40 @@ public:
 
 REGISTER_STATECHANGE( LightingSwitch );
 
+///State changer for enabling/disabling lighting
+class DepthTest : public StateChange
+{
+public:
+	DepthTest( const MVector< MString > & sParameters ) : StateChange( sParameters )
+	{
+		if( sParameters.size() < 1 )
+		{
+			LOG.Write( ssprintf( "Error: DepthTest state has invalid number of parameters(%d).", sParameters.size() ) );
+			return;
+		}
+
+		bEnable = StrToBool( sParameters[0] );
+	}
+
+	void Stringify( MString & sOut )
+	{
+		sOut = ssprintf( "%f", bEnable );
+	}
+
+	void Activate()
+	{
+		if( bEnable )
+			glEnable( GL_DEPTH_TEST );
+		else
+			glDisable( GL_DEPTH_TEST );
+	}
+
+	STATECHANGE_RTTI( DepthTest );
+	bool bEnable;
+};
+
+REGISTER_STATECHANGE( DepthTest );
+
 
 //////////////////////////////////////STATE CHANGE CHUNK//////////////////////////////////////
 StateChangeRegister * StateChangeRegister::m_Instance;
