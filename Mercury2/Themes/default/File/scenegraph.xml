@@ -1,6 +1,8 @@
 <SceneGraph name="root">
 	<!--We have to put all states that are the generic state up here.  This way, the states will fall back to these -->
 	<asset type="StateChanger" file="ColorChange:1,1,1,1" />
+	<asset type="StateChanger" file="DepthTest:1" />
+	<asset type="StateChanger" file="LightingSwitch:0" />
 	<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100" name="vp">
 		<node type="cameranode" movx="0" movz="0" movy="0" rotx="0" roty="0" rotz="0" name="camera">
 			<node type="transformnode" movz="-5"  movy=".2">
@@ -51,4 +53,11 @@
 		<asset type="quad"/>
 	</node>
 	-->
+	<node type="orthographic" left="0" right="640" top="480" bottom="0" near="1" far="-1" name="Ortho" >
+		<asset type="StateChanger" file="LightingSwitch:0" />
+		<asset type="StateChanger" file="DepthTest:0" />
+		<node type="Cu2Root" width="640" height="480" hidden="true" >
+			<node type="Cu2Button" text="hello" font="FONT:FreeSans.hgfont" size=".25" alignment="CENTER" x="10" y="450" />
+		</node>
+	</node>
 </SceneGraph>
