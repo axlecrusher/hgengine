@@ -57,7 +57,10 @@
 		<asset type="StateChanger" file="LightingSwitch:0" />
 		<asset type="StateChanger" file="DepthTest:0" />
 		<node type="Cu2Root" width="640" height="480" hidden="true" >
-			<node type="Cu2Button" text="hello" font="FONT:FreeSans.hgfont" size=".25" alignment="CENTER" x="10" y="450" />
+			<node type="Cu2Button" text="hello" font="FONT:FreeSans.hgfont" size=".25" alignment="CENTER" x="10" y="450" name="Button" />
+			<node type="Cu2Dialog" text="T00" font="FONT:FreeSans.hgfont" size=".25" x="200" y="40" name="Dialog" >
+				<node type="Cu2Button" text="hel0" font="FONT:FreeSans.hgfont" size=".25" alignment="CENTER" x="10" y="40" />
+			</node>
 		</node>
 	</node>
 </SceneGraph>

@@ -321,7 +321,10 @@ void Cu2Button::LoadFromXML(const XMLNode& node)
 
 	if( m_pText )
 	{
-		m_pText->LoadFromXML( node );
+		m_pText->SetAlignment( TextNode::LEFT );
+		m_pText->LoadFont( node.Attribute("font") );
+		m_pText->SetSize( StrToFloat( node.Attribute("size") ) );
+		SetText( m_sText );
 		m_pText->SetShiftAbsolute( true );
 		m_pText->SetShiftX( 5 );
 		m_pText->SetShiftY( 5 );
