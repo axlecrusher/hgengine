@@ -41,6 +41,7 @@ class MercuryNode : public MessageHandler
 		inline MercuryNode* NextSibling() const { return m_nextSibling; }
 		inline MercuryNode* PrevSibling() const { return m_prevSibling; }
 		MercuryNode* FirstChild() const;
+		MercuryNode* LastChild() const;
 		MercuryNode* NextChild(const MercuryNode* n) const; ///Finds the next child in regards to n
 		MercuryNode* PrevChild(const MercuryNode* n) const; ///Finds the previous child in regards to n
 		const std::list< MercuryNode* >& Children() const { return m_children; }

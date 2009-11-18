@@ -114,6 +114,15 @@ MercuryNode* MercuryNode::FirstChild() const
 	return NULL;
 }
 
+MercuryNode* MercuryNode::LastChild() const
+{
+	if( !m_children.empty() )
+		return m_children.back();
+	else
+		return NULL;
+}
+
+
 MercuryNode* MercuryNode::NextChild(const MercuryNode* child) const
 {
 	if (child==NULL) return NULL;
