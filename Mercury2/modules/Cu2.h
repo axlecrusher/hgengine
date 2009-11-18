@@ -37,7 +37,7 @@ public:
 
 	///Push raw mouse event.  Generally, this calls MouseAction, and is only called internally.
 	///You may override this if you want to take actions that require mouse motion.
-	virtual bool MouseMotion( int x, int y, unsigned char iCurrentButtonMask );
+	virtual bool MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask );
 
 	///Called when a key is pressed - down the focus line.
 	virtual void GetKeypress( int key, bool bDown, bool bRepeat );
@@ -53,6 +53,12 @@ public:
 	///Also handle tab stopping correctly.
 	virtual void SetHidden( bool bHide );
 
+	///Does this node have focus?
+	bool HasFocus();
+
+	///Make this object get focus.
+	void RaiseFocus();
+
 	///Progress to the next tab.
 	Cu2Element * NextTab();
 
@@ -67,12 +73,6 @@ public:
 
 	///Propogate Release (You should not override this or modify it)
 	void PropogateReleaseOut( int x, int y, int iWhichButton );
-
-	///Get current button mask
-	inline unsigned char GetCurrentButtonMask() { return m_iButtonMask; }
-
-	///Get if current button is down
-	inline bool IsButtonDown( char iWhichButton ) { return (m_iButtonMask)&(1<<iWhichButton); }
 
 	///Set Position
 	void SetXY( float fX, float fY ) { m_fX = fX; m_fY = fY; SetPosition( MercuryVertex( m_fX, m_fY, 0. ) ); }
@@ -102,9 +102,6 @@ protected:
 
 	bool m_bCanTabStop;
 
-	///Mask of currently depressed buttons.
-	unsigned char m_iButtonMask;
-
 	bool m_bWasMouseInThisFrame;
 
 	float m_fX, m_fY, m_fW, m_fH;
@@ -133,6 +130,7 @@ public:
 	GENRTTI( Cu2Root );
 private:
 	static Cu2Root * g_pCurrentInstance;
+	unsigned char m_iLastButtonMask;
 };
 
 class TextNode;
@@ -145,7 +143,7 @@ public:
 
 	virtual void MouseAction( int x, int y, Cu2Action c, int iWhichButton );
 	///This function gets called whenever the button is clicked, you should abstract from this.
-	virtual void Click();
+	virtual void Click( int x, int y );
 
 	virtual void LoadFromXML(const XMLNode& node);
 	virtual void SaveToXMLTag( MString & sXMLStream );
@@ -166,6 +164,29 @@ private:
 	bool m_bAutoSize;
 	bool m_bDown;
 	TextNode * m_pText;
+};
+
+class Cu2Dialog : public Cu2Element
+{
+public:
+	Cu2Dialog();
+	GENRTTI( Cu2Dialog );
+
+	TextNode * GetTextNodeHandle() { return m_pTitle; }
+
+	virtual void LoadFromXML(const XMLNode& node);
+	virtual void SaveToXMLTag( MString & sXMLStream );
+	virtual void Render( const MercuryMatrix& m );
+	virtual bool MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask );
+	virtual void MouseAction( int x, int y, Cu2Action c, int iWhichButton );
+
+	void SetText( const MString & sText );
+
+private:
+	bool m_bDragging;
+	int m_iClickX, m_iClickY;
+	TextNode * m_pTitle;
+	MString m_sTitle;
 };
 
 #endif

@@ -10,7 +10,7 @@
 ///////////////////////////////////////COPPER 2 ELEMENT///////////////////////////////////////
 
 Cu2Element::Cu2Element() : TransformNode(),
-	m_pFocusNode(0), m_bCanTabStop( false ), m_iButtonMask(0), m_bWasMouseInThisFrame(0), 
+	m_pFocusNode(0), m_bCanTabStop( true ), m_bWasMouseInThisFrame(0), 
 	m_fX(0), m_fY(0), m_fW(100), m_fH(100),
 	m_fOrigX(0), m_fOrigY(0), m_fOrigW(100), m_fOrigH(100)
 {
@@ -45,7 +45,7 @@ void Cu2Element::ResetAttributes()
 	SetSize( m_fOrigW, m_fOrigH );
 }
 
-bool Cu2Element::MouseMotion( int x, int y, unsigned char iCurrentButtonMask )
+bool Cu2Element::MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask )
 {
 	if(  IsHidden() )
 		return false;
@@ -62,13 +62,12 @@ bool Cu2Element::MouseMotion( int x, int y, unsigned char iCurrentButtonMask )
 	for( unsigned button = 0; button < 8; button++ )
 	{
 		unsigned char Mask = 1<<button;
-		bool bWasDown = m_iButtonMask & Mask;
+		bool bWasDown = iLastButtonMask & Mask;
 		bool bIsDown = iCurrentButtonMask & Mask;
 		if( bWasDown && !bIsDown )
 		{
 			//XXX: When we release outside - we want to propogate that information, and that can be tricky..
 			//So, instead, we choose to propogate that elsewhere...
-			m_iButtonMask &= ~Mask;
 			if( bIsInside )
 				MouseAction( x, y, RELEASE_IN, button );
 			else
@@ -76,18 +75,19 @@ bool Cu2Element::MouseMotion( int x, int y, unsigned char iCurrentButtonMask )
 		}
 		else if( !bWasDown && bIsDown && bIsInside )
 		{
-			m_iButtonMask |= Mask;
 			MouseAction( x, y, PRESS_IN, button );
 		}
 	}
 
 	if( bIsInside )
-		for( MercuryNode* send = FirstChild(); send; send = NextChild( send ) )
+		for( MercuryNode* send = LastChild(); send; send = PrevChild( send ) )
 		{
 			Cu2Element * sa = dynamic_cast<Cu2Element*>(send);
 			if( sa )
 			{
-				sa->MouseMotion( x - int(sa->m_fX), y - int(sa->m_fY), iCurrentButtonMask );
+				//Break on the first one that is a hit, that way we don't pass mouse info to buttons below.
+				if( sa->MouseMotion( x - int(sa->m_fX), y - int(sa->m_fY), iCurrentButtonMask, iLastButtonMask ) )
+					return bIsInside;
 			}
 		}
 
@@ -108,7 +108,8 @@ void Cu2Element::PropogateReleaseOut( int x, int y, int iWhichButton )
 
 void Cu2Element::MouseAction( int x, int y, Cu2Action c, int iWhichButton )
 {
-	//nothing
+	if( c == PRESS_IN )
+		RaiseFocus();
 }
 
 void Cu2Element::AddChild(MercuryNode* n)
@@ -154,6 +155,39 @@ Cu2Element * Cu2Element::NextTab()
 	return 0;
 }
 
+bool Cu2Element::HasFocus()
+{
+	Cu2Element * sa = dynamic_cast<Cu2Element*>(Parent());
+
+	if( sa && sa->m_pFocusNode == this )
+		return true;
+	else
+		return false;
+}
+
+void Cu2Element::RaiseFocus()
+{
+	Cu2Element * ca = dynamic_cast<Cu2Element*>(Parent());
+
+	if( ca )
+	{
+		bool bCouldTabStop = IsEnableTabStop( );
+
+		//Remove this node from wherever it is
+		ca->RemoveChild( this );
+
+		//This is reset by RemoveChild - so we have to update.
+		SetEnableTabStop( bCouldTabStop );
+
+		//Make it so it draws last.
+		ca->AddChild( this );
+
+		ca->m_pFocusNode = this;
+
+		ca->RaiseFocus();
+	}
+}
+
 void Cu2Element::SetHidden( bool bHide )
 {
 	MercuryNode::SetHidden( bHide );
@@ -184,12 +218,14 @@ void Cu2Element::UpdateTab()
 	for( MercuryNode* send = FirstChild(); send; send = NextChild( send ) )
 	{
 		Cu2Element * sa = dynamic_cast<Cu2Element*>(send);
+
 		if( sa && sa->IsEnableTabStop() && !sa->IsHidden() )
 		{
 			m_pFocusNode = sa;
 			return;
 		}
 	}
+
 	m_pFocusNode = 0;
 }
 
@@ -242,8 +278,10 @@ void Cu2Root::HandleMouseInput(const MessageData& data)
 	}
 	else
 	{
-		MouseMotion( m.dx, MercuryWindow::GetCurrentWindow()->Height()-m.dy, m.buttons.data );
+		MouseMotion( m.dx, MercuryWindow::GetCurrentWindow()->Height()-m.dy, m.buttons.data, m_iLastButtonMask );
 	}
+
+	m_iLastButtonMask = m.buttons.data;
 }
 
 void Cu2Root::HandleKeyboardInput(const MessageData& data)
@@ -312,7 +350,7 @@ void Cu2Button::MouseAction( int x, int y, Cu2Action c, int iWhichButton )
 	if( c == RELEASE_IN )
 	{
 		if( m_bDown )
-			Click();
+			Click( x, y );
 		m_bDown = false;
 	}
 
@@ -320,6 +358,8 @@ void Cu2Button::MouseAction( int x, int y, Cu2Action c, int iWhichButton )
 	{
 		m_bDown = false;
 	}
+
+	Cu2Element::MouseAction( x, y, c, iWhichButton );
 }
 
 void Cu2Button::Refresh()
@@ -336,11 +376,10 @@ void Cu2Button::Refresh()
 	if( m_bAutoSize )
 	{
 		SetSize( m_pText->GetRMaxX() + 8, m_pText->GetRMaxY() + 8 );
-		printf( "Size: %f %f\n", m_pText->GetRMaxX() + 8, m_pText->GetRMaxY() + 8 );
 	}
 }
 
-void Cu2Button::Click()
+void Cu2Button::Click( int x, int y )
 {
 	if( m_sMessageToSend.length() )
 		MESSAGEMAN.BroadcastMessage( m_sMessageToSend, new PointerDataMessage( this ) );
@@ -388,6 +427,127 @@ void Cu2Button::Render( const MercuryMatrix& m )
 }
 
 REGISTER_NODE_TYPE(Cu2Button);
+
+///////////////////////////////////////COPPER 2 DIALOG///////////////////////////////////////
+
+
+Cu2Dialog::Cu2Dialog() : Cu2Element(), m_bDragging( false ), m_iClickX( 0 ), m_iClickY( 0 )
+{
+	m_sTitle = "(not set)";
+	m_pTitle = (TextNode*)NODEFACTORY.Generate( "TextNode" );
+	AddChild( m_pTitle );
+}
+
+void Cu2Dialog::LoadFromXML(const XMLNode& node)
+{
+	LOAD_FROM_XML( "text", m_sTitle,  );
+
+	if( m_pTitle )
+	{
+		m_pTitle->SetAlignment( TextNode::LEFT );
+		m_pTitle->LoadFont( node.Attribute("font") );
+		m_pTitle->SetSize( StrToFloat( node.Attribute("size") ) );
+		m_pTitle->SetShiftAbsolute( true );
+		m_pTitle->SetShiftX( 3 );
+		m_pTitle->SetShiftY( GetH() - 18 );
+		SetText( m_sTitle );
+	}
+	Cu2Element::LoadFromXML( node );
+}
+
+void Cu2Dialog::SaveToXMLTag( MString & sXMLStream )
+{
+	if( !m_pTitle )
+		m_pTitle->SaveToXMLTag( sXMLStream );
+
+	Cu2Element::SaveToXMLTag( sXMLStream );
+}
+
+void Cu2Dialog::Render( const MercuryMatrix& m )
+{
+	glDisable( GL_TEXTURE_2D );
+	glColor3f( 0.5, 0.5, 0.5 );
+
+	glBegin( GL_QUADS );
+	glVertex2f( 1., 1. );
+	glVertex2f( GetW()-1, 1 );
+	glVertex2f( GetW()-1, GetH()-1);
+	glVertex2f( 1., GetH()-1 );
+	glEnd();
+
+	glLineWidth( 2 );
+	glBegin( GL_LINES );
+	glColor3f( 0.7, 0.7, 0.7 );
+	glVertex2f( 1, 1 );
+	glVertex2f( 1, GetH()-1 );
+	glVertex2f( 1, GetH()-1 );
+	glVertex2f( GetW()-2, GetH()-1 );
+	glColor3f( 0.1, 0.1, 0.1 );
+	glVertex2f( GetW()-1, GetH()-2 );
+	glVertex2f( GetW()-1, 1 );
+	glVertex2f( GetW()-1, 1 );
+	glVertex2f( 1, 1 );
+	glEnd();
+
+	if( HasFocus() )
+		glColor3f( 0., 0., 1. );
+	else
+		glColor3f( .3, .3, .3 );
+
+	glBegin( GL_QUADS );
+	glVertex2f( 2., GetH()-18 );
+	glVertex2f( GetW()-2, GetH()-18 );
+	glVertex2f( GetW()-2, GetH()-3 );
+	glVertex2f( 2., GetH()-3 );
+	glEnd();
+
+	glEnable( GL_TEXTURE_2D );
+
+	glColor3f( 1., 1., 1. );
+
+	TransformNode::Render( m );
+}
+
+void Cu2Dialog::MouseAction( int x, int y, Cu2Action c, int iWhichButton )
+{
+	if( y > GetH() - 14 && c == PRESS_IN )
+	{
+		m_bDragging = true;
+		m_iClickX = x;
+		m_iClickY = y;
+	}
+
+	if( c == RELEASE_IN || c == RELEASE_OUT )
+		m_bDragging = false;
+
+
+	Cu2Element::MouseAction( x, y, c, iWhichButton );
+}
+
+bool Cu2Dialog::MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask )
+{
+	if( m_bDragging )
+	{
+		float ix = GetX() - ( m_iClickX - x );
+		float iy = GetY() - ( m_iClickY - y );
+
+		SetXY( ix, iy );
+	}
+	return Cu2Element::MouseMotion( x, y, iCurrentButtonMask, iLastButtonMask );
+}
+
+void Cu2Dialog::SetText( const MString & sText )
+{
+	m_sTitle = sText;
+	if( m_pTitle )
+	{
+		m_pTitle->SetText( m_sTitle );
+		m_pTitle->RenderText();
+	}
+}
+
+
+REGISTER_NODE_TYPE(Cu2Dialog);
 
 
 /****************************************************************************
