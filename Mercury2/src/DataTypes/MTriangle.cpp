@@ -4,6 +4,9 @@
 
 MTriangle::MTriangle()
 {
+	m_verts[0] = 0;
+	m_verts[1] = 0;
+	m_verts[2] = 0;
 }
 
 MTriangle::MTriangle(const MercuryVertex a, const MercuryVertex& b, const MercuryVertex& c)
