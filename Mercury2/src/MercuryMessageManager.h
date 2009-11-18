@@ -40,7 +40,7 @@ class MercuryMessageManager
 		void PostMessage(const MString& message, MessageData* data, float delay);
 
 		///Immediately dispatch message
-		void BroadcastMessage( const MString & message, MessageData * data );
+		void BroadcastMessage( const MString & message, const MessageData * data );
 
 		void PumpMessages(const uint64_t& currTime);
 		

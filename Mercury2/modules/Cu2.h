@@ -37,7 +37,10 @@ public:
 
 	///Push raw mouse event.  Generally, this calls MouseAction, and is only called internally.
 	///You may override this if you want to take actions that require mouse motion.
-	virtual bool MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask );
+	///Return value 2: Has hit a child.
+	///Return value 1: Has hit self.
+	///Return value 0: Has missed self.
+	virtual int MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask );
 
 	///Called when a key is pressed - down the focus line.
 	virtual void GetKeypress( int key, bool bDown, bool bRepeat );
@@ -155,11 +158,14 @@ public:
 	void SetAutoSize( bool bAutoSize ) { m_bAutoSize = bAutoSize; Refresh(); }
 	void Refresh();
 
+	MString & Payload() { return m_sValueToSend; }
+
 	TextNode * GetTextNodeHandle() { return m_pText; }
 
 	GENRTTI( Cu2Button );
 private:
 	MString m_sMessageToSend;
+	MString m_sValueToSend;
 	MString m_sText;
 	bool m_bAutoSize;
 	bool m_bDown;
@@ -177,7 +183,7 @@ public:
 	virtual void LoadFromXML(const XMLNode& node);
 	virtual void SaveToXMLTag( MString & sXMLStream );
 	virtual void Render( const MercuryMatrix& m );
-	virtual bool MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask );
+	virtual int MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask );
 	virtual void MouseAction( int x, int y, Cu2Action c, int iWhichButton );
 
 	void SetText( const MString & sText );

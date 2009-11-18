@@ -46,7 +46,7 @@ void MercuryMessageManager::PumpMessages(const uint64_t& currTime)
 	}
 }
 
-void MercuryMessageManager::BroadcastMessage( const MString & message, MessageData * data )
+void MercuryMessageManager::BroadcastMessage( const MString & message, const MessageData * data )
 {
 	std::list< MessagePair > recipients;
 	{

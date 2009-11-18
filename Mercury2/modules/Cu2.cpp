@@ -45,7 +45,7 @@ void Cu2Element::ResetAttributes()
 	SetSize( m_fOrigW, m_fOrigH );
 }
 
-bool Cu2Element::MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask )
+int Cu2Element::MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask )
 {
 	if(  IsHidden() )
 		return false;
@@ -87,11 +87,11 @@ bool Cu2Element::MouseMotion( int x, int y, unsigned char iCurrentButtonMask, un
 			{
 				//Break on the first one that is a hit, that way we don't pass mouse info to buttons below.
 				if( sa->MouseMotion( x - int(sa->m_fX), y - int(sa->m_fY), iCurrentButtonMask, iLastButtonMask ) )
-					return bIsInside;
+					return 2;
 			}
 		}
 
-	return bIsInside;
+	return bIsInside?1:0;
 }
 
 void Cu2Element::PropogateReleaseOut( int x, int y, int iWhichButton )
@@ -278,7 +278,10 @@ void Cu2Root::HandleMouseInput(const MessageData& data)
 	}
 	else
 	{
-		MouseMotion( m.dx, MercuryWindow::GetCurrentWindow()->Height()-m.dy, m.buttons.data, m_iLastButtonMask );
+		if( MouseMotion( m.dx, MercuryWindow::GetCurrentWindow()->Height()-m.dy, m.buttons.data, m_iLastButtonMask ) != 2 )
+		{
+			MESSAGEMAN.BroadcastMessage( "UIMissMouse", &data );
+		}
 	}
 
 	m_iLastButtonMask = m.buttons.data;
@@ -318,6 +321,7 @@ void Cu2Button::LoadFromXML(const XMLNode& node)
 	LOAD_FROM_XML( "clickMessage", m_sMessageToSend, );
 	LOAD_FROM_XML( "text", m_sText,  );
 	LOAD_FROM_XML( "autoSize",  m_bAutoSize, StrToBool );
+	LOAD_FROM_XML( "clickPayload", m_sValueToSend, );
 
 	if( m_pText )
 	{
@@ -338,6 +342,7 @@ void Cu2Button::LoadFromXML(const XMLNode& node)
 void Cu2Button::SaveToXMLTag( MString & sXMLStream )
 {
 	if( m_sMessageToSend.length() ) sXMLStream += ssprintf( "clickMessage=\"%s\" ", m_sMessageToSend.c_str() );
+	if( m_sValueToSend.length() ) sXMLStream += ssprintf( "clickPayload=\"%s\" ", m_sValueToSend.c_str() );
 	if( m_bAutoSize ) sXMLStream += ssprintf( "autoSize=\"%d\" ", m_bAutoSize );
 
 	if( !m_pText )
@@ -498,8 +503,8 @@ void Cu2Dialog::Render( const MercuryMatrix& m )
 		glColor3f( .3, .3, .3 );
 
 	glBegin( GL_QUADS );
-	glVertex2f( 2., GetH()-18 );
-	glVertex2f( GetW()-2, GetH()-18 );
+	glVertex2f( 2., GetH()-19 );
+	glVertex2f( GetW()-2, GetH()-19 );
 	glVertex2f( GetW()-2, GetH()-3 );
 	glVertex2f( 2., GetH()-3 );
 	glEnd();
@@ -527,14 +532,18 @@ void Cu2Dialog::MouseAction( int x, int y, Cu2Action c, int iWhichButton )
 	Cu2Element::MouseAction( x, y, c, iWhichButton );
 }
 
-bool Cu2Dialog::MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask )
+int Cu2Dialog::MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask )
 {
 	if( m_bDragging )
 	{
 		float ix = GetX() - ( m_iClickX - x );
 		float iy = GetY() - ( m_iClickY - y );
 
+		int dx = x - m_iClickX;
+		int dy = y - m_iClickY;
+
 		SetXY( ix, iy );
+		return Cu2Element::MouseMotion( x - dx, y - dy, iCurrentButtonMask, iLastButtonMask );
 	}
 	return Cu2Element::MouseMotion( x, y, iCurrentButtonMask, iLastButtonMask );
 }
