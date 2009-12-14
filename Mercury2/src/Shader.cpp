@@ -160,7 +160,7 @@ bool Shader::LoadShader( )
 		f2->Read( Buffer, i );
 		f2->Close();
 		Buffer[i] = '\0';
-		LOG.Write("Compiling: %s"+s2);
+		LOG.Write("Compiling: "+s2);
 		if( !LoadShaderVert( Buffer ) )
 		{
 			if( f3 )
@@ -178,7 +178,7 @@ bool Shader::LoadShader( )
 		f3->Read( Buffer, i );
 		f3->Close();
 		Buffer[i] = '\0';
-		LOG.Write("Compiling: %s"+s3);
+		LOG.Write("Compiling: "+s3);
 		if( !LoadShaderGeom( Buffer ) )
 		{
 			free( Buffer );
@@ -485,11 +485,13 @@ void Shader::SetAttributeInternal(const MString& name, const ShaderAttribute& x)
 				GLCALL( glUniform1iARB( location, x.value.iInt ) );
 				break;
 			case ShaderAttribute::TYPE_FLOAT:
+				GLCALL( glUniform1fARB( location, x.value.fFloat ) );
+				break;
 			case ShaderAttribute::TYPE_FLOATV4:
 				GLCALL( glUniform4fvARB( location, 1, &x.value.fFloatV4[0] ) );
 				break;
 			case ShaderAttribute::TYPE_MATRIX:
-				GLCALL( glUniformMatrix4fvARB(location, 1, 1, x.value.matrix) ); //transpase too
+				GLCALL( glUniformMatrix4fvARB(location, 1, 1, x.value.matrix) ); //transpose too
 				break;
 			case ShaderAttribute::TYPE_INT4:
 				GLCALL( glUniform4ivARB( location, 1, x.value.iInts ) );

@@ -34,6 +34,8 @@ class MercuryNode : public MessageHandler
 		MercuryNode();
 		virtual ~MercuryNode();
 		
+		virtual void Init() {};
+		
 		virtual void AddChild(MercuryNode* n);
 		virtual void RemoveChild(MercuryNode* n);
 				

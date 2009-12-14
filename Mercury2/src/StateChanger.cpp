@@ -112,6 +112,35 @@ public:
 
 REGISTER_STATECHANGE( DepthTest );
 
+class DepthWrite : public StateChange
+{
+public:
+	DepthWrite( const MVector< MString > & sParameters ) : StateChange( sParameters )
+	{
+		if( sParameters.size() < 1 )
+		{
+			LOG.Write( ssprintf( "Error: DepthWrite state has invalid number of parameters(%d).", sParameters.size() ) );
+			return;
+		}
+
+		bEnable = StrToBool( sParameters[0] );
+	}
+
+	void Stringify( MString & sOut )
+	{
+		sOut = ssprintf( "%f", bEnable );
+	}
+
+	void Activate()
+	{
+		glDepthMask( bEnable );
+	}
+
+	STATECHANGE_RTTI( DepthWrite );
+	bool bEnable;
+};
+
+REGISTER_STATECHANGE( DepthWrite );
 
 //////////////////////////////////////STATE CHANGE CHUNK//////////////////////////////////////
 StateChangeRegister * StateChangeRegister::m_Instance;
