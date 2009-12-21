@@ -1,5 +1,6 @@
 #include <Win32Window.h>
 #include <GLHeaders.h>
+#include <MercuryInput.h>
 
 LRESULT CALLBACK WindowCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam); //Window callback
 Callback0R< MercuryWindow* > MercuryWindow::genWindowClbk(Win32Window::GenWin32Window); //Register window generation callback
@@ -197,9 +198,18 @@ bool Win32Window::PumpMessages()
 		case WM_QUIT:
 			return false;
 		case WM_KEYDOWN:
-			printf( "%d\n", message.lParam>>16 );
+			{
+				if ( IsKeyRepeat(message.lParam) ) break;
+//				printf( "%d\n", message.lParam>>16 );
+				KeyboardInput::ProcessKeyInput( ConvertScancode( message.lParam ), true, false);
+			}
 			break;
 		case WM_KEYUP:
+			{
+				if ( IsKeyRepeat(message.lParam) ) break;
+//				printf( "%d\n", message.lParam>>16 );
+				KeyboardInput::ProcessKeyInput( ConvertScancode( message.lParam ), false, false);
+			}
 			break;
 		case WM_MOUSEMOVE:
 			break;
@@ -236,6 +246,118 @@ void Win32Window::Clear()
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 }
 
+bool Win32Window::IsKeyRepeat(uint32_t c)
+{
+//	printf("count %d\n", (c&65535));
+	return (c&65535) > 1;
+}
+
+short Win32Window::ConvertScancode( uint32_t scanin )
+{
+//	Specifies the scan code. The value depends on the OEM.
+	scanin = (scanin>>16)&511;
+	switch( scanin )
+	{
+	case 1: return 27;      //esc
+	case 0: return '0';
+	case 41: return 97;     //`
+	case 14: return 8;      //backspace
+	case 87: return 292;    //F11
+	case 88: return 293;    //F12
+	case 12: return 45;     //-
+	case 13: return 61;     //=
+	case 43: return 92;     //backslash
+	case 15: return 9;      //tab
+	case 58: return 15;     //Caps lock
+	case 42: return 160;    //[lshift]
+	case 54: return 161;    //[rshift]
+
+	case 30: return 'a';
+	case 48: return 'b';
+	case 46: return 'c';
+	case 32: return 'd';
+	case 18: return 'e';
+	case 33: return 'f';
+	case 34: return 'g';
+	case 35: return 'h';
+	case 23: return 'i';
+	case 36: return 'j';
+	case 37: return 'k';	
+	case 38: return 'l';	
+	case 50: return 'm';	
+	case 49: return 'n';	
+	case 24: return 'o';	
+	case 25: return 'p';	
+	case 16: return 'q';	
+	case 19: return 'r';	
+	case 31: return 's';	
+	case 20: return 't';	
+	case 22: return 'u';	
+	case 47: return 'v';	
+	case 17: return 'w';	
+	case 45: return 'x';	
+	case 21: return 'y';	
+	case 44: return 'z';	
+
+	case 39: return 59;	//;
+	case 40: return 39;	//'
+	case 51: return 44;	//,
+	case 52: return 46;	//.
+	case 53: return 47;	// /
+
+	case 328: return 273;	//arrow keys: up
+	case 331: return 276;	//arrow keys: left
+	case 333: return 275;	//arrow keys: right
+	case 336: return 274;	//arrow keys: down
+//STOPPED HERE
+	case 29: return 162;	//left ctrl
+	case 347: return 91;	//left super (aka win)
+	case 64: return 164;	//left alt
+	case 57: return 32;	//space bar
+	case 108: return 165;	//right alt
+	case 134: return 91;	//right super (aka win)
+	case 349: return 93;	//menu
+	case 285: return 268;	//right control
+	
+	case 107: return 316;	//Print Screen
+	//case 78: scroll lock
+	case 127: return 19;	//Pause
+	case 118: return 277;	//Insert
+	case 110: return 278;	//Home
+	case 112: return 280;	//Page Up
+	case 119: return 127;	//Delete
+	case 115: return 279;	//End
+	case 117: return 181;	//Page Down
+	
+	//case 77: Num Lock (not mapped)
+	case 106: return 267;	//Keypad /
+	case 63: return 268;	//Keypad *
+	case 82: return 269;	//Keypad -
+	case 79: return 263;	//Keypad 7
+	case 80: return 264;	//Keypad 8
+	case 81: return 265;	//Keypad 9
+	case 86: return 270;	//Keypad +
+	case 83: return 260;	//Keypad 4
+	case 84: return 261;	//Keypad 5
+	case 85: return 262;	//Keypad 6
+//	case 87: return 257;	//Keypad 1
+//	case 88: return 258;	//Keypad 2
+	case 89: return 259;	//Keypad 3
+//	case 36:		//Enter
+	case 104: return 13;	//Keypad enter
+	case 90: return 260;	//Keypad 0
+	case 91: return 266;	//Keypad .
+	
+	default:
+		// numbers
+		if( scanin >= 10 && scanin <= 18 )
+			return scanin + ( (short)'1' - 10 );
+		// f1 -- f10
+		if( scanin >= 67 && scanin <= 76 )
+			return scanin + ( 282 - 67 );
+		return scanin;
+	}
+}
 
 LRESULT CALLBACK WindowCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
