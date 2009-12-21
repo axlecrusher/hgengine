@@ -1,12 +1,11 @@
 #ifndef GLHEADERS_H
 #define GLHEADERS_H
 
-#include <configuration.h>
-
 #ifdef WIN32
 #include <windows.h>
 #else
 #define GL_GLEXT_PROTOTYPES
+#include <configuration.h>
 #endif
 
 #include <GL/gl.h>

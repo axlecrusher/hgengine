@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;src;src/include;src/include/png;src/include/zlib"
+				AdditionalIncludeDirectories="modules;.;src;src/include;src/include/png;src/include/zlib;src/DataStructures;src/DataTypes"
 				PreprocessorDefinitions="HGENGINE;WIN32;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -172,213 +172,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\src\AlignedBuffer.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\BMPLoader.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\src\BoundingBox.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Camera.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Frustum.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\FullscreenQuad.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\GLHelpers.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\HGMDLMesh.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\HGMDLModel.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ImageLoader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Mercury2.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryAsset.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryBacktrace.c"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryCrash.c"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryFBO.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryFile.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryFileDriverDirect.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryFileDriverMem.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryFileDriverPacked.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryFileDriverZipped.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryInput.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryMath.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryMatrix.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryMessageManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryNamedResource.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryNode.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryPlane.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryPrefs.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryString.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryTheme.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryThreads.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryTimer.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryUtil.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryVBO.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryVertex.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MercuryWindow.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\ModuleManager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MQuaternion.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\MSemaphore.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\OGLExtensions.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\PNGLoader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Quad.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RawImageData.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\RenderGraph.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Shader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Texture.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\TransformNode.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\UpdateThreader.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Viewport.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\Win32Window.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\XMLParser.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-			<File
-				RelativePath=".\src\AlignedBuffer.h"
 				>
 			</File>
 			<File
@@ -390,11 +192,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\Camera.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Camera.h"
 				>
 			</File>
 			<File
+				RelativePath=".\src\Frustum.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Frustum.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\FullscreenQuad.cpp"
 				>
 			</File>
 			<File
@@ -410,6 +224,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\GLHelpers.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\GLHelpers.h"
 				>
 			</File>
@@ -418,7 +236,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\HGMDLMesh.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\HGMDLMesh.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\HGMDLModel.cpp"
 				>
 			</File>
 			<File
@@ -426,7 +252,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\ImageLoader.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\ImageLoader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Light.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Light.h"
 				>
 			</File>
 			<File
@@ -434,7 +272,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\Mercury2.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryAsset.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryAsset.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryBacktrace.c"
 				>
 			</File>
 			<File
@@ -442,7 +292,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryCrash.c"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryCrash.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryCTA.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryCTA.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryFBO.cpp"
 				>
 			</File>
 			<File
@@ -450,7 +316,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryFile.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryFile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryFileDriverDirect.cpp"
 				>
 			</File>
 			<File
@@ -458,11 +332,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryFileDriverMem.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryFileDriverMem.h"
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryFileDriverPacked.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryFileDriverPacked.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryFileDriverZipped.cpp"
 				>
 			</File>
 			<File
@@ -474,6 +360,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryInput.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryInput.h"
 				>
 			</File>
@@ -482,7 +372,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryLog.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryMath.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryMath.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryMatrix.cpp"
 				>
 			</File>
 			<File
@@ -490,7 +392,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryMessageManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryMessageManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryNamedResource.cpp"
 				>
 			</File>
 			<File
@@ -498,7 +408,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryNode.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryNode.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryPlane.cpp"
 				>
 			</File>
 			<File
@@ -506,7 +424,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryPrefs.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryPrefs.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercurySound.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercurySound.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryString.cpp"
 				>
 			</File>
 			<File
@@ -514,7 +448,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryTheme.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryTheme.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryThreads.cpp"
 				>
 			</File>
 			<File
@@ -522,11 +464,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryTimer.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryTimer.h"
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryUtil.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryUtil.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryVBO.cpp"
 				>
 			</File>
 			<File
@@ -538,7 +492,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryVertex.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryVertex.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryWindow.cpp"
 				>
 			</File>
 			<File
@@ -554,7 +516,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\ModuleManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\ModuleManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MQuaternion.cpp"
 				>
 			</File>
 			<File
@@ -570,7 +540,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MSemaphore.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MSemaphore.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\DataTypes\MTriangle.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\DataTypes\MTriangle.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\OGLExtensions.cpp"
 				>
 			</File>
 			<File
@@ -578,11 +564,31 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\Orthographic.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Orthographic.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\PNGLoader.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\PriorityQueue.h"
 				>
 			</File>
 			<File
+				RelativePath=".\src\Quad.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Quad.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\RawImageData.cpp"
 				>
 			</File>
 			<File
@@ -594,7 +600,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\RenderDeferredLights.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\RenderDeferredLights.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\RenderGraph.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\RenderGraph.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Shader.cpp"
 				>
 			</File>
 			<File
@@ -602,7 +624,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\StateChanger.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\StateChanger.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\stdint.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Texture.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Texture.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\TransformNode.cpp"
 				>
 			</File>
 			<File
@@ -610,7 +652,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\UpdateThreader.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\UpdateThreader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Viewport.cpp"
 				>
 			</File>
 			<File
@@ -618,7 +668,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\Win32Window.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Win32Window.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\XMLParser.cpp"
 				>
 			</File>
 			<File
@@ -644,11 +702,47 @@
 				>
 			</File>
 			<File
+				RelativePath=".\modules\Cu2.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\modules\Cu2.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryLog.h"
+				>
+			</File>
+			<File
+				RelativePath=".\modules\ParticleEmitter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\modules\ParticleEmitter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\modules\Terrain.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\modules\Terrain.h"
+				>
+			</File>
+			<File
 				RelativePath=".\modules\TextNode.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\modules\TextNode.h"
+				>
+			</File>
+			<File
+				RelativePath=".\modules\TextPlate.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\modules\TextPlate.h"
 				>
 			</File>
 		</Filter>

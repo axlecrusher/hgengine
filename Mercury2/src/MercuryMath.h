@@ -3,7 +3,9 @@
 
 #include <math.h>
 #ifdef HGENGINE
+#ifndef WIN32
 #include <configuration.h>
+#endif
 #endif
 
 #ifdef USE_SSE

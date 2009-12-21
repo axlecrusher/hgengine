@@ -126,7 +126,7 @@ void ParticleEmitter::ActivateParticle()
 		
 		
 		p->m_lifespan = m_particleMinLife;
-		p->m_lifespan = (rand()%(int(m_particleMaxLife*1000) - int(m_particleMinLife*1000)))/1000.0f;
+		p->m_lifespan += (rand()%(int(m_particleMaxLife*1000) - int(m_particleMinLife*1000)))/1000.0f;
 		p->m_seed1 = rand()%100000;
 		p->m_seed2 = rand()%100000;
 //		+((rand()%((m_particleMaxLife*1000)-(m_particleMinLife*1000)))/1000.0f);

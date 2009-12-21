@@ -143,10 +143,10 @@ public:
 REGISTER_STATECHANGE( DepthWrite );
 
 //////////////////////////////////////STATE CHANGE CHUNK//////////////////////////////////////
-StateChangeRegister * StateChangeRegister::m_Instance;
 
 StateChangeRegister & StateChangeRegister::Instance()
 {
+	static StateChangeRegister* m_Instance = NULL;
 	if( !m_Instance )
 		m_Instance = new StateChangeRegister();
 	return *m_Instance;
@@ -285,7 +285,6 @@ void StateChanger::SaveToXMLTag( MString & sXMLStream )
 }
 
 MVector< MVector< MAutoPtr< StateChange > > > StateChanger::m_StateSet;
-
 
 /****************************************************************************
  *   Copyright (C) 2008 - 2009 by Joshua Allen                              *

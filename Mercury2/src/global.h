@@ -3,8 +3,9 @@
 
 #ifdef WIN32
 #pragma warning( disable : 4100 )
-#endif
+#else
 #include <configuration.h>
+#endif
 #include <Mint.h>
 
 #endif

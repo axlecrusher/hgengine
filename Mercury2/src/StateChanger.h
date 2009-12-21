@@ -27,6 +27,9 @@ public:
 class StateChangeRegister
 {
 public:
+	StateChangeRegister()
+		:m_iStateCount(0)
+	{}
 	static StateChangeRegister & Instance();
 	int RegisterGenerator( const MString & name, StateChange*(*gn)( const MVector< MString > &sParameters ) );
 	MAutoPtr< StateChange > Create( const MString & name, const MVector< MString > & sParameters );
@@ -35,7 +38,7 @@ public:
 	int GetStateCount() { return m_iStateCount; }
 private:
 	MHash< StateChange*(*)(const MVector< MString > &sParameters) > m_Generators;
-	static StateChangeRegister * m_Instance;
+//	static StateChangeRegister * m_Instance;
 	MHash< int > m_hStateIDs;
 	int m_iStateCount;
 };
