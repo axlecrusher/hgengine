@@ -231,7 +231,7 @@ bool X11Window::SwapBuffers()
 
 bool X11Window::PumpMessages()
 {
-	static bool inFocus = false;
+//	static bool inFocus = false;
 	XEvent event;
 	while ( XPending(m_display) > 0)
 	{
@@ -265,14 +265,14 @@ bool X11Window::PumpMessages()
 			case FocusOut:
 			{
 				//XFocusChangeEvent*e = (XFocusChangeEvent*)&event;
-				inFocus = (event.type == FocusIn);
-				if (inFocus && m_bGrabbed ) XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
+				m_inFocus = (event.type == FocusIn);
+				if (m_inFocus && m_bGrabbed ) XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
 				break;
 			}
 		}
 
 		//The events below only get processed if window is in focus
-		if ( !inFocus ) continue;
+		if ( !m_inFocus ) continue;
 		switch (event.type)
 		{
 			case ButtonPress:

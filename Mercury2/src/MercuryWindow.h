@@ -34,6 +34,9 @@ public:
 
 	void SetGrabbedMouseMode( bool bGrabbed ) { m_bGrabbed = bGrabbed; }
 	bool GetGrabbedMouseMode( ) { return m_bGrabbed; }
+
+	inline bool InFocus() const { return m_inFocus; }
+
 protected:
 	static Callback0R< MercuryWindow* > genWindowClbk;
 	static MercuryWindow* m_windowInstance;
@@ -43,6 +46,11 @@ protected:
 	uint8_t m_bits, m_depthBits;
 	bool m_fullscreen;
 	bool m_bGrabbed;
+
+	int m_iLastMouseX;
+	int m_iLastMouseY;
+
+	bool m_inFocus;
 };
 
 #endif

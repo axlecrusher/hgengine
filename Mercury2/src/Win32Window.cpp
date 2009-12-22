@@ -1,9 +1,11 @@
 #include <Win32Window.h>
+//#include <Windowsx.h>
 #include <GLHeaders.h>
 #include <MercuryInput.h>
 
 LRESULT CALLBACK WindowCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam); //Window callback
 Callback0R< MercuryWindow* > MercuryWindow::genWindowClbk(Win32Window::GenWin32Window); //Register window generation callback
+bool ACTIVE = false;
 
 MercuryWindow* Win32Window::GenWin32Window()
 {
@@ -20,8 +22,8 @@ LPCTSTR StringToLPCTSTR(const MString & s)
 }
 
 Win32Window::Win32Window(const MString& title, int width, int height, int bits, int depthBits, bool fullscreen)
-	:m_hwnd(NULL), m_hdc(NULL), m_hglrc(NULL), m_hInstance(NULL), m_className(NULL), m_windowAtom(NULL), m_winTitle(NULL),
-	MercuryWindow(title, width, height, bits, depthBits, fullscreen)
+	:m_hwnd(NULL), m_hdc(NULL), m_hglrc(NULL), m_hInstance(NULL), m_className(NULL), m_windowAtom(NULL), m_winTitle(NULL),m_cX(0),
+	m_cY(0),MercuryWindow(title, width, height, bits, depthBits, fullscreen)
 {
 	m_className = (WCHAR*)StringToLPCTSTR("Mercury Render Window");
 	m_winTitle = (WCHAR*)StringToLPCTSTR(title);
@@ -191,44 +193,62 @@ bool Win32Window::PumpMessages()
 {
 	MSG message;
 
+	if ( InFocus() != ACTIVE )
+	{
+		m_inFocus = ACTIVE;
+		ShowCursor(!m_inFocus);
+		PointerToCenter();
+	}
+
 	while (PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
 	{
-		switch( message.message )
+		if ( InFocus() )
 		{
-		case WM_QUIT:
-			return false;
-		case WM_KEYDOWN:
+			switch( message.message )
 			{
-				if ( IsKeyRepeat(message.lParam) ) break;
-//				printf( "%d\n", message.lParam>>16 );
-				KeyboardInput::ProcessKeyInput( ConvertScancode( message.lParam ), true, false);
+			case WM_KEYDOWN:
+				{
+					if ( IsKeyRepeat(message.lParam) ) break;
+					KeyboardInput::ProcessKeyInput( ConvertScancode( message.lParam ), true, false);
+				}
+				break;
+			case WM_KEYUP:
+				{
+					if ( IsKeyRepeat(message.lParam) ) break;
+					KeyboardInput::ProcessKeyInput( ConvertScancode( message.lParam ), false, false);
+				}
+				break;
+			case WM_MOUSEMOVE:
+				{
+					POINT pos;
+					GetCursorPos(&pos);
+					if (pos.x!=m_cX || pos.y!=m_cY) //ignore the resets to center
+					{
+						int dx = m_cX - pos.x; 
+						int dy = m_cY - pos.y;
+						m_iLastMouseX += dx;
+						m_iLastMouseY += dy;
+						MouseInput::ProcessMouseInput(dx, dy, message.wParam&MK_LBUTTON, message.wParam&MK_RBUTTON, message.wParam&MK_MBUTTON, 0, 0);
+						PointerToCenter();
+					}
+				}
+				break;
+			case WM_LBUTTONDOWN:
+				break;
+			case WM_LBUTTONUP:
+				break;
+			case WM_RBUTTONDOWN:
+				break;
+			case WM_RBUTTONUP:
+				break;
+			case WM_MBUTTONDOWN:
+				break;
+			case WM_MBUTTONUP:
+				break;
+			case 0x020A:	//Do nothing (at least now) It's a mouse wheel!
+				break;
 			}
-			break;
-		case WM_KEYUP:
-			{
-				if ( IsKeyRepeat(message.lParam) ) break;
-//				printf( "%d\n", message.lParam>>16 );
-				KeyboardInput::ProcessKeyInput( ConvertScancode( message.lParam ), false, false);
-			}
-			break;
-		case WM_MOUSEMOVE:
-			break;
-		case WM_LBUTTONDOWN:
-			break;
-		case WM_LBUTTONUP:
-			break;
-		case WM_RBUTTONDOWN:
-			break;
-		case WM_RBUTTONUP:
-			break;
-		case WM_MBUTTONDOWN:
-			break;
-		case WM_MBUTTONUP:
-			break;
-		case 0x020A:	//Do nothing (at least now) It's a mouse wheel!
-			break;
 		}
-
 		TranslateMessage(&message);				// Translate The Message
 		DispatchMessage(&message);				// Dispatch The Message
 	}
@@ -250,6 +270,15 @@ bool Win32Window::IsKeyRepeat(uint32_t c)
 {
 //	printf("count %d\n", (c&65535));
 	return (c&65535) > 1;
+}
+
+void Win32Window::PointerToCenter()
+{
+	RECT rect;
+	GetWindowRect(m_hwnd, &rect);
+	m_cX = rect.left+m_width/2;
+	m_cY = rect.top+m_height/2;
+	SetCursorPos(m_cX, m_cY);
 }
 
 short Win32Window::ConvertScancode( uint32_t scanin )
@@ -364,9 +393,12 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	switch (uMsg)
 	{
 	case WM_CLOSE:
-		{
-			exit(1);
-		}
+		exit(1);
+		break;
+	case WM_ACTIVATE:
+		ACTIVE = LOWORD(wParam)!=WA_INACTIVE;
+//		return 0;
+		break;
 	}
 	return DefWindowProc(hWnd,uMsg,wParam,lParam);
 }
