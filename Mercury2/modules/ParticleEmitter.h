@@ -6,7 +6,7 @@
 
 class ParticleEmitter;
 
-class ParticleBase : public MercuryNode
+class ParticleBase
 {
 	public:
 		ParticleBase();
@@ -15,22 +15,32 @@ class ParticleBase : public MercuryNode
 		virtual void Init();
 		virtual void Update(float dTime);
 		
-		virtual void RecursiveRender();
+//		virtual void RecursiveRender();
     
-//		void Activate();
-//		void Deactivate();
+		void Activate();
+		void Deactivate();
+		void WriteToVBO();
 		
-		GENRTTI( ParticleBase );
+//		GENRTTI( ParticleBase );
 	private:
-		CLASS_HELPERS( MercuryNode );
+//		CLASS_HELPERS( MercuryNode );
+
+		static const uint8_t STRIDE = 9;
+
+		void WriteAgeToVBO();
+		void WriteLifespanToVBO();
+		void WriteRand1ToVBO();
+		void WriteRand2ToVBO();
+		void WriteFloatToVertices(float v, uint8_t vertexIndex, uint8_t offset);
 
 		friend class ParticleEmitter;
 		ParticleBase* m_nextParticle;
 		float m_age;
 		float m_lifespan;
-		float m_seed1, m_seed2;
+		float m_rand1, m_rand2;
 		ParticleEmitter* m_emitter;
 //		MercuryNode* m_particleGraph;
+		float* m_particleVobData; //pointer to position in VBO
 };
 
 class ParticleEmitter : public MercuryNode
@@ -44,12 +54,19 @@ class ParticleEmitter : public MercuryNode
 
 		void DeactivateParticle(ParticleBase* p);
 		virtual void LoadFromXML(const XMLNode& node);
+		virtual void Render(const MercuryMatrix& matrix);
+
+		void SetMaxParticleCount(uint16_t count);
+		inline void SetDirtyVBO() { m_dirtyVBO=true; }
 
 		GENRTTI( ParticleEmitter );
 	private:
 		void DestroyParticles();
 		void ActivateParticle();
-		void FillUnusedParticleList(ParticleBase* p, uint32_t);
+
+		void FillUnusedParticleList(ParticleBase* p, uint32_t i);
+		void InitNewParticles(ParticleBase* p, uint32_t i, uint16_t vobStep, float* vob);
+
 		CLASS_HELPERS( MercuryNode );
 		
 		uint32_t m_maxParticles;
@@ -63,7 +80,11 @@ class ParticleEmitter : public MercuryNode
 		ParticleBase* m_particles;
 		
 		Callback1R<uint32_t,ParticleBase*>* GenerateParticlesClbk;
+		AlignedBuffer<float> m_vertexData;
 		
+		unsigned int m_bufferID;
+		bool m_dirtyVBO;
+
 //		MercuryNode* m_masterParticle;
 };
 
