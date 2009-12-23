@@ -21,6 +21,8 @@ class ParticleBase
 		void Deactivate();
 		void WriteToVBO();
 		
+		inline bool IsActive() const { return m_age < m_lifespan; }
+		
 //		GENRTTI( ParticleBase );
 	private:
 //		CLASS_HELPERS( MercuryNode );
@@ -34,7 +36,7 @@ class ParticleBase
 		void WriteFloatToVertices(float v, uint8_t vertexIndex, uint8_t offset);
 
 		friend class ParticleEmitter;
-		ParticleBase* m_nextParticle;
+//		ParticleBase *m_prev, *m_next;
 		float m_age;
 		float m_lifespan;
 		float m_rand1, m_rand2;
@@ -54,6 +56,9 @@ class ParticleEmitter : public MercuryNode
 
 		void DeactivateParticle(ParticleBase* p);
 		virtual void LoadFromXML(const XMLNode& node);
+		
+
+		virtual void PreRender(const MercuryMatrix& matrix);
 		virtual void Render(const MercuryMatrix& matrix);
 
 		void SetMaxParticleCount(uint16_t count);
@@ -61,11 +66,11 @@ class ParticleEmitter : public MercuryNode
 
 		GENRTTI( ParticleEmitter );
 	private:
-		void DestroyParticles();
+//		void DestroyParticles();
 		void ActivateParticle();
 
-		void FillUnusedParticleList(ParticleBase* p, uint32_t i);
-		void InitNewParticles(ParticleBase* p, uint32_t i, uint16_t vobStep, float* vob);
+//		void FillUnusedParticleList(ParticleBase* p, uint32_t i);
+//		void InitNewParticles(ParticleBase* p, uint32_t i, uint16_t vobStep, float* vob);
 
 		CLASS_HELPERS( MercuryNode );
 		
@@ -76,8 +81,7 @@ class ParticleEmitter : public MercuryNode
 		uint32_t m_particlesEmitted;
 		float m_particleMinLife, m_particleMaxLife;
 		
-		ParticleBase* m_inactiveParticles;
-		ParticleBase* m_particles;
+		ParticleBase *m_particles;
 		
 		Callback1R<uint32_t,ParticleBase*>* GenerateParticlesClbk;
 		AlignedBuffer<float> m_vertexData;
@@ -85,6 +89,7 @@ class ParticleEmitter : public MercuryNode
 		unsigned int m_bufferID;
 		bool m_dirtyVBO;
 
+		std::list< ParticleBase* > m_active, m_inactive;
 //		MercuryNode* m_masterParticle;
 };
 

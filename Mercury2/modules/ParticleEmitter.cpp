@@ -5,63 +5,36 @@
 #include <MercuryVBO.h>
 #include <Texture.h>
 
+#include <list>
+using namespace std;
 //REGISTER_NODE_TYPE(ParticleBase);
 REGISTER_NODE_TYPE(ParticleEmitter);
 
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 
 ParticleBase::ParticleBase()
-	:m_nextParticle(NULL), m_age(0), m_lifespan(0), m_particleVobData(NULL)
+	:m_age(0), m_lifespan(0), m_particleVobData(NULL)
 {
 }
 
 ParticleBase::~ParticleBase()
 {
 	m_particleVobData = NULL;
-//	m_children.clear();
 }
 
 void ParticleBase::Init()
 {
-//	base::Init();
 	m_age = 0;
-//	m_lifespan = (rand()%5000)/1000.f;
-//	LOG.Write("init particle");
 }
 
 void ParticleBase::Update(float dTime)
 {
-//	base::Update(dTime);
-
 	m_age += dTime;
 	WriteAgeToVBO();
 
-	if (m_age >= m_lifespan)
-	{
-		m_emitter->DeactivateParticle(this);
-		Deactivate();
-	}
+	if (m_age >= m_lifespan) Deactivate();
 }
-/*
-void ParticleBase::RecursiveRender()
-{
-	ShaderAttribute sa;
-	sa.type = ShaderAttribute::TYPE_FLOATV4;
-	sa.value.fFloatV4[0] = m_age;
-	sa.value.fFloatV4[1] = m_lifespan;
-	sa.value.fFloatV4[2] = m_rand1;
-	sa.value.fFloatV4[3] = m_rand2;
-	Shader::SetAttribute("HG_ParticleTime", sa);
-	
-	GLCALL( glPushAttrib(GL_ENABLE_BIT|GL_DEPTH_BUFFER_BIT) );
-	GLCALL( glDepthMask( false ) );
-	GLCALL( glDisable(GL_CULL_FACE) );
-	
-	base::RecursiveRender();
-	
-	GLCALL( glPopAttrib() );
-}
-*/
+
 void ParticleBase::WriteAgeToVBO()
 {
 	m_emitter->SetDirtyVBO();
@@ -92,6 +65,7 @@ void ParticleBase::WriteRand2ToVBO()
 
 void ParticleBase::Activate()
 {
+//	printf("Activate\n");
 	uint8_t i = 0;
 
 	//upper left
@@ -122,13 +96,13 @@ void ParticleBase::Activate()
 
 void ParticleBase::Deactivate()
 {
-	m_emitter->SetDirtyVBO();
 	for (uint8_t i = 0; i < 4; ++i)
 	{
 		WriteFloatToVertices(0,i,0);
 		WriteFloatToVertices(0,i,1);
 		WriteFloatToVertices(0,i,2);
 	}
+	m_emitter->SetDirtyVBO();
 }
 
 void ParticleBase::WriteFloatToVertices(float v, uint8_t vertexIndex, uint8_t offset)
@@ -144,24 +118,10 @@ void ParticleBase::WriteToVBO()
 	WriteRand2ToVBO();
 }
 
-/*
-void ParticleBase::Activate()
-{
-	LOG.Write("Activate");
-	m_emitter->AddChild(this);
-}
-
-void ParticleBase::Deactivate()
-{
-	LOG.Write("Deactivate");
-	m_emitter->RemoveChild(this);
-	m_emitter->DeactivateParticle(this);
-}
-*/
 ParticleEmitter::ParticleEmitter()
-	:m_maxParticles(50), m_age(0), m_emitDelay(0.01), m_lifespan(0),
-	m_particlesEmitted(0), m_particleMinLife(0.01), m_particleMaxLife(5),
-	m_inactiveParticles(NULL), m_particles(NULL), GenerateParticlesClbk(NULL),
+	:base(), m_maxParticles(50), m_age(0), m_emitDelay(0.1), m_lifespan(0),
+	m_particlesEmitted(0), m_particleMinLife(0.1), m_particleMaxLife(5),
+	m_particles(NULL), GenerateParticlesClbk(NULL),
 	m_bufferID(0), m_dirtyVBO(false)
 {
 	Init();
@@ -170,29 +130,19 @@ ParticleEmitter::ParticleEmitter()
 
 ParticleEmitter::~ParticleEmitter()
 {
-	DestroyParticles();
-
 	if (m_bufferID > 0) { GLCALL( glDeleteBuffersARB(1, &m_bufferID) ); }
 
+	SAFE_DELETE_ARRAY(m_particles); //do we need to destroy each element????
 	SAFE_DELETE(GenerateParticlesClbk);
-//	SAFE_DELETE(m_masterParticle);
 }
 
 
 void ParticleEmitter::Init()
 {
 	MercuryNode::Init();
-	DestroyParticles();
+	SAFE_DELETE_ARRAY(m_particles); //do we need to destroy each element????
 
 	SetMaxParticleCount(m_maxParticles);
-}
-
-
-void ParticleEmitter::DestroyParticles()
-{
-///	for (uint32_t i = 0; (i < m_maxParticles) && m_particles; ++i)
-//		RemoveChild(m_particles+i);
-	SAFE_DELETE_ARRAY(m_particles); //do we need to destroy each element????
 }
 
 void ParticleEmitter::Update(float dTime)
@@ -207,58 +157,55 @@ void ParticleEmitter::Update(float dTime)
 		++m_particlesEmitted;  //always increment even if the maximum number of particles exist
 		ActivateParticle();
 	}
+	
+	list< ParticleBase* >::iterator i = m_active.begin();
+	while ( i!=m_active.end() )
+	{
+		ParticleBase *p = *i;
+		p->Update(dTime);
+		if ( !p->IsActive() )
+		{
+			m_active.erase(i++); //don't invalidate iterator before incrementing it
+			m_inactive.push_back(p);
+		}
+		else
+		{
+			++i;
+		}
+	}
 }
 
 void ParticleEmitter::ActivateParticle()
 {
-	if (m_inactiveParticles)
+	if (!m_inactive.empty())
 	{
-		ParticleBase* p = m_inactiveParticles;
-		m_inactiveParticles = p->m_nextParticle;
-		p->m_nextParticle = NULL;
+		ParticleBase* p = m_inactive.front();
+		m_inactive.pop_front();
+		
 		p->Init();
 		p->Activate();
-		
 		
 		p->m_lifespan = m_particleMinLife;
 		p->m_lifespan += (rand()%(int(m_particleMaxLife*1000) - int(m_particleMinLife*1000)))/1000.0f;
 		p->m_rand1 = rand()%100000;
 		p->m_rand2 = rand()%100000;
 //		+((rand()%((m_particleMaxLife*1000)-(m_particleMinLife*1000)))/1000.0f);
-		
-//		AddChild(p);
-	}
-}
 
-void ParticleEmitter::DeactivateParticle(ParticleBase* p)
-{
-//	LOG.Write("Deactivate");
-//	RemoveChild(p);
-	if (!m_inactiveParticles)
-	{
-		m_inactiveParticles = p;
-	}
-	else
-	{
-		ParticleBase* ip = m_inactiveParticles;
-		while (ip->m_nextParticle) ip = ip->m_nextParticle;
-		ip->m_nextParticle = p;
-	}
-}
 
-void ParticleEmitter::FillUnusedParticleList(ParticleBase* p, uint32_t i)
-{
-	if (p)
-	{
-		p->m_emitter = this;
-		++i;
-		if (i<m_maxParticles) p->m_nextParticle = m_particles+i;
-		FillUnusedParticleList(p->m_nextParticle, i);
+		p->WriteAgeToVBO();
+		p->WriteLifespanToVBO();
+		p->WriteRand1ToVBO();
+		p->WriteRand2ToVBO();
+
+		//add to the active list
+//		printf("push %p\n", p);
+		m_active.push_back(p);
 	}
 }
 
 void ParticleEmitter::LoadFromXML(const XMLNode& node)
 {
+	printf("LOADED!!!!!\n");
 	base::LoadFromXML(node);
 /*	
 	XMLNode particleXML;
@@ -283,25 +230,32 @@ void ParticleEmitter::SetMaxParticleCount(uint16_t count)
 	SAFE_DELETE_ARRAY(m_particles);
 //	if (GenerateParticlesClbk) m_particles = (*GenerateParticlesClbk)(m_maxParticles);
 	m_particles = new ParticleBase[m_maxParticles];
-	m_inactiveParticles = m_particles;
-	InitNewParticles(m_particles, 0, ParticleBase::STRIDE*4, m_vertexData.Buffer());
+//	m_inactiveParticles = m_particles;
+//	InitNewParticles(m_particles, 0, ParticleBase::STRIDE*4, m_vertexData.Buffer());
+
+	m_inactive.clear();
+	m_active.clear();
+	
+	for (uint32_t i = 0; i < m_maxParticles; ++i)
+	{
+		ParticleBase* p = m_particles+i;
+		p->m_emitter = this;
+		p->m_particleVobData = m_vertexData.Buffer()+(ParticleBase::STRIDE*4*i);
+		p->Deactivate();
+//		printf("addr1 %p\n", p);
+		m_inactive.push_back( p );
+	}
 }
 
-void ParticleEmitter::InitNewParticles(ParticleBase* p, uint32_t i, uint16_t vobStep, float* vob)
+void ParticleEmitter::PreRender(const MercuryMatrix& matrix)
 {
-	if (p)
-	{
-		p->m_emitter = this;
-		p->m_particleVobData = vob;
-		p->Deactivate();
-		++i;
-		if (i<m_maxParticles) p->m_nextParticle = m_particles+i;
-		InitNewParticles(p->m_nextParticle, i, vobStep, vob+vobStep);
-	}
+	MercuryNode::PreRender(matrix);
+	SetCulled(false);
 }
 
 void ParticleEmitter::Render(const MercuryMatrix& matrix)
 {
+//	printf("render particles\n");
 	GLCALL( glPushAttrib(GL_ENABLE_BIT|GL_DEPTH_BUFFER_BIT) );
 	GLCALL( glDepthMask( false ) );
 	GLCALL( glDisable(GL_CULL_FACE) );
@@ -335,12 +289,12 @@ void ParticleEmitter::Render(const MercuryMatrix& matrix)
 //	GLCALL( glDrawRangeElements(GL_QUADS, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL) );
 //	GLCALL( glDrawElements(GL_QUADS, m_maxParticles*4, GL_UNSIGNED_BYTE, 0) );
 	GLCALL( glDrawArrays(GL_QUADS, 0, m_maxParticles*4) );
-
+//printf("darw\n");
 	GLCALL( glPopClientAttrib() );
+	GLCALL( glPopAttrib() );
 
 	base::Render(matrix);
 
-		GLCALL( glPopAttrib() );
 
 }
 
