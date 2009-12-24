@@ -217,13 +217,13 @@ void Texture::Deactivate(uint32_t textureResource)
 	GLERRORCHECK;
 }
 
-void Texture::ApplyActiveTextures(uint16_t stride)
+void Texture::ApplyActiveTextures(uint16_t stride, uint8_t uvByteOffset)
 {
 	for (uint8_t i = 0; i < m_numActiveTextures; ++i)
 	{
 		GLCALL( glActiveTexture( GL_TEXTURE0+i ) );
 		GLCALL( glClientActiveTextureARB(GL_TEXTURE0+i) );
-		GLCALL( glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(sizeof(float)*0)) );
+		GLCALL( glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(uvByteOffset)) );
 	}
 	
 	Texture::DisableUnusedTextures();

@@ -49,11 +49,12 @@ void MercuryVBO::Render(const MercuryNode* node)
 		++m_vboBinds;
 	}
 	
+	GLCALL( glPushAttrib(GL_CURRENT_BIT) );
 	GLCALL( glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT) );
 
 	if (m_useVertexColor) { GLCALL( glEnableClientState( GL_COLOR_ARRAY ) ); }
 	
-	Texture::ApplyActiveTextures(STRIDE*sizeof(float));
+	Texture::ApplyActiveTextures(STRIDE*sizeof(float), 0);
 	
 	GLCALL( glEnableClientState( GL_NORMAL_ARRAY ) );
 	GLCALL( glNormalPointer(GL_FLOAT, STRIDE*sizeof(float), BUFFER_OFFSET(sizeof(float)*2)) );
@@ -64,6 +65,7 @@ void MercuryVBO::Render(const MercuryNode* node)
 	if (m_boundingVolume && SHOWBOUNDINGVOLUME) m_boundingVolume->Render();
 
 	GLCALL( glPopClientAttrib() );
+	GLCALL( glPopAttrib() );
 
 	if ( SHOWAXISES ) DrawAxes();
 }
@@ -118,8 +120,8 @@ void MercuryVBO::AllocateIndexSpace(unsigned int count)
 }
 
 void* MercuryVBO::m_lastVBOrendered = NULL;
-uint32_t MercuryVBO::m_vboBatches;
-uint32_t MercuryVBO::m_vboBinds;
+uint32_t MercuryVBO::m_vboBatches = 0;
+uint32_t MercuryVBO::m_vboBinds = 0;
 
 /****************************************************************************
  *   Copyright (C) 2008 by Joshua Allen                                     *

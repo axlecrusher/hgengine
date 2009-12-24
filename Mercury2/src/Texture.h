@@ -43,7 +43,7 @@ class Texture : public MercuryAsset
 		
 		void SetRawData(RawImageData* raw);
 		
-		static void ApplyActiveTextures(uint16_t stride);
+		static void ApplyActiveTextures(uint16_t stride, uint8_t uvByteOffset);
 		static void DisableUnusedTextures();
 
 		void SetFilter( TextureFilterMode t ) { m_tFilterMode = t; }
