@@ -1,10 +1,11 @@
-uniform vec4 HG_ParticleTime;
+//uniform vec4 HG_ParticleTime;
 uniform vec4 HG_EyePos;
 uniform vec4 HG_LookVector;
 uniform mat4 HG_ModelMatrix;
 uniform mat4 HG_WorldMatrix;
 uniform mat4 HG_ViewMatrix;
 varying vec3 angleC;
+varying vec4 particleData;
 
 mat4 glRotate(float angle, vec3 axis)
 {
@@ -47,15 +48,21 @@ mat4 Billboard(vec3 pos)
 
 void main()
 {
+ 	particleData = gl_Color; 
+
 	vec4 pos = vec4(1.0);
-	pos.y = 0.30*(HG_ParticleTime.x*HG_ParticleTime.x);
-	pos.x = 0.40*((HG_ParticleTime.z-50000.0)/50000.0)*HG_ParticleTime.x; //rand num
-	pos.z = 0.40*((HG_ParticleTime.w-50000.0)/50000.0)*HG_ParticleTime.x; //rand num
+	pos.y = 0.6*(particleData.x*particleData.x);
+	pos.x = 0.40*((particleData.z-50000.0)/50000.0)*particleData.x; //rand num
+	pos.z = 0.40*((particleData.w-50000.0)/50000.0)*particleData.x; //rand num
 
 	mat4 m = Billboard(pos.xyz);
 	m[3].xyz = pos.xyz;
 
-	gl_Position = gl_ProjectionMatrix *HG_ViewMatrix *HG_ModelMatrix *m* gl_Vertex;
-  
+	mat4 s = mat4(0.0);
+	s[0][0] = 1.0+3.0*(particleData.x/particleData.y);
+	s[1][1] = 1.0+3.0*(particleData.x/particleData.y);
+	s[2][2] = 1.0+3.0*(particleData.x/particleData.y);
+	s[3][3] = 1.0;
+	gl_Position = gl_ProjectionMatrix *HG_ViewMatrix *HG_ModelMatrix *m*s* gl_Vertex;
   	gl_TexCoord[0] = gl_MultiTexCoord0;
 }
