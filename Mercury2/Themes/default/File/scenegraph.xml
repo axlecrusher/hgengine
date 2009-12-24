@@ -35,14 +35,10 @@
 <!--						<asset type="StateChanger" file="DepthWrite:0" />
 						state changer needs some work for proper on and off.
 						until then had code it for all particles -->
-						<node type="particleemitter" texture="GRAPHIC:flame.png">
-							<asset type="texture" file="GRAPHIC:flame.png"/>
+						<node type="transformnode" scalex="0.1" scaley="0.1" scalez="0.1">
 							<asset type="shader" file="GRAPHIC:FireParticles"/>
-							<particle>
-								<node type="transformnode" scalex="0.075" scaley="0.075" scalez="0.075" alphaPath="false">
-									<asset type="quad"/>
-								</node>
-							</particle>
+							<asset type="texture" file="GRAPHIC:flame.png"/>
+							<node type="particleemitter"/>
 						</node>
 					</node>
 					<node type="transformnode" movx="1" fallback="lamprow.lamp" />
