@@ -36,15 +36,19 @@ class MercuryVBO : public MercuryAsset
 	
 		inline uint16_t IndiceCount() const { return m_indexData.Length(); }
 		
-		static void* m_lastVBOrendered;
 
 		inline void DirtyVertices() { m_bDirtyVertices = true; }
 		inline void DirtyVerexColor() { m_bDirtyVertexColor = true; }
 		inline void DirtyIndices() { m_bDirtyIndices = true; }
+		
+		static void SetLastRendered(void* p);
+		inline static const void* GetLastRendered() { return m_lastVBOrendered; }
+		inline static void IncrementBatches() { ++m_vboBatches; }
 
 		GENRTTI( MercuryVBO );
 	private:
 		virtual void InitVBO();
+		static void* m_lastVBOrendered;
 	
 		unsigned int m_bufferIDs[3];
 		bool m_initiated;

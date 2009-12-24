@@ -155,9 +155,9 @@ void BoundingBox::DoOcclusionTest( OcclusionResult& result )
 	
 	if (m_vboID == 0) InitVBO();
 	
-	if ( MercuryVBO::m_lastVBOrendered != &m_vboID )
+	if ( MercuryVBO::GetLastRendered() != &m_vboID )
 	{
-		MercuryVBO::m_lastVBOrendered = &m_vboID;
+		MercuryVBO::SetLastRendered( &m_vboID );
 		GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID) ); // once
 		GLCALL( glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );  // once
 		GLCALL( glVertexPointer(3, GL_FLOAT, 0, 0) );  // once
@@ -170,7 +170,7 @@ void BoundingBox::DoOcclusionTest( OcclusionResult& result )
 	GLCALL( glDepthMask(GL_FALSE) );
 
 	GLCALL( glDrawArrays(GL_QUADS, 0, 24) );
-	
+	MercuryVBO::IncrementBatches();
 	GLCALL( glEndQueryARB(GL_SAMPLES_PASSED_ARB) );
 //	GLCALL( glGetQueryObjectuivARB(q, GL_QUERY_RESULT_ARB, &samples) );
 
@@ -189,15 +189,16 @@ void BoundingBox::RenderFaces() const
 	
 	if (m_vboID == 0) InitVBO();
 	
-//	if ( MercuryVBO::m_lastVBOrendered != &m_vboID )
+//	if ( MercuryVBO::GetLastRendered() != &m_vboID )
 	{
-		MercuryVBO::m_lastVBOrendered = &m_vboID;
+		MercuryVBO::SetLastRendered( &m_vboID );
 		GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vboID) ); // once
 		GLCALL( glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0) );  // once
 		GLCALL( glVertexPointer(3, GL_FLOAT, 0, 0) );  // once
 	}
 	
 	GLCALL( glDrawArrays(GL_QUADS, 0, 24) );
+	MercuryVBO::IncrementBatches();
 	GLCALL( glPopMatrix() );
 }
 

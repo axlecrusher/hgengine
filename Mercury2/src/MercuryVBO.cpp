@@ -28,9 +28,9 @@ void MercuryVBO::Render(const MercuryNode* node)
 	
 	if ( !m_initiated ) InitVBO();
 
-	if ( this != m_lastVBOrendered )
+	if ( this != GetLastRendered() )
 	{
-		m_lastVBOrendered = this;
+		SetLastRendered(this);
 
 		if ( m_bDirtyVertices ) UpdateVertices();
 		if( m_bDirtyIndices ) UpdateIndices();
@@ -60,7 +60,7 @@ void MercuryVBO::Render(const MercuryNode* node)
 	GLCALL( glNormalPointer(GL_FLOAT, STRIDE*sizeof(float), BUFFER_OFFSET(sizeof(float)*2)) );
 
 	GLCALL( glDrawRangeElements(GL_TRIANGLES, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL) );
-	++m_vboBatches;
+	IncrementBatches();
 		
 	if (m_boundingVolume && SHOWBOUNDINGVOLUME) m_boundingVolume->Render();
 
@@ -117,6 +117,12 @@ void MercuryVBO::AllocateVertexSpace(unsigned int count)
 void MercuryVBO::AllocateIndexSpace(unsigned int count)
 {
 	m_indexData.Allocate(count);
+}
+
+void MercuryVBO::SetLastRendered(void* p)
+{
+	m_lastVBOrendered = p;
+	++m_vboBinds;
 }
 
 void* MercuryVBO::m_lastVBOrendered = NULL;
