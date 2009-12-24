@@ -64,6 +64,8 @@ class ParticleEmitter : public MercuryNode
 		void SetMaxParticleCount(uint16_t count);
 		inline void SetDirtyVBO() { m_dirtyVBO=true; }
 
+		static uint32_t ResetDrawnCount();
+
 		GENRTTI( ParticleEmitter );
 	private:
 //		void DestroyParticles();
@@ -91,6 +93,7 @@ class ParticleEmitter : public MercuryNode
 
 		std::list< ParticleBase* > m_active, m_inactive;
 //		MercuryNode* m_masterParticle;
+		static uint32_t m_particlesDrawn;
 };
 
 #endif

@@ -255,8 +255,7 @@ void ParticleEmitter::PreRender(const MercuryMatrix& matrix)
 
 void ParticleEmitter::Render(const MercuryMatrix& matrix)
 {
-//	printf("render particles\n");
-	GLCALL( glPushAttrib(GL_ENABLE_BIT|GL_DEPTH_BUFFER_BIT) );
+	GLCALL( glPushAttrib(GL_ENABLE_BIT|GL_DEPTH_BUFFER_BIT|GL_CURRENT_BIT) );
 	GLCALL( glDepthMask( false ) );
 	GLCALL( glDisable(GL_CULL_FACE) );
 	
@@ -266,37 +265,46 @@ void ParticleEmitter::Render(const MercuryMatrix& matrix)
 	}
 
 	GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferID) );
+//	GLCALL( glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, 0) );
+
 	MercuryVBO::m_lastVBOrendered = this;
 
 	if (m_dirtyVBO)
 	{
 		m_dirtyVBO = false;
-		GLCALL( glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_vertexData.LengthInBytes(), m_vertexData.Buffer(), GL_STATIC_DRAW_ARB) );
+		GLCALL( glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_vertexData.LengthInBytes(), m_vertexData.Buffer(), GL_STREAM_DRAW_ARB) );
 	}
 
 	GLCALL( glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT) );
 
 	//do render stuff here
-//	GLCALL( glDisableClientState(GL_TEXTURE_COORD_ARRAY) );
-	Texture::ApplyActiveTextures(ParticleBase::STRIDE*sizeof(float));
+	Texture::ApplyActiveTextures(ParticleBase::STRIDE*sizeof(float), 7*sizeof(float));
 
 	GLCALL( glEnableClientState(GL_VERTEX_ARRAY) );
 	GLCALL( glEnableClientState( GL_COLOR_ARRAY ) ); //used for attributes
+//	GLCALL( glDisableClientState( GL_NORMAL_ARRAY ) );
+
 	GLCALL( glVertexPointer(3, GL_FLOAT, ParticleBase::STRIDE*sizeof(float), BUFFER_OFFSET( 0*sizeof(float) ) ) );
 	GLCALL( glColorPointer(4, GL_FLOAT, ParticleBase::STRIDE*sizeof(float), BUFFER_OFFSET( 3*sizeof(float) ) ) );
-	GLCALL( glTexCoordPointer(3, GL_FLOAT, ParticleBase::STRIDE*sizeof(float), BUFFER_OFFSET( 7*sizeof(float) ) ) );
 
-//	GLCALL( glDrawRangeElements(GL_QUADS, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL) );
-//	GLCALL( glDrawElements(GL_QUADS, m_maxParticles*4, GL_UNSIGNED_BYTE, 0) );
 	GLCALL( glDrawArrays(GL_QUADS, 0, m_maxParticles*4) );
-//printf("darw\n");
+
 	GLCALL( glPopClientAttrib() );
 	GLCALL( glPopAttrib() );
 
+	m_particlesDrawn+=m_maxParticles;
+
 	base::Render(matrix);
-
-
 }
+
+uint32_t ParticleEmitter::ResetDrawnCount()
+{
+	uint32_t t = m_particlesDrawn;
+	m_particlesDrawn = 0;
+	return t;
+}
+
+uint32_t ParticleEmitter::m_particlesDrawn = 0;
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *
