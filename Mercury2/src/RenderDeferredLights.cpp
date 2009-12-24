@@ -20,7 +20,7 @@ void RenderDeferredLights::Render(const MercuryNode* node)
 //	uint8_t numTextures = Texture::NumberActiveTextures();
 	uint16_t stride = sizeof(float)*8;
 	
-	Texture::ApplyActiveTextures(stride);
+	Texture::ApplyActiveTextures(stride, 0);
 
 	GLCALL( glPushAttrib( GL_CURRENT_BIT | GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT | GL_POLYGON_BIT) );
 	GLCALL( glCullFace(GL_FRONT) );
