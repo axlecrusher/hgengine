@@ -267,7 +267,7 @@ void ParticleEmitter::Render(const MercuryMatrix& matrix)
 	GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferID) );
 //	GLCALL( glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, 0) );
 
-	MercuryVBO::m_lastVBOrendered = this;
+	MercuryVBO::SetLastRendered(this);
 
 	if (m_dirtyVBO)
 	{
@@ -293,6 +293,7 @@ void ParticleEmitter::Render(const MercuryMatrix& matrix)
 	GLCALL( glPopAttrib() );
 
 	m_particlesDrawn+=m_maxParticles;
+	MercuryVBO::IncrementBatches();
 
 	base::Render(matrix);
 }
