@@ -43,7 +43,9 @@ mat4 Billboard(vec3 pos)
 	vec3 up = cross(objLookAt, objToEye);
 	float angleCos = dot(objLookAt, objToEye);
 
-	return glRotate(-acos(angleCos), up);
+	//add in an extra rotation around y to make particles look more unique
+	float o = 360.0*((particleData.z-50000.0)/50000.0);
+	return glRotate(-acos(angleCos), up)*glRotate(o, vec3(0,0,1));
 }
 
 void main()
@@ -51,7 +53,7 @@ void main()
  	particleData = gl_Color; 
 
 	vec4 pos = vec4(1.0);
-	pos.y = 0.6*(particleData.x*particleData.x);
+	pos.y = 0.3*(particleData.x*particleData.x);
 	pos.x = 0.40*((particleData.z-50000.0)/50000.0)*particleData.x; //rand num
 	pos.z = 0.40*((particleData.w-50000.0)/50000.0)*particleData.x; //rand num
 

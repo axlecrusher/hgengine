@@ -37,7 +37,7 @@
 						until then had code it for all particles -->
 						<node type="transformnode" scalex="0.1" scaley="0.1" scalez="0.1">
 							<asset type="shader" file="GRAPHIC:FireParticles"/>
-							<asset type="texture" file="GRAPHIC:flame.png"/>
+							<asset type="texture" file="GRAPHIC:flame2.png"/>
 							<node type="particleemitter"/>
 						</node>
 					</node>
