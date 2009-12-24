@@ -38,7 +38,7 @@
 						<node type="transformnode" scalex="0.1" scaley="0.1" scalez="0.1">
 							<asset type="shader" file="GRAPHIC:FireParticles"/>
 							<asset type="texture" file="GRAPHIC:flame.png"/>
-							<node type="particleemitter" setPasses="7"/>
+							<node type="particleemitter"/>
 						</node>
 					</node>
 					<node type="transformnode" movx="1" fallback="lamprow.lamp" />

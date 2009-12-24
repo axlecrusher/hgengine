@@ -124,6 +124,8 @@ ParticleEmitter::ParticleEmitter()
 	m_particles(NULL), GenerateParticlesClbk(NULL),
 	m_bufferID(0), m_dirtyVBO(false)
 {
+	m_iForcePasses = m_iForcePasses | (1<<15);
+	m_iForcePasses = m_iForcePasses | (1<<7);
 	Init();
 }
 
