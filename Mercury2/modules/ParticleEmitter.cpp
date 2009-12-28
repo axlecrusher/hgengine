@@ -257,8 +257,7 @@ void ParticleEmitter::PreRender(const MercuryMatrix& matrix)
 
 void ParticleEmitter::Render(const MercuryMatrix& matrix)
 {
-	GLCALL( glPushAttrib(GL_ENABLE_BIT|GL_DEPTH_BUFFER_BIT|GL_CURRENT_BIT) );
-	GLCALL( glDepthMask( false ) );
+	GLCALL( glPushAttrib(GL_ENABLE_BIT|GL_CURRENT_BIT) );
 	GLCALL( glDisable(GL_CULL_FACE) );
 	
 	if (m_bufferID==0)

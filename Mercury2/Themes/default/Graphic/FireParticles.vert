@@ -53,7 +53,7 @@ void main()
  	particleData = gl_Color; 
 
 	vec4 pos = vec4(1.0);
-	pos.y = 0.3*(particleData.x*particleData.x);
+	pos.y = 0.3*(particleData.x*particleData.x) + 1.5*(particleData.x/particleData.y);
 	pos.x = 0.40*((particleData.z-50000.0)/50000.0)*particleData.x; //rand num
 	pos.z = 0.40*((particleData.w-50000.0)/50000.0)*particleData.x; //rand num
 
@@ -61,9 +61,9 @@ void main()
 	m[3].xyz = pos.xyz;
 
 	mat4 s = mat4(0.0);
-	s[0][0] = 1.0+3.0*(particleData.x/particleData.y);
-	s[1][1] = 1.0+3.0*(particleData.x/particleData.y);
-	s[2][2] = 1.0+3.0*(particleData.x/particleData.y);
+	s[0][0] = 0.5+3.0*(particleData.x/particleData.y);
+	s[1][1] = 0.5+3.0*(particleData.x/particleData.y);
+	s[2][2] = 0.5+3.0*(particleData.x/particleData.y);
 	s[3][3] = 1.0;
 	gl_Position = gl_ProjectionMatrix *HG_ViewMatrix *HG_ModelMatrix *m*s* gl_Vertex;
   	gl_TexCoord[0] = gl_MultiTexCoord0;

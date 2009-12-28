@@ -35,7 +35,7 @@ public:
 
 	void Activate()
 	{
-		glColor4f( r,g,b,a );
+		GLCALL( glColor4f( r,g,b,a ) );
 	}
 
 	STATECHANGE_RTTI( ColorChange );
@@ -67,9 +67,13 @@ public:
 	void Activate()
 	{
 		if( bEnable )
-			glEnable( GL_LIGHTING );
+		{
+			GLCALL( glEnable( GL_LIGHTING ) );
+		}
 		else
-			glDisable( GL_LIGHTING );
+		{
+			GLCALL( glDisable( GL_LIGHTING ) );
+		}
 	}
 
 	STATECHANGE_RTTI( LightingSwitch );
@@ -101,9 +105,13 @@ public:
 	void Activate()
 	{
 		if( bEnable )
-			glEnable( GL_DEPTH_TEST );
+		{
+			GLCALL( glEnable( GL_DEPTH_TEST ) );
+		}
 		else
-			glDisable( GL_DEPTH_TEST );
+		{
+			GLCALL( glDisable( GL_DEPTH_TEST ) );
+		}
 	}
 
 	STATECHANGE_RTTI( DepthTest );
@@ -133,7 +141,7 @@ public:
 
 	void Activate()
 	{
-		glDepthMask( bEnable );
+		GLCALL( glDepthMask( bEnable ) );
 	}
 
 	STATECHANGE_RTTI( DepthWrite );
@@ -141,6 +149,58 @@ public:
 };
 
 REGISTER_STATECHANGE( DepthWrite );
+
+class BlendFunc : public StateChange
+{
+public:
+	BlendFunc( const MVector< MString > & sParameters ) : StateChange( sParameters )
+	{
+		if( sParameters.size() < 2 )
+		{
+			LOG.Write( ssprintf( "Error: BlendFunc state has invalid number of parameters(%d).", sParameters.size() ) );
+			return;
+		}
+		
+		m_src = StrToBlend(sParameters[0] );
+		m_dest = StrToBlend(sParameters[1] );
+	}
+
+	void Stringify( MString & sOut )
+	{
+		//XXX
+//		sOut = ssprintf( "%f", bEnable );
+	}
+
+#define STRTOGL(x,s) if (x==#s) return GL_##s;
+	int StrToBlend(const MString& s)
+	{
+		STRTOGL(s, ZERO);
+		STRTOGL(s, ONE);
+		STRTOGL(s, SRC_COLOR);
+		STRTOGL(s, ONE_MINUS_SRC_COLOR);
+		STRTOGL(s, DST_COLOR);
+		STRTOGL(s, ONE_MINUS_DST_COLOR);
+		STRTOGL(s, SRC_ALPHA);
+		STRTOGL(s, ONE_MINUS_SRC_ALPHA);
+		STRTOGL(s, DST_ALPHA);
+		STRTOGL(s, ONE_MINUS_DST_ALPHA);
+		STRTOGL(s, CONSTANT_COLOR);
+		STRTOGL(s, ONE_MINUS_CONSTANT_COLOR);
+		STRTOGL(s, CONSTANT_ALPHA);
+		STRTOGL(s, ONE_MINUS_CONSTANT_ALPHA);
+		STRTOGL(s, SRC_ALPHA_SATURATE);
+	}
+	
+	void Activate()
+	{
+		GLCALL( glBlendFunc(m_src,m_dest) );
+	}
+
+	STATECHANGE_RTTI( BlendFunc );
+	int m_src, m_dest;
+};
+
+REGISTER_STATECHANGE( BlendFunc );
 
 //////////////////////////////////////STATE CHANGE CHUNK//////////////////////////////////////
 

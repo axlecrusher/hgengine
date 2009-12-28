@@ -3,6 +3,8 @@
 	<asset type="StateChanger" file="ColorChange:1,1,1,1" />
 	<asset type="StateChanger" file="DepthTest:1" />
 	<asset type="StateChanger" file="LightingSwitch:0" />
+	<asset type="StateChanger" file="DepthWrite:1" />
+	<asset type="StateChanger" file="BlendFunc:SRC_ALPHA,ONE_MINUS_SRC_ALPHA" />
 	<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100" name="vp">
 		<node type="cameranode" movx="0" movz="0" movy="0" rotx="0" roty="0" rotz="0" name="camera">
 			<node type="transformnode" movz="-5"  movy=".2">
@@ -36,6 +38,8 @@
 						state changer needs some work for proper on and off.
 						until then had code it for all particles -->
 						<node type="transformnode" scalex="0.1" scaley="0.1" scalez="0.1">
+							<asset type="StateChanger" file="DepthWrite:0" />
+							<asset type="StateChanger" file="BlendFunc:ONE,ONE" />
 							<asset type="shader" file="GRAPHIC:FireParticles"/>
 							<asset type="texture" file="GRAPHIC:flame2.png"/>
 							<node type="particleemitter"/>
