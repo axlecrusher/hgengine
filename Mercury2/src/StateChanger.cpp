@@ -167,8 +167,7 @@ public:
 
 	void Stringify( MString & sOut )
 	{
-		//XXX
-//		sOut = ssprintf( "%f", bEnable );
+		sOut = BlendToString(m_src) + "," + BlendToString(m_dest);
 	}
 
 #define STRTOGL(x,s) if (x==#s) return GL_##s;
@@ -189,6 +188,29 @@ public:
 		STRTOGL(s, CONSTANT_ALPHA);
 		STRTOGL(s, ONE_MINUS_CONSTANT_ALPHA);
 		STRTOGL(s, SRC_ALPHA_SATURATE);
+	}
+	
+	#define GLTOSTR(x,s) case GL_##s: return #s;
+	MString BlendToString(int blend)
+	{
+		switch (blend)
+		{
+			GLTOSTR(blend, ZERO);
+			GLTOSTR(blend, ONE);
+			GLTOSTR(blend, SRC_COLOR);
+			GLTOSTR(blend, ONE_MINUS_SRC_COLOR);
+			GLTOSTR(blend, DST_COLOR);
+			GLTOSTR(blend, ONE_MINUS_DST_COLOR);
+			GLTOSTR(blend, SRC_ALPHA);
+			GLTOSTR(blend, ONE_MINUS_SRC_ALPHA);
+			GLTOSTR(blend, DST_ALPHA);
+			GLTOSTR(blend, ONE_MINUS_DST_ALPHA);
+			GLTOSTR(blend, CONSTANT_COLOR);
+			GLTOSTR(blend, ONE_MINUS_CONSTANT_COLOR);
+			GLTOSTR(blend, CONSTANT_ALPHA);
+			GLTOSTR(blend, ONE_MINUS_CONSTANT_ALPHA);
+			GLTOSTR(blend, SRC_ALPHA_SATURATE);
+		};
 	}
 	
 	void Activate()
