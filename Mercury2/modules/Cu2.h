@@ -45,6 +45,9 @@ public:
 	///Called when a key is pressed - down the focus line.
 	virtual void GetKeypress( int key, bool bDown, bool bRepeat );
 
+	///Called whenever the element is resized.
+	virtual void UpdateSize() { }
+
 	//Below here - you run into functions that are seldom overloaded.
 
 	///Handle updating of tab information
@@ -88,7 +91,7 @@ public:
 	float GetY() { return m_fY; }
 
 	///Set Width/Height
-	void SetSize( float fW, float fH ) { m_fW = fW; m_fH = fH; }
+	void SetSize( float fW, float fH ) { m_fW = fW; m_fH = fH; UpdateSize(); }
 	///Set Width
 	void SetW( float fW ) { m_fW = fW; }
 	///Set Height
@@ -185,6 +188,7 @@ public:
 	virtual void Render( const MercuryMatrix& m );
 	virtual int MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask );
 	virtual void MouseAction( int x, int y, Cu2Action c, int iWhichButton );
+	virtual void UpdateSize();
 
 	void SetText( const MString & sText );
 

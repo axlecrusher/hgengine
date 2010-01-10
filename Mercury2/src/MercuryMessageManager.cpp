@@ -94,7 +94,7 @@ void MercuryMessageManager::UnRegisterForMessage(const MString& message, Message
 	
 }
 
-void MercuryMessageManager::RegisterForMessage(const MString& message, MessageHandler* ptr,  Delegate d )
+void MercuryMessageManager::RegisterForMessage(const MString& message, MessageHandler* ptr,  MessageDelegate d )
 {
 	MSemaphoreLock lock(&m_recipientLock);
 	m_messageRecipients[message].push_back(MessagePair(ptr, d));

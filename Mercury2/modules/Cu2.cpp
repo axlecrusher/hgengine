@@ -558,6 +558,15 @@ void Cu2Dialog::SetText( const MString & sText )
 	}
 }
 
+void Cu2Dialog::UpdateSize()
+{
+	if( m_pTitle )
+	{
+		m_pTitle->SetShiftY( GetH() - 18 );
+		m_pTitle->RenderText();
+	}
+}
+
 
 REGISTER_NODE_TYPE(Cu2Dialog);
 
