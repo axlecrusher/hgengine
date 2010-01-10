@@ -13,6 +13,7 @@ void* MercuryLog::ThreadLoop(void* d)
 		log->WriteQueue();
 		msleep(100); //10x/sec
 	}
+	return 0;
 }
 
 MercuryLog::MercuryLog()

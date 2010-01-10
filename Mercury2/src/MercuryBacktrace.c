@@ -208,7 +208,11 @@ int Addr2Line( char * out, char * demangled, int maxlen, const char * file, cons
 #else
 	sprintf( execline, "addr2line -fC -e %s 0x%lx 1>&%d", file, (unsigned long)offset, fds[1] );
 #endif
-	system( execline );
+	if( system( execline ) != 0 )
+	{
+		printf( "Failed to execute backtrace app.  Command line:\"%s\".", execline );
+		return 0;
+	}
 
 	readbytes = read( fds[0], buffer, 1024 );
 	if( readbytes + 1 >= maxlen )
@@ -336,7 +340,10 @@ void SetupDBGHelp()
 	if( DBGSetup )
 		return;
 	DBGSetup = 1;
-	pipe( fds );
+	if( pipe( fds ) != 0 )
+	{
+		printf( "Warning: Could not pipe for backtrace.\n" );
+	}
 
 #ifdef _CMAC
 	sprintf( execline, "atos 2>&%d", fds[0] );

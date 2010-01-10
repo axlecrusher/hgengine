@@ -6,8 +6,7 @@
 extern bool DOOCCLUSIONCULL;
 
 MercuryAsset::MercuryAsset( const MString & key, bool bInstanced )
-	:m_isInstanced(bInstanced), m_boundingVolume(NULL),
-	 m_path( key ), m_loadState(NONE), m_ignoreCull(false), m_iPasses( DEFAULT_PASSES ), slType( 0 )
+	:slType( 0 ), m_isInstanced(bInstanced), m_boundingVolume(NULL), m_path( key ), m_loadState(NONE), m_ignoreCull(false), m_iPasses( DEFAULT_PASSES )
 {
 }
 

@@ -59,7 +59,7 @@ MercuryMatrix glGetMatrix(unsigned int m)
 
 MercuryVertex pointFromScreenLoc(int screen_x, int screen_y, float fForceDepth)
 {
-	GLfloat winX, winY, winZ;
+	GLfloat winX, winY;
 	GLdouble mouseX = 0, mouseY = 0, mouseZ = 0;
 	GLint viewport[4];
 	GLdouble modelview[16];
@@ -93,7 +93,7 @@ MercuryVertex pointFromScreenLoc(int screen_x, int screen_y )
 
 void CameraPointAndRay(int screen_x, int screen_y, MercuryVertex & p, MercuryVertex & r)
 {
-	GLfloat winX, winY, winZ;
+	GLfloat winX, winY;
 	GLdouble dox = 0, doy = 0, doz = 0;
 	GLint viewport[4];
 	GLdouble modelview[16];

@@ -61,7 +61,7 @@ public:
 
 	void Stringify( MString & sOut )
 	{
-		sOut = ssprintf( "%f", bEnable );
+		sOut = (bEnable)?"1":"0";
 	}
 
 	void Activate()
@@ -99,7 +99,7 @@ public:
 
 	void Stringify( MString & sOut )
 	{
-		sOut = ssprintf( "%f", bEnable );
+		sOut = (bEnable)?"1":"0";
 	}
 
 	void Activate()
@@ -136,7 +136,7 @@ public:
 
 	void Stringify( MString & sOut )
 	{
-		sOut = ssprintf( "%f", bEnable );
+		sOut = (bEnable)?"1":"0";
 	}
 
 	void Activate()
@@ -188,6 +188,7 @@ public:
 		STRTOGL(s, CONSTANT_ALPHA);
 		STRTOGL(s, ONE_MINUS_CONSTANT_ALPHA);
 		STRTOGL(s, SRC_ALPHA_SATURATE);
+		return -1;
 	}
 	
 	#define GLTOSTR(x,s) case GL_##s: return #s;

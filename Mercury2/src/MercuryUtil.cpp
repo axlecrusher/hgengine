@@ -234,6 +234,7 @@ bool StringToFile( const MString & sFileName, const MString & data )
 	if( !f ) return false;
 	f->Write( data.c_str(), data.length() );
 	delete f;
+	return true;
 }
 
 

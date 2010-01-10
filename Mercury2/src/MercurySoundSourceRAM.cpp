@@ -6,8 +6,6 @@ MercurySoundSourceRAM::MercurySoundSourceRAM( MercurySoundSource * chain ) : Mer
 
 void MercurySoundSourceRAM::FillBuffer( float * cBufferToFill, int iCount )
 {
-	int i;
-
 	int iOffset = 0;
 
 	if( m_iSampleHold > 0 )
@@ -28,7 +26,7 @@ void MercurySoundSourceRAM::FillBuffer( float * cBufferToFill, int iCount )
 
 	int placeBytes = m_iSoundPlace* MercurySoundManager::iChannels;
 
-	for( unsigned i = iOffset; i < iCopyFrames * MercurySoundManager::iChannels; i++ )
+	for( int i = iOffset; i < iCopyFrames * MercurySoundManager::iChannels; i++ )
 	{
 		cBufferToFill[i] = m_Sound->fSound[placeBytes+i];
 	}

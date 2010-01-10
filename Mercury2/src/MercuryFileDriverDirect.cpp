@@ -237,7 +237,10 @@ MercuryFileDirverDirect::MercuryFileDirverDirect()
 		return;
 	}
 	*path_end = 0;
-	chdir( buffer );
+	if( chdir( buffer ) != 0 )
+	{
+		fprintf( stderr, "WARNING: Could not change path of executable to \"%s\"\n", buffer );
+	}
 #endif
 #endif
 }

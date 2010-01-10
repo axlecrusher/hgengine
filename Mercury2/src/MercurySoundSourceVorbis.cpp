@@ -118,7 +118,7 @@ MHash< MAutoPtr< HGRawSound > > MercurySoundSourceVorbisRAM::g_SoundLibrary;
 REGISTER_SOUND_SOURCE( MercurySoundSourceVorbis, "Vorbis" );
 
 MercurySoundSourceVorbis::MercurySoundSourceVorbis( MercurySoundSource * chain ) :
-	MercurySoundSource( chain ), iBufferSize( 32768 ), iBufferLoad(1), iBufferPlay(0)
+	MercurySoundSource( chain ), iBufferSize( 32768 ), iBufferPlay(0), iBufferLoad(1)
 {
 	iBuffer = (short*)malloc( sizeof( short ) * iBufferSize * 2 );
 }
@@ -134,7 +134,7 @@ MercurySoundSourceVorbis::~MercurySoundSourceVorbis()
 bool MercurySoundSourceVorbis::Load( const MString & sDescriptor )
 {
 	MAutoPtr< HGRawSound > r;
-	MAutoPtr< HGRawSound > * g;
+//	MAutoPtr< HGRawSound > * g;
 
 	m_File = FILEMAN.Open( sDescriptor );
 	
@@ -148,12 +148,13 @@ bool MercurySoundSourceVorbis::Load( const MString & sDescriptor )
 
 	ov_open_callbacks( m_File, vorbisFile, NULL, 0, vorbisCallbacks );
 
-	vorbis_info* info = ov_info(vorbisFile, -1);
+//	vorbis_info* info = ov_info(vorbisFile, -1);
 //	unsigned VorbisChannels = info->channels;
 //	unsigned VorbisSamplerate = info->rate;
+
 	unsigned VorbisSamples = ov_pcm_total( vorbisFile, 0 );
 
-	unsigned Vorbisbytes_read;	
+//	unsigned Vorbisbytes_read;	
 
 	if( VorbisSamples <= 0 )
 	{
@@ -169,7 +170,7 @@ bool MercurySoundSourceVorbis::Load( const MString & sDescriptor )
 void MercurySoundSourceVorbis::FillBuffer( float * cBufferToFill, int iCount )
 {
 	//Don't worry our circular queue is threadsafe.
-	for( unsigned i = 0; i < iCount; i++ )
+	for( int i = 0; i < iCount; i++ )
 	{
 		if( PlayLeft() <= 2 ) break;
 		cBufferToFill[i*2+0] = float(iBuffer[iBufferPlay*2+0])/32768.;

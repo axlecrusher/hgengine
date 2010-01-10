@@ -207,7 +207,7 @@ int MercurySoundDriverALSA::playback_function(int nrframes)
 
 	SOUNDMAN->FillBuffer( ibuf, nrframes );
 
-	for( unsigned i = 0; i < nrframes; ++i )
+	for( int i = 0; i < nrframes; ++i )
 	{
 		float fi = ibuf[i*2+0];
 		float fb = ibuf[i*2+1];
