@@ -324,6 +324,8 @@ void Cu2Button::LoadFromXML(const XMLNode& node)
 	LOAD_FROM_XML( "text", m_sText,  );
 	LOAD_FROM_XML( "autoSize",  m_bAutoSize, StrToBool );
 	LOAD_FROM_XML( "clickPayload", m_sValueToSend, );
+	LOAD_FROM_XML( "associatedValue", m_sAssociatedValue, );
+	LOAD_FROM_XML( "associatedValueSet", m_sAssociatedValueSet, );
 
 	if( m_pText )
 	{
@@ -346,6 +348,8 @@ void Cu2Button::SaveToXMLTag( MString & sXMLStream )
 	if( m_sMessageToSend.length() ) sXMLStream += ssprintf( "clickMessage=\"%s\" ", m_sMessageToSend.c_str() );
 	if( m_sValueToSend.length() ) sXMLStream += ssprintf( "clickPayload=\"%s\" ", m_sValueToSend.c_str() );
 	if( m_bAutoSize ) sXMLStream += ssprintf( "autoSize=\"%d\" ", m_bAutoSize );
+	if( m_sAssociatedValue.length() ) sXMLStream += ssprintf( "associatedValue=\"%s\" ", m_sAssociatedValue.c_str() );
+	if( m_sAssociatedValueSet.length() ) sXMLStream += ssprintf( "associatedValueSet=\"%s\" ", m_sAssociatedValueSet.c_str() );
 
 	if( !m_pText )
 		m_pText->SaveToXMLTag( sXMLStream );
@@ -391,6 +395,9 @@ void Cu2Button::Refresh()
 
 void Cu2Button::Click( int x, int y )
 {
+	if( m_sAssociatedValue.length() )
+		MESSAGEMAN.GetValue( m_sAssociatedValue )->SetString( m_sAssociatedValueSet );
+
 	if( m_sMessageToSend.length() )
 		MESSAGEMAN.BroadcastMessage( m_sMessageToSend, new PointerDataMessage( this ) );
 }
@@ -437,6 +444,90 @@ void Cu2Button::Render( const MercuryMatrix& m )
 }
 
 REGISTER_NODE_TYPE(Cu2Button);
+
+///////////////////////////////////////COPPER 2 LABEL///////////////////////////////////////
+
+Cu2Label::Cu2Label() : Cu2Element()
+{
+	m_pText = (TextNode*)NODEFACTORY.Generate( "TextNode" );
+	AddChild( m_pText );
+	m_bAutoSize = true;
+	m_bDown = false;
+}
+
+Cu2Label::~Cu2Label()
+{
+	if( m_sAssociatedValue.length() )
+		MESSAGEMAN.GetValue( m_sAssociatedValue )->DetachModifyDelegate( (ValueDelegate)&Cu2Label::ChangeValue, this );
+}
+
+void Cu2Label::LoadFromXML(const XMLNode& node)
+{
+	LOAD_FROM_XML( "associatedValue", m_sAssociatedValue, );
+	if( m_sAssociatedValue.length() )
+	{
+		MESSAGEMAN.GetValue( m_sAssociatedValue )->AttachModifyDelegate( (ValueDelegate)&Cu2Label::ChangeValue, this );
+		printf( "Associating Value: %s\n", m_sAssociatedValue.c_str() );
+	}
+
+	LOAD_FROM_XML( "text", m_sText,  );
+	LOAD_FROM_XML( "autoSize",  m_bAutoSize, StrToBool );
+
+	if( m_pText )
+	{
+		m_pText->SetAlignment( TextNode::LEFT );
+		m_pText->LoadFont( node.Attribute("font") );
+		m_pText->SetSize( StrToFloat( node.Attribute("size") ) );
+		SetText( m_sText );
+		m_pText->SetShiftAbsolute( true );
+		m_pText->SetShiftX( 5 );
+		m_pText->SetShiftY( 5 );
+	}
+
+	Cu2Element::LoadFromXML( node );
+
+	Refresh();
+}
+
+void Cu2Label::SaveToXMLTag( MString & sXMLStream )
+{
+	if( m_sAssociatedValue.length() ) sXMLStream += ssprintf( "m_sAssociatedValue=\"%s\" ", m_sAssociatedValue.c_str() );
+	if( m_bAutoSize ) sXMLStream += ssprintf( "autoSize=\"%d\" ", m_bAutoSize );
+
+	if( !m_pText )
+		m_pText->SaveToXMLTag( sXMLStream );
+
+	Cu2Element::SaveToXMLTag( sXMLStream );
+}
+void Cu2Label::Refresh()
+{
+	if( !m_pText )
+	{
+		LOG.Write( "Warning: Cu2Button \"" + GetName() + "\" does not have valid Text box associated." );
+		return;
+	}
+
+	m_pText->SetText( m_sText );
+	m_pText->RenderText();
+
+	if( m_bAutoSize )
+	{
+		SetSize( m_pText->GetRMaxX() + 8, m_pText->GetRMaxY() + 8 );
+	}
+}
+
+void Cu2Label::Render( const MercuryMatrix& m )
+{
+	TransformNode::Render( m );
+}
+
+void Cu2Label::ChangeValue( MValue * v )
+{
+	m_sText = v->GetString();
+	Refresh();
+}
+
+REGISTER_NODE_TYPE(Cu2Label);
 
 ///////////////////////////////////////COPPER 2 DIALOG///////////////////////////////////////
 

@@ -50,7 +50,8 @@ public:
 
 	int GetInt() { MSemaphoreLock( &this->m_Sema ); return (m_CurType == TYPE_INT)?m_Data.l:ConvInt(); }
 	float GetFloat() { MSemaphoreLock( &this->m_Sema ); return (m_CurType == TYPE_FLOAT)?m_Data.f:ConvFloat(); }
-	const MString & GetString() { MSemaphoreLock( &this->m_Sema ); return (m_CurType == TYPE_STRING)?*m_Data.dataS:ConvString(); }
+	const MString GetString() { MSemaphoreLock( &this->m_Sema ); return (m_CurType == TYPE_STRING)?*m_Data.dataS:ConvString(); }
+	void GetString( MString & str ) { MSemaphoreLock( &this->m_Sema ); if (m_CurType == TYPE_STRING) str = *m_Data.dataS; else ConvString( str ); }
 	bool GetBool() { MSemaphoreLock( &this->m_Sema ); return (m_CurType == TYPE_INT)?m_Data.l:ConvBool(); }
 	void * GetPtr() { MSemaphoreLock( &this->m_Sema ); return (m_CurType == TYPE_PTR)?m_Data.v:0; }
 
@@ -83,19 +84,15 @@ public:
 
 	MVType GetType() { return m_CurType; }
 
-	void AttachModifyDelegate( DeletionNotifier NotifyFunction, MessageHandler * NotifyObject )
-	{
-		DelegateNotifierList * d = new DelegateNotifierList( NotifyFunction, NotifyObject );
-		d->Next = DLModify;
-		DLModify = d;
-	}
-
+	void AttachModifyDelegate( DeletionNotifier NotifyFunction, MessageHandler * NotifyObject );
+	void DetachModifyDelegate( DeletionNotifier NotifyFunction, MessageHandler * NotifyObject );
 	void SetReferences( short RefCount ) { m_References = RefCount; }
 private:
 	//Conv functions are not thread protected - this is because the caller of these functions should be.
 	int ConvInt();
 	float ConvFloat();
-	const MString & ConvString();
+	const MString ConvString();
+	void ConvString( MString & ret );
 	bool ConvBool();
 
 	//Cleanup (to be done when object is deleted or switching types)
@@ -191,7 +188,7 @@ public:
 	MVRefString( MValue * m ) : MVRefBase( m ) { }
 	MVRefString( const MString & p ) : MVRefBase( p ) { }
 
-	const MString & Get() { return mv->GetString(); } 
+	const MString Get() { return mv->GetString(); } 
 	void Set( const MString & sv ) { mv->SetString( sv ); }
 };
 

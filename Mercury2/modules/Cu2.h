@@ -170,6 +170,9 @@ public:
 
 	GENRTTI( Cu2Button );
 private:
+	MString m_sAssociatedValue;
+	MString m_sAssociatedValueSet;
+
 	MString m_sMessageToSend;
 	MString m_sValueToSend;
 	MString m_sText;
@@ -178,6 +181,39 @@ private:
 	TextNode * m_pText;
 };
 
+///Standard label (doesn't do anything but display something)
+class Cu2Label : public Cu2Element
+{
+public:
+	Cu2Label();
+	~Cu2Label();
+
+	virtual void LoadFromXML(const XMLNode& node);
+	virtual void SaveToXMLTag( MString & sXMLStream );
+
+	virtual void Render( const MercuryMatrix& m );
+
+	void SetText( const MString & sText ) { m_sText = sText; Refresh(); }
+	void SetAutoSize( bool bAutoSize ) { m_bAutoSize = bAutoSize; Refresh(); }
+	void Refresh();
+
+	MString & Payload() { return m_sValueToSend; }
+	TextNode * GetTextNodeHandle() { return m_pText; }
+
+	void ChangeValue( MValue * v );
+
+	GENRTTI( Cu2Button );
+private:
+	MString m_sAssociatedValue;
+	MString m_sMessageToSend;
+	MString m_sValueToSend;
+	MString m_sText;
+	bool m_bAutoSize;
+	bool m_bDown;
+	TextNode * m_pText;
+};
+
+///Dialog box (for putting other things into and being able to drag around)
 class Cu2Dialog : public Cu2Element
 {
 public:

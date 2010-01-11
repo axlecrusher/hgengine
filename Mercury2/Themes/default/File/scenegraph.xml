@@ -72,7 +72,9 @@
 		<node type="Cu2Root" width="640" height="480" hidden="true" >
 			<node type="Cu2Button" text="hello" font="FONT:FreeSans.hgfont" size=".25" alignment="CENTER" x="10" y="450" name="Button" />
 			<node type="Cu2Dialog" text="T00" font="FONT:FreeSans.hgfont" size=".25" x="200" y="40" name="Dialog" >
-				<node type="Cu2Button" text="hel0" font="FONT:FreeSans.hgfont" size=".25" alignment="CENTER" x="10" y="40" />
+				<node type="Cu2Button" text="A" font="FONT:FreeSans.hgfont" size=".25" alignment="CENTER" x="32" y="40" associatedValue="TestMode" associatedValueSet="A" />
+				<node type="Cu2Button" text="B" font="FONT:FreeSans.hgfont" size=".25" alignment="CENTER" x="10" y="40" associatedValue="TestMode" associatedValueSet="B"/>
+				<node type="Cu2Label" text="[nil]" font="FONT:FreeSans.hgfont" size=".25" alignment="CENTER" x="10" y="10" associatedValue="TestMode" />
 			</node>
 		</node>
 	</node>

@@ -211,12 +211,12 @@ class TestMouse
 public:
 	TestMouse()
 	{
-		MESSAGEMAN.GetValue( "Input.CursorGrabbed" )->AttachModifyDelegate( (ValueDelegate)&TestMouse::ChangeX, (MessageHandler*)this );
+		MESSAGEMAN.GetValue( "TestMode" )->AttachModifyDelegate( (ValueDelegate)&TestMouse::ChangeX, (MessageHandler*)this );
 	}
 
 	void ChangeX( MValue * v )
 	{
-		printf( "Changed: %d\n", v->GetBool() );
+		printf( "Changed: %s\n", v->GetString().c_str() );
 	}
 } TM;
 ///XXXXXXX REMOVE THIS CODE BEFORE ANY RELEASE XXXXXXXXXXx

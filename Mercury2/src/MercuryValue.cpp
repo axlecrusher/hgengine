@@ -93,18 +93,30 @@ float MValue::ConvFloat()
 }
 
 
-const MString & MValue::ConvString()
+const MString MValue::ConvString()
 {
-	static const MString NILVAL = "(NIL)";
 	switch( m_CurType )
 	{
 	case TYPE_STRING:  return *m_Data.dataS;
-	case TYPE_INT:     ssprintf( "%d", m_Data.l );
-	case TYPE_FLOAT:   ssprintf( "%f", m_Data.f );
-	case TYPE_PTR:     ssprintf( "%p", m_Data.v );
-	default:           return NILVAL;
+	case TYPE_INT:     return ssprintf( "%d", m_Data.l );
+	case TYPE_FLOAT:   return ssprintf( "%.2f", m_Data.f );
+	case TYPE_PTR:     return ssprintf( "%p", m_Data.v );
+	default:           return "(NIL)";
 	}
 }
+
+void MValue::ConvString( MString & ret )
+{
+	switch( m_CurType )
+	{
+	case TYPE_STRING:  ret = *m_Data.dataS;
+	case TYPE_INT:     ret = ssprintf( "%d", m_Data.l );
+	case TYPE_FLOAT:   ret = ssprintf( "%.2f", m_Data.f );
+	case TYPE_PTR:     ret = ssprintf( "%p", m_Data.v );
+	default:           ret = "(NIL)";
+	}
+}
+
 
 bool MValue::ConvBool()
 {
@@ -116,6 +128,22 @@ bool MValue::ConvBool()
 	default:           return 0;
 	}
 }
+
+
+
+void MValue::AttachModifyDelegate( DeletionNotifier NotifyFunction, MessageHandler * NotifyObject )
+{
+	DelegateNotifierList * d = new DelegateNotifierList( NotifyFunction, NotifyObject );
+	d->Next = DLModify;
+	DLModify = d;
+}
+
+void MValue::DetachModifyDelegate( DeletionNotifier NotifyFunction, MessageHandler * NotifyObject )
+{
+	DLModify->DelNotifier( NotifyFunction, NotifyObject, DLModify );
+}
+
+
 
 MVRefBase::MVRefBase(const MString & sPath)
 {
