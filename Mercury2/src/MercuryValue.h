@@ -3,6 +3,8 @@
 
 #include <MSemaphore.h>
 
+class MessageHandler;
+
 ///Types for the values
 enum MVType
 {
@@ -158,6 +160,17 @@ public:
 
 	int Get() { return mv->GetInt(); } 
 	void Set( int iv ) { mv->SetInt( iv ); }
+};
+
+///Value Reference for Bool objects.
+class MVRefBool : public MVRefBase
+{
+public:
+	MVRefBool( MValue * m ) : MVRefBase( m ) { }
+	MVRefBool( const MString & p ) : MVRefBase( p ) { }
+
+	int Get() { return mv->GetBool(); } 
+	void Set( int iv ) { mv->SetBool( iv ); }
 };
 
 ///Value Reference for Float objects.

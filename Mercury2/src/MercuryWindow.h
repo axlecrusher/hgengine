@@ -32,9 +32,6 @@ public:
 	inline int Width() const { return m_width; }
 	inline int Height() const { return m_height; }
 
-	void SetGrabbedMouseMode( bool bGrabbed ) { m_bGrabbed = bGrabbed; }
-	bool GetGrabbedMouseMode( ) { return m_bGrabbed; }
-
 	inline bool InFocus() const { return m_inFocus; }
 
 protected:
@@ -45,7 +42,6 @@ protected:
 	int m_width, m_height;
 	uint8_t m_bits, m_depthBits;
 	bool m_fullscreen;
-	bool m_bGrabbed;
 
 	int m_iLastMouseX;
 	int m_iLastMouseY;

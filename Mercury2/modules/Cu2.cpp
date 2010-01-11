@@ -241,6 +241,9 @@ REGISTER_NODE_TYPE(Cu2Element);
 
 
 ///////////////////////////////////////COPPER 2 ROOT///////////////////////////////////////
+
+MVRefBool Cu2Root::CursorGrabbed( "Input.CursorGrabbed" );
+
 Cu2Root::Cu2Root()
 {
 	g_pCurrentInstance = this;
@@ -255,15 +258,14 @@ Cu2Root::~Cu2Root()
 
 void Cu2Root::SetHidden( bool bHide )
 {
-	MercuryWindow::GetCurrentWindow()->SetGrabbedMouseMode( bHide );
-
+	CursorGrabbed.Set( bHide );
 	MercuryNode::SetHidden( bHide );
 }
 
 void Cu2Root::LoadFromXML(const XMLNode& node)
 {
 	Cu2Element::LoadFromXML( node );
-	MercuryWindow::GetCurrentWindow()->SetGrabbedMouseMode( IsHidden() );
+	CursorGrabbed.Set( IsHidden() );
 }
 
 

@@ -2,6 +2,7 @@
 #define CAMERA_H
 
 #include <TransformNode.h>
+#include <MercuryValue.h>
 #include <MQuaternion.h>
 
 class CameraNode : public TransformNode
@@ -19,6 +20,8 @@ class CameraNode : public TransformNode
 
 		GENRTTI(CameraNode);
 	private:
+		static MVRefBool CursorGrabbed;
+
 		MercuryVertex m_origionalPosition;
 		MercuryVector m_lookAt;
 		float m_x, m_y;

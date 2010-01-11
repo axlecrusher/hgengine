@@ -211,12 +211,12 @@ class TestMouse
 public:
 	TestMouse()
 	{
-		MESSAGEMAN.GetValue( "Input.CursorDeltaX" )->AttachModifyDelegate( (ValueDelegate)&TestMouse::ChangeX, (MessageHandler*)this );
+		MESSAGEMAN.GetValue( "Input.CursorGrabbed" )->AttachModifyDelegate( (ValueDelegate)&TestMouse::ChangeX, (MessageHandler*)this );
 	}
 
 	void ChangeX( MValue * v )
 	{
-		printf( "Changed: %f\n", v->GetFloat() );
+		printf( "Changed: %d\n", v->GetBool() );
 	}
 } TM;
 ///XXXXXXX REMOVE THIS CODE BEFORE ANY RELEASE XXXXXXXXXXx

@@ -5,6 +5,8 @@
 
 #include <Shader.h>
 
+MVRefBool CameraNode::CursorGrabbed( "Input.CursorGrabbed" );
+
 REGISTER_NODE_TYPE(CameraNode);
 
 CameraNode::CameraNode()
@@ -82,7 +84,11 @@ void CameraNode::ComputeMatrix()
 void CameraNode::HandleMouseInput(const MessageData& data)
 {
 	const MouseInput& m( dynamic_cast<const MouseInput&>( data ) );
-	
+
+	//First find out if cursor is grabbed.  If it isn't then we shouldn't be responding to the input.
+	if( !CursorGrabbed.Get() )
+		return;
+
 	m_y += m.dy/1200.0f;
 	m_x += m.dx/1200.0f;
 	

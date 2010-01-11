@@ -2,6 +2,7 @@
 #define _CU2_H
 
 #include <TransformNode.h>
+#include <MercuryValue.h>
 
 ///All the mouse actions Cu2 can transmit.
 enum Cu2Action
@@ -132,6 +133,8 @@ public:
 
 	void HandleMouseInput(const MessageData& data);
 	void HandleKeyboardInput(const MessageData& data);
+
+	static MVRefBool CursorGrabbed;
 
 	GENRTTI( Cu2Root );
 private:

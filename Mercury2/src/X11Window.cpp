@@ -11,6 +11,8 @@
 #define MOUSE_BTN_SCROLL_UP 4
 #define MOUSE_BTN_SCROLL_DOWN 5
 
+MVRefBool GlobalMouseGrabbed_Set( "Input.CursorGrabbed" );
+
 // Use X11_MASK(MOUSE_BTN_SCROLL_UP) to generate the token Button4Mask
 #define X11_MASK(x) _X11_MASK(x)
 // Sigh... second #define needed, because otherwise x doesn't get evaluated.
@@ -266,7 +268,7 @@ bool X11Window::PumpMessages()
 			{
 				//XFocusChangeEvent*e = (XFocusChangeEvent*)&event;
 				m_inFocus = (event.type == FocusIn);
-				if (m_inFocus && m_bGrabbed ) XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
+				if (m_inFocus && GlobalMouseGrabbed_Set.Get() ) XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
 				break;
 			}
 		}
@@ -317,7 +319,7 @@ bool X11Window::PumpMessages()
 				center = e->state & X11_MASK(MOUSE_BTN_CENTER);
 				su = e->state & X11_MASK(MOUSE_BTN_SCROLL_UP);
 				sd = e->state & X11_MASK(MOUSE_BTN_SCROLL_DOWN);
-				if( m_bGrabbed )
+				if( GlobalMouseGrabbed_Set.Get() )
 				{
 					x = m_width/2 - e->x;
 					y = m_height/2 - e->y;

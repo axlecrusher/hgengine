@@ -1,8 +1,9 @@
 #include <MercuryInput.h>
 #include <MercuryMessageManager.h>
 
-MVRefFloat GlobalMouseX_Set( "Input.CursorDeltaX" );
-MVRefFloat GlobalMouseY_Set( "Input.CursorDeltaY" );
+MVRefFloat GlobalMouseX_Set( "Input.CursorX" );
+MVRefFloat GlobalMouseY_Set( "Input.CursorY" );
+MVRefInt GlobalMouseB_Set( "Input.CursorButtons" );
 
 MouseInput::MouseInput()
 	:MessageData(), dx(0), dy(0)
@@ -26,6 +27,7 @@ void MouseInput::ProcessMouseInput(int dx, int dy, bool leftButton, bool rightBu
 
 	GlobalMouseX_Set.Set( dx );
 	GlobalMouseY_Set.Set( dy );
+	GlobalMouseB_Set.Set( currentButtonMasks.data );
 
 	POST_MESSAGE( INPUTEVENT_MOUSE, mi, 0 );
 }
