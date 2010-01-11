@@ -11,6 +11,9 @@ class RenderDeferredLights : public MercuryAsset
 		
 		virtual void Render(const MercuryNode* node);
 		GENRTTI( RenderDeferredLights );
+	protected:
+		virtual bool CheckForNewer() { return false; }
+		virtual void Reload() {};
 };
 
 #endif

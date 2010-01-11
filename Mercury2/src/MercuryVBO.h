@@ -46,6 +46,10 @@ class MercuryVBO : public MercuryAsset
 		inline static void IncrementBatches() { ++m_vboBatches; }
 
 		GENRTTI( MercuryVBO );
+	protected:
+		virtual bool CheckForNewer() { return false; }
+		virtual void Reload() {};
+
 	private:
 		virtual void InitVBO();
 		static void* m_lastVBOrendered;

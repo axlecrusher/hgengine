@@ -7,7 +7,7 @@ const uint16_t EXPCTMJRV = 2;
 const uint16_t EXPCTMNRV = 3;
 
 HGMDLModel::HGMDLModel( const MString & key, bool bInstanced )
-	:MercuryAsset( key, bInstanced )
+	:MercuryAsset( key, bInstanced ), m_timeStamp( 0 ) 
 {
 }
 
@@ -17,10 +17,33 @@ HGMDLModel::~HGMDLModel()
 
 void HGMDLModel::LoadFromXML(const XMLNode& node)
 {
-	MString path = node.Attribute("file");
-	ChangeKey( path );
-	
+	LoadFromFile( node.Attribute("file") );
 	MercuryAsset::LoadFromXML( node );
+}
+
+
+void HGMDLModel::LoadFromFile(const MString& path)
+{
+	m_path = path;
+	ChangeKey( path );
+}
+
+bool HGMDLModel::CheckForNewer()
+{
+	uint32_t t = 0;
+	MercuryFile *f = FILEMAN.Open(m_path);
+	
+	if (f)
+	{
+		t = f->GetModTime();
+		delete f;
+	}
+	return t != m_timeStamp;
+}
+
+void HGMDLModel::Reload()
+{
+	LoadFromFile(m_path);
 }
 
 void HGMDLModel::LoadModel(MercuryFile* hgmdl, HGMDLModel* model)

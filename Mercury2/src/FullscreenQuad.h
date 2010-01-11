@@ -13,6 +13,10 @@ class FullscreenQuad : public Quad
 		virtual void Render(const MercuryNode* node);
 
 		GENRTTI( FullscreenQuad );
+	protected:
+		virtual bool CheckForNewer() { return false; }
+		virtual void Reload() {};
+		
 	private:
 		MercuryMatrix m_matrix;
 };

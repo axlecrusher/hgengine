@@ -13,7 +13,7 @@ REGISTER_ASSET_TYPE(Texture);
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 
 Texture::Texture( const MString & key, bool bInstanced )
-	:MercuryAsset( key, bInstanced ), m_raw(NULL),m_textureID(0),m_bDeleteRaw(true),m_dynamic(false), m_bClamp(true), m_tFilterMode(TF_LINEAR_MIPS)
+	:MercuryAsset( key, bInstanced ), m_raw(NULL),m_textureID(0),m_bDeleteRaw(true),m_dynamic(false), m_bClamp(true), m_tFilterMode(TF_LINEAR_MIPS), m_timeStamp(0)
 {
 	if (!m_initTextureSuccess)
 	{
@@ -290,6 +290,27 @@ void Texture::MakeDynamic(uint16_t width, uint16_t height, ColorByteType cbt, co
 	GLCALL( glBindTexture( GL_TEXTURE_2D, 0 ) );
 
 	GLERRORCHECK;
+}
+
+bool Texture::CheckForNewer()
+{
+	uint32_t timeStamp = m_timeStamp;
+	
+	if (timeStamp == 0) return false;
+
+	MercuryFile *f = FILEMAN.Open(m_path);
+	if (f)
+	{
+		m_timeStamp = f->GetModTime();
+		delete f;
+	}
+	
+	return timeStamp != m_timeStamp;
+}
+
+void Texture::Reload()
+{
+	LoadImagePath(m_path);
 }
 
 MAutoPtr< Texture > Texture::LoadFromFile(const MString& path)

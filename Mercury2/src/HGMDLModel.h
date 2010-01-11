@@ -12,6 +12,7 @@ class HGMDLModel : public MercuryAsset
 		~HGMDLModel();
 		
 		virtual void LoadFromXML(const XMLNode& node);
+		void LoadFromFile(const MString& path);
 
 		static void LoadModel(MercuryFile* hgmdl, HGMDLModel* model);
 
@@ -21,11 +22,16 @@ class HGMDLModel : public MercuryAsset
 		virtual void Render(const MercuryNode* node);
 		GENRTTI( HGMDLModel );
 	protected:
+		virtual bool CheckForNewer();
+		virtual void Reload();
+
 		MVector< MAutoPtr< HGMDLMesh > > m_meshes;
 
 	private:
 		CLASS_HELPERS( MercuryAsset );
 		static void* LoaderThread(void* d);
+		
+		uint32_t m_timeStamp;
 };
 
 

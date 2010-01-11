@@ -6,7 +6,7 @@
 extern bool DOOCCLUSIONCULL;
 
 MercuryAsset::MercuryAsset( const MString & key, bool bInstanced )
-	:slType( 0 ), m_isInstanced(bInstanced), m_boundingVolume(NULL), m_path( key ), m_loadState(NONE), m_ignoreCull(false), m_iPasses( DEFAULT_PASSES )
+	:slType( 0 ), m_isInstanced(bInstanced), m_boundingVolume(NULL), m_path( key ), m_loadState(NONE), m_ignoreCull(false), m_iPasses( DEFAULT_PASSES ), m_lastNewerCheck(0)
 {
 }
 
@@ -53,6 +53,13 @@ bool MercuryAsset::DoCullingTests(OcclusionResult& occlusion, const MercuryMatri
 
 void MercuryAsset::PreRender(const MercuryNode* node)
 {
+	uint32_t t = time(0);
+	if ( CheckForNewer() && (m_lastNewerCheck < t) )
+	{
+		m_lastNewerCheck = t;
+		Reload();
+	}
+
 	/*
 	MercuryNode* n = const_cast<MercuryNode*>(node);
 	if ( m_boundingVolume )

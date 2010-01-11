@@ -384,16 +384,21 @@ void Shader::DestroyShader()
 	return;
 }
 
-void Shader::CheckForNewer( )
+void Shader::Reload()
+{
+	DestroyShader( );
+	LoadShader( );
+}
+
+bool Shader::CheckForNewer()
 {
 	unsigned long iCurTimes[3];
 	GetTimeCodes( iCurTimes );
 
 	if( iCurTimes[0] != iTimeCode[0] || iCurTimes[1] != iTimeCode[1] || iCurTimes[2] != iTimeCode[2] )
-	{
-		DestroyShader( );
-		LoadShader( );
-	}
+		return true;
+	
+	return false;
 }
 
 void Shader::GetTimeCodes( unsigned long * iOut )

@@ -64,6 +64,10 @@ public:
 	virtual bool ChangeKey( const MString & sNewKey );
 	virtual bool LoadInternal( const MString & sFile );
 	GENRTTI( StateChanger );
+	
+	protected:
+		virtual bool CheckForNewer() { return false; }
+		virtual void Reload() {};
 private:
 
 	MVector< MAutoPtr< StateChange > > m_vStates;

@@ -14,6 +14,9 @@ class Quad : public MercuryVBO
 		virtual bool ChangeKey( const MString & sDescription );
 
 		GENRTTI( Quad );
+	protected:
+		virtual bool CheckForNewer() { return false; }
+		virtual void Reload() {};
 
 	private:
 		bool m_bFlipV;

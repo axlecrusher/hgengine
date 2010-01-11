@@ -84,14 +84,21 @@ class MercuryAsset : public RefBase, public MessageHandler
 	protected:
 		void SetLoadState(LoadState ls); //thread safe
 		
+		virtual bool CheckForNewer() = 0;
+		virtual void Reload() = 0;
+		
 		bool m_isInstanced;
 		BoundingVolume* m_boundingVolume;
 		MString m_path;
+		
 	private:
 		LoadState m_loadState;
 		MSemaphore m_lock;
 		bool m_ignoreCull;
 		unsigned short m_iPasses;
+
+		uint32_t m_lastNewerCheck;
+//		uint32_t m_timeStamp; //creation timestamp of asset eg. file timestamp
 };
 
 /** This holds the per-instance data for each asset instance.

@@ -47,9 +47,13 @@ class Texture : public MercuryAsset
 		static void DisableUnusedTextures();
 
 		void SetFilter( TextureFilterMode t ) { m_tFilterMode = t; }
-
 		GENRTTI( Texture );
+	protected:
+		virtual bool CheckForNewer();
+		virtual void Reload();
+
 	private:
+
 		void LoadImagePath(const MString& path);
 		
 		void BindTexture();
@@ -59,7 +63,7 @@ class Texture : public MercuryAsset
 		void Deactivate(uint32_t textureResource);
 		
 		void InitiateBindCache();
-		
+
 		RawImageData* m_raw;
 		uint32_t m_textureID;
 		
@@ -75,7 +79,7 @@ class Texture : public MercuryAsset
 		bool m_dynamic;
 		bool m_bClamp;
 		TextureFilterMode m_tFilterMode;
-		
+		uint32_t m_timeStamp;
 };
 
 #endif

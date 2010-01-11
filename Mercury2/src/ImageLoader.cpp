@@ -56,11 +56,12 @@ RawImageData* ImageLoader::LoadImage(const MString& filename)
 		if (i->first == t)
 		{
 			RawImageData* d = i->second(f);
-			delete f;
+			SAFE_DELETE(f);
 			return d;
 		}
 	}
-	delete f;
+	
+	SAFE_DELETE(f);
 	return NULL;
 }
 

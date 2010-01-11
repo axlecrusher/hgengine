@@ -90,6 +90,11 @@ public:
 	///Explicitly get the OpenGL ProgramID in the event you need it for advanced techniques
 	unsigned int	GetProgramID() { return iProgramID; }
 	inline static Shader* GetCurrentShader() { return CurrentShader; }
+	
+	protected:
+		virtual bool CheckForNewer();
+		virtual void Reload();
+		
 private:
 	
 	int32_t GetUniformLocation(const MString& n);
@@ -127,7 +132,7 @@ private:
 	bool LinkShaders();
 
 	///Check for newer version of 'this' shader
-	void CheckForNewer( );
+//	void CheckForNewer( );
 
 	///Get the last modified time for sShaderName
 	/* This function takes on iOut as being where to put the last time the shader was modified.
