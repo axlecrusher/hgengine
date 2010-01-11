@@ -11,8 +11,8 @@
 #include <MercuryUtil.h>
 #include <Mint.h>
 #include <MAutoPtr.h>
-
 #include <MSemaphore.h>
+#include <MercuryValue.h>
 
 class MessageHolder : public RefBase
 {
