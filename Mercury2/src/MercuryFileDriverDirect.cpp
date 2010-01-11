@@ -27,7 +27,6 @@ MercuryFile::MercuryFile()
 
 MercuryFile::~MercuryFile()
 {
-	//No code
 }
 
 bool MercuryFile::Init( const MString &sPath, FilePermission p )
@@ -69,11 +68,7 @@ MercuryFileObjectDirect::MercuryFileObjectDirect( ):
 
 MercuryFileObjectDirect::~MercuryFileObjectDirect()
 {
-	if ( m_fF != NULL )
-	{
-		fclose ( m_fF );
-		m_fF = NULL;
-	}
+	Close();
 }
 
 void MercuryFileObjectDirect::Close()
@@ -83,7 +78,6 @@ void MercuryFileObjectDirect::Close()
 		fclose ( m_fF );
 		m_fF = NULL;
 	}
-	delete this;
 }
 
 bool MercuryFileObjectDirect::Init( const MString & fName, FilePermission p )
