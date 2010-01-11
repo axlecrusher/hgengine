@@ -138,16 +138,14 @@ bool Shader::LoadShader( )
 		i = f1->Length();
 		Buffer = (char*)malloc( i+1 );
 		f1->Read( Buffer, i );
-		f1->Close();
+		SAFE_DELETE( f1 );
 		LOG.Write( "Compiling: " + s1 );
 		Buffer[i] = '\0';
 		if( !LoadShaderFrag( Buffer ) )
 		{
 			free( Buffer );
-			if( f2 )
-				f2->Close();
-			if( f3 )
-				f3->Close();
+			SAFE_DELETE( f2 );
+			SAFE_DELETE( f3 );
 			LOG.Write("Reporting failed shaderload. Not linking." );
 			return false;
 		}
@@ -158,13 +156,13 @@ bool Shader::LoadShader( )
 		i = f2->Length();
 		Buffer = (char*)malloc( i+1 );
 		f2->Read( Buffer, i );
-		f2->Close();
+		SAFE_DELETE( f2 );
 		Buffer[i] = '\0';
 		LOG.Write("Compiling: "+s2);
 		if( !LoadShaderVert( Buffer ) )
 		{
 			if( f3 )
-				f3->Close();
+				SAFE_DELETE( f3 );
 			free( Buffer );
 			LOG.Write("Reporting failed shaderload. Not linking." );
 			return false;
@@ -176,7 +174,7 @@ bool Shader::LoadShader( )
 		i = f3->Length();
 		Buffer = (char*)malloc( i+1 );
 		f3->Read( Buffer, i );
-		f3->Close();
+		SAFE_DELETE( f3 );
 		Buffer[i] = '\0';
 		LOG.Write("Compiling: "+s3);
 		if( !LoadShaderGeom( Buffer ) )
@@ -404,7 +402,7 @@ void Shader::GetTimeCodes( unsigned long * iOut )
 	if( f )
 	{
 		iOut[0] = f->GetModTime();
-		f->Close();
+		delete f;
 	} else
 		iOut[0] = 0;
 
@@ -412,7 +410,7 @@ void Shader::GetTimeCodes( unsigned long * iOut )
 	if( f )
 	{
 		iOut[1] = f->GetModTime();
-		f->Close();
+		delete f;
 	} else
 		iOut[1] = 0;
 
@@ -420,7 +418,7 @@ void Shader::GetTimeCodes( unsigned long * iOut )
 	if( f )
 	{
 		iOut[2] = f->GetModTime();
-		f->Close();
+		delete f;
 	} else
 		iOut[2] = 0;
 }
