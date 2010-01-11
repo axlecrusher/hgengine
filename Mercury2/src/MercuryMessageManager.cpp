@@ -147,6 +147,17 @@ MessageHolder* MercuryMessageManager::GetNextMessageFromQueue()
 	return mh;
 }
 
+MValue * MercuryMessageManager::GetValue( const MString & sVariableName )
+{
+	MValue * v = m_allValues.get( sVariableName );
+	if( !v )
+	{
+		v = &m_allValues[sVariableName];
+		v->SetReferences( 1 );
+	}
+	return v;
+}
+
 MercuryMessageManager& MercuryMessageManager::GetInstance()
 {
 	static MercuryMessageManager *instance = NULL;

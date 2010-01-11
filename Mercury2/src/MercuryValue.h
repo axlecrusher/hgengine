@@ -42,7 +42,7 @@ public:
 class MValue
 {
 public:
-
+	MValue();
 	MValue( MVType t );
 	~MValue();
 
@@ -80,6 +80,15 @@ public:
 	}
 
 	MVType GetType() { return m_CurType; }
+
+	void AttachModifyDelegate( DeletionNotifier NotifyFunction, MessageHandler * NotifyObject )
+	{
+		DelegateNotifierList * d = new DelegateNotifierList( NotifyFunction, NotifyObject );
+		d->Next = DLModify;
+		DLModify = d;
+	}
+
+	void SetReferences( short RefCount ) { m_References = RefCount; }
 private:
 	//Conv functions are not thread protected - this is because the caller of these functions should be.
 	int ConvInt();
@@ -144,6 +153,9 @@ protected:
 class MVRefInt : public MVRefBase
 {
 public:
+	MVRefInt( MValue * m ) : MVRefBase( m ) { }
+	MVRefInt( const MString & p ) : MVRefBase( p ) { }
+
 	int Get() { return mv->GetInt(); } 
 	void Set( int iv ) { mv->SetInt( iv ); }
 };
@@ -152,6 +164,9 @@ public:
 class MVRefFloat : public MVRefBase
 {
 public:
+	MVRefFloat( MValue * m ) : MVRefBase( m ) { }
+	MVRefFloat( const MString & p ) : MVRefBase( p ) { }
+
 	float Get() { return mv->GetFloat(); } 
 	void Set( float fv ) { mv->SetFloat( fv ); }
 };
@@ -160,6 +175,9 @@ public:
 class MVRefString : public MVRefBase
 {
 public:
+	MVRefString( MValue * m ) : MVRefBase( m ) { }
+	MVRefString( const MString & p ) : MVRefBase( p ) { }
+
 	const MString & Get() { return mv->GetString(); } 
 	void Set( const MString & sv ) { mv->SetString( sv ); }
 };
@@ -168,6 +186,9 @@ template< typename T >
 class MVRefPtr : public MVRefBase
 {
 public:
+	MVRefPtr( MValue * m ) : MVRefBase( m ) { }
+	MVRefPtr( const MString & p ) : MVRefBase( p ) { }
+
 	T * Get() {
 		return (T*)mv->GetPtr();
 	}
@@ -208,3 +229,4 @@ public:
  *   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  *
  *   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   *
  ***************************************************************************/
+

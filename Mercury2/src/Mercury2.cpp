@@ -201,6 +201,28 @@ int main( int argc, char** argv)
 	return 0;
 }
 
+
+
+
+
+///XXXXXXXX STUB CODE XXXXXXXXXXX  THIS CODE SHOULD BE REMOVED AS SOON AS TESTING OF THE VARIABLE SYSTEM IS COMPLETE
+class TestMouse
+{
+public:
+	TestMouse()
+	{
+		MESSAGEMAN.GetValue( "Input.CursorDeltaX" )->AttachModifyDelegate( (ValueDelegate)&TestMouse::ChangeX, (MessageHandler*)this );
+	}
+
+	void ChangeX( MValue * v )
+	{
+		printf( "Changed: %f\n", v->GetFloat() );
+	}
+} TM;
+///XXXXXXX REMOVE THIS CODE BEFORE ANY RELEASE XXXXXXXXXXx
+
+
+
 /* Copyright (c) 2008, Joshua Allen
  * All rights reserved.
  *

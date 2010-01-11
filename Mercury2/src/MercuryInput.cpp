@@ -1,6 +1,9 @@
 #include <MercuryInput.h>
 #include <MercuryMessageManager.h>
 
+MVRefFloat GlobalMouseX_Set( "Input.CursorDeltaX" );
+MVRefFloat GlobalMouseY_Set( "Input.CursorDeltaY" );
+
 MouseInput::MouseInput()
 	:MessageData(), dx(0), dy(0)
 {
@@ -20,7 +23,10 @@ void MouseInput::ProcessMouseInput(int dx, int dy, bool leftButton, bool rightBu
 	buttons.scrolldown = scrollDownButton;
 	mi->buttons = buttons;
 	currentButtonMasks = buttons;
-	
+
+	GlobalMouseX_Set.Set( dx );
+	GlobalMouseY_Set.Set( dy );
+
 	POST_MESSAGE( INPUTEVENT_MOUSE, mi, 0 );
 }
 

@@ -46,7 +46,9 @@ class MercuryMessageManager
 		
 		void RegisterForMessage(const MString& message, MessageHandler* ptr,  MessageDelegate d = 0 );
 		void UnRegisterForMessage(const MString& message, MessageHandler* ptr);
-		
+
+		MValue * GetValue( const MString & sVariableName );
+
 		static MercuryMessageManager& GetInstance();
 	private:
 		void FireOffMessage( const MessageHolder & message );
@@ -63,7 +65,8 @@ class MercuryMessageManager
 		};
 
 		MHash< std::list< MessagePair > > m_messageRecipients;
-		
+		MHash< MValue > m_allValues;	//Careful - these cannot be deleted.
+
 //		MercuryMutex m_lock;
 		MSemaphore m_queueLock;
 		MSemaphore m_recipientLock;
