@@ -94,6 +94,9 @@ void Shader::LoadFromXML(const XMLNode& node)
 
 	fPriority = StrToFloat( node.Attribute("priority" ) );
 	ChangeKey( node.Attribute("file") );
+
+	if (iProgramID == NULL)
+		LoadShader();
 }
 
 bool Shader::ChangeKey( const MString& path )
@@ -102,7 +105,7 @@ bool Shader::ChangeKey( const MString& path )
 		return true;
 	
 	sShaderName = path;
-	LoadShader( );
+//	LoadShader( );
 
 	return MercuryAsset::ChangeKey( path );
 }
@@ -206,8 +209,7 @@ bool Shader::LoadShaderFrag( const char * sShaderCode )
 	{
 		char * tmpstr = (char*)malloc( stringLength + 1 );
 		GLCALL( glGetInfoLogARB( fragmentShader, stringLength, NULL, tmpstr ) );
-		puts( "Compiling Fragment Shader response follows:" );
-		puts( tmpstr );
+		LOG.Write( ssprintf("Compiling Fragment Shader response follows:%s" ,tmpstr) );
 		free( tmpstr );
 		return bFragCompiled!=0;
 	}
@@ -234,8 +236,7 @@ bool Shader::LoadShaderVert( const char * sShaderCode )
 	{
 		char * tmpstr = (char*)malloc( stringLength + 1 );
 		GLCALL( glGetInfoLogARB( vertexShader, stringLength, NULL, tmpstr ) );
-		puts( "Compiling Vertex Shader response follows:" );
-		puts( tmpstr );
+		LOG.Write( ssprintf("Compiling Vertex Shader response follows:%s", tmpstr) );
 		free( tmpstr );
 		return bVertCompiled!=0;
 	}
@@ -263,8 +264,7 @@ bool Shader::LoadShaderGeom( const char * sShaderCode )
 	{
 		char * tmpstr = (char*)malloc( stringLength + 1 );
 		GLCALL( glGetInfoLogARB( geometryShader, stringLength, NULL, tmpstr ) );
-		puts( "Compiling Geometry Shader response follows:" );
-		puts( tmpstr );
+		LOG.Write( ssprintf("Compiling Geometry Shader response follows:%s",tmpstr) );
 		free( tmpstr );
 		return bGeomCompiled!=0;
 	}
@@ -304,8 +304,8 @@ bool Shader::LinkShaders()
 		GLCALL( glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES_EXT,&imaxvert) );
 		if( (ierror = glGetError()) != 0 )
 		{
-			puts( "ERROR: You cannot load a geometry shader when there are still errors left in OpenGL." );
-			puts( "Please track down the error remaining by using glGetError() to cordon off your code." );
+			LOG.Write( "ERROR: You cannot load a geometry shader when there are still errors left in OpenGL." );
+			LOG.Write( "Please track down the error remaining by using glGetError() to cordon off your code." );
 			LOG.Write( ssprintf( "The last error received was: %d", ierror ) );
 		}
 		for( i = 1; i < imaxvert; i++ )
@@ -326,11 +326,14 @@ bool Shader::LinkShaders()
 	{
 		char * tmpstr = (char*)malloc( stringLength + 1 );
 		GLCALL( glGetInfoLogARB( iProgramID, stringLength, NULL, tmpstr ) );
-		puts( "Linking shaders. response follows:" );
-		puts( tmpstr );
+		LOG.Write( ssprintf("Linking shaders. response follows:%s",tmpstr) );
 		free( tmpstr );
+	}
+
+	if (bLinked == 0)
+	{
 		DestroyShader();
-		return bLinked!=0;
+		return false;
 	}
 
 	//Build the list of uniform tabs.

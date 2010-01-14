@@ -1,7 +1,7 @@
 #ifndef SPATIALHASH_H
 #define SPATIALHASH_H
 
-#include <stdint.h>
+//#include <stdint.h>
 #include <list>
 #include <math.h>
 

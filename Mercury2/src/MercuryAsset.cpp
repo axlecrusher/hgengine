@@ -3,6 +3,8 @@
 #include <MercuryNode.h>
 #include <GLHeaders.h>
 
+#include <time.h>
+
 extern bool DOOCCLUSIONCULL;
 
 MercuryAsset::MercuryAsset( const MString & key, bool bInstanced )
@@ -192,7 +194,7 @@ void AssetFactory::AddAssetInstance(const MString& key, MercuryAsset* asset)
 void AssetFactory::RemoveAssetInstance(const MString& key)
 {
 	m_assetInstances.remove( key );
-	puts( "removed asset "+key );
+	LOG.Write("removed asset "+key);
 }
 
 /****************************************************************************
