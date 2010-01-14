@@ -480,6 +480,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\MercuryValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryValue.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\MercuryVBO.cpp"
 				>
 			</File>

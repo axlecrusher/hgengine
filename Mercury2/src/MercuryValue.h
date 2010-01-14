@@ -52,7 +52,7 @@ public:
 	float GetFloat() { MSemaphoreLock( &this->m_Sema ); return (m_CurType == TYPE_FLOAT)?m_Data.f:ConvFloat(); }
 	const MString GetString() { MSemaphoreLock( &this->m_Sema ); return (m_CurType == TYPE_STRING)?*m_Data.dataS:ConvString(); }
 	void GetString( MString & str ) { MSemaphoreLock( &this->m_Sema ); if (m_CurType == TYPE_STRING) str = *m_Data.dataS; else ConvString( str ); }
-	bool GetBool() { MSemaphoreLock( &this->m_Sema ); return (m_CurType == TYPE_INT)?m_Data.l:ConvBool(); }
+	bool GetBool() { MSemaphoreLock( &this->m_Sema ); return (m_CurType == TYPE_INT)?m_Data.l!=0:ConvBool(); }
 	void * GetPtr() { MSemaphoreLock( &this->m_Sema ); return (m_CurType == TYPE_PTR)?m_Data.v:0; }
 
 	void SetInt( int iv ) { MSemaphoreLock( &this->m_Sema ); Cleanup(); m_Data.l = iv; m_CurType = TYPE_INT; Notify();}
@@ -167,7 +167,7 @@ public:
 	MVRefBool( const MString & p ) : MVRefBase( p ) { }
 
 	int Get() { return mv->GetBool(); } 
-	void Set( int iv ) { mv->SetBool( iv ); }
+	void Set( int iv ) { mv->SetBool( iv!=0 ); }
 };
 
 ///Value Reference for Float objects.

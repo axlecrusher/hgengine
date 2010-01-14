@@ -74,7 +74,7 @@ int MValue::ConvInt()
 {
 	switch( m_CurType )
 	{
-	case TYPE_INT: 	   return m_Data.l;
+	case TYPE_INT: 	   return (int)m_Data.l;
 	case TYPE_FLOAT:   return m_Data.f;
 	case TYPE_STRING:  return StrToInt(*m_Data.dataS);
 	default:           return 0;
@@ -85,7 +85,7 @@ float MValue::ConvFloat()
 {
 	switch( m_CurType )
 	{
-	case TYPE_INT: 	   return m_Data.l;
+	case TYPE_INT: 	   return (float)m_Data.l;
 	case TYPE_FLOAT:   return m_Data.f;
 	case TYPE_STRING:  return StrToFloat(*m_Data.dataS);
 	default:           return 0;
