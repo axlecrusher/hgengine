@@ -207,7 +207,6 @@ void ParticleEmitter::ActivateParticle()
 
 void ParticleEmitter::LoadFromXML(const XMLNode& node)
 {
-	printf("LOADED!!!!!\n");
 	base::LoadFromXML(node);
 /*	
 	XMLNode particleXML;
