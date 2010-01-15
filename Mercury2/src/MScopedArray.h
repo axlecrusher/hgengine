@@ -14,9 +14,9 @@ class MScopedArray
 		MScopedArray(T* ptr)
 		:m_ptr(ptr), m_count(NULL)
 		{
-			m_criticalSection.Wait();
+			m_criticalSection.DangerousWait();
 			IncrementReference();
-			m_criticalSection.UnLock();
+			m_criticalSection.DangerousWait();
 		}
 	
 		MScopedArray()
@@ -35,26 +35,26 @@ class MScopedArray
 		
 		inline ~MScopedArray()
 		{
-			m_criticalSection.Wait();
+			m_criticalSection.DangerousWait();
 			DecrementReference();
-			m_criticalSection.UnLock();
+			m_criticalSection.DangerousUnLock();
 		}
 		
 		inline unsigned int Count()
 		{
 			unsigned int count = 0;
-			m_criticalSection.Wait();
+			m_criticalSection.DangerousWait();
 			if( m_ptr && m_count ) count = *m_count;
-			m_criticalSection.UnLock();
+			m_criticalSection.DangerousUnLock();
 			return count;
 		}
 		
 		void Clear()
 		{
-			m_criticalSection.Wait();
+			m_criticalSection.DangerousWait();
 			DecrementReference();
 			m_ptr = NULL;
-			m_criticalSection.UnLock();
+			m_criticalSection.DangerousUnLock();
 		}
 /*		
 		void Forget()
@@ -85,11 +85,11 @@ class MScopedArray
 		//Assignment
 		MScopedArray& operator=(const MScopedArray<T>& rhs)
 		{
-			m_criticalSection.Wait();
+			m_criticalSection.DangerousWait();
 			DecrementReference();
 			m_ptr = rhs.m_ptr;
 			IncrementReference();
-			m_criticalSection.UnLock();
+			m_criticalSection.DangerousUnLock();
 			return *this;
 		}
 

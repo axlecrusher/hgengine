@@ -22,6 +22,8 @@ typedef std::string MString;
 class StartThreadData;
 #endif
 
+#include <stdio.h>
+
 ///Thread object
 class MercuryThread
 {
@@ -74,13 +76,22 @@ public:
 	MercuryMutex( const MString &name );
 	~MercuryMutex();
 	
-	///Wait for a mutex to unlock (0xFFFFFF is infinate on windows)
-	int Wait( long lMilliseconds = 0xFFFFFF );
+	/** These functions are dangerous because you need to be VERY careful to cover all
+	unlock scenarios including errors and exceptions.
+	Recommend using AutoMutexLock on the stack to avoid problems **/
 
-	///Unlock a mutex for the next thing waiting in line.
-	int UnLock( );
+	///Wait for a mutex to unlock (0xFFFFFF is infinate on windows)
+	bool DangerousWait( long lMilliseconds = 0xFFFFFF ) { return Wait(lMilliseconds); } //return false on error
+	/// Unlock a mutex for the next thing waiting in line.
+	bool DangerousUnLock( ) { return UnLock( ); } //return false on error
+
+	inline unsigned long HeldBy() const { return m_heldBy; }
+	void SetName(const MString& name);
 	
 private:
+	friend class AutoMutexLock;
+	bool Wait( long lMilliseconds = 0xFFFFFF ); //return false on error
+	bool UnLock( ); //return false on error
 	
 	///Start up a mutex.  You need to do this as well as UnLock() afterwards when in a constructor.
 	int Open( );
@@ -91,6 +102,7 @@ private:
 	MString m_name;
 	int iLockCount;
 
+	unsigned long m_heldBy;
 #if defined( WIN32 )
 	void * m_mutex;
 #else
@@ -109,8 +121,12 @@ class AutoMutexLock
 		AutoMutexLock( MercuryMutex& mutex)
 			:m_mutex(&mutex)
 		{
-			m_mutex->Wait();
+			//loop until we get a lock but use a timeout so we are warned
+			//of a held mutex indicating a possible deadlock
+			bool l = m_mutex->Wait(1000);
+			while (!l) m_mutex->Wait(1000);
 		}
+
 		~AutoMutexLock()
 		{
 			m_mutex->UnLock();

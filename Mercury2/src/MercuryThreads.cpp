@@ -4,6 +4,9 @@
 #include <windows.h>
 #endif
 
+//XXX WARNING in windows mutex of the same name are shared!!!
+//we can not give mutexes a default name
+
 #include <stdio.h>
 
 MercuryThread::MercuryThread()
@@ -131,7 +134,7 @@ unsigned long MercuryThread::Current()
 
 //Mutex functions
 MercuryMutex::MercuryMutex( )
-:m_name("(null)")
+:m_heldBy(0)
 {
 	iLockCount = 0;
 	Open( );
@@ -139,7 +142,7 @@ MercuryMutex::MercuryMutex( )
 }
 
 MercuryMutex::MercuryMutex( const MString &name )
-:m_name(name)
+:m_name(name),m_heldBy(0)
 {
 	iLockCount = 0;
 	Open( );
@@ -151,11 +154,26 @@ MercuryMutex::~MercuryMutex( )
 	Close( );
 }
 
-int MercuryMutex::Wait( long lMilliseconds )
+void MercuryMutex::SetName(const MString& name)
+{
+	m_name = name;
+}
+
+bool MercuryMutex::Wait( long lMilliseconds )
 {
 	int r = 0;
 #if defined( WIN32 )
 	r = WaitForSingleObject( m_mutex, lMilliseconds );
+
+	switch( r )
+	{
+	case WAIT_TIMEOUT:
+		fprintf(stderr, "Mutex held by thread ID 0x%x timed out (%d locks)\n", m_heldBy, iLockCount );
+		return false;
+	case WAIT_FAILED:
+		fprintf(stderr, "Mutex held by thread ID 0x%x failed (%d locks)\n", m_heldBy, iLockCount );
+		return false;
+	}
 #else
 /*	timespec abstime;
 	abstime.tv_sec = 0;
@@ -172,25 +190,30 @@ int MercuryMutex::Wait( long lMilliseconds )
 //	}
 #endif
 //	printf("Locked %s\n", m_name.c_str());
+	m_heldBy = MercuryThread::Current();
 	++iLockCount;
-	return r;
+//	return r;
+	return true;
 }
 
-int MercuryMutex::UnLock( )
+bool MercuryMutex::UnLock( )
 {
 //	printf("Unlocked %s\n", m_name.c_str());
 	--iLockCount;
+	if (iLockCount==0) m_heldBy = 0;
 #if defined( WIN32 )
-	return ReleaseMutex( m_mutex );
+	bool r = ReleaseMutex( m_mutex )!=0;
+	if (!r) fprintf(stderr, "Failed to release mutex %s, error %d!!\n", m_name.c_str(), GetLastError());
+	return r;
 #else
 	pthread_mutex_unlock( &m_mutex );
-	return 0;
+	return true;
 #endif
 }
 
 int MercuryMutex::Open( )
 {
-	iLockCount++;
+	++iLockCount;
 #if defined( WIN32 )
 	SECURITY_ATTRIBUTES *p = ( SECURITY_ATTRIBUTES* ) malloc( sizeof( SECURITY_ATTRIBUTES ) );
 	p->nLength = sizeof( SECURITY_ATTRIBUTES );

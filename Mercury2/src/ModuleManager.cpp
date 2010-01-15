@@ -37,7 +37,8 @@ ModuleManager & ModuleManager::GetInstance()
 
 void ModuleManager::InitializeAllModules()
 {
-	m_mHandleMutex.Wait();
+	AutoMutexLock lock(m_mHandleMutex);
+
 	XMLDocument* doc = XMLDocument::Load("modules.xml");
 	XMLNode r = doc->GetRootNode();
 	for (XMLNode child = r.Child(); child.IsValid(); child = child.NextNode())
@@ -60,7 +61,7 @@ void ModuleManager::InitializeAllModules()
 		m_hClassMFunction[child.Attribute( "class" )] = LoadFunct;
 		LoadModule( ModuleName, LoadFunct );
 	}
-	m_mHandleMutex.UnLock();
+
 	delete doc;
 }
 
@@ -72,25 +73,26 @@ void ModuleManager::UnloadModule( const MString & ModuleName )
 
 void * ModuleManager::LoadModule( const MString & ModuleName, const MString & LoadFunction )
 {
-	m_mHandleMutex.Wait();
-
-	if( m_hAllHandles[ModuleName] ) UnloadModule( ModuleName );
-
-	void * v = dlopen( ModuleName.c_str(), RTLD_NOW | RTLD_GLOBAL );
-	m_hAllHandles[ModuleName] = v;
-
-	if( !m_hAllHandles[ModuleName] )
 	{
+		//scope mutex lock
+		AutoMutexLock lock(m_mHandleMutex);
+
+		if( m_hAllHandles[ModuleName] ) UnloadModule( ModuleName );
+
+		void * v = dlopen( ModuleName.c_str(), RTLD_NOW | RTLD_GLOBAL );
+		m_hAllHandles[ModuleName] = v;
+
+		if( !m_hAllHandles[ModuleName] )
+		{
 #ifdef WIN32
-		fprintf( stderr, "Error opening: %s\n", ModuleName.c_str() );
+			fprintf( stderr, "Error opening: %s\n", ModuleName.c_str() );
 #else
-		fprintf( stderr, "Error opening: %s (%s)\n", ModuleName.c_str(), dlerror() );
+			fprintf( stderr, "Error opening: %s (%s)\n", ModuleName.c_str(), dlerror() );
 #endif
 
-		return false;
+			return false;
+		}
 	}
-
-	m_mHandleMutex.UnLock();
 
 	//If no load funct, just exit early.
 	if( LoadFunction == "" )
