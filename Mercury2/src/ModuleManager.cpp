@@ -120,7 +120,7 @@ void * ModuleManager::LoadModule( const MString & ModuleName, const MString & Lo
 
 void ModuleManager::ReloadModule( const MString & sClass )
 {
-	m_mHandleMutex.Wait();
+	AutoMutexLock lock(m_mHandleMutex);
 
 	std::set< void * > & s = m_hAllInstances[sClass];
 	std::set< void * >::iterator i = s.begin();
@@ -129,8 +129,6 @@ void ModuleManager::ReloadModule( const MString & sClass )
 
 	for( ; i != s.end(); i++ )
 		*((void**)(*i)) = newvtable;
-
-	m_mHandleMutex.UnLock();
 }
 
 void ModuleManager::RegisterInstance( void * instance, const char * sClass )

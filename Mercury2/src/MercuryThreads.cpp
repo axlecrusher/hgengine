@@ -2,6 +2,8 @@
 
 #if defined( WIN32 )
 #include <windows.h>
+#else
+#include <errno.h>
 #endif
 
 //XXX WARNING in windows mutex of the same name are shared!!!
@@ -185,7 +187,19 @@ bool MercuryMutex::Wait( long lMilliseconds )
 //	if (pthread_mutex_trylock( &m_mutex ) != 0)
 //	{
 //		printf("%s waiting\n", m_name.c_str());
-		pthread_mutex_lock( &m_mutex );
+		r = pthread_mutex_lock( &m_mutex );
+		switch (r)
+		{
+			case EBUSY:
+				fprintf(stderr, "Mutex held by thread ID 0x%x failed (%d locks)\n", m_heldBy, iLockCount );
+				return false;
+			case EINVAL:
+				fprintf(stderr, "Invalid Mutex\n");
+				return true;
+			case EAGAIN:
+				fprintf(stderr, "Max Recursive Locks Reached\n");
+				return false;
+		}
 //		printf("%s locked\n", m_name.c_str());		
 //	}
 #endif
@@ -201,14 +215,16 @@ bool MercuryMutex::UnLock( )
 //	printf("Unlocked %s\n", m_name.c_str());
 	--iLockCount;
 	if (iLockCount==0) m_heldBy = 0;
+
+	int r, error;
 #if defined( WIN32 )
-	bool r = ReleaseMutex( m_mutex )!=0;
-	if (!r) fprintf(stderr, "Failed to release mutex %s, error %d!!\n", m_name.c_str(), GetLastError());
-	return r;
+	r = ReleaseMutex( m_mutex );
+	if (r!=0) error = GetLastError();
 #else
-	pthread_mutex_unlock( &m_mutex );
-	return true;
+	error = r = pthread_mutex_unlock( &m_mutex );
 #endif
+	if (r!=0) fprintf(stderr, "Failed to release mutex %s, error %d!!\n", m_name.c_str(), error);
+	return r!=0;
 }
 
 int MercuryMutex::Open( )
