@@ -46,8 +46,13 @@ class SpatialHash
 			
 			//check for and skip duplicate
 			std::list<T>& cell = m_hashTable[ Index( ix, iy, iz ) ];
+
 			typename std::list<T>::iterator i = cell.begin();
-			for (;i != cell.end(); ++i) if (*i == d) return;
+			for (;i != cell.end(); ++i)
+			{
+				const T& a = *i;
+				if (a == d) return;
+			}
 			
 			cell.push_back( d );
 //			printf("added at %d %d %d\n", ix, iy, iz);
@@ -107,7 +112,7 @@ class SpatialHash
 		}
 		
 		std::list<T>* m_hashTable;
-		uint32_t m_spacing;
+		float m_spacing;
 		uint32_t m_cellCount;
 };
 

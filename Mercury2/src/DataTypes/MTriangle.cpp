@@ -73,7 +73,7 @@ float MTriangle::Area()
 	return r.Length() * 0.5;
 }
 
-bool MTriangle::operator == (const MTriangle& rhs)
+bool MTriangle::operator == (const MTriangle& rhs) const
 {
 	if (m_verts[0] != rhs.m_verts[0]) return false;
 	if (m_verts[1] != rhs.m_verts[1]) return false;

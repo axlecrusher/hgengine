@@ -34,7 +34,7 @@ class MercuryVBO : public MercuryAsset
 		const short unsigned int* GetIndexHandle() const { return m_indexData.Buffer(); }
 		short unsigned int* GetIndexHandle() { return m_indexData.Buffer(); }
 	
-		inline uint16_t IndiceCount() const { return m_indexData.Length(); }
+		inline uint16_t IndiceCount() const { return (uint16_t)m_indexData.Length(); }
 		
 
 		inline void DirtyVertices() { m_bDirtyVertices = true; }

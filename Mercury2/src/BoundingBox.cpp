@@ -22,7 +22,7 @@ OcclusionResult::~OcclusionResult()
 
 uint32_t OcclusionResult::GetSamples() const
 {
-	if (m_occlusionQuery == 0) return ~0;
+	if (m_occlusionQuery == 0) return ~(uint32_t(0));
 	
 	uint32_t samples;
 	GLCALL( glGetQueryObjectuivARB(m_occlusionQuery, GL_QUERY_RESULT_ARB, &samples) );

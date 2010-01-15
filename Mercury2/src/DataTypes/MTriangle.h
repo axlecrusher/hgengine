@@ -15,7 +15,7 @@ class MTriangle
 		float Area();
 		MercuryVertex InterpolatePosition(const MercuryVertex& barycentric);
 				
-		bool operator == (const MTriangle& rhs);
+		bool operator == (const MTriangle& rhs) const;
 //	private:
 		
 		MercuryVertex m_verts[3];

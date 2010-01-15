@@ -155,7 +155,7 @@ void CameraNode::LoadFromXML(const XMLNode& node)
 {
 	TransformNode::LoadFromXML( node );
 	m_origionalPosition = GetPosition();
-	POST_MESSAGE("QueryTerrainPoint", new VertexDataMessage(GetPosition()), 0.00001);
+	POST_MESSAGE("QueryTerrainPoint", new VertexDataMessage(GetPosition()), 0.00001f);
 }
 
 
