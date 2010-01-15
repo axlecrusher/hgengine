@@ -21,6 +21,13 @@
 
 #include <MercuryLog.h>
 
+#ifdef WIN32DBGMEM
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#endif
+
+
 #define MULTIPASS
 
 bool SHOWBOUNDINGVOLUME = false;
@@ -95,11 +102,16 @@ void HandleCommandLineParameters( int argc, char ** argv )
 
 int main( int argc, char** argv)
 {
+#ifdef WIN32DBGMEM
+	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+#endif
 	unsigned long m_count = 0;
 
 	g_SceneGraphToLoad = "FILE:scenegraph.xml";
 
+#ifndef NOCRAHSHANDLE
 	cnset_execute_on_crash( SignalHandler );
+#endif
 	HandleCommandLineParameters( argc, argv );
 
 	//Sound first.
