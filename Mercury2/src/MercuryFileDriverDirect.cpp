@@ -168,8 +168,9 @@ unsigned long MercuryFileObjectDirect::GetModTime()
 #if defined(WIN32)
 	HANDLE hFile = CreateFile( (LPCWSTR)(m_sPath.c_str()), GENERIC_READ, FILE_SHARE_READ, 
 		NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
-	if( !hFile )
-		return 0;
+
+	if ( hFile == INVALID_HANDLE_VALUE ) return 0;
+
 	FILETIME Tcreate,Taccess,Twrite;
 	if( !GetFileTime( hFile, &Tcreate, &Taccess, &Twrite ) )
 	{
