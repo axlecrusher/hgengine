@@ -336,6 +336,17 @@ int MString::compare( int start, int len, const char * cmp ) const
 	return strncmp( m_sCur + start, cmp, len );
 }
 
+MString MString::replace(const MString& old, const MString& n)
+{
+	if (this->empty() || old.empty() || n.empty()) return *this;
+
+	int i = this->find(old);
+	if (i<0) return *this;
+
+	MString s = this->substr(0,i) + n + this->substr(i+old.length());
+	return s.replace(old, n);
+}
+
 unsigned int MString::hash() const
 {
 	unsigned int ret = 0;

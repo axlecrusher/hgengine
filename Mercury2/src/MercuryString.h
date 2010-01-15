@@ -65,6 +65,8 @@ public:
 	int compare( int start, int len, const MString & cmp ) const;
 	int compare( int start, int len, const char * cmp ) const;
 
+	MString replace(const MString& old, const MString& n);
+
 	unsigned int hash() const;
 
 	enum 
