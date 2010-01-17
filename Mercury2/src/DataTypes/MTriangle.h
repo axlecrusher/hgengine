@@ -7,7 +7,8 @@ class MTriangle
 {
 	public:
 		MTriangle();
-		MTriangle(const MercuryVertex a, const MercuryVertex& b, const MercuryVertex& c);
+		MTriangle(const MTriangle& t);
+		MTriangle(const MercuryVertex& a, const MercuryVertex& b, const MercuryVertex& c);
 		
 		MercuryVertex Barycentric(const MercuryVertex& p);
 		bool IsInTriangle( const MercuryVertex& p );

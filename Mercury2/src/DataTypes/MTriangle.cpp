@@ -9,7 +9,15 @@ MTriangle::MTriangle()
 	m_verts[2] = 0;
 }
 
-MTriangle::MTriangle(const MercuryVertex a, const MercuryVertex& b, const MercuryVertex& c)
+MTriangle::MTriangle(const MTriangle& t)
+{
+	m_verts[0] = t.m_verts[0];
+	m_verts[1] = t.m_verts[1];
+	m_verts[2] = t.m_verts[2];
+	
+}
+
+MTriangle::MTriangle(const MercuryVertex& a, const MercuryVertex& b, const MercuryVertex& c)
 {
 	m_verts[0] = a;
 	m_verts[1] = b;
