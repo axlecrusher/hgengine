@@ -4,12 +4,15 @@
 #include <windows.h>
 #else
 #include <errno.h>
+#include <time.h>
+#include <sys/time.h>
 #endif
 
 //XXX WARNING in windows mutex of the same name are shared!!!
 //we can not give mutexes a default name
 
 #include <stdio.h>
+#include <stdint.h>
 
 MercuryThread::MercuryThread()
 	:m_haltOnDestroy(true), m_thread(0)
@@ -136,19 +139,15 @@ unsigned long MercuryThread::Current()
 
 //Mutex functions
 MercuryMutex::MercuryMutex( )
-:m_heldBy(0)
+:iLockCount(0),m_heldBy(0)
 {
-	iLockCount = 0;
 	Open( );
-	UnLock();
 }
 
 MercuryMutex::MercuryMutex( const MString &name )
-:m_name(name),m_heldBy(0)
+:m_name(name),iLockCount(0),m_heldBy(0)
 {
-	iLockCount = 0;
 	Open( );
-	UnLock();
 }
 
 MercuryMutex::~MercuryMutex( )
@@ -177,31 +176,39 @@ bool MercuryMutex::Wait( long lMilliseconds )
 		return false;
 	}
 #else
-/*	timespec abstime;
-	abstime.tv_sec = 0;
-	abstime.tv_nsec = lMilliseconds;
-	
-	pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
-
-	pthread_cond_timedwait( &cond, &m_mutex, &abstime ); */
-//	if (pthread_mutex_trylock( &m_mutex ) != 0)
-//	{
-//		printf("%s waiting\n", m_name.c_str());
+	if ( lMilliseconds < 0xFFFFFF )
+	{
+		timeval t;
+		gettimeofday( &t, 0 ); //XXX I question the efficiency of this call -- Josh
+		uint64_t ns = t.tv_sec*1000000000 + t.tv_usec*1000 + lMilliseconds*1000000;
+		
+		timespec timeout;
+		timeout.tv_sec = ns/1000000000;
+		timeout.tv_nsec = ns%1000000000;
+		
+		r = pthread_mutex_timedlock( &m_mutex, &timeout );
+	}
+	else
+	{
 		r = pthread_mutex_lock( &m_mutex );
-		switch (r)
-		{
-			case EBUSY:
-				fprintf(stderr, "Mutex held by thread ID 0x%x failed (%d locks)\n", m_heldBy, iLockCount );
-				return false;
-			case EINVAL:
-				fprintf(stderr, "Invalid Mutex\n");
-				return true;
-			case EAGAIN:
-				fprintf(stderr, "Max Recursive Locks Reached\n");
-				return false;
-		}
-//		printf("%s locked\n", m_name.c_str());		
-//	}
+	}
+	
+	switch (r)
+	{
+		case EBUSY:
+			fprintf(stderr, "Mutex held by thread ID 0x%lx failed (%d locks)\n", m_heldBy, iLockCount );
+			return false;
+		case EINVAL:
+			fprintf(stderr, "Invalid mutex or invalid timeout length %ldms\n", lMilliseconds );
+			return true;
+		case EAGAIN:
+			fprintf(stderr, "Max Recursive Locks Reached\n");
+			return false;
+		case ETIMEDOUT:
+			fprintf(stderr, "Mutex held by thread ID 0x%lx timed out (%d locks)\n", m_heldBy, iLockCount );
+			return false;
+	}
+//	printf("%s locked\n", m_name.c_str());		
 #endif
 //	printf("Locked %s\n", m_name.c_str());
 	m_heldBy = MercuryThread::Current();
@@ -229,7 +236,6 @@ bool MercuryMutex::UnLock( )
 
 int MercuryMutex::Open( )
 {
-	++iLockCount;
 #if defined( WIN32 )
 	SECURITY_ATTRIBUTES *p = ( SECURITY_ATTRIBUTES* ) malloc( sizeof( SECURITY_ATTRIBUTES ) );
 	p->nLength = sizeof( SECURITY_ATTRIBUTES );
@@ -240,12 +246,16 @@ int MercuryMutex::Open( )
 	else
 		m_mutex = CreateMutex( p, true, (LPCWSTR)m_name.c_str() );
 	free( p );
+	ReleaseMutex( m_mutex ); //windows API locks mutex on creation
 	return (int)m_mutex;
 #else
 	pthread_mutexattr_t attr;
 	pthread_mutexattr_init( &attr );
 	pthread_mutexattr_settype( &attr, PTHREAD_MUTEX_RECURSIVE );
 	pthread_mutex_init( &m_mutex, &attr );
+	
+//pthread_mutex_lock( &m_mutex ); //test deadlock
+
 	return 0;
 #endif
 }
