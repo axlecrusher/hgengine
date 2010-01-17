@@ -19,10 +19,17 @@ MercuryVertex::MercuryVertex( float ix, float iy, float iz, float iw )
 	(*this)[3] = iw;
 }
 
-MercuryVertex::MercuryVertex( const float * in )
+MercuryVertex::MercuryVertex( const float* in3f, float f )
+{
+	for (unsigned int i = 0; i < 3; ++i)
+		(*this)[i] = in3f[i];
+	(*this)[3] = f;
+}
+
+MercuryVertex::MercuryVertex( const float* in4f )
 {
 	for (unsigned int i = 0; i < 4; ++i)
-		(*this)[i] = in[i];
+		(*this)[i] = in4f[i];
 }
 
 MercuryVertex::MercuryVertex( const MercuryVertex& v)

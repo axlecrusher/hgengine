@@ -4,7 +4,7 @@
 
 
 DelegateNotifierList::DelegateNotifierList( DeletionNotifier nf, MessageHandler * no ) :
-	NotifyFunction( nf ), NotifyObject( no ), Next( 0 )
+	NotifyFunction( nf ), NotifyObject( no ), Next( NULL )
 {
 }
 
@@ -43,14 +43,14 @@ void DelegateNotifierList::Notify( MValue * v )
 
 
 
-MValue::MValue( ) : m_References( 0 ), m_CurType( TYPE_UNDEF ), DLDelete( 0 ), DLModify( 0 )
+MValue::MValue( ) : m_References( NULL ), m_CurType( TYPE_UNDEF ), DLDelete( NULL ), DLModify( NULL )
 {
-	m_Data.v = 0;
+	m_Data.v = NULL;
 }
 
-MValue::MValue( MVType t ) : m_References( 0 ), m_CurType( t ), DLDelete( 0 ), DLModify( 0 )
+MValue::MValue( MVType t ) : m_References( NULL ), m_CurType( t ), DLDelete( NULL ), DLModify( NULL )
 {
-	m_Data.v = 0;
+	m_Data.v = NULL;
 }
 
 MValue::~MValue()
