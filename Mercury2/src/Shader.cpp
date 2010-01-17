@@ -95,7 +95,7 @@ void Shader::LoadFromXML(const XMLNode& node)
 	fPriority = StrToFloat( node.Attribute("priority" ) );
 	ChangeKey( node.Attribute("file") );
 
-	if (iProgramID == NULL)
+	if (iProgramID == 0)
 		LoadShader();
 }
 
