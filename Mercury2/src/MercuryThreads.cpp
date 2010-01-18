@@ -6,13 +6,13 @@
 #include <errno.h>
 #include <time.h>
 #include <sys/time.h>
+#include <stdint.h>
 #endif
 
 //XXX WARNING in windows mutex of the same name are shared!!!
 //we can not give mutexes a default name
 
 #include <stdio.h>
-#include <stdint.h>
 
 MercuryThread::MercuryThread()
 	:m_haltOnDestroy(true), m_thread(0)
@@ -225,13 +225,18 @@ bool MercuryMutex::UnLock( )
 
 	int r, error;
 #if defined( WIN32 )
-	r = ReleaseMutex( m_mutex );
-	if (r!=0) error = GetLastError();
-#else
-	error = r = pthread_mutex_unlock( &m_mutex );
-#endif
-	if (r!=0) fprintf(stderr, "Failed to release mutex %s, error %d!!\n", m_name.c_str(), error);
+	r = ReleaseMutex( m_mutex ); //nonzero on success
+	if (r==0)
+	{	
+		error = GetLastError();
+		fprintf(stderr, "Failed to release mutex %s, error %d!!\n", m_name.c_str(), error);
+	}
 	return r!=0;
+#else
+	error = r = pthread_mutex_unlock( &m_mutex ); //0 on success
+	if (r!=0) fprintf(stderr, "Failed to release mutex %s, error %d!!\n", m_name.c_str(), error);
+	return r==0;
+#endif
 }
 
 int MercuryMutex::Open( )
