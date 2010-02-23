@@ -150,6 +150,52 @@ public:
 
 REGISTER_STATECHANGE( DepthWrite );
 
+class FaceCulling : public StateChange
+{
+public:
+	FaceCulling( const MVector< MString > & sParameters ) : StateChange( sParameters )
+	{
+		if( sParameters.size() < 1 )
+		{
+			LOG.Write( ssprintf( "Error: DepthWrite state has invalid number of parameters(%d).", sParameters.size() ) );
+			return;
+		}
+		if( sParameters[0].compare( "front" ) == 0 )
+			iWhich = 1;
+		if( sParameters[0].compare( "back" ) == 0 )
+			iWhich = 2;
+		else
+			iWhich = 0;
+	}
+
+	void Stringify( MString & sOut )
+	{
+		sOut = (iWhich)?((iWhich==1)?"front":"back"):"";
+	}
+
+	void Activate()
+	{
+		if( iWhich )
+		{
+			GLCALL( glEnable(GL_CULL_FACE) );
+			if( iWhich == 1 )
+				{GLCALL( glCullFace(GL_FRONT) );}
+			else
+				{GLCALL( glCullFace(GL_BACK) );}
+		}
+		else
+		{
+			GLCALL( glDisable(GL_CULL_FACE) );
+		}
+	}
+
+	STATECHANGE_RTTI( FaceCulling );
+	int iWhich;
+};
+
+REGISTER_STATECHANGE( FaceCulling );
+
+
 class BlendFunc : public StateChange
 {
 public:
@@ -224,6 +270,69 @@ public:
 };
 
 REGISTER_STATECHANGE( BlendFunc );
+
+class AlphaFunc : public StateChange
+{
+public:
+	AlphaFunc( const MVector< MString > & sParameters ) : StateChange( sParameters )
+	{
+		if( sParameters.size() < 2 )
+		{
+			LOG.Write( ssprintf( "Error: AlphaFunc state has invalid number of parameters(%d).", sParameters.size() ) );
+			return;
+		}
+		
+		m_func = StrToAlpha(sParameters[0] );
+		m_ref = StrToFloat(sParameters[1] );
+	}
+
+	void Stringify( MString & sOut )
+	{
+		sOut = AlphaToStr(m_func) + ssprintf( ",%f", m_ref );
+	}
+
+	#define STRTOGL(x,s) if (x==#s) return GL_##s;
+	int StrToAlpha(const MString& s)
+	{
+		STRTOGL(s, NEVER);
+		STRTOGL(s, LESS);
+		STRTOGL(s, EQUAL);
+		STRTOGL(s, LEQUAL);
+		STRTOGL(s, GREATER);
+		STRTOGL(s, NOTEQUAL);
+		STRTOGL(s, GEQUAL);
+		STRTOGL(s, ALWAYS);
+		return -1;
+	}
+	
+	#define GLTOSTR(x,s) case GL_##s: return #s;
+	MString AlphaToStr(int blend)
+	{
+		switch (blend)
+		{
+			GLTOSTR(blend, NEVER);
+			GLTOSTR(blend, LESS);
+			GLTOSTR(blend, EQUAL);
+			GLTOSTR(blend, LEQUAL);
+			GLTOSTR(blend, GREATER);
+			GLTOSTR(blend, NOTEQUAL);
+			GLTOSTR(blend, GEQUAL);
+			GLTOSTR(blend, ALWAYS);
+		};
+	}
+	
+	void Activate()
+	{
+		GLCALL( glEnable( GL_ALPHA_TEST ) );
+		GLCALL( glAlphaFunc(m_func,m_ref) );
+	}
+
+	STATECHANGE_RTTI( AlphaFunc );
+	int m_func;
+	float m_ref;
+};
+
+REGISTER_STATECHANGE( AlphaFunc );
 
 //////////////////////////////////////STATE CHANGE CHUNK//////////////////////////////////////
 
