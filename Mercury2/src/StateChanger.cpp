@@ -285,27 +285,29 @@ void StateChanger::Render(const MercuryNode* node)
 	{
 		MAutoPtr< StateChange > & k = m_vStates[i];
 		k->Activate();
-		m_StateSet[k->sID].push_back( k );
+		if( !m_isEnduring )
+			m_StateSet[k->sID].push_back( k );
 	}
 }
 
 void StateChanger::PostRender(const MercuryNode* node)
 {
-	for( unsigned i = 0; i < m_vStates.size(); i++ )
-	{
-		MAutoPtr< StateChange > & k = m_vStates[i];
-		MVector< MAutoPtr< StateChange > > & l = m_StateSet[k->sID];
+	if( !m_isEnduring )
+		for( unsigned i = 0; i < m_vStates.size(); i++ )
+		{
+			MAutoPtr< StateChange > & k = m_vStates[i];
+			MVector< MAutoPtr< StateChange > > & l = m_StateSet[k->sID];
 
-		unsigned ilpos = l.size() - 1;
+			unsigned ilpos = l.size() - 1;
 
-		if( ilpos <= 0 )
-			continue;
+			if( ilpos <= 0 )
+				continue;
 
-		l.resize( ilpos-- );
+			l.resize( ilpos-- );
 
-		if( ilpos >= 0 )
-			l[ilpos]->Activate();
-	}
+			if( ilpos >= 0 )
+				l[ilpos]->Activate();
+		}
 }
 
 bool StateChanger::ChangeKey( const MString & sFile )
@@ -353,6 +355,8 @@ void StateChanger::LoadFromXML(const XMLNode& node)
 		MString sFile = node.Attribute("file");
 		ChangeKey( sFile );
 	}
+
+	LOAD_FROM_XML( "enduring", m_isEnduring, StrToBool );
 }
 
 void StateChanger::SaveToXMLTag( MString & sXMLStream )
@@ -363,6 +367,9 @@ void StateChanger::SaveToXMLTag( MString & sXMLStream )
 		m_vStates[0]->Stringify( sStr );
 		sXMLStream += "file=\"" + sStr +  "\" ";
 	}
+
+	if( m_isEnduring )
+		sXMLStream += "enduring=\"1\" ";
 
 	MercuryAsset::SaveToXMLTag( sXMLStream );
 }

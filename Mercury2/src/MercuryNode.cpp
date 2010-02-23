@@ -223,7 +223,7 @@ void MercuryNode::RecursiveRender( )
 {
 #ifdef WRITE_OUT_RENDERGARPH
 	static int depth;
-	if ( IsHidden() || IsCulled() || (! (m_iPasses & (1<<g_iPass))) )
+	if ( IsHidden() || IsCulled() || ((! (m_iPasses & (1<<g_iPass))) &&  m_iForcePasses ) )
 	{
 		printf( "x%*c %p:%s (%d %d %d)\n", depth, 0, this, GetName().c_str(), IsHidden(), IsCulled(), (! (m_iPasses & (1<<g_iPass))) );
 		return;
@@ -231,7 +231,7 @@ void MercuryNode::RecursiveRender( )
 	printf( "1%*c %p:%s\n", depth, 0, this, GetName().c_str() );
 	depth++;
 #else
-	if ( IsHidden() || IsCulled() || (! (m_iPasses & (1<<g_iPass))) )
+	if ( IsHidden() || IsCulled() || ((! (m_iPasses & (1<<g_iPass))) &&  m_iForcePasses )  )
 		return;
 #endif
 

@@ -69,6 +69,7 @@ public:
 		virtual bool CheckForNewer() { return false; }
 		virtual void Reload() {};
 private:
+	bool m_isEnduring;	//If set, then, it does not get "undone" when going back up stack. 90% of all assets should set this to 0
 
 	MVector< MAutoPtr< StateChange > > m_vStates;
 
