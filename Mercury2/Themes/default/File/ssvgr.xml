@@ -27,20 +27,22 @@
 
 
 	<node type="orthographic" left="-.5" right=".5" top=".5" bottom="-.5" near="1" far="-1" name="Ortho" setPasses="7" >
-		<asset type="StateChanger" file="LightingSwitch:0"/>
-		<asset type="StateChanger" file="DepthTest:0"/>
-		<asset type="shader" file="GRAPHIC:Crepuscular"/>
-		<node type="transformnode" >
-			<asset type="texture" file="FBOB_0" dynamic="true"/>
-			<asset type="texture" file="FBOA_0" dynamic="true"/>
-			<asset type="quad" />
+		<node type="cameranode" movx="0" movz="0" movy="0" rotx="0" roty="0" rotz="0" name="camera" >
+			<asset type="StateChanger" file="LightingSwitch:0"/>
+			<asset type="StateChanger" file="DepthTest:0"/>
+			<asset type="shader" file="GRAPHIC:Crepuscular"/>
+			<node type="transformnode" >
+				<asset type="texture" file="FBOB_0" dynamic="true"/>
+				<asset type="texture" file="FBOA_0" dynamic="true"/>
+				<asset type="quad" />
+			</node>
 		</node>
 	</node>
 
 	<!-- Below here is just a library for some junk we can throw in -->
 
 	<node type="mercurynode" name="lampForest" setPasses="0" >
-		<node type="transformnode" movz="-5" movx="0" movy="0" name="lamprow" >
+		<node type="transformnode" movz="-5" movx="0" movy="2" name="lamprow" >
 			<node type="mercurynode" name="lamp"  >
 				<node type="transformnode" rotx="-90" >
 					<asset type="texture" file="MODEL:lamp.png"/>

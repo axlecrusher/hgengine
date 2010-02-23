@@ -4,16 +4,18 @@ uniform sampler2D HG_Texture1;
 
 varying vec3 normal;
 varying vec3 pos;
-varying float dist;
+varying vec3 posn;
+varying vec3 tlipos;
 
 void main()
 {
-	float fbrgt = 0.1;
+	vec3 rLpos = normalize(tlipos - posn);
+	float fbrgt = .7;
 	vec2 sspos = gl_TexCoord[0].xy;
-	for( int i = 0; i < 100; i++ )
+	for( int i = 0; i < 50; i++ )
 	{
 		vec4 SW = texture2D( HG_Texture1, sspos );
-		sspos += 0.001;
+		sspos += rLpos.xy * 0.005;
 		sspos = clamp( sspos, vec2( 0. ), vec2( .99 ) );
 		if( SW.a < 0.5 ) fbrgt += 0.01;
 	}
