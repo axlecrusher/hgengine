@@ -375,7 +375,7 @@ int StateChangeRegister::GetStateID( const MString & spar )
 REGISTER_ASSET_TYPE(StateChanger);
 
 StateChanger::StateChanger( const MString & key, bool bInstanced )
-	:MercuryAsset( key, bInstanced )
+	:MercuryAsset( key, bInstanced ),  m_isEnduring(0)
 {
 	//Make sure our state stack is correctly sized
 	if( m_StateSet.size() < (unsigned)StateChangeRegister::Instance().GetStateCount() )
