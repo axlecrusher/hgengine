@@ -24,6 +24,16 @@ MercurySoundManager * MercurySoundManager::Instance()
 	return tm;
 }
 
+MercurySoundManager::~MercurySoundManager()
+{
+	if( m_SoundDriver )
+	{
+		m_SoundDriver->Close();
+		SAFE_DELETE( m_SoundDriver );
+	}
+}
+
+
 void MercurySoundManager::Init( const MString & sParameters )
 {
 	MercurySoundDriverConstructionPair * dBest = 0;
@@ -54,7 +64,7 @@ void MercurySoundManager::Init( const MString & sParameters )
 
 		//Otherwise something went wrong.
 		m_SoundDriver->Close();
-		delete m_SoundDriver;
+		SAFE_DELETE( m_SoundDriver );
 		scBlacklist.insert( dBest );
 	} while( true );
 

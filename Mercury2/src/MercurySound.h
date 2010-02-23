@@ -60,6 +60,7 @@ class MercurySoundManager
 {
 public:
 	MercurySoundManager() { }
+	~MercurySoundManager();
 
 	static MercurySoundManager * Instance();
 

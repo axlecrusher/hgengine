@@ -138,7 +138,9 @@ void MercurySoundDriverALSA::Close()
 {
 	tPlayback.Halt( true );
 	if( playback_handle )
+	{
 		snd_pcm_close (playback_handle);
+	}
 }
 
 void * MercurySoundDriverALSA::playback_thread( void * )
