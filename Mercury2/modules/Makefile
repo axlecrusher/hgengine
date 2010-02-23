@@ -2,7 +2,7 @@ CFLAGS=-O2 -g0 -Wall -I/usr/include/libxml2 -I.. -msse2 -DHAVE_CONFIG -DHGENGINE
 CXXFLAGS=${CFLAGS}
 LDFLAGS=-shared
 
-all : BillboardNode.so TextNode.so Terrain.so TextPlate.so ParticleEmitter.so Cu2.so
+all : BillboardNode.so TextNode.so Terrain.so TextPlate.so ParticleEmitter.so Cu2.so Skybox.so
 
 clean :
 	rm -rf *~ *.o *.so

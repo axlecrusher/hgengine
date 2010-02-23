@@ -5,4 +5,5 @@
 	<Module src="modules/TextPlate.cpp" obj="modules/TextPlate" func="InstallTextPlate" class="TextPlate"/>
 	<Module src="modules/ParticleEmitter.cpp" obj="modules/ParticleEmitter" func="InstallParticleEmitter" class="ParticleEmitter"/>
 	<Module src="modules/Cu2.cpp" obj="modules/Cu2" func="InstallCu2Element" class="Cu2Element"/>
+	<Module src="modules/Skybox.cpp" obj="modules/Skybox" func="InstallSkybox" class="Skybox"/>
 </Modules>

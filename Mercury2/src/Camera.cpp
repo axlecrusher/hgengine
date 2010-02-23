@@ -17,6 +17,12 @@ CameraNode::CameraNode()
 	REGISTER_MESSAGE_WITH_DELEGATE( "SetCameraPosition", &CameraNode::SetCameraPosition );
 }
 
+CameraNode::~CameraNode()
+{
+	UNREGISTER_FOR_MESSAGE( INPUTEVENT_MOUSE );
+	UNREGISTER_FOR_MESSAGE( "SetCameraPosition" );
+}
+
 void CameraNode::PreRender(const MercuryMatrix& matrix)
 {
 	VIEWMATRIX = m_viewMatrix;

@@ -9,6 +9,7 @@ class CameraNode : public TransformNode
 {
 	public:
 		CameraNode();
+		~CameraNode();
 		virtual void ComputeMatrix();
 		virtual void HandleMouseInput(const MessageData& data);
 		virtual void Update(float dTime);

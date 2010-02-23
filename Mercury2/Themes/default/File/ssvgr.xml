@@ -1,33 +1,41 @@
-<SceneGraph name="root" setPasses="6+7" >
+<SceneGraph name="root" setPasses="5+6+7" >
 	<!--We have to put all states that are the generic state up here.  This way, the states will fall back to these -->
 	<asset type="StateChanger" file="ColorChange:1,1,1,1"/>
-	<asset type="StateChanger" file="DepthTest:1"/>
+	<asset type="StateChanger" file="DepthTest:1" setPasses="5+6+7" />
 	<asset type="StateChanger" file="LightingSwitch:0" enduring="1" />
-	<asset type="StateChanger" file="DepthWrite:1"/>
+	<asset type="StateChanger" file="DepthWrite:1" setPasses="5+6+7" />
 	<asset type="StateChanger" file="FaceCulling:none"/>
 	<asset type="StateChanger" file="BlendFunc:SRC_ALPHA,ONE_MINUS_SRC_ALPHA" />
 	<asset type="StateChanger" file="AlphaFunc:GREATER,0.5" /> <!-- makes alpha ordering not matter, since it's all or nothing -->
 
-	<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100" name="vp" >
+	<node type="viewport" fov="45" aspect="1.3333" near="0.01" far="100" name="vp" setPasses="5+6+7" >
 		<node type="cameranode" movx="0" movz="0" movy="0" rotx="0" roty="0" rotz="0" name="camera" >
 
-			<node fallback="root.ground" setPasses="7" />
 
-			<node type="transformnode" movy="2" >
+			<node type="mercuryfbo" width="640" height="480" depth="true" tnum="1" name="FBOA" colorbyte0="RGBA" usescreensize="true"  setPasses="5" >
+				<node fallback="root.lampForest" setPasses="5" />
+			</node>
+
+			<node type="mercuryfbo" width="640" height="480" depth="true" tnum="1" name="FBOB" colorbyte0="RGBA" usescreensize="true" setPasses="6" >
+				<node fallback="root.skybox" setPasses="6" />
+				<node fallback="root.ground" setPasses="6" />
 				<node fallback="root.lampForest" setPasses="6" />
 			</node>
-			<node type="transformnode" movy="0" >
-				<node fallback="root.lampForest" setPasses="7" />
-			</node>
-
-			<node type="transformnode" movz="-5" >
-				<asset type="texture" file="GRAPHIC:2by.png" filter="none" />
-				<asset type="quad" />
-			</node>
-
 		</node>
 	</node>
 
+
+
+	<node type="orthographic" left="-.5" right=".5" top=".5" bottom="-.5" near="1" far="-1" name="Ortho" setPasses="7" >
+		<asset type="StateChanger" file="LightingSwitch:0"/>
+		<asset type="StateChanger" file="DepthTest:0"/>
+		<asset type="shader" file="GRAPHIC:Crepuscular"/>
+		<node type="transformnode" >
+			<asset type="texture" file="FBOB_0" dynamic="true"/>
+			<asset type="texture" file="FBOA_0" dynamic="true"/>
+			<asset type="quad" />
+		</node>
+	</node>
 
 	<!-- Below here is just a library for some junk we can throw in -->
 
@@ -56,6 +64,37 @@
 	<node type="transformnode" rotx="-90" movz="-10" movx="0" movy="-0.99" setPasses="0" name="ground" >
 		<asset type="texture" file="MODEL:map.png" />
 		<asset type="terrain" file="MODEL:map.hgmdl" />
+	</node>
+
+	<node type="Skybox" name="skybox" setPasses="0" >
+		<asset type="StateChanger" file="DepthTest:0"/>
+		<asset type="StateChanger" file="LightingSwitch:0" />
+		<asset type="StateChanger" file="DepthWrite:0"/>
+
+		<node type="transformnode" movx=".5" rotx="-180" roty="-270" >
+			<asset type="texture" file="MODEL:Skybox/neg_x.png" />
+			<asset type="quad" />
+		</node>
+		<node type="transformnode" movy="-.5" rotx="-90" rotz="270" scaley="-1" >
+			<asset type="texture" file="MODEL:Skybox/neg_y.png" />
+			<asset type="quad" />
+		</node>
+		<node type="transformnode" movz="-.5" rotx="-180" >
+			<asset type="texture" file="MODEL:Skybox/neg_z.png" />
+			<asset type="quad" />
+		</node>
+		<node type="transformnode" movx="-.5" rotx="-180" roty="-270" scalex="-1" >
+			<asset type="texture" file="MODEL:Skybox/pos_x.png" />
+			<asset type="quad" />
+		</node>
+		<node type="transformnode" movy=".5" rotx="-90" rotz="270" >
+			<asset type="texture" file="MODEL:Skybox/pos_y.png" />
+			<asset type="quad" />
+		</node>
+		<node type="transformnode" movz=".5" rotx="-180" scalex="-1" >
+			<asset type="texture" file="MODEL:Skybox/pos_z.png" />
+			<asset type="quad" />
+		</node>
 	</node>
 
 </SceneGraph>

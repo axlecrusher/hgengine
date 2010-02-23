@@ -34,7 +34,7 @@ from the beginning of the queue." */
 class MercuryMessageManager
 {
 	public:
-		MercuryMessageManager() : m_messageQueue( MessageHolder::Compare ) { }
+		MercuryMessageManager() : m_messageQueue( MessageHolder::Compare ), m_currTime(0) { }
 
 		///Dispatch message whenever the message manager gets control again; delay after now.
 		void PostMessage(const MString& message, MessageData* data, float delay);
