@@ -15,8 +15,8 @@ Terrain::~Terrain()
 
 void Terrain::LoadedCallback()
 {
-	base::LoadedCallback();
 	BuildHash();
+	base::LoadedCallback();
 }
 
 void Terrain::BuildHash()
@@ -60,9 +60,9 @@ void Terrain::ImportMeshToHash(const HGMDLMesh& mesh)
 	
 	for(uint16_t i = 0; i < length; i+=3)
 	{
-		MercuryVertex v1(vertice+(indice[i]*HGMDLMesh::STRIDE));
-		MercuryVertex v2(vertice+(indice[i+1]*HGMDLMesh::STRIDE));
-		MercuryVertex v3(vertice+(indice[i+2]*HGMDLMesh::STRIDE));
+		MercuryVertex v1(vertice+(indice[i]*HGMDLMesh::STRIDE), 0);
+		MercuryVertex v2(vertice+(indice[i+1]*HGMDLMesh::STRIDE), 0);
+		MercuryVertex v3(vertice+(indice[i+2]*HGMDLMesh::STRIDE), 0);
 		MTriangle t( v1, v2, v3 );
 		
 		m_hash.Insert( v1.GetX(), v1.GetY(), v1.GetZ(), t );
