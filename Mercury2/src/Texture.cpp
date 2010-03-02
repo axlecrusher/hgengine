@@ -203,7 +203,7 @@ void Texture::UnbindTexture()
 void Texture::Activate(uint32_t textureResource)
 {
 	GLCALL( glActiveTexture( textureResource ) );
-	GLCALL( glClientActiveTextureARB(textureResource) );	//XXX: Note to self, this seems to be causing a crash, look into it.
+//	GLCALL( glClientActiveTextureARB(textureResource) );	//XXX: Note to self, this seems to be causing a crash, look into it.
 	GLCALL( glEnableClientState(GL_TEXTURE_COORD_ARRAY) );
 	GLCALL( glEnable( GL_TEXTURE_2D ) );
 }
@@ -211,7 +211,7 @@ void Texture::Activate(uint32_t textureResource)
 void Texture::Deactivate(uint32_t textureResource)
 {
 	GLCALL( glActiveTexture( textureResource ) );
-	GLCALL( glClientActiveTextureARB(textureResource) );
+//	GLCALL( glClientActiveTextureARB(textureResource) );
 	GLCALL( glDisableClientState(GL_TEXTURE_COORD_ARRAY) );
 	GLCALL( glDisable( GL_TEXTURE_2D ) );
 	GLERRORCHECK;
@@ -222,7 +222,7 @@ void Texture::ApplyActiveTextures(uint16_t stride, uint8_t uvByteOffset)
 	for (uint8_t i = 0; i < m_numActiveTextures; ++i)
 	{
 		GLCALL( glActiveTexture( GL_TEXTURE0+i ) );
-		GLCALL( glClientActiveTextureARB(GL_TEXTURE0+i) );	//XXX: Note to self, this seems to be causing a crash, look into it.
+//		GLCALL( glClientActiveTextureARB(GL_TEXTURE0+i) );	//XXX: Note to self, this seems to be causing a crash, look into it.
 		GLCALL( glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(uvByteOffset)) );
 	}
 	
