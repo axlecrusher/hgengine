@@ -2,7 +2,6 @@
 #include <MercuryUtil.h>
 #include <MercuryMath.h>
 #include <MQuaternion.h>
-#include <MercuryLog.h>
 
 #include <MercuryMatrix.h>
 
@@ -149,9 +148,9 @@ float MercuryVertex::AddComponents() const
 	return GetX() + GetY() + GetZ() + GetW();
 }
 
-void MercuryVertex::Print(const MString& s) const
+MString MercuryVertex::Stringify(const MString& s) const
 {
-	LOG.Write(ssprintf("%s: %f %f %f %f", s.c_str(), (*this)[0], (*this)[1], (*this)[2], (*this)[3]));
+	return ssprintf("%s: %f %f %f %f", s.c_str(), (*this)[0], (*this)[1], (*this)[2], (*this)[3]);
 }
 
 MercuryVertex MercuryVertex::Rotate(const MQuaternion& q) const

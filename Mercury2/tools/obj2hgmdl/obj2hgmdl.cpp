@@ -5,6 +5,7 @@
 #include <MercuryVertex.h>
 #include <map>
 #include <math.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -85,7 +86,8 @@ void LineParser(const string &line)
 			bool found = false;
 			tv[i].position = v[ iv[i]-1 ];
 			tv[i].normal = vn[ ivn[i]-1 ];
-			tv[i].uv = vt[ ivt[i]-1 ];
+			if( vt.size() > ivt[i]-1 )
+				tv[i].uv = vt[ ivt[i]-1 ];
 		
 			for (unsigned long j = 0; j < vertice.size(); ++j)
 			{
@@ -180,6 +182,12 @@ int main(int argc, char** argv)
 {
 	FILE *mbmf;
 	ifstream obj;
+
+	if( argc != 3 )
+	{
+		fprintf( stderr, "Usage: %s [OBJ File] [HGMDL File]\n", argv[0] );
+		exit( -1 );
+	}
 
 	obj.open(argv[1]);
 	mbmf = fopen(argv[2], "wb");

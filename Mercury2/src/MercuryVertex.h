@@ -88,7 +88,7 @@ class MercuryVertex
 		float DotProduct(const MercuryVertex& rhs) const;
 		MercuryVertex DotProduct3(const MercuryVertex& rhs1, const MercuryVertex& rhs2, const MercuryVertex& rhs3) const;
 
-		void Print(const MString& s = "Vertex") const;
+		MString Stringify(const MString& s = "Vertex") const;
 		
 		MercuryVertex Rotate(const MQuaternion& q) const;
 		

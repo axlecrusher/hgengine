@@ -1,7 +1,6 @@
 #include <MQuaternion.h>
 #include <MercuryMath.h>
 #include <MercuryMatrix.h>
-#include <MercuryLog.h>
 
 MQuaternion::MQuaternion()
 {
@@ -264,9 +263,9 @@ MercuryVertex MQuaternion::ToVector() const
 	return v;
 }
 
-void MQuaternion::Print(const MString& s) const
+MString MQuaternion::Stringify(const MString& s) const
 {
-	LOG.Write( ssprintf("%s: %f %f %f %f", s.c_str(), m_wxyz[0], m_wxyz[1], m_wxyz[2], m_wxyz[3]) );
+	return ssprintf("%s: %f %f %f %f", s.c_str(), m_wxyz[0], m_wxyz[1], m_wxyz[2], m_wxyz[3]);
 }
 
 //Returns the Euclidian Inner Product of two MQuaternions (Similar to Vector Dot-Product)

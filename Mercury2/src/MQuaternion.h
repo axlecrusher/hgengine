@@ -69,7 +69,7 @@ class MQuaternion {
 		bool operator==(const MQuaternion &rhs) const;
 		inline bool operator!=(const MQuaternion &rhs) const { return !(*this == rhs); }
 		
-		void Print(const MString& s = "MQuaternion") const;
+		MString Stringify(const MString& s = "MQuaternion") const;
 		
 		inline float& W() { return m_wxyz[0]; }
 		inline float& X() { return m_wxyz[1]; }
