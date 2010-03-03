@@ -271,6 +271,7 @@ public:
 
 REGISTER_STATECHANGE( BlendFunc );
 
+///Change the alpha blending function (can be useful for non-shader farcry-like foliage)
 class AlphaFunc : public StateChange
 {
 public:
@@ -334,6 +335,51 @@ public:
 
 REGISTER_STATECHANGE( AlphaFunc );
 
+///OpenGL-based fixed light
+class OGLLight : public StateChange
+{
+public:
+	OGLLight( const MVector< MString > & sParameters ) : StateChange( sParameters )
+	{
+		if( sParameters.size() < 5 )
+		{
+			LOG.Write( ssprintf( "Error: Light has invalid number of parameters(%d).", sParameters.size() ) );
+			return;
+		}
+
+		iLight = StrToInt( sParameters[0] );
+
+		for( unsigned i = 0; i < 16; i++ )
+			if( i+1 < sParameters.size() )
+			{
+				fParams[i] = StrToFloat( sParameters[i+1] );
+			}
+	}
+
+	void Stringify( MString & sOut )
+	{
+		sOut = ssprintf( "%d", iLight );
+		for( unsigned i = 0; i < 16; i++ )
+			sOut += ssprintf( ",%f", fParams[i] );
+	}
+	
+	void Activate()
+	{
+		GLCALL( glEnable(GL_LIGHT0 + iLight) );
+		GLCALL( glLightfv(GL_LIGHT0, GL_POSITION, &fParams[0]) );
+		GLCALL( glLightfv(GL_LIGHT0, GL_DIFFUSE, &fParams[4]) );
+		GLCALL( glLightfv(GL_LIGHT0, GL_AMBIENT, &fParams[8]) );
+		GLCALL( glLightfv(GL_LIGHT0, GL_SPECULAR, &fParams[12]) );
+ 
+	}
+
+	STATECHANGE_RTTI( OGLLight );
+
+	int iLight;
+	float fParams[16];	//Position, Diffuse, Ambient, Specular; each [4]
+};
+
+REGISTER_STATECHANGE( OGLLight );
 //////////////////////////////////////STATE CHANGE CHUNK//////////////////////////////////////
 
 StateChangeRegister & StateChangeRegister::Instance()
@@ -442,7 +488,7 @@ bool StateChanger::LoadInternal( const MString & sFile )
 	MString sParameters = sFile.substr( f+1 );
 	MVector< MString > vsParameters;
 
-	SplitStrings( sParameters, vsParameters, ",", " ", 1, 1 );
+	SplitStrings( sParameters, vsParameters, ",;", " ", 2, 1 );
 
 	MAutoPtr< StateChange > s = StateChangeRegister::Instance().Create( sType, vsParameters );
 	if( s.Ptr() )

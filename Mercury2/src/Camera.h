@@ -26,6 +26,7 @@ class CameraNode : public TransformNode
 		MercuryVertex m_origionalPosition;
 		MercuryVector m_lookAt;
 		float m_x, m_y;
+		bool m_bFreeFly;
 		MercuryMatrix m_viewMatrix;
 };
 
