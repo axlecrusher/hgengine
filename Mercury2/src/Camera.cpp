@@ -10,7 +10,7 @@ MVRefBool CameraNode::CursorGrabbed( "Input.CursorGrabbed" );
 REGISTER_NODE_TYPE(CameraNode);
 
 CameraNode::CameraNode()
-	:TransformNode(), m_x(0), m_y(0)
+	:TransformNode(), m_x(0), m_y(0), m_bFreeFly( false )
 {
 	m_lookAt = MercuryVector(0,0,-1);
 	REGISTER_MESSAGE_WITH_DELEGATE( INPUTEVENT_MOUSE, &CameraNode::HandleMouseInput );
@@ -135,7 +135,8 @@ void CameraNode::Update(float dTime)
 	p += m_lookAt * a;
 	p += Xaxis * b;
 //	p.SetY(0); //lock to ground
-//	SetPosition( p );
+	if( m_bFreeFly )
+		SetPosition( p );
 	m_origionalPosition = p;
 	TransformNode::Update( dTime );
 
@@ -155,12 +156,16 @@ void CameraNode::SaveToXMLTag( MString & sXMLStream )
 	SetPosition( m_origionalPosition );
 	TransformNode::SaveToXMLTag( sXMLStream );
 	SetPosition( OrigPos );
+	if( m_bFreeFly )
+		sXMLStream += ssprintf( "freeFly=\"%d\" ", m_bFreeFly );
 }
 
 void CameraNode::LoadFromXML(const XMLNode& node)
 {
 	TransformNode::LoadFromXML( node );
 	m_origionalPosition = GetPosition();
+
+	LOAD_FROM_XML( "freeFly", m_bFreeFly, StrToBool );
 	POST_MESSAGE("QueryTerrainPoint", new VertexDataMessage(GetPosition()), 0.00001f);
 }
 
