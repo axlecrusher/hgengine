@@ -3,6 +3,7 @@
 #include <Mint.h>
 #include <MercuryVector.h>
 #include <MercuryBacktrace.h>
+#include <math.h>
 
 #ifdef WIN32
 #include <Windows.h>
@@ -297,6 +298,34 @@ void msleep(uint32_t msec)
 	usleep(msec*1000);
 #endif
 }
+
+float FLinear( float in, float slice )
+{
+	float fret = (in - 0.5) * slice;
+
+	if( fret > 0.5 ) fret = 0.5;
+	else if( fret < -0.5 ) fret = -0.5;
+	return fret + 0.5;
+}
+
+float FExponential( float in, float powx )
+{
+	return pow( in, powx );
+}
+
+float FStep( float in, float stepplace )
+{
+	return ( in < stepplace )?0:1;
+}
+
+float FSigmoid( float in, float fspeed )
+{
+	float fi = in - 0.5;
+	float fr = ( exp( fi * fspeed ) - 1 ) / ( exp( fi * fspeed ) + 1 );
+	float smax = ( exp( fspeed * 0.5 ) - 1 ) / ( exp( fspeed * 0.5 ) + 1 );
+	return (fr / smax) / 2. + 0.5;
+}
+
 
 /* Copyright (c) 2009, Joshua Allen and Charles Lohr
  * All rights reserved.

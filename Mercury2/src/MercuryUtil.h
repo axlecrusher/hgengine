@@ -137,6 +137,18 @@ MString ConvertToUnformatted( const MString & cf );
 ///millisecond sleep
 void msleep(uint32_t msec);
 
+///Utility linear function, in = [0..1] out = [0..1]; respectively, if slice >= 1
+float FLinear( float in, float slice = 1. );
+
+///Utility exponential function, in = [0..1] out = [0..1]; respectively; regardless of pow.  If pow == 1, would be identical to linear.
+float FExponential( float in, float powx = 1. );
+
+///Utility step function; out = 0 when in < stepplace; out = 1 when in >= stepplace
+float FStep( float in, float stepplace = 1. );
+
+///Utility sigmoid function; in = [0..1] out = [0..1]; speed is the slope of change in the middle.
+float FSigmoid( float in, float fspeed = 1. );
+
 #endif
 
 /* Copyright (c) 2009, Joshua Allen and Charles Lohr
