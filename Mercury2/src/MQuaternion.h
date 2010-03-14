@@ -86,6 +86,9 @@ class MQuaternion {
 ///Produce a matrix out of a rotation x, then y then z (how Mercury does it)
 void AngleMatrix (const MercuryVector & angles, MercuryMatrix & mat );
 
+///Spherically interpolate between two quaternions t = 0..1
+MQuaternion SLERP( const MQuaternion &a, const MQuaternion &b,float t);
+
 #endif
 
 /****************************************************************************
