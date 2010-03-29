@@ -167,7 +167,7 @@ void TerrainAssetInstance::HandleMessage(const MString& message, const MessageDa
 	{
 		if( Asset().GetLoadState() == LOADING )
 		{
-			POST_MESSAGE( "QueryTerrainPoint", new VertexDataMessage( dynamic_cast<const VertexDataMessage&>(data) ), 0.0001 );
+			POST_MESSAGE( "QueryTerrainPoint", new VertexDataMessage( dynamic_cast<const VertexDataMessage&>(data) ), 0.0001f );
 			return;
 		}
 		const VertexDataMessage& v( dynamic_cast<const VertexDataMessage&>(data) );

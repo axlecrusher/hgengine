@@ -410,25 +410,25 @@ void Shader::GetTimeCodes( unsigned long * iOut )
 	if( f )
 	{
 		iOut[0] = f->GetModTime();
-		delete f;
 	} else
 		iOut[0] = 0;
+	SAFE_DELETE(f);
 
 	f = FILEMAN.Open( sShaderName + ".vert" );
 	if( f )
 	{
 		iOut[1] = f->GetModTime();
-		delete f;
 	} else
 		iOut[1] = 0;
+	SAFE_DELETE(f);
 
 	f = FILEMAN.Open( sShaderName + ".geom" );
 	if( f )
 	{
 		iOut[2] = f->GetModTime();
-		delete f;
 	} else
 		iOut[2] = 0;
+	SAFE_DELETE(f);
 }
 
 void Shader::ActivateShader()
