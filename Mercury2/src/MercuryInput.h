@@ -19,14 +19,15 @@ class MouseInput : public MessageData
 				unsigned int center: 1;
 				unsigned int scrollup: 1;
 				unsigned int scrolldown: 1;
+				unsigned int motion : 1; //if 1, don't expect other button info, it's a mouse-motion event.
 			};
 		} buttonMask;
-		static void ProcessMouseInput(int dx, int dy, bool leftButton, bool rightButton, bool centerButton, bool scrollUpButton, bool scrollDownButton);
+		static void ProcessMouseInput(int dx, int dy, bool leftButton, bool rightButton, bool centerButton, bool scrollUpButton, bool scrollDownButton, bool motionevent);
 		
 		MouseInput();
 		int32_t dx, dy;
 		buttonMask buttons;
-
+		
 	private:
 		static buttonMask currentButtonMasks;
 };

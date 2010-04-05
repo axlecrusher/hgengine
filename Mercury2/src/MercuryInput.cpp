@@ -11,7 +11,7 @@ MouseInput::MouseInput()
 	buttons.data = 0;
 }
 
-void MouseInput::ProcessMouseInput(int dx, int dy, bool leftButton, bool rightButton, bool centerButton, bool scrollUpButton, bool scrollDownButton)
+void MouseInput::ProcessMouseInput(int dx, int dy, bool leftButton, bool rightButton, bool centerButton, bool scrollUpButton, bool scrollDownButton, bool bMotionEvent )
 {	
 	MouseInput* mi = new MouseInput();
 	mi->dx = dx;
@@ -23,6 +23,7 @@ void MouseInput::ProcessMouseInput(int dx, int dy, bool leftButton, bool rightBu
 	buttons.scrollup = scrollUpButton;
 	buttons.scrolldown = scrollDownButton;
 	mi->buttons = buttons;
+	mi->buttons.motion = bMotionEvent;
 	currentButtonMasks = buttons;
 
 	GlobalMouseX_Set.Set( dx );

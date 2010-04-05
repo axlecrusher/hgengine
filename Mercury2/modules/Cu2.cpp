@@ -59,7 +59,7 @@ int Cu2Element::MouseMotion( int x, int y, unsigned char iCurrentButtonMask, uns
 
 	m_bWasMouseInThisFrame = bIsInside;
 
-	for( unsigned button = 0; button < 8; button++ )
+	for( unsigned button = 0; button < 3; button++ )
 	{
 		unsigned char Mask = 1<<button;
 		bool bWasDown = iLastButtonMask & Mask;

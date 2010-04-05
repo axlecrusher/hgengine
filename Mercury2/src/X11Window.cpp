@@ -289,7 +289,7 @@ bool X11Window::PumpMessages()
 				sd     = ((e->state & X11_MASK(MOUSE_BTN_SCROLL_DOWN))!=0) ^ (e->button == MOUSE_BTN_SCROLL_DOWN);
 
 				MouseInput::ProcessMouseInput(m_iLastMouseX, m_iLastMouseY , 
-					left, right, center, su, sd);
+					left, right, center, su, sd, false);
 				break;
 			}
 			case KeyPress:
@@ -327,7 +327,7 @@ bool X11Window::PumpMessages()
 					{
 						m_iLastMouseX = x;
 						m_iLastMouseY = y;
-						MouseInput::ProcessMouseInput(x, y, left, right, center, su, sd);
+						MouseInput::ProcessMouseInput(x, y, left, right, center, su, sd, true);
 						XWarpPointer(m_display, None, m_window, 0,0,0,0,m_width/2,m_height/2);
 					}
 				}
@@ -335,7 +335,7 @@ bool X11Window::PumpMessages()
 				{
 					m_iLastMouseX = e->x;
 					m_iLastMouseY = e->y;
-					MouseInput::ProcessMouseInput(e->x, e->y, left, right, center, su, sd);
+					MouseInput::ProcessMouseInput(e->x, e->y, left, right, center, su, sd, true);
 				}
 				break;
 			}
