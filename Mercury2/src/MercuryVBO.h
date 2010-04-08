@@ -45,12 +45,15 @@ class MercuryVBO : public MercuryAsset
 		inline static const void* GetLastRendered() { return m_lastVBOrendered; }
 		inline static void IncrementBatches() { ++m_vboBatches; }
 
+		inline void SetIndexCountOverride( int iCount ) { m_iIndexCountOverride = iCount; }
 		GENRTTI( MercuryVBO );
 	protected:
 		virtual bool CheckForNewer() { return false; }
 		virtual void Reload() {};
 
 	private:
+
+		unsigned long m_iIndexCountOverride;
 		virtual void InitVBO();
 		static void* m_lastVBOrendered;
 	

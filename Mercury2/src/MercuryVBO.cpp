@@ -10,7 +10,7 @@ extern bool SHOWBOUNDINGVOLUME;
 extern bool SHOWAXISES;
 
 MercuryVBO::MercuryVBO( const MString & key, bool bInstanced, bool useVertexColor )
-	:MercuryAsset( key,  bInstanced ), m_initiated(false), m_useVertexColor(useVertexColor)
+	:MercuryAsset( key,  bInstanced ), m_initiated(false), m_useVertexColor(useVertexColor), m_iIndexCountOverride( -1 )
 {
 	m_bufferIDs[0] = m_bufferIDs[1] = m_bufferIDs[2] = 0;
 	m_bDirtyIndices = m_bDirtyVertices = m_bDirtyVertexColor = false;
@@ -59,7 +59,11 @@ void MercuryVBO::Render(const MercuryNode* node)
 	GLCALL( glEnableClientState( GL_NORMAL_ARRAY ) );
 	GLCALL( glNormalPointer(GL_FLOAT, STRIDE*sizeof(float), BUFFER_OFFSET(sizeof(float)*2)) );
 
-	GLCALL( glDrawRangeElements(GL_TRIANGLES, 0, m_indexData.Length()-1, m_indexData.Length(), GL_UNSIGNED_SHORT, NULL) );
+	unsigned long iElemsToDraw = (m_iIndexCountOverride!=-1)?m_iIndexCountOverride:(m_indexData.Length()-1);
+//printf( "%d  (%d,%d)\n", iElemsToDraw,m_iIndexCountOverride,m_indexData.Length()-1 );
+	GLCALL( glDrawRangeElements( GL_TRIANGLES, 0, iElemsToDraw,
+		iElemsToDraw+1, GL_UNSIGNED_SHORT, NULL) );
+
 	IncrementBatches();
 		
 	if (m_boundingVolume && SHOWBOUNDINGVOLUME) m_boundingVolume->Render();
