@@ -1,122 +1,49 @@
-#ifndef SPATIALHASH_H
-#define SPATIALHASH_H
+#ifndef ARRAY3D_h
+#define ARRAY3D_h
 
-//#include <stdint.h>
-#include <list>
-#include <math.h>
-#include <array3d.h>
-
-template<typename T>
-class SpatialHash
+class Array3dOutOfBounds
 {
 	public:
-		SpatialHash()
-			:m_hashTable(NULL), m_spacing(1.0f)
+		Array3dOutOfBounds(uint16_t xx, uint16_t yy, uint16_t zz, uint16_t mx, uint16_t my, uint16_t mz)
+			:X(xx), Y(yy), Z(zz), MaxX(mx), MaxY(my), MaxZ(mz)
+		{ }
+		uint16_t X,Y,Z;
+		uint16_t MaxX,MaxY,MaxZ;
+};
+
+template<typename T>
+class Array3d
+{
+	public:
+		Array3d(uint16_t x, uint16_t y, uint16_t z)
+			:m_array(0), m_x(x), m_y(y), m_z(z)
 		{
-			m_cellCount = 0;
+			m_array = new T[m_x*m_y*m_z];
 		}
 		
-		~SpatialHash()
+		~Array3d()
 		{
-			DeleteHash();
+			if (m_array!=0) delete[] m_array;
+			m_array=0;
+			m_x = m_y = m_z = 0;
 		}
 		
-		void Allocate(uint32_t cellCount, float spacing)
+		inline T& Get(uint16_t x, uint16_t y, uint16_t z)
 		{
-			DeleteHash();
-			
-			m_spacing = spacing;
-			
-			cellCount = cellCount==0?1:cellCount;
-			m_cellCount = cellCount;
-			
-			m_hashTable = new Array3d< std::list<T> >(cellCount,cellCount,cellCount);
+			if (x>=m_x || y>=m_y || z>=m_z) throw Array3dOutOfBounds(x,y,z,m_x,m_y,m_z);
+			return m_array[x + (m_x * y) + (m_x * m_y * z)];
 		}
-		
-		void Insert(float x, float y, float z, const T& d)
-		{
-			float s = 1.0f/m_spacing;
-			uint32_t ix = (uint32_t)(abs(x)*s);
-			uint32_t iy = (uint32_t)(abs(y)*s);
-			uint32_t iz = (uint32_t)(abs(z)*s);
-			
-			ix = ix % m_cellCount;
-			iy = iy % m_cellCount;
-			iz = iz % m_cellCount;
-			
-			//check for and skip duplicate
-			std::list<T>& cell = m_hashTable->Get( ix, iy, iz );
 
-			typename std::list<T>::iterator i = cell.begin();
-			for (;i != cell.end(); ++i)
-			{
-				const T& a = *i;
-				if (a == d) return;
-			}
-			
-			cell.push_back( d );
-//			printf("added at %d %d %d\n", ix, iy, iz);
-		}
-		
-		std::list<T> FindByXY(float x, float y)
-		{
-			float s = 1.0f/m_spacing;
-			uint32_t ix = (uint32_t)(abs(x)*s);
-			uint32_t iy = (uint32_t)(abs(y)*s);
-
-			ix = ix % m_cellCount;
-			iy = iy % m_cellCount;
-
-			std::list<T> r;
-			
-			for (uint32_t iz = 0; iz < m_cellCount; ++iz)
-				CopyIntoList(m_hashTable->Get(ix, iy, iz), r);
-			
-			return r;
-		}
-	
-		std::list<T> FindByXZ(float x, float z)
-		{
-			float s = 1.0f/m_spacing;
-			uint32_t ix = (uint32_t)(abs(x)*s);
-			uint32_t iz = (uint32_t)(abs(z)*s);
-
-			ix = ix % m_cellCount;
-			iz = iz % m_cellCount;
-
-			std::list<T> r;
-			
-			for (uint32_t iy = 0; iy < m_cellCount; ++iy)
-				CopyIntoList(m_hashTable->Get(ix, iy, iz), r);
-			
-			return r;
-		}
 	private:
-		
-		void DeleteHash()
-		{
-			if (m_hashTable) delete m_hashTable;
-			m_spacing = 1;
-			m_cellCount = 0;
-		}
-		
-		void CopyIntoList(std::list<T>& in, std::list<T>& r)
-		{
-			if ( in.empty() ) return;
-			typename std::list<T>::iterator i = in.begin();
-			for (;i != in.end(); ++i) r.push_back(*i);
-		}
-		
-		Array3d< std::list<T> >* m_hashTable;
-		float m_spacing;
-		uint32_t m_cellCount;
+		T* m_array;
+		uint16_t m_x,m_y,m_z;
 };
 
 #endif
 
 
 /****************************************************************************
- *   Copyright (C) 2009 by Joshua Allen                                     *
+ *   Copyright (C) 2010 by Joshua Allen                                     *
  *                                                                          *
  *                                                                          *
  *   All rights reserved.                                                   *
