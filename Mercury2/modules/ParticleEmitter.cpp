@@ -96,14 +96,15 @@ void ParticleBase::Activate()
 
 void ParticleBase::Deactivate()
 {
-	m_age = 0;
-	WriteAgeToVBO();
+//	m_age = 0; //doing this breaks IsActive()
+//	WriteAgeToVBO();
 	for (uint8_t i = 0; i < 4; ++i)
 	{
 		//zero vertices should enable fast empty set culling but does not work might need FBO
 		WriteFloatToVertices(0,i,0);
 		WriteFloatToVertices(0,i,1);
 		WriteFloatToVertices(0,i,2);
+		WriteFloatToVertices(0,i,3); //fake zero age
 	}
 	m_emitter->SetDirtyVBO();
 }
