@@ -96,8 +96,11 @@ void ParticleBase::Activate()
 
 void ParticleBase::Deactivate()
 {
+	m_age = 0;
+	WriteAgeToVBO();
 	for (uint8_t i = 0; i < 4; ++i)
 	{
+		//zero vertices should enable fast empty set culling but does not work might need FBO
 		WriteFloatToVertices(0,i,0);
 		WriteFloatToVertices(0,i,1);
 		WriteFloatToVertices(0,i,2);
