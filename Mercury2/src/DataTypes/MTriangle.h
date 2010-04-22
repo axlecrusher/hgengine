@@ -2,6 +2,7 @@
 #define MTRIANGLE_H
 
 #include <MercuryVertex.h>
+#include <BoundingBox.h>
 
 class MTriangle
 {
@@ -17,6 +18,8 @@ class MTriangle
 		MercuryVertex InterpolatePosition(const MercuryVertex& barycentric);
 				
 		bool operator == (const MTriangle& rhs) const;
+		
+		BoundingBox MakeBoundingBox();
 //	private:
 		
 		MercuryVertex m_verts[3];

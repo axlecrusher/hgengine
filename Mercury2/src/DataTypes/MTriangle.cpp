@@ -14,7 +14,6 @@ MTriangle::MTriangle(const MTriangle& t)
 	m_verts[0] = t.m_verts[0];
 	m_verts[1] = t.m_verts[1];
 	m_verts[2] = t.m_verts[2];
-	
 }
 
 MTriangle::MTriangle(const MercuryVertex& a, const MercuryVertex& b, const MercuryVertex& c)
@@ -87,6 +86,32 @@ bool MTriangle::operator == (const MTriangle& rhs) const
 	if (m_verts[1] != rhs.m_verts[1]) return false;
 	if (m_verts[2] != rhs.m_verts[2]) return false;
 	return true;
+}
+
+BoundingBox MTriangle::MakeBoundingBox()
+{
+	float minX, minY, minZ;
+	float maxX, maxY, maxZ;
+	minX=minY=minZ = 9999999999999;
+	maxX=maxY=maxZ = -9999999999999;
+	
+	for (uint8_t i = 0; i<3; ++i)
+	{
+		minX = MIN<float>(minX,m_verts[i].GetX());
+		minY = MIN<float>(minY,m_verts[i].GetY());
+		minZ = MIN<float>(minZ,m_verts[i].GetZ());
+		maxX = MAX<float>(maxX,m_verts[i].GetX());
+		maxY = MAX<float>(maxY,m_verts[i].GetY());
+		maxZ = MAX<float>(maxZ,m_verts[i].GetZ());
+	}
+	
+	//compute center
+	MercuryVertex center( (maxX+minX)/2.0f, (maxY+minY)/2.0f, (maxZ+minZ)/2.0f );
+
+	//extends
+	MercuryVertex extend( (maxX-minX)/2.0, (maxY-minY)/2.0, (maxZ-minZ)/2.0 );
+
+	return BoundingBox(center, extend);
 }
 
 /****************************************************************************
