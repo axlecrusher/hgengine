@@ -28,8 +28,6 @@ private:
 	void CreateRenderingContext();
 	void GenPixelType();
 
-	void PointerToCenter();
-
 	HWND m_hwnd; //window handle
 	HDC m_hdc; //device handle
 	PIXELFORMATDESCRIPTOR m_pfd; //pixel format descriptor

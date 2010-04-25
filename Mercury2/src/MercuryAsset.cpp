@@ -55,7 +55,7 @@ bool MercuryAsset::DoCullingTests(OcclusionResult& occlusion, const MercuryMatri
 
 void MercuryAsset::PreRender(const MercuryNode* node)
 {
-	uint32_t t = time(0);
+	uint32_t t = (uint32_t)time(0);
 	if ( m_lastNewerCheck < t )
 	{
 		m_lastNewerCheck = t;

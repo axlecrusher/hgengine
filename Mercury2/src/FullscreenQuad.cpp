@@ -7,7 +7,7 @@ FullscreenQuad::FullscreenQuad( const MString & key, bool bInstanced )
 	: Quad( key, bInstanced )
 {
 	m_matrix = MercuryMatrix::Identity();
-	m_matrix.Transotale(0,0,-1,0,0,0,2,2,0.01);
+	m_matrix.Transotale(0,0,-1,0,0,0,2,2,0.01f);
 //	m_matrix.Scale(2,2,1);
 	m_matrix.Transpose();
 }

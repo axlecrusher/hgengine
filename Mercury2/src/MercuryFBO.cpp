@@ -95,7 +95,7 @@ void MercuryFBO::Render(const MercuryMatrix& matrix)
 		int h = MercuryWindow::GetCurrentWindow()->Height();
 		if ((m_width != w) || (m_height != h))
 		{	
-			m_width = w; m_height = h;
+			m_width = (unsigned short) w; m_height = (unsigned short)h;
 			for (uint8_t i = 0; i < m_numTextures; ++i)
 			{
 				MString n = ssprintf("%s_%d", m_name.c_str(), i);
@@ -153,16 +153,16 @@ void MercuryFBO::PostRender(const MercuryMatrix& matrix)
 void MercuryFBO::LoadFromXML(const XMLNode& node)
 {
 	if ( !node.Attribute("width").empty() )
-		SetWidth( StrToInt(node.Attribute("width")) );
+		SetWidth( (unsigned short) StrToInt(node.Attribute("width")) );
 
 	if ( !node.Attribute("height").empty() )
-		SetHeight( StrToInt(node.Attribute("height")) );
+		SetHeight( (unsigned short) StrToInt(node.Attribute("height")) );
 
 	if ( !node.Attribute("depth").empty() )
 		SetUseDepth( node.Attribute("depth") == "true"?true:false );
 
 	if ( !node.Attribute("tnum").empty() )
-		SetNumTextures( StrToInt(node.Attribute("tnum")) );
+		SetNumTextures( (unsigned char)StrToInt(node.Attribute("tnum")) );
 	
 	if ( !node.Attribute("usescreensize").empty() )
 		m_useScreenSize = node.Attribute("usescreensize") == "true"?true:false;

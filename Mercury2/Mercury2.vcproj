@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="modules;.;src;src/include;src/include/png;src/include/zlib;src/DataStructures;src/DataTypes"
-				PreprocessorDefinitions="HGENGINE;WIN32;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="HGENGINE;WIN32;_CRT_SECURE_NO_WARNINGS;_HAVE_LIB_GL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -115,7 +115,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories=".;src;src/include;src/include/png;src/include/zlib"
-				PreprocessorDefinitions="HGENGINE;WIN32;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="HGENGINE;WIN32;_CRT_SECURE_NO_WARNINGS;_HAVE_LIB_GL"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"

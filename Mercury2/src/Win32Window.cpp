@@ -2,6 +2,9 @@
 //#include <Windowsx.h>
 #include <GLHeaders.h>
 #include <MercuryInput.h>
+#include <MercuryMessageManager.h>
+
+MVRefBool GlobalMouseGrabbed_Set( "Input.CursorGrabbed" );
 
 LRESULT CALLBACK WindowCallback(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam); //Window callback
 Callback0R< MercuryWindow* > MercuryWindow::genWindowClbk(Win32Window::GenWin32Window); //Register window generation callback
@@ -120,7 +123,11 @@ void Win32Window::GenWindow()
 	SetForegroundWindow(m_hwnd);					// Slightly Higher Priority
 	SetFocus(m_hwnd);								// Sets Keyboard Focus To The Window
 
-		
+	//Resize windows so it's actually as big as we want, not minus borders.s
+	GetClientRect( m_hwnd, &rect );
+	int diffx = m_width - rect.right;
+	int diffy = m_height - rect.bottom;
+	SetWindowPos( m_hwnd, HWND_TOP, 0, 0, diffx + m_width, diffy + m_height, 0 );
 }
 
 void Win32Window::SetPixelType()
@@ -191,17 +198,29 @@ bool Win32Window::SwapBuffers()
 
 bool Win32Window::PumpMessages()
 {
+	static int lastx, lasty;
+	static bool bWasCursorVisible;
 	MSG message;
 
 	if ( InFocus() != ACTIVE )
 	{
 		m_inFocus = ACTIVE;
 		ShowCursor(!m_inFocus);
-		PointerToCenter();
+		if( GlobalMouseGrabbed_Set.Get() )
+		{
+			RECT rect;
+			GetWindowRect(m_hwnd, &rect);
+			SetCursorPos( rect.left + m_width/2, rect.top + m_height/2 );
+		}
 	}
 
 	while (PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
 	{
+		RECT rect;
+		GetClientRect( m_hwnd, &rect );
+		m_width = rect.right;
+		m_height = rect.bottom;
+
 		if ( InFocus() )
 		{
 			switch( message.message )
@@ -221,32 +240,73 @@ bool Win32Window::PumpMessages()
 			case WM_MOUSEMOVE:
 				{
 					POINT pos;
+					RECT rect;
+					GetWindowRect(m_hwnd, &rect);
 					GetCursorPos(&pos);
-					if (pos.x!=m_cX || pos.y!=m_cY) //ignore the resets to center
+					ScreenToClient(m_hwnd, &pos );
+					bool left = message.wParam&MK_LBUTTON;
+					bool right = message.wParam&MK_RBUTTON;
+					bool center = message.wParam&MK_MBUTTON;
+					bool su = 0;
+					bool sd = 0;
+					int px = pos.x;// - rect.left - borderx;
+					int py = pos.y;// - rect.top - bordery;
+
+					if( GlobalMouseGrabbed_Set.Get() )
 					{
-						int dx = m_cX - pos.x; 
-						int dy = m_cY - pos.y;
-						m_iLastMouseX += dx;
-						m_iLastMouseY += dy;
-						MouseInput::ProcessMouseInput(dx, dy, message.wParam&MK_LBUTTON, message.wParam&MK_RBUTTON, message.wParam&MK_MBUTTON, 0, 0);
-						PointerToCenter();
+						int x, y;
+						x = m_width/2 - px;
+						y = m_height/2 - py;
+						if (x!=0 || y!=0) //prevent recursive XWarp
+						{
+							m_iLastMouseX = x;
+							m_iLastMouseY = y;
+							MouseInput::ProcessMouseInput(x, y, left, right, center, su, sd, true);
+							lastx = x; lasty = y;
+							
+							pos.x = m_width/2;
+							pos.y = m_height/2;
+							ClientToScreen(m_hwnd, &pos );
+							SetCursorPos( pos.x, pos.y);
+							if( bWasCursorVisible )
+							{
+								bWasCursorVisible = false;
+								ShowCursor( false );
+							}
+						}
+					}
+					else
+					{
+						m_iLastMouseX = px;
+						m_iLastMouseY = py;
+						lastx = px; lasty = py;
+						MouseInput::ProcessMouseInput(px, py, left, right, center, su, sd, true);
+						if( !bWasCursorVisible )
+						{
+							ShowCursor( true );
+							bWasCursorVisible = true;
+						}
 					}
 				}
 				break;
 			case WM_LBUTTONDOWN:
-				break;
 			case WM_LBUTTONUP:
-				break;
 			case WM_RBUTTONDOWN:
-				break;
 			case WM_RBUTTONUP:
-				break;
 			case WM_MBUTTONDOWN:
-				break;
 			case WM_MBUTTONUP:
+				MouseInput::ProcessMouseInput( lastx, lasty, message.wParam&MK_LBUTTON, 
+					message.wParam&MK_RBUTTON, message.wParam&MK_MBUTTON, 0, 0, false);
 				break;
-			case 0x020A:	//Do nothing (at least now) It's a mouse wheel!
+			case 0x020A: //Not-too-well-documented mouse wheel.
+			{
+				short cx = short(message.wParam>>16);
+				MouseInput::ProcessMouseInput( lastx, lasty, message.wParam&MK_LBUTTON, 
+					message.wParam&MK_RBUTTON, message.wParam&MK_MBUTTON, (cx>0), (cx<0), false);
+				MouseInput::ProcessMouseInput( lastx, lasty, message.wParam&MK_LBUTTON, 
+					message.wParam&MK_RBUTTON, message.wParam&MK_MBUTTON, 0, 0, false);
 				break;
+			}
 			}
 		}
 		TranslateMessage(&message);				// Translate The Message
@@ -270,15 +330,6 @@ bool Win32Window::IsKeyRepeat(uint32_t c)
 {
 //	printf("count %d\n", (c&65535));
 	return (c&65535) > 1;
-}
-
-void Win32Window::PointerToCenter()
-{
-	RECT rect;
-	GetWindowRect(m_hwnd, &rect);
-	m_cX = rect.left+m_width/2;
-	m_cY = rect.top+m_height/2;
-	SetCursorPos(m_cX, m_cY);
 }
 
 short Win32Window::ConvertScancode( uint32_t scanin )

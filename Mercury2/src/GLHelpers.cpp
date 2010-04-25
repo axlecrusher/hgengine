@@ -111,13 +111,13 @@ void CameraPointAndRay(int screen_x, int screen_y, MercuryVertex & p, MercuryVer
 		modelview, projection, viewport,
 		&dox, &doy, &doz);
 
-	p = MercuryVertex( dox, doy, doz );
+	p = MercuryVertex( (float)dox, (float)doy, (float)doz );
 
 	gluUnProject(
 		winX, winY, 1,
 		modelview, projection, viewport,
 		&dox, &doy, &doz );
-	r = MercuryVertex( dox, doy, doz ) - p;
+	r = MercuryVertex( (float)dox, (float)doy, (float)doz ) - p;
 
 	r.NormalizeSelf();
 
