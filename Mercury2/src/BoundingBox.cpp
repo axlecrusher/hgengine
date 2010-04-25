@@ -149,7 +149,7 @@ bool BoundingBox::Intersect( const BoundingBox& b )
 	if ( d.Length() > (ComputeRadius()+b.ComputeRadius()) ) return false; //quick circle check
 	
 	MercuryVector l(m_extend+b.GetExtend());
-	return l.GetX()<=abs(d.GetX()) && l.GetY()<=abs(d.GetY()) && l.GetZ()<=abs(d.GetZ());
+	return l.GetX()<=ABS(d.GetX()) && l.GetY()<=ABS(d.GetY()) && l.GetZ()<=ABS(d.GetZ());
 }
 
 bool BoundingBox::DoFrustumTest( const MercuryMatrix& m )
