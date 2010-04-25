@@ -197,7 +197,7 @@ echo "LDFLAGS=$LDFLAGS" >> Makefile
 echo "">>Makefile
 echo -e "all : \$(PROJ) library allmodules" >> Makefile
 echo -e "\$(PROJ) : \$(OBJ)" >> Makefile
-echo -e "\t${cc} -o \$@ \$^ \$(LDFLAGS)" >> Makefile
+echo -e "\t${CC} -o \$@ \$^ \$(LDFLAGS)" >> Makefile
 echo -e "help : " >> Makefile
 echo -e "	echo \"Available: <\$(PROJ)> <clean> <library> <help>\"" >> Makefile
 if test `uname -s` == "Darwin" ; then
