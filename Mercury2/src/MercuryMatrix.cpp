@@ -8,7 +8,7 @@ float base_matrix_identity[16] = {
 	0.0f, 0.0f, 0.0f, 1.0f };
 
 MercuryMatrix::MercuryMatrix()
-{
+{/*
 #ifdef USE_SSE
 	m_matrix[0] = _mm_load1_ps( &base_matrix_identity[0] );
 	m_matrix[1] = _mm_load1_ps( &base_matrix_identity[4] );
@@ -17,6 +17,8 @@ MercuryMatrix::MercuryMatrix()
 #else
 	Copy16f(m_matrix[0], base_matrix_identity );
 #endif
+*/
+	*this = Identity();
 }
 
 const MercuryMatrix& MercuryMatrix::operator=(const MercuryMatrix& m)
@@ -46,7 +48,7 @@ const MercuryMatrix& MercuryMatrix::Identity()
 	if (!bSetIdentity)
 	{
 		bSetIdentity = true;
-#ifdef USE_SSE
+#ifdef USE_SSEXXX //XXX broken _mm_load1_ps routines
 		MercuryMatrix::IdentityMatrix.m_matrix[0] = _mm_load1_ps( &base_matrix_identity[0] );
 		MercuryMatrix::IdentityMatrix.m_matrix[1] = _mm_load1_ps( &base_matrix_identity[4] );
 		MercuryMatrix::IdentityMatrix.m_matrix[2] = _mm_load1_ps( &base_matrix_identity[8] );

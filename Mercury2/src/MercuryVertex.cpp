@@ -7,22 +7,22 @@
 
 MercuryVertex::MercuryVertex()
 {
-	(*this)[0] = (*this)[1] = (*this)[2] = (*this)[3] = 0;
+	m_xyzw[0] = m_xyzw[1] = m_xyzw[2] = m_xyzw[3] = 0;
 }
 
 MercuryVertex::MercuryVertex( float ix, float iy, float iz, float iw )
 {
-	(*this)[0] = ix;
-	(*this)[1] = iy;
-	(*this)[2] = iz;
-	(*this)[3] = iw;
+	m_xyzw[0] = ix;
+	m_xyzw[1] = iy;
+	m_xyzw[2] = iz;
+	m_xyzw[3] = iw;
 }
 
 MercuryVertex::MercuryVertex( const float* in3f, float f )
 {
 	for (unsigned int i = 0; i < 3; ++i)
 		(*this)[i] = in3f[i];
-	(*this)[3] = f;
+	m_xyzw[3] = f;
 }
 
 MercuryVertex::MercuryVertex( const float* in4f )
@@ -41,7 +41,7 @@ MercuryVertex::MercuryVertex( const MercuryVertex& v, float w)
 {
 	for (unsigned int i = 0; i < 3; ++i)
 		(*this)[i] = v[i];
-	(*this)[3] = w;
+	m_xyzw[3] = w;
 }
 
 void MercuryVertex::NormalizeSelf()
@@ -60,19 +60,19 @@ MercuryVertex MercuryVertex::Normalize() const
 
 float MercuryVertex::Length() const
 {
-	float length = (*this)[0]*(*this)[0];
-	length += (*this)[1]*(*this)[1];
-	length += (*this)[2]*(*this)[2];
-	length += (*this)[3]*(*this)[3];
+	float length = m_xyzw[0]*m_xyzw[0];
+	length += m_xyzw[1]*m_xyzw[1];
+	length += m_xyzw[2]*m_xyzw[2];
+	length += m_xyzw[3]*m_xyzw[3];
 	return SQRT(length);
 }
 
 float MercuryVertex::GetBiggestElement() const
 {
-	float tmp = (*this)[0];
-	tmp = MAX<float>(tmp, (*this)[1]);
-	tmp = MAX<float>(tmp, (*this)[2]);
-	return MAX<float>(tmp, (*this)[3]);
+	float tmp = m_xyzw[0];
+	tmp = MAX<float>(tmp, m_xyzw[1]);
+	tmp = MAX<float>(tmp, m_xyzw[2]);
+	return MAX<float>(tmp, m_xyzw[3]);
 }
 
 const MercuryVertex& MercuryVertex::operator *= (const MercuryVertex& p)
@@ -114,7 +114,7 @@ MercuryVertex MercuryVertex::CrossProduct(const MercuryVertex& p) const
 float MercuryVertex::DotProduct(const MercuryVertex& rhs) const
 {
 	//XXX should this use all 4 components?
-	return ((*this)[0]*rhs[0]+(*this)[1]*rhs[1]+(*this)[2]*rhs[2]);
+	return (m_xyzw[0]*rhs[0]+m_xyzw[1]*rhs[1]+m_xyzw[2]*rhs[2]);
 }
 
 MercuryVertex MercuryVertex::DotProduct3(const MercuryVertex& rhs1, const MercuryVertex& rhs2, const MercuryVertex& rhs3) const
@@ -150,7 +150,7 @@ float MercuryVertex::AddComponents() const
 
 MString MercuryVertex::Stringify(const MString& s) const
 {
-	return ssprintf("%s: %f %f %f %f", s.c_str(), (*this)[0], (*this)[1], (*this)[2], (*this)[3]);
+	return ssprintf("%s: %f %f %f %f", s.c_str(), m_xyzw[0], m_xyzw[1], m_xyzw[2], m_xyzw[3]);
 }
 
 MercuryVertex MercuryVertex::Rotate(const MQuaternion& q) const

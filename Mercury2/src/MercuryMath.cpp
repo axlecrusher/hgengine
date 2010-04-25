@@ -144,6 +144,13 @@ void FloatRow2Float( const FloatRow& r, float* f)
 		f[i] = r[i];
 }
 
+void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
+{
+	result[0] = r1[1]*r2[2] - r1[2]*r2[1];
+	result[1] = r1[2]*r2[0] - r1[0]*r2[2];
+	result[2] = r1[0]*r2[1] - r1[1]*r2[0];
+}
+
 #else
 
 //inline __m128 Hadd4(__m128 x);
@@ -258,7 +265,7 @@ void VectorMultiply4f( const FloatRow* matrix, const FloatRow& p, FloatRow& out 
 
 void ZeroFloatRow(FloatRow& r)
 {
-	r = (FloatRow)_mm_setzero_ps();
+	r = _mm_setzero_ps();
 }
 
 void Float2FloatRow(const float* f, FloatRow& r)
@@ -269,6 +276,20 @@ void Float2FloatRow(const float* f, FloatRow& r)
 void FloatRow2Float( const FloatRow& r, float* f)
 {
 	_mm_store_ps( f, r );
+}
+
+void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
+{
+	__m128 a,b,c,d,r;//using more registers is faster
+
+	a = _mm_shuffle_ps(r1, r1, 0xc9);
+	b = _mm_shuffle_ps(r2, r2, 0xd2);
+	r = _mm_mul_ps( a, b );
+
+	c = _mm_shuffle_ps(r2, r2, 0xc9);
+	d = _mm_shuffle_ps(r1, r1, 0xd2);
+	r -= _mm_mul_ps( c, d );
+	result = r;
 }
 
 #endif

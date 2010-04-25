@@ -10,10 +10,26 @@
 
 #ifdef USE_SSE
 #include <xmmintrin.h>
-typedef __m128 FloatRow __attribute__((aligned(16)));
-#else
-typedef float FloatRow[4];
 #endif
+class FloatRow
+{
+	public:
+		inline float& operator[](unsigned int i) { return ((float*)&m_floats)[i]; }
+		inline const float& operator[](unsigned int i) const { return ((const float*)&m_floats)[i]; }
+
+		inline operator float*() { return (float*)&m_floats; }
+		inline operator const float*() const { return (const float*)&m_floats; }
+		
+#ifndef USE_SSE
+		float m_floats[4];
+#else
+		inline FloatRow& operator=(const __m128& f) { m_floats=f; return *this; }
+		
+		inline operator __m128&() { return m_floats; }
+		inline operator const __m128&() const { return m_floats; }
+		__m128 m_floats __attribute__((aligned(16)));
+#endif
+};
 
 #ifdef WIN32
 #include <limits>
@@ -79,34 +95,12 @@ void Copy16f( void * dest, const void * source );
 void MatrixMultiply4f ( const FloatRow* in1, const FloatRow* in2, FloatRow* out );
 void VectorMultiply4f(const FloatRow* matrix, const FloatRow& p, FloatRow& out );
 void TransposeMatrix( FloatRow* m );
+void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result);
 
 //void Float2FloatRow(const float* f, FloatRow& r);
 //void FloatRow2Float(const FloatRow& fr, float* f);
 
-#ifdef USE_SSE
-inline void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
-{
-	__m128 a,b,c,d,r;//using more registers is faster
-
-	a = _mm_shuffle_ps(r1, r1, 0xc9);
-	b = _mm_shuffle_ps(r2, r2, 0xd2);
-	r = _mm_mul_ps( a, b );
-
-	c = _mm_shuffle_ps(r2, r2, 0xc9);
-	d = _mm_shuffle_ps(r1, r1, 0xd2);
-	r -= _mm_mul_ps( c, d );
-	result = r;
-}
-#else
-inline void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
-{
-	result[0] = r1[1]*r2[2] - r1[2]*r2[1];
-	result[1] = r1[2]*r2[0] - r1[0]*r2[2];
-	result[2] = r1[0]*r2[1] - r1[1]*r2[0];
-}
-#endif
-
-const FloatRow gfrZero = { 0.f, 0.f, 0.f, 0.f };
+const FloatRow gfrZero = { { 0.f, 0.f, 0.f, 0.f } };
 
 #endif
 
