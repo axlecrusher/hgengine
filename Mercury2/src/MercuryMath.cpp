@@ -184,38 +184,21 @@ void Sub4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 
 void Copy4f( void * dest, const void * source )
 {
-	__m128 xmm;
-
-	xmm = _mm_load_ps((float*)source);
-	_mm_store_ps((float*)dest, xmm);
+	_mm_stream_ps(((float*)dest),((__m128*)source)[0]);
 }
 
 void Copy8f( void * dest, const void * source )
 {
-	__m128 xmm[2];
-
-	xmm[0] = _mm_load_ps((float*)source);
-	_mm_store_ps((float*)dest, xmm[0]);
-
-	xmm[1] = _mm_load_ps((float*)&(((float*)source)[4]));
-	_mm_store_ps((float*)&(((float*)dest)[4]), xmm[1]);
+	_mm_stream_ps(((float*)dest),((__m128*)source)[0]);
+	_mm_stream_ps(((float*)dest)+4,((__m128*)source)[1]);
 }
 
 void Copy16f( void * dest, const void * source )
 {
-	__m128 xmm[4];
-
-	xmm[0] = _mm_load_ps((float*)source);
-	_mm_store_ps((float*)dest, xmm[0]);
-
-	xmm[1] = _mm_load_ps((float*)&(((float*)source)[4]));
-	_mm_store_ps((float*)&(((float*)dest)[4]), xmm[1]);
-
-	xmm[2] = _mm_load_ps((float*)&(((float*)source)[8]));
-	_mm_store_ps((float*)&(((float*)dest)[8]), xmm[2]);
-
-	xmm[3] = _mm_load_ps((float*)&(((float*)source)[12]));
-	_mm_store_ps((float*)&(((float*)dest)[12]), xmm[3]);
+	_mm_stream_ps(((float*)dest),((__m128*)source)[0]);
+	_mm_stream_ps(((float*)dest)+4,((__m128*)source)[1]);
+	_mm_stream_ps(((float*)dest)+8,((__m128*)source)[2]);
+	_mm_stream_ps(((float*)dest)+12,((__m128*)source)[3]);
 }
 
 void MatrixMultiply4f( const FloatRow* in1, const FloatRow* in2, FloatRow* out)
