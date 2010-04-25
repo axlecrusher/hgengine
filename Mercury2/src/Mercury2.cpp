@@ -15,7 +15,9 @@
 #include <MercuryTimer.h>
 #include <RenderGraph.h>
 #include <Texture.h>
+#ifdef _HAVE_LIB_GL
 #include <GLHeaders.h>
+#endif
 #include <ModuleManager.h>
 #include <MercuryFile.h>
 
@@ -201,7 +203,9 @@ int main( int argc, char** argv)
 //	UpdateLoopGo.Increment();
 //	updateThread.Wait();
 
+#ifdef _HAVE_LIB_GL
 	PrintGLFunctionCalls();
+#endif
 
 	SAFE_DELETE(root);
 	SAFE_DELETE(w);

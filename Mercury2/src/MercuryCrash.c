@@ -21,7 +21,7 @@
 #ifndef __USE_POSIX
 #define __USE_POSIX
 #include <signal.h>
-#undef__USE_POSIX
+#undef __USE_POSIX
 #else
 #include <signal.h>
 #endif

@@ -8,7 +8,7 @@ if test $OSTYPE = "darwin8.0"; then
 	ISMAC=1; fi
 
 
-OPTIONS="X11 libxml OGL sse gprof glprofile instancewatch alsa ogg"
+OPTIONS="X11 libxml OGL sse gprof glprofile instancewatch alsa ogg wii"
 OPT_X11=1
 OPT_OGL=1
 OPT_libxml=1
@@ -18,6 +18,7 @@ OPT_glprofile=0
 OPT_instancewatch=1
 OPT_alsa=1
 OPT_ogg=1
+OPT_wii=0
 
 
 DEFINES="WAS_CONFIGURED USE_MSTRING"
@@ -52,8 +53,16 @@ WANT_H="time.h"
 WANT_L="iberty"
 CC_BASE="$CC_BASE -I."
 
-NEED_L="m c z pthread png pthread";
-
+if test $OPT_wii = 1; then
+	CC="$DEVKITPPC/bin/powerpc-eabi-g++"
+	EXTRA_BEGIN="include $DEVKITPPC/wii_rules"
+	LD_BASE="$LD_BASE -g $MACHDEP -Ltools/wii_png -Wl,-Map,mercury.map $DEVKITPRO/libogc/lib/wii/libwiiuse.a $DEVKITPRO/libogc/lib/wii/libbte.a $DEVKITPRO/libogc/lib/wii/libogc.a"
+	NEED_L="m c png"
+	CC_BASE="$CC_BASE -I$DEVKITPRO/libogc/include"
+else
+	NEED_L="m c z pthread png pthread";
+	CC="cc"
+fi
 
 if test $OPT_libxml = 1; then
 	CC_BASE="$CC_BASE -I/usr/include/libxml2"
@@ -110,10 +119,14 @@ fi
 
 ARCH=`uname -m`
 
-if test $ARCH = "i686" || test $ARCH = "i586"; then
-	if test $OPT_sse = 1; then
-		CC_BASE="$CC_BASE -march=pentium3"
-	else
-		CC_BASE="$CC_BASE -march=pentium"
+if test $OPT_wii = 1; then 
+	CC_BASE="$CC_BASE -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float"
+else
+	if test $ARCH = "i686" || test $ARCH = "i586"; then
+		if test $OPT_sse = 1; then
+			CC_BASE="$CC_BASE -march=pentium3"
+		else
+			CC_BASE="$CC_BASE -march=pentium"
+		fi
 	fi
 fi

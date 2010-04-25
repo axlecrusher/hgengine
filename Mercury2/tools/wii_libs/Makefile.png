@@ -1,0 +1,17 @@
+all : libpng.a minitest
+
+OBJS:=png.o pngerror.o pngget.o pngpread.o pngrio.o pngrtran.o pngrutil.o pngset.o pngtrans.o pngwio.o pngwrite.o pngwtran.o pngwutil.o
+SRCS:=png.c pngerror.c pngget.c pngpread.c pngrio.c pngrtran.c pngrutil.c pngset.c pngtrans.c pngwio.c pngwrite.c pngwtran.c pngwutil.c
+
+libpng.a : $(OBJS)
+	$(DEVKITPPC)/bin/powerpc-eabi-ar rcs $@ $^
+
+%.o : %.c
+	$(DEVKITPPC)/bin/powerpc-eabi-gcc -I../zlib-1.2.4 -O2 -c -o $@ $^ 
+
+minitest : libpng.a
+	$(DEVKITPPC)/bin/powerpc-eabi-gcc -I../zlib-1.2.4 -O2 -c example.c -c -o example.o
+	$(DEVKITPPC)/bin/powerpc-eabi-gcc example.o -L. -L.. -lz -lpng
+
+clean :
+	rm -rf *~ *.o libz.a

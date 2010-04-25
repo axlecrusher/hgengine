@@ -11,8 +11,8 @@ CheckForInclude( )
 {
 echo -n "Checking for <$1>... "
 echo -e "#include <$1>\n" > tmp.c
-#echo gcc $CC_BASE -E tmp.c
-if gcc $CC_BASE -E tmp.c 1> foo 2> foo; then
+#echo ${CC} $CC_BASE -E tmp.c
+if $CC $CC_BASE -E tmp.c 1> foo 2> foo; then
 #	rm ./tmp.c
 	rm ./foo
 	echo "yes"
@@ -29,8 +29,8 @@ CheckForLib()
 {
 echo -n "Checking for -l$1... "
 echo -e "int main() { return 0; }" > tmp.c
-#echo gcc $CC_BASE $LD_BASE -o bar tmp.c -l$1
-if gcc $CC_BASE $LD_BASE -o bar tmp.c -l$1 1> foo 2> foo; then
+#echo $CC $CC_BASE $LD_BASE -o bar tmp.c -l$1
+if $CC $CC_BASE $LD_BASE -o bar tmp.c -l$1 1> foo 2> foo; then
 	rm ./tmp.c
 	rm ./foo
 	rm ./bar
@@ -58,11 +58,11 @@ for i in $DEFINES; do
 	echo "#define $i" >> configuration.h
 done
 
-echo "Compile line used: cc $CC_BASE"
+echo "Compile line used: $CC $CC_BASE"
 
 echo -n "Checking to make sure standard cflags and compile are acceptable... "
 echo -e "\n" > tmp.c
-if cc $CC_BASE -E tmp.c 1> foo 2> foo; then
+if $CC $CC_BASE -E tmp.c 1> foo 2> foo; then
         rm ./foo
         echo "yes"
 else
@@ -71,10 +71,10 @@ else
 	exit -1
 fi
 
-echo "Link line used: g++ $CC_BASE $LD_BASE"
+echo "Link line used: $CC $CC_BASE $LD_BASE"
 echo -n "Checking to make sure ldflags and cflags are acceptable... "
 echo -e "int main() { return 0; }" > tmp.c
-if g++ $CC_BASE $LD_BASE -o bar tmp.c  1> foo 2> foo; then
+if $CC $CC_BASE $LD_BASE -o bar tmp.c  1> foo 2> foo; then
         rm ./tmp.c
         rm ./foo
         rm ./bar
@@ -128,7 +128,7 @@ echo -e "#include <stdio.h>
 		return 0;
 	}\n" > tmp.c
 
-if gcc -o tmp.o tmp.c; then
+if cc -o tmp.o tmp.c; then
 	echo -n "Compile OK. "
 	rm ./tmp.c
 else
@@ -170,6 +170,9 @@ fi
 
 echo "" > Makefile
 
+#if we need extra beginning parameters, tack them in here
+echo $EXTRA_BEGIN >> Makefile
+
 echo -n "SOURCES=" >> Makefile
 for i in $SOURCES; do
 	echo -n "$i " >> Makefile
@@ -184,16 +187,17 @@ done
 
 LDFLAGS="$LDFLAGS $LD_BASE"
 
-echo "Final compile line: cc ${CC_BASE} ${CFLAGS} -c -o \$@ \$<"
+echo "Final compile line: ${CC} ${CC_BASE} ${CFLAGS} -c -o \$@ \$<"
 echo "Final link line: g++ -o \$@ \$^ ${LDFLAGS}"
 
 echo "PROJ=$PROJ" >> Makefile
+echo "CC=$CC" >> Makefile
 echo "CFLAGS=$CC_BASE $CFLAGS" >> Makefile
 echo "LDFLAGS=$LDFLAGS" >> Makefile
 echo "">>Makefile
 echo -e "all : \$(PROJ) library allmodules" >> Makefile
 echo -e "\$(PROJ) : \$(OBJ)" >> Makefile
-echo -e "\tg++ -o \$@ \$^ \$(LDFLAGS)" >> Makefile
+echo -e "\t${cc} -o \$@ \$^ \$(LDFLAGS)" >> Makefile
 echo -e "help : " >> Makefile
 echo -e "	echo \"Available: <\$(PROJ)> <clean> <library> <help>\"" >> Makefile
 if test `uname -s` == "Darwin" ; then
@@ -208,7 +212,7 @@ fi
 echo "" >> Makefile
 for i in $SOURCES; do
 	echo "Processing: $i"
-	cc $CC_BASE $CFLAGS -MM "$i" -MT $( echo "$i" | sed "s/\.S/\.o/g;s/\.cpp/\.o/g;s/\.c/\.o/g" ) >> Makefile
+	${CC} $CC_BASE $CFLAGS -MM "$i" -MT $( echo "$i" | sed "s/\.S/\.o/g;s/\.cpp/\.o/g;s/\.c/\.o/g" ) >> Makefile
 #FIX THIS!!!! It should be don at make time, not here.
 	echo -e "\t\$(CC) \$(CC_BASE) \$(CFLAGS) -c -o \$@ \$<" >> Makefile
 	echo "" >> Makefile

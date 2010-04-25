@@ -1,0 +1,17 @@
+all : libz.a minitest
+
+OBJS:=adler32.o crc32.o deflate.o gzclose.o gzlib.o gzread.o gzwrite.o infback.o inftrees.o inffast.o inflate.o trees.o uncompr.o zutil.o
+SRCS:=adler32.c crc32.c deflate.c gzclose.c gzlib.c gzread.c gzwrite.c infback.c inftrees.c inffast.c inflate.c trees.c uncompr.c zutil.c
+
+libz.a : $(OBJS)
+	$(DEVKITPPC)/bin/powerpc-eabi-ar rcs $@ $^
+
+%.o : %.c
+	$(DEVKITPPC)/bin/powerpc-eabi-gcc -O2 -c -o $@ $^
+
+minitest : libz.a
+	$(DEVKITPPC)/bin/powerpc-eabi-gcc -O2 -c minigzip.c -c -o minigzip.o
+	$(DEVKITPPC)/bin/powerpc-eabi-gcc minigzip.o -L. -lz
+
+clean :
+	rm -rf *~ *.o libz.a
