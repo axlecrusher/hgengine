@@ -85,10 +85,13 @@ class BoundingBox : public BoundingVolume
 		virtual bool Clip( const MercuryPlane& p );
 		virtual bool Clip( const Frustum& f );
 
+		virtual bool Intersect( const BoundingBox& b );
+
 		virtual bool DoFrustumTest( const MercuryMatrix& m );
 		virtual void DoOcclusionTest(OcclusionResult& result);
 
 	private:
+		float ComputeRadius() const;
 		void ComputeNormals();
 		static void PopulateVertices();
 		static void InitVBO();

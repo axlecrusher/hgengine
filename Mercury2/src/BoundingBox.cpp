@@ -109,12 +109,22 @@ void BoundingBox::Transform( const MercuryMatrix& m )
 	*this = bb;
 }
 
+float BoundingBox::ComputeRadius() const
+{
+/*	MercuryVertex p(m_center+m_extend);
+	float r = (m_center-p).Length();
+	if (abs(m_extend.Length() - r) > .000001) printf("wrong %f %f\n",m_extend.Length(), r);
+	return (m_center-p).Length();
+	*/
+	return m_extend.Length(); //this is actually correct, verified above
+}
+
 bool BoundingBox::Clip( const MercuryPlane& p )
 {
 	//do a quick spherical test using the signed distance
 	//from the center of the box
 	float d = p.GetNormal().DotProduct( m_center - p.GetCenter() );
-	if (d < -m_extend.Length()) return true;  //sphere is further than radius distance behind plane
+	if (d < -ComputeRadius()) return true;  //sphere is further than radius distance behind plane
 	
 	//all points must be behind a plane to be considered clipped
 	bool clip = true;
@@ -131,6 +141,15 @@ bool BoundingBox::Clip( const Frustum& f )
 		clipped = Clip( f.GetPlane(i) );
 	
 	return clipped;
+}
+
+bool BoundingBox::Intersect( const BoundingBox& b )
+{
+	MercuryVector d(m_center - b.m_center);
+	if ( d.Length() > (ComputeRadius()+b.ComputeRadius()) ) return false; //quick circle check
+	
+	MercuryVector l(m_extend+b.GetExtend());
+	return l.GetX()<=abs(d.GetX()) && l.GetY()<=abs(d.GetY()) && l.GetZ()<=abs(d.GetZ());
 }
 
 bool BoundingBox::DoFrustumTest( const MercuryMatrix& m )
