@@ -10,13 +10,13 @@
 
 #ifdef USE_SSE
 #include <xmmintrin.h>
+#define PREFETCH(a,sel) _mm_prefetch(a,sel); //prefetch a cache line (64 bytes)
+#else
+#define PREFETCH(a,sel) ; //prefetch a cache line (64 bytes)
 #endif
 class FloatRow
 {
 	public:
-		inline float& operator[](unsigned int i) { return ((float*)&m_floats)[i]; }
-		inline const float& operator[](unsigned int i) const { return ((const float*)&m_floats)[i]; }
-
 		inline operator float*() { return (float*)&m_floats; }
 		inline operator const float*() const { return (const float*)&m_floats; }
 		

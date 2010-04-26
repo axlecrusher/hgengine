@@ -205,7 +205,11 @@ void MatrixMultiply4f( const FloatRow* in1, const FloatRow* in2, FloatRow* out)
 {
 	unsigned int y;
 	__m128 xmm[4];
-	
+
+//	PREFETCH(in1, _MM_HINT_T0);
+//	PREFETCH(in2, _MM_HINT_T1);
+//	PREFETCH(out, _MM_HINT_T1);
+
 	for (y = 0; y < 4; ++y)
 	{
 		//load rows as columns
