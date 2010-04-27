@@ -275,7 +275,8 @@ void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
 
 	c = _mm_shuffle_ps(r2, r2, 0xc9);
 	d = _mm_shuffle_ps(r1, r1, 0xd2);
-	r -= _mm_mul_ps( c, d );
+	a = _mm_mul_ps( c, d );
+	a = _mm_sub_ps(r,a);
 	result = r;
 }
 
