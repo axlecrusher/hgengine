@@ -8,13 +8,21 @@
 #endif
 #endif
 
+#if defined(__GNUC__)
+#define VC_ALIGN(n)
+#define CC_ALIGN(n) __attribute__((aligned(n)))
+#else
+#define VC_ALIGN(n) __declspec(align(n)) 
+#define CC_ALIGN(n)
+#endif
+
 #ifdef USE_SSE
 #include <xmmintrin.h>
 #define PREFETCH(a,sel) _mm_prefetch(a,sel); //prefetch a cache line (64 bytes)
 #else
 #define PREFETCH(a,sel) ; //prefetch a cache line (64 bytes)
 #endif
-class FloatRow
+VC_ALIGN(16) class FloatRow
 {
 	public:
 		inline operator float*() { return (float*)&m_floats; }
@@ -27,9 +35,10 @@ class FloatRow
 		
 		inline operator __m128&() { return m_floats; }
 		inline operator const __m128&() const { return m_floats; }
-		__m128 m_floats __attribute__((aligned(16)));
+//		__m128 m_floats __attribute__((aligned(16)));
+		__m128 m_floats;
 #endif
-};
+} CC_ALIGN(16);
 
 #ifdef WIN32
 #include <limits>
@@ -99,7 +108,7 @@ void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result);
 
 //http://graphics.stanford.edu/~seander/bithacks.html
 #define SetBit(x,mask,t) ((x & ~mask) | (-t & mask)) /*superscalar CPU version*/
-#define GetBit(x,mask) (x & mask)
+#define GetBit(x,mask) ((x & mask)>0)
 
 //void Float2FloatRow(const float* f, FloatRow& r);
 //void FloatRow2Float(const FloatRow& fr, float* f);

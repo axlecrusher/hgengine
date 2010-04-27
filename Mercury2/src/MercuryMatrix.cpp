@@ -1,7 +1,7 @@
 #include "MercuryMatrix.h"
 #include <MercuryLog.h>
 
-float base_matrix_identity[16] = {
+VC_ALIGN(16) float base_matrix_identity[16] CC_ALIGN(16) = {
 	1.0f, 0.0f, 0.0f, 0.0f,
 	0.0f, 1.0f, 0.0f, 0.0f,
 	0.0f, 0.0f, 1.0f, 0.0f,
@@ -18,7 +18,8 @@ MercuryMatrix::MercuryMatrix()
 	Copy16f(m_matrix[0], base_matrix_identity );
 #endif
 */
-	*this = Identity();
+//	*this = Identity();
+	LoadIdentity();
 }
 
 const MercuryMatrix& MercuryMatrix::operator=(const MercuryMatrix& m)
@@ -59,6 +60,11 @@ const MercuryMatrix& MercuryMatrix::Identity()
 	}
 	
 	return IdentityMatrix;
+}
+
+void MercuryMatrix::LoadIdentity()
+{
+	Copy16f(m_matrix, base_matrix_identity );
 }
 
 void MercuryMatrix::Translate(float x, float y, float z)

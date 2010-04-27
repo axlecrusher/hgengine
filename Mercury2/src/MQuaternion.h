@@ -7,7 +7,7 @@
 class MercuryMatrix;
 
 ///Mathematical Quaternion (Used for Rotation)
-class MQuaternion {
+VC_ALIGN(16) class MQuaternion {
 	public:
 		enum WXYZ { QW = 0, QX, QY, QZ };
 
@@ -81,7 +81,7 @@ class MQuaternion {
 		//Also, for most operations, it appeared to go slower.  All the moving in and out of these variables
 		//is disadvantagious.
 		float m_wxyz[4];
-} M_ALIGN(32);
+} CC_ALIGN(16);
 
 ///Produce a matrix out of a rotation x, then y then z (how Mercury does it)
 void AngleMatrix (const MercuryVector & angles, MercuryMatrix & mat );

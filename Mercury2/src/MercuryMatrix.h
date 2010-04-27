@@ -8,7 +8,7 @@
 #include <MQuaternion.h>
 
 ///General Purpose 4x4 row-major matrix
-class MercuryMatrix
+ VC_ALIGN(16) class MercuryMatrix
 {
 private:
 	///[row][column] (The internal matrix)
@@ -52,14 +52,10 @@ public:
 
 	void Zero();
 	static const MercuryMatrix& Identity();
+	void LoadIdentity();
 	
 	void Print() const;
-}
-#if !defined( WIN32 ) || defined( _MSC_VER )
-M_ALIGN(64);
-#else
-M_ALIGN(16);
-#endif
+} CC_ALIGN(16);
 
 //namespace MercuryMath
 //{

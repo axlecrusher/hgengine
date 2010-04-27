@@ -19,12 +19,6 @@ void fail_m( const char * message, const char * file, int line );
 void* mmemalign(size_t align, size_t size, void*& mem);
 bool isAligned(size_t align, const void* mem);
 
-#if defined(__GNUC__)
-#define M_ALIGN(n) __attribute__((aligned(n)))
-#else
-#define M_ALIGN(n)
-#endif
-
 ///Make a string all upper case
 MString ToUpper(const MString & s);
 
