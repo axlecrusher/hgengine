@@ -275,7 +275,7 @@ float innerProduct(const MQuaternion & a, const MQuaternion &b)
 }
 
 //Returns the Euclidian Outer Product of two MQuaternions
-MercuryVertex outerProduct(MQuaternion a,MQuaternion b) 
+MercuryVertex outerProduct(const MQuaternion& a, const MQuaternion& b) 
 {
 	MercuryVertex result;
 	result[0] = (a.m_wxyz[0]*b.m_wxyz[1])-(a.m_wxyz[1]*b.m_wxyz[0])-(a.m_wxyz[2]*b.m_wxyz[3])+(a.m_wxyz[3]*b.m_wxyz[2]);
@@ -285,7 +285,7 @@ MercuryVertex outerProduct(MQuaternion a,MQuaternion b)
 }
 
 //Returns the Even Product of two MQuaternions
-MQuaternion evenProduct(MQuaternion a,MQuaternion b) {
+MQuaternion evenProduct(const MQuaternion& a, const MQuaternion& b) {
 	MQuaternion result;
 	result.m_wxyz[0] = (a.m_wxyz[0]*b.m_wxyz[0])-(a.m_wxyz[1]*b.m_wxyz[1])-(a.m_wxyz[2]*b.m_wxyz[2])-(a.m_wxyz[3]*b.m_wxyz[3]);
 	result.m_wxyz[1] = (a.m_wxyz[0]*b.m_wxyz[1])+(a.m_wxyz[1]*b.m_wxyz[0]);
@@ -295,7 +295,7 @@ MQuaternion evenProduct(MQuaternion a,MQuaternion b) {
 }
 
 //Returns the Odd Product of two MQuaternions (Similar to Vector Cross-Product)
-MercuryVertex oddProduct(MQuaternion a,MQuaternion b) {
+MercuryVertex oddProduct(const MQuaternion& a, const MQuaternion& b) {
 	MercuryVertex result;
 	result[0] = (a.m_wxyz[2]*b.m_wxyz[3])-(a.m_wxyz[3]*b.m_wxyz[2]);
 	result[1] = (a.m_wxyz[3]*b.m_wxyz[1])-(a.m_wxyz[1]*b.m_wxyz[3]);
