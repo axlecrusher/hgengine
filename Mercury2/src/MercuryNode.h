@@ -28,6 +28,15 @@ extern __ThreadLocalStore int g_iViewportID;
 ///The Global Pass Number (which Pass is currently doing Render)
 extern __ThreadLocalStore int g_iPass;
 
+enum MercuryNodeFlagMask
+{
+	HIDDEN = 1,
+	CULLED,
+	SAVECHILDREN,
+	ENABLESAVE,
+	ALPHAPATH
+};
+
 class MercuryNode : public MessageHandler
 {
 	public:
@@ -114,10 +123,21 @@ class MercuryNode : public MessageHandler
 		virtual void Render(const MercuryMatrix& matrix);
 		virtual void PostRender(const MercuryMatrix& matrix);
 		
-		inline bool IsHidden() { return m_hidden; }
+		virtual void SetHidden( bool bHide ) { m_flags = SetBit(m_flags,HIDDEN,bHide); } //is there anyway to make this not virtual??
+		inline bool IsHidden() { return GetBit(m_flags,HIDDEN); }
 		
-		inline void SetCulled(bool t) { m_culled = t; }
-		inline bool IsCulled() const { return m_culled; }
+		inline void SetCulled(bool t) { m_flags = SetBit(m_flags,CULLED,t); }
+		inline bool IsCulled() const { return GetBit(m_flags,CULLED); }
+
+		inline void SetSaveChildren(bool t) { m_flags = SetBit(m_flags,SAVECHILDREN,t); }
+		inline bool GetSaveChildren() const { return GetBit(m_flags,SAVECHILDREN); }
+
+		inline void SetEnableSave(bool t) { m_flags = SetBit(m_flags,ENABLESAVE,t); }
+		inline bool GetEnableSave() const { return GetBit(m_flags,ENABLESAVE); }
+
+		inline void SetUseAlphaPass(bool t) { m_flags = SetBit(m_flags,ALPHAPATH,t); }
+		inline bool GetUseAlphaPass() const { return GetBit(m_flags,ALPHAPATH); }
+
 		virtual MercuryMatrix ManipulateMatrix(const MercuryMatrix& matrix);
 
 		const MercuryMatrix & GetGlobalMatrix() const { return m_pGlobalMatrix[g_iViewportID]; }
@@ -125,7 +145,6 @@ class MercuryNode : public MessageHandler
 
 		inline unsigned short GetPasses() const { return m_iPasses; }
 
-		virtual void SetHidden( bool bHide ) { m_hidden = bHide; }
 	protected:
 		std::list< MercuryNode* > m_children;	//These nodes are unique, not instanced
 		MercuryNode* m_parent;
@@ -135,11 +154,7 @@ class MercuryNode : public MessageHandler
 		static bool m_rebuildRenderGraph;
 		MString m_name;
 		
-		bool m_hidden;		
-		bool m_useAlphaPath;
-		bool m_culled;
-		bool m_bEnableSave;
-		bool m_bEnableSaveChildren;
+		unsigned char m_flags;
 		bool IsInAssetList(MercuryAsset* asset) const;
 
 		unsigned short m_iPasses;

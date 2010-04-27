@@ -17,9 +17,7 @@ REGISTER_NODE_TYPE(MercuryNode);
 
 MercuryNode::MercuryNode()
 	:m_parent(NULL), m_prevSibling(NULL),
-	m_nextSibling(NULL), m_hidden(false),
-	m_useAlphaPath(false), m_culled(false),
-	m_bEnableSave(true), m_bEnableSaveChildren(true),
+	m_nextSibling(NULL), m_flags(SAVECHILDREN & ENABLESAVE),
 	m_iPasses( DEFAULT_PASSES ), m_iForcePasses( 0 )
 {
 	m_pGlobalMatrix = &MercuryMatrix::Identity();
@@ -213,7 +211,7 @@ void MercuryNode::RecursivePreRender()
 	for (MercuryNode* child = FirstChild(); child != NULL; child = NextChild(child))
 	{
 		child->RecursivePreRender();
-		m_culled = m_culled && child->IsCulled();
+		SetCulled( IsCulled() && child->IsCulled() );
 	}
 }
 
@@ -254,7 +252,7 @@ void MercuryNode::RecursiveRender( )
 	//call render on other render graph entries under me
 	for (MercuryNode* child = FirstChild(); child != NULL; child = NextChild(child))
 	{
-		if ( child->m_useAlphaPath )
+		if ( child->GetUseAlphaPass() )
 			CURRENTRENDERGRAPH->AddAlphaNode(child);
 		else
 			child->RecursiveRender();
@@ -284,10 +282,12 @@ void MercuryNode::LoadFromXML(const XMLNode& node)
 {
 	SetName( node.Attribute("name") );
 	
-	LOAD_FROM_XML( "hidden", m_hidden, StrToBool );
-	LOAD_FROM_XML( "alphaPath", m_useAlphaPath, StrToBool );
-	LOAD_FROM_XML( "enableSave", m_bEnableSave, StrToBool );
-	LOAD_FROM_XML( "enableSaveChildren", m_bEnableSaveChildren, StrToBool );
+	bool t;
+	t = IsHidden(); LOAD_FROM_XML( "hidden", t, StrToBool ); SetHidden(t);
+	t = GetUseAlphaPass(); LOAD_FROM_XML( "alphaPath", t, StrToBool ); SetUseAlphaPass(t);
+	t = GetEnableSave(); LOAD_FROM_XML( "enableSave", t, StrToBool ); SetEnableSave(t);
+	t = GetSaveChildren(); LOAD_FROM_XML( "enableSaveChildren", t, StrToBool );
+	SetSaveChildren(t);
 
 
 	//Not much to do here except run through all the children nodes
@@ -324,7 +324,7 @@ void MercuryNode::LoadFromXML(const XMLNode& node)
 
 void MercuryNode::SaveToXML( MString & sXMLStream, int depth )
 {
-	if( !m_bEnableSave ) return;
+	if( !GetEnableSave() ) return;
 	sXMLStream += ssprintf( "%*c<node ", depth * 3, 32 );
 
 	SaveBaseXMLTag( sXMLStream );
@@ -332,7 +332,7 @@ void MercuryNode::SaveToXML( MString & sXMLStream, int depth )
 
 	bool bNoChildren = true;
 
-	if( m_bEnableSaveChildren )
+	if( GetSaveChildren() )
 	{
 		if( !m_assets.empty() )
 		{
@@ -350,7 +350,7 @@ void MercuryNode::SaveToXML( MString & sXMLStream, int depth )
 			//No children yet (but we have them, so terminate (>) )
 			for( std::list< MercuryNode * >::iterator i = m_children.begin(); i != m_children.end(); i++ )
 			{
-				if( (*i)->m_bEnableSave )
+				if( (*i)->GetEnableSave() )
 				{
 					if( bNoChildren )
 						sXMLStream += ">\n";
@@ -377,7 +377,7 @@ void MercuryNode::SaveBaseXMLTag( MString & sXMLStream )
 	sXMLStream+= ssprintf( "type=\"%s\" ", GetType() );
 	if( GetName().length() )
 		sXMLStream += ssprintf( "name=\"%s\" ", GetName().c_str() );
-	if( m_useAlphaPath )
+	if( GetUseAlphaPass() )
 		sXMLStream += "alphaPath=\"true\" ";
 }
 
