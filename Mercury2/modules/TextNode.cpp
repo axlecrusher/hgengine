@@ -22,7 +22,7 @@ TextNode::TextNode()
 	m_bShiftAbsolute(false)
 {
 	//Disabling saving of children... As, we create many temporary children.
-	m_bEnableSaveChildren = false;
+	SetSaveChildren(false);
 }
 
 void TextNode::Update(float dTime)
