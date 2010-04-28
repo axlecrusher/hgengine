@@ -133,6 +133,7 @@ class MVRefBase
 public:
 	MVRefBase(MValue * m) : mv(m) { MSemaphoreLock( &mv->m_Sema ); mv->m_References++; }
 	MVRefBase(const MString & sPath);	//Special - get values from MESSAGEMAN
+	MValue * Base() { return mv; }
 	~MVRefBase() {
 		//If out of references, bail.
 		mv->m_Sema.Wait();
