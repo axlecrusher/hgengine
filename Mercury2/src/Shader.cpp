@@ -63,8 +63,6 @@ void Shader::Render(const MercuryNode* node)
 {
 	bool bApply = true;
 
-	CheckForNewer();
-
 	//If there's a currnet shader, we may want to abort switching shaders
 	if( CurrentShader )
 	{
