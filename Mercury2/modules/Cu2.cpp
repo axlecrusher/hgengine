@@ -327,6 +327,14 @@ void Cu2Button::LoadFromXML(const XMLNode& node)
 	LOAD_FROM_XML( "associatedValue", m_sAssociatedValue, );
 	LOAD_FROM_XML( "associatedValueSet", m_sAssociatedValueSet, );
 
+	LOAD_FROM_XML( "associatedValueX", m_sAssociatedValueX, );
+	LOAD_FROM_XML( "associatedValueY", m_sAssociatedValueY, );
+
+	LOAD_FROM_XML( "xRangeMin", m_sxRangeMin, );
+	LOAD_FROM_XML( "xRangeMax", m_sxRangeMax, );
+	LOAD_FROM_XML( "yRangeMin", m_syRangeMin, );
+	LOAD_FROM_XML( "yRangeMax", m_syRangeMax, );
+
 	if( m_pText )
 	{
 		m_pText->SetAlignment( TextNode::LEFT );
@@ -350,6 +358,13 @@ void Cu2Button::SaveToXMLTag( MString & sXMLStream )
 	if( m_bAutoSize ) sXMLStream += ssprintf( "autoSize=\"%d\" ", m_bAutoSize );
 	if( m_sAssociatedValue.length() ) sXMLStream += ssprintf( "associatedValue=\"%s\" ", m_sAssociatedValue.c_str() );
 	if( m_sAssociatedValueSet.length() ) sXMLStream += ssprintf( "associatedValueSet=\"%s\" ", m_sAssociatedValueSet.c_str() );
+	if( m_sAssociatedValueX.length() ) sXMLStream += ssprintf( "associatedValueX=\"%s\" ", m_sAssociatedValueX.c_str() );
+	if( m_sAssociatedValueY.length() ) sXMLStream += ssprintf( "associatedValueY=\"%s\" ", m_sAssociatedValueY.c_str() );
+
+	if( m_sxRangeMin.length() ) sXMLStream += ssprintf( "xRangeMin=\"%s\" ",m_sxRangeMin.c_str() );
+	if( m_sxRangeMax.length() ) sXMLStream += ssprintf( "xRangeMax=\"%s\" ",m_sxRangeMax.c_str() );
+	if( m_syRangeMin.length() ) sXMLStream += ssprintf( "yRangeMin=\"%s\" ",m_syRangeMin.c_str() );
+	if( m_syRangeMax.length() ) sXMLStream += ssprintf( "yRangeMax=\"%s\" ",m_syRangeMax.c_str() );
 
 	if( !m_pText )
 		m_pText->SaveToXMLTag( sXMLStream );
@@ -361,6 +376,7 @@ void Cu2Button::MouseAction( int x, int y, Cu2Action c, int iWhichButton )
 {
 	if( c == PRESS_IN )
 		m_bDown = true;
+
 	if( c == RELEASE_IN )
 	{
 		if( m_bDown )
@@ -375,6 +391,30 @@ void Cu2Button::MouseAction( int x, int y, Cu2Action c, int iWhichButton )
 
 	Cu2Element::MouseAction( x, y, c, iWhichButton );
 }
+
+int Cu2Button::MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask )
+{
+	if( m_sAssociatedValueX.length() && m_bDown && x >= 0 && y >= 0 && x < GetW() && y < GetH() )
+	{
+		float fxRangeMin = atof( m_sxRangeMin.c_str() );
+		float fxRangeMax = m_sxRangeMax.length()?atof( m_sxRangeMax.c_str() ):GetW();
+
+		float fX = ( float(x) / float(GetW()-1) ) * (fxRangeMax - fxRangeMin) + fxRangeMin;
+		MESSAGEMAN.GetValue( m_sAssociatedValueX )->SetFloat( fX );
+	}
+
+	if( m_sAssociatedValueY.length() && m_bDown && x >= 0 && y >= 0 && x < GetW() && y < GetH() )
+	{
+		float fyRangeMin = atof( m_syRangeMin.c_str() );
+		float fyRangeMax = m_syRangeMax.length()?atof( m_syRangeMax.c_str() ):GetW();
+
+		float fY = ( float(y) / float(GetH()-1) ) * (fyRangeMax - fyRangeMin) + fyRangeMin;
+		MESSAGEMAN.GetValue( m_sAssociatedValueY )->SetFloat( fY );
+	}
+
+	return Cu2Element::MouseMotion( x, y, iCurrentButtonMask, iLastButtonMask );
+}
+
 
 void Cu2Button::Refresh()
 {

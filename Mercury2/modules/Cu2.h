@@ -150,6 +150,7 @@ class Cu2Button : public Cu2Element
 public:
 	Cu2Button();
 
+	virtual int MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsigned char iLastButtonMask );
 	virtual void MouseAction( int x, int y, Cu2Action c, int iWhichButton );
 	///This function gets called whenever the button is clicked, you should abstract from this.
 	virtual void Click( int x, int y );
@@ -172,10 +173,18 @@ public:
 private:
 	MString m_sAssociatedValue;
 	MString m_sAssociatedValueSet;
+	MString m_sAssociatedValueX;
+	MString m_sAssociatedValueY;
 
 	MString m_sMessageToSend;
 	MString m_sValueToSend;
 	MString m_sText;
+
+	MString m_sxRangeMin;
+	MString m_sxRangeMax;
+	MString m_syRangeMin;
+	MString m_syRangeMax;
+
 	bool m_bAutoSize;
 	bool m_bDown;
 	TextNode * m_pText;
@@ -237,6 +246,7 @@ private:
 	TextNode * m_pTitle;
 	MString m_sTitle;
 };
+
 
 #endif
 
