@@ -100,11 +100,11 @@ void Frustum::LookAt(const MercuryVertex& eye, const MercuryVector& look, const 
 	m_fbr = m_planes[PFAR].GetCenter() - (Y * m_fh/2.0f) + (X * m_fw/2.0f);
 }
 
-void Frustum::Ortho(float left, float right, float bottom, float top, float near, float far)
+void Frustum::Ortho(float left, float right, float bottom, float top, float znear, float zfar)
 {
 	float rml = right - left;
 	float tmb = top - bottom;
-	float fmn = far - near;
+	float fmn = zfar - znear;
 	
 	m_frustum = MercuryMatrix::Identity();
 	m_frustum[0][0] = 2.0f/rml;
@@ -113,7 +113,7 @@ void Frustum::Ortho(float left, float right, float bottom, float top, float near
 
 	m_frustum[0][3] = -(right+left)/rml;
 	m_frustum[1][3] = -(top+bottom)/tmb;
-	m_frustum[2][3] = -(far+near)/fmn;
+	m_frustum[2][3] = -(zfar+znear)/fmn;
 	
 	m_planes[PTOP].Setup(MercuryVertex(rml/2.0f, top, fmn/2.0f), MercuryVector(0,-1,0));
 	m_planes[PBOTTOM].Setup(MercuryVertex(rml/2.0f, bottom, fmn/2.0f), MercuryVector(0,1,0));
@@ -121,8 +121,8 @@ void Frustum::Ortho(float left, float right, float bottom, float top, float near
 	m_planes[PLEFT].Setup(MercuryVertex(left, tmb/2.0f, fmn/2.0f), MercuryVector(1,0,0));
 	m_planes[PRIGHT].Setup(MercuryVertex(right, tmb/2.0f, fmn/2.0f), MercuryVector(-1,0,0));
 	
-	m_planes[PNEAR].Setup(MercuryVertex(rml/2.0f, tmb/2.0f, near), MercuryVector(0,0,-1));
-	m_planes[PFAR].Setup(MercuryVertex(rml/2.0f, tmb/2.0f, far), MercuryVector(0,0,1));
+	m_planes[PNEAR].Setup(MercuryVertex(rml/2.0f, tmb/2.0f, znear), MercuryVector(0,0,-1));
+	m_planes[PFAR].Setup(MercuryVertex(rml/2.0f, tmb/2.0f, zfar), MercuryVector(0,0,1));
 }
 
 
