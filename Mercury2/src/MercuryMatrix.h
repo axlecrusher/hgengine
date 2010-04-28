@@ -7,25 +7,49 @@
 #include <MercuryVertex.h>
 #include <MQuaternion.h>
 
+#include <list>
+#include <MSemaphore.h>
+
+///Memory holder for matrices
+class MercuryMatrixMemory
+{
+	/* Allocates all matrix space as one contigous block
+	to try to take advantage of data prefetching. Some matrix data should get a
+	free ride into the CPU cache. */
+	public:
+		void Init();
+		static MercuryMatrixMemory& Instance();
+		FloatRow* GetNewMatrix();
+		void FreeMatrix(FloatRow* m);
+	private:
+		typedef FloatRow MatrixArray[4]; //64kb
+		static const unsigned int rows = 1024; //1024 matrices * 64bytes each = 64kb
+		std::list< MatrixArray* > m_free;
+		MatrixArray m_data[rows];
+		MSemaphore m_lock;
+};
+
 ///General Purpose 4x4 row-major matrix
- VC_ALIGN(16) class MercuryMatrix
+class MercuryMatrix
 {
 private:
 	///[row][column] (The internal matrix)
 //	float m_matrix[4][4];
-	FloatRow m_matrix[4];
+//	FloatRow m_matrix[4];
+	FloatRow* m_matrix;
 	
 	static MercuryMatrix IdentityMatrix;
 public:
 	MercuryMatrix();
-	inline MercuryMatrix(const MercuryMatrix& m) { *this = m; }
-	inline float* operator[](unsigned int i) { return (float*)&m_matrix[i]; }
+	MercuryMatrix(const MercuryMatrix& m);
+	~MercuryMatrix();
+	inline float* operator[](unsigned int i) { return m_matrix[i]; }
 	///Allow typecasting to float * for use in APIs
-	inline const float* operator[](unsigned int i) const { return (float*)&m_matrix[i]; }
+	inline const float* operator[](unsigned int i) const { return m_matrix[i]; }
 	const MercuryMatrix& operator=(const MercuryMatrix& m);
 	const MercuryMatrix& operator=(const float* m);
-	inline float* Ptr() { return (float*)&m_matrix; }
-	inline const float* Ptr() const { return (float*)&m_matrix; }
+	inline float* Ptr() { return (float*)m_matrix; }
+	inline const float* Ptr() const { return (const float*)m_matrix; }
 
 	MercuryMatrix operator*(const MercuryMatrix& m) const;
 	MercuryMatrix& operator*=(const MercuryMatrix& m);
@@ -55,12 +79,7 @@ public:
 	void LoadIdentity();
 	
 	void Print() const;
-} CC_ALIGN(16);
-
-//namespace MercuryMath
-//{
-//}
-
+};
 
 #endif
 

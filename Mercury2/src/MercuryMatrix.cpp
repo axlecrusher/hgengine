@@ -1,13 +1,52 @@
 #include "MercuryMatrix.h"
 #include <MercuryLog.h>
 
+MercuryMatrixMemory& MercuryMatrixMemory::Instance()
+{
+	static MercuryMatrixMemory* mmm = NULL;
+	
+	if (mmm==NULL)
+	{
+		mmm = new MercuryMatrixMemory();
+		mmm->Init();
+	}
+	
+	return *mmm;
+}
+
+void MercuryMatrixMemory::Init()
+{
+	MSemaphoreLock lock(&m_lock);
+	for (unsigned int i = 0; i < rows;i++)
+		m_free.push_back( m_data+i );
+}
+
+FloatRow* MercuryMatrixMemory::GetNewMatrix()
+{
+	MatrixArray* m = (MatrixArray*)0xdeadbeef;
+	MSemaphoreLock lock(&m_lock);
+	if ( m_free.begin() != m_free.end() )
+	{
+		m = m_free.front();
+		m_free.pop_front();
+	}
+	return (FloatRow*)m;
+}
+
+void MercuryMatrixMemory::FreeMatrix(FloatRow* m)
+{
+	MSemaphoreLock lock(&m_lock);
+	m_free.push_back((MatrixArray*)m);
+}
+/*
 VC_ALIGN(16) float base_matrix_identity[16] CC_ALIGN(16) = {
 	1.0f, 0.0f, 0.0f, 0.0f,
 	0.0f, 1.0f, 0.0f, 0.0f,
 	0.0f, 0.0f, 1.0f, 0.0f,
 	0.0f, 0.0f, 0.0f, 1.0f };
-
+*/
 MercuryMatrix::MercuryMatrix()
+	:m_matrix(0)
 {/*
 #ifdef USE_SSE
 	m_matrix[0] = _mm_load1_ps( &base_matrix_identity[0] );
@@ -19,7 +58,22 @@ MercuryMatrix::MercuryMatrix()
 #endif
 */
 //	*this = Identity();
+	m_matrix = MercuryMatrixMemory::Instance().GetNewMatrix();
 	LoadIdentity();
+}
+
+MercuryMatrix::MercuryMatrix(const MercuryMatrix& m)
+	:m_matrix(0)
+{
+	m_matrix = MercuryMatrixMemory::Instance().GetNewMatrix();
+	Copy16f(m_matrix, m.m_matrix);
+}
+
+MercuryMatrix::~MercuryMatrix()
+{
+	if (m_matrix)
+		MercuryMatrixMemory::Instance().FreeMatrix( m_matrix );
+	m_matrix = NULL;
 }
 
 const MercuryMatrix& MercuryMatrix::operator=(const MercuryMatrix& m)
@@ -44,7 +98,8 @@ void MercuryMatrix::Zero()
 
 const MercuryMatrix& MercuryMatrix::Identity()
 {
-	static bool bSetIdentity = false;
+	return IdentityMatrix;
+/*	static bool bSetIdentity = false;
 
 	if (!bSetIdentity)
 	{
@@ -60,11 +115,14 @@ const MercuryMatrix& MercuryMatrix::Identity()
 	}
 	
 	return IdentityMatrix;
+	*/
 }
 
 void MercuryMatrix::LoadIdentity()
 {
-	Copy16f(m_matrix, base_matrix_identity );
+	for (uint8_t x=0;x<4;++x)
+		for (uint8_t y=0;y<4;++y)
+			m_matrix[x][y] = (x==y)?1.0f:0.0f;
 }
 
 void MercuryMatrix::Translate(float x, float y, float z)
