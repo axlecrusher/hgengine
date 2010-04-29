@@ -22,6 +22,7 @@
 #else
 #define PREFETCH(a,sel) ; //prefetch a cache line (64 bytes)
 #endif
+/*
 VC_ALIGN(16) class FloatRow
 {
 	public:
@@ -39,6 +40,9 @@ VC_ALIGN(16) class FloatRow
 		__m128 m_floats;
 #endif
 } CC_ALIGN(16);
+*/
+
+typedef VC_ALIGN(16) float FloatRow[4] CC_ALIGN(16);
 
 #ifdef WIN32
 #include <limits>
@@ -113,7 +117,7 @@ void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result);
 //void Float2FloatRow(const float* f, FloatRow& r);
 //void FloatRow2Float(const FloatRow& fr, float* f);
 
-const FloatRow gfrZero = { { 0.f, 0.f, 0.f, 0.f } };
+const FloatRow gfrZero = { 0.f, 0.f, 0.f, 0.f };
 
 #endif
 
