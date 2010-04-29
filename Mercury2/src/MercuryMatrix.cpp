@@ -23,13 +23,14 @@ void MercuryMatrixMemory::Init()
 
 FloatRow* MercuryMatrixMemory::GetNewMatrix()
 {
-	MatrixArray* m = (MatrixArray*)0xdeadbeef;
+	MatrixArray* m = (MatrixArray*)0x0;
 	MSemaphoreLock lock(&m_lock);
 	if ( m_free.begin() != m_free.end() )
 	{
 		m = m_free.front();
 		m_free.pop_front();
 	}
+	if (m==0x0) ***m=0;
 	return (FloatRow*)m;
 }
 
