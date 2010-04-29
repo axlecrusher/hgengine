@@ -1,7 +1,7 @@
 #include "MercuryMatrix.h"
 #include <MercuryLog.h>
 
-MercuryMatrixMemory& MercuryMatrixMemory::Instance()
+MercuryMatrixMemory& MercuryMatrixMemory::GetInstance()
 {
 	static MercuryMatrixMemory* mmm = NULL;
 	
@@ -58,21 +58,21 @@ MercuryMatrix::MercuryMatrix()
 #endif
 */
 //	*this = Identity();
-	m_matrix = MercuryMatrixMemory::Instance().GetNewMatrix();
+	m_matrix = MercuryMatrixMemory::GetInstance().GetNewMatrix();
 	LoadIdentity();
 }
 
 MercuryMatrix::MercuryMatrix(const MercuryMatrix& m)
 	:m_matrix(0)
 {
-	m_matrix = MercuryMatrixMemory::Instance().GetNewMatrix();
+	m_matrix = MercuryMatrixMemory::GetInstance().GetNewMatrix();
 	Copy16f(m_matrix, m.m_matrix);
 }
 
 MercuryMatrix::~MercuryMatrix()
 {
 	if (m_matrix)
-		MercuryMatrixMemory::Instance().FreeMatrix( m_matrix );
+		MercuryMatrixMemory::GetInstance().FreeMatrix( m_matrix );
 	m_matrix = NULL;
 }
 
@@ -90,10 +90,10 @@ const MercuryMatrix& MercuryMatrix::operator=(const float* m)
 
 void MercuryMatrix::Zero()
 {
-	ZeroFloatRow( m_matrix[0] );
-	ZeroFloatRow( m_matrix[1] );
-	ZeroFloatRow( m_matrix[2] );
-	ZeroFloatRow( m_matrix[3] );
+	m_matrix[0] = {0,0,0,0};
+	m_matrix[1] = {0,0,0,0};
+	m_matrix[2] = {0,0,0,0};
+	m_matrix[3] = {0,0,0,0};
 }
 
 const MercuryMatrix& MercuryMatrix::Identity()

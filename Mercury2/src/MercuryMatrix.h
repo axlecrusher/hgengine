@@ -18,7 +18,7 @@ class MercuryMatrixMemory
 	free ride into the CPU cache. */
 	public:
 		void Init();
-		static MercuryMatrixMemory& Instance();
+		static MercuryMatrixMemory& GetInstance();
 		FloatRow* GetNewMatrix();
 		void FreeMatrix(FloatRow* m);
 	private:
@@ -80,6 +80,8 @@ public:
 	
 	void Print() const;
 };
+
+static InstanceCounter<MercuryMatrixMemory> MMMcounter("MercuryMatrixMemory");
 
 #endif
 
