@@ -164,22 +164,38 @@ __m128 Hadd4(__m128 x)
 
 void Mul4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
-	out = _mm_mul_ps( first, second );
+	__m128 a,b,o;
+	a = _mm_load_ps(first);
+	b = _mm_load_ps(second);
+	o = _mm_mul_ps( a, b );
+	_mm_store_ps(out,o);
 }
 
 void Div4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
-	out = _mm_div_ps( first, second );
+	__m128 a,b,o;
+	a = _mm_load_ps(first);
+	b = _mm_load_ps(second);
+	o = _mm_div_ps( a, b );
+	_mm_store_ps(out,o);
 }
 
 void Add4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
-	out = _mm_add_ps( first, second );
+	__m128 a,b,o;
+	a = _mm_load_ps(first);
+	b = _mm_load_ps(second);
+	o = _mm_add_ps( a, b );
+	_mm_store_ps(out,o);
 }
 
 void Sub4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
-	out = _mm_sub_ps( first, second );
+	__m128 a,b,o;
+	a = _mm_load_ps(first);
+	b = _mm_load_ps(second);
+	o = _mm_sub_ps( a, b );
+	_mm_store_ps(out,o);
 }
 
 void Copy4f( void * dest, const void * source )
@@ -195,6 +211,11 @@ void Copy8f( void * dest, const void * source )
 
 void Copy16f( void * dest, const void * source )
 {
+/*	_mm_stream_si128((__m128i*)dest,((__m128i*)source)[0]);
+	_mm_stream_si128(&((__m128i*)dest)[1],((__m128i*)source)[1]);
+	_mm_stream_si128(&((__m128i*)dest)[2],((__m128i*)source)[2]);
+	_mm_stream_si128(&((__m128i*)dest)[3],((__m128i*)source)[3]);
+*/
 	_mm_stream_ps(((float*)dest),((__m128*)source)[0]);
 	_mm_stream_ps(((float*)dest)+4,((__m128*)source)[1]);
 	_mm_stream_ps(((float*)dest)+8,((__m128*)source)[2]);
@@ -204,52 +225,68 @@ void Copy16f( void * dest, const void * source )
 void MatrixMultiply4f( const FloatRow* in1, const FloatRow* in2, FloatRow* out)
 {
 	unsigned int y;
-	__m128 xmm[4];
+	__m128 xmm[4], a[4], b[4];
 
 //	PREFETCH(in1, _MM_HINT_T0);
 //	PREFETCH(in2, _MM_HINT_T1);
 //	PREFETCH(out, _MM_HINT_T1);
+	b[0] = _mm_load_ps(in2[0]);
+	b[1] = _mm_load_ps(in2[1]);
+	b[2] = _mm_load_ps(in2[2]);
+	b[3] = _mm_load_ps(in2[3]);
 
 	for (y = 0; y < 4; ++y)
 	{
+		a[y] = _mm_load_ps(in1[y]);
+		
 		//load rows as columns
-		xmm[3] = _mm_shuffle_ps (in1[y], in1[y], 0xff);
-		xmm[2] = _mm_shuffle_ps (in1[y], in1[y], 0xaa);
-		xmm[1] = _mm_shuffle_ps (in1[y], in1[y], 0x55);
-		xmm[0] = _mm_shuffle_ps (in1[y], in1[y], 0x00);
+		xmm[3] = _mm_shuffle_ps (a[y], a[y], 0xff);
+		xmm[2] = _mm_shuffle_ps (a[y], a[y], 0xaa);
+		xmm[1] = _mm_shuffle_ps (a[y], a[y], 0x55);
+		xmm[0] = _mm_shuffle_ps (a[y], a[y], 0x00);
 
-		xmm[0] = _mm_mul_ps( xmm[0], in2[0] );
-		xmm[1] = _mm_mul_ps( xmm[1], in2[1] );
-		xmm[2] = _mm_mul_ps( xmm[2], in2[2] );
-		xmm[3] = _mm_mul_ps( xmm[3], in2[3] );
+		xmm[0] = _mm_mul_ps( xmm[0], b[0] );
+		xmm[1] = _mm_mul_ps( xmm[1], b[1] );
+		xmm[2] = _mm_mul_ps( xmm[2], b[2] );
+		xmm[3] = _mm_mul_ps( xmm[3], b[3] );
 
 		xmm[0] = _mm_add_ps( xmm[0], xmm[1] );
 		xmm[2] = _mm_add_ps( xmm[2], xmm[3] );
-		out[y] = _mm_add_ps( xmm[0], xmm[2] );
+		a[y] = _mm_add_ps( xmm[0], xmm[2] );
 	}
+
+	//try to use the CPU's write-combining
+	_mm_store_ps(out[0], a[0]);
+	_mm_store_ps(out[1], a[1]);
+	_mm_store_ps(out[2], a[2]);
+	_mm_store_ps(out[3], a[3]);
 }
 
 //This is an SSE matrix vector multiply, see the standard C++ code
 //for a clear algorithim.  This seems like it works.
 void VectorMultiply4f( const FloatRow* matrix, const FloatRow& p, FloatRow& out )
 {
-	__m128 tmp, XY;
+	__m128 tmp,tmp2, XY, pp;
+	
+	pp=_mm_load_ps(p);
 	
 	//compute term X and term Y and store them in the low order of XY
-	XY = Hadd4( _mm_mul_ps( matrix[0], p ) ); //compute X
-	tmp = Hadd4( _mm_mul_ps( matrix[1], p ) ); //compute Y
+	XY = Hadd4( _mm_mul_ps( _mm_load_ps(matrix[0]), pp ) ); //compute X
+	tmp = Hadd4( _mm_mul_ps( _mm_load_ps(matrix[1]), pp ) ); //compute Y
 	XY = _mm_unpacklo_ps(XY, tmp);
 
 	//compute term Z and term W and store them in the low order of out
-	out = Hadd4( _mm_mul_ps( matrix[2], p ) ); //compute Z
-	tmp = Hadd4( _mm_mul_ps( matrix[3], p ) ); //compute W
-	out = _mm_unpacklo_ps(out, tmp);
+	tmp2 = Hadd4( _mm_mul_ps( _mm_load_ps(matrix[2]), pp ) ); //compute Z
+	tmp = Hadd4( _mm_mul_ps( _mm_load_ps(matrix[3]), pp ) ); //compute W
+	pp = _mm_unpacklo_ps(tmp2, tmp);
 
 	//shuffle the low order of XY into the loworder of out
 	//and shuffle the low order of out into the high order of out
-	out = _mm_movelh_ps(XY, out);
+	tmp = _mm_movelh_ps(XY, pp);
+	
+	_mm_store_ps(out, tmp);
 }
-
+/*
 void ZeroFloatRow(FloatRow& r)
 {
 	r = _mm_setzero_ps();
@@ -264,20 +301,25 @@ void FloatRow2Float( const FloatRow& r, float* f)
 {
 	_mm_store_ps( f, r );
 }
-
+*/
 void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
 {
 	__m128 a,b,c,d,r;//using more registers is faster
+	__m128 t1,t2;
+	
+	t1 = _mm_load_ps(r1);
+	t2 = _mm_load_ps(r2);
 
-	a = _mm_shuffle_ps(r1, r1, 0xc9);
-	b = _mm_shuffle_ps(r2, r2, 0xd2);
+	a = _mm_shuffle_ps(t1, t1, 0xc9);
+	b = _mm_shuffle_ps(t2, t2, 0xd2);
 	r = _mm_mul_ps( a, b );
 
-	c = _mm_shuffle_ps(r2, r2, 0xc9);
-	d = _mm_shuffle_ps(r1, r1, 0xd2);
+	c = _mm_shuffle_ps(t2, t2, 0xc9);
+	d = _mm_shuffle_ps(t1, t1, 0xd2);
 	a = _mm_mul_ps( c, d );
 	r = _mm_sub_ps(r,a);
-	result = r;
+
+	_mm_store_ps(result, r);
 }
 
 #endif
