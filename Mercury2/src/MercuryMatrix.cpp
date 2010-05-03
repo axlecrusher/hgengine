@@ -129,10 +129,12 @@ void MercuryMatrix::LoadIdentity()
 void MercuryMatrix::Translate(float x, float y, float z)
 {
 	MercuryMatrix m;
+
 	m[0][3] = x;
 	m[1][3] = y;
 	m[2][3] = z;
-	*this *= m;
+
+	MatrixMultiply4f(m_matrix,m.m_matrix,m_matrix);
 }
 
 void MercuryMatrix::RotateXYZ(float x, float y, float z)
@@ -172,7 +174,7 @@ void MercuryMatrix::RotateXYZ(float x, float y, float z)
 	matrix[2][3] = 0;
 	matrix[3][3] = 1;
 
-	*this *= matrix;	
+	MatrixMultiply4f(m_matrix,matrix.m_matrix,m_matrix);
 }
 
 void MercuryMatrix::RotateAngAxis( float fAngle, float ix, float iy, float iz )
@@ -249,7 +251,7 @@ void MercuryMatrix::Transotale( float tX, float tY, float tZ, float rX, float rY
 	matrix[2][3] = tZ;
 	matrix[3][3] = 1;
 
-	*this *= matrix;	
+	MatrixMultiply4f(m_matrix,matrix.m_matrix,m_matrix);
 }
 
 
@@ -269,12 +271,6 @@ MercuryMatrix MercuryMatrix::operator*(const MercuryMatrix& m) const
 	MercuryMatrix r;
 	MatrixMultiply4f ( m_matrix, m.m_matrix, r.m_matrix);
 	return r;
-}
-
-MercuryMatrix& MercuryMatrix::operator*=(const MercuryMatrix& m) 
-{
-	MatrixMultiply4f ( m_matrix, m.m_matrix, m_matrix);
-	return *this;
 }
 
 void MercuryMatrix::Print() const

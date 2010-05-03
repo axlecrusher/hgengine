@@ -52,7 +52,9 @@ public:
 	inline const float* Ptr() const { return (const float*)m_matrix; }
 
 	MercuryMatrix operator*(const MercuryMatrix& m) const;
-	MercuryMatrix& operator*=(const MercuryMatrix& m);
+	
+	inline MercuryMatrix& operator*=(const MercuryMatrix& m)
+	{ MatrixMultiply4f ( m_matrix, m.m_matrix, m_matrix); return *this; }
 	
 	MercuryVector operator*(const MercuryVertex& v) const;
 
