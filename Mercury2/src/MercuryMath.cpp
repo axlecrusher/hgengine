@@ -41,26 +41,34 @@ void ZeroFloatRow(FloatRow& r)
 
 void Mul4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
+	FloatRow r;
 	for (uint8_t i = 0; i < 4; ++i)
-	    out[i] = first[i] * second[i];
+	    r[i] = first[i] * second[i];
+	Copy4f(out,r);
 }
 
 void Div4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
+	FloatRow r;
 	for (uint8_t i = 0; i < 4; ++i)
 		out[i] = first[i] / second[i];
+	Copy4f(out,r);
 }
 
 void Add4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
+	FloatRow r;
 	for (uint8_t i = 0; i < 4; ++i)
 		out[i] = first[i] + second[i];
+	Copy4f(out,r);
 }
 
 void Sub4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
+	FloatRow r;
 	for (uint8_t i = 0; i < 4; ++i)
 		out[i] = first[i] - second[i];
+	Copy4f(out,r);
 }
 
 void Copy4f( void * dest, const void * source )
@@ -82,56 +90,61 @@ void MatrixMultiply4f ( const FloatRow* in1a, const FloatRow* in2a, FloatRow* ou
 {
 	const float *in1 = *in1a;
 	const float *in2 = *in2a;
-	float *out = *outa;
+	FloatRow r[4];
 	
-	out[0] = in1[0] * in2[0] + in1[1] * in2[4] +
+	(*r)[0] = in1[0] * in2[0] + in1[1] * in2[4] +
 				in1[2] * in2[8] + in1[3] * in2[12];
-	out[1] = in1[0] * in2[1] + in1[1] * in2[5] +
+	(*r)[1] = in1[0] * in2[1] + in1[1] * in2[5] +
 				in1[2] * in2[9] + in1[3] * in2[13];
-	out[2] = in1[0] * in2[2] + in1[1] * in2[6] +
+	(*r)[2] = in1[0] * in2[2] + in1[1] * in2[6] +
 				in1[2] * in2[10] + in1[3] * in2[14];
-	out[3] = in1[0] * in2[3] + in1[1] * in2[7] +
+	(*r)[3] = in1[0] * in2[3] + in1[1] * in2[7] +
 				in1[2] * in2[11] + in1[3] * in2[15];
 
-	out[4] = in1[4] * in2[0] + in1[5] * in2[4] +
+	(*r)[4] = in1[4] * in2[0] + in1[5] * in2[4] +
 				in1[6] * in2[8] + in1[7] * in2[12];
-	out[5] = in1[4] * in2[1] + in1[5] * in2[5] +
+	(*r)[5] = in1[4] * in2[1] + in1[5] * in2[5] +
 				in1[6] * in2[9] + in1[7] * in2[13];
-	out[6] = in1[4] * in2[2] + in1[5] * in2[6] +
+	(*r)[6] = in1[4] * in2[2] + in1[5] * in2[6] +
 				in1[6] * in2[10] + in1[7] * in2[14];
-	out[7] = in1[4] * in2[3] + in1[5] * in2[7] +
+	(*r)[7] = in1[4] * in2[3] + in1[5] * in2[7] +
 				in1[6] * in2[11] + in1[7] * in2[15];
 
-	out[8] = in1[8] * in2[0] + in1[9] * in2[4] +
+	(*r)[8] = in1[8] * in2[0] + in1[9] * in2[4] +
 				in1[10] * in2[8] + in1[11] * in2[12];
-	out[9] = in1[8] * in2[1] + in1[9] * in2[5] +
+	(*r)[9] = in1[8] * in2[1] + in1[9] * in2[5] +
 				in1[10] * in2[9] + in1[11] * in2[13];
-	out[10] = in1[8] * in2[2] + in1[9] * in2[6] +
+	(*r)[10] = in1[8] * in2[2] + in1[9] * in2[6] +
 				in1[10] * in2[10] + in1[11] * in2[14];
-	out[11] = in1[8] * in2[3] + in1[9] * in2[7] +
+	(*r)[11] = in1[8] * in2[3] + in1[9] * in2[7] +
 				in1[10] * in2[11] + in1[11] * in2[15];
 
-	out[12] = in1[12] * in2[0] + in1[13] * in2[4] +
+	(*r)[12] = in1[12] * in2[0] + in1[13] * in2[4] +
 				in1[14] * in2[8] + in1[15] * in2[12];
-	out[13] = in1[12] * in2[1] + in1[13] * in2[5] +
+	(*r)[13] = in1[12] * in2[1] + in1[13] * in2[5] +
 				in1[14] * in2[9] + in1[15] * in2[13];
-	out[14] = in1[12] * in2[2] + in1[13] * in2[6] +
+	(*r)[14] = in1[12] * in2[2] + in1[13] * in2[6] +
 				in1[14] * in2[10] + in1[15] * in2[14];
-	out[15] = in1[12] * in2[3] + in1[13] * in2[7] +
+	(*r)[15] = in1[12] * in2[3] + in1[13] * in2[7] +
 				in1[14] * in2[11] + in1[15] * in2[15];
+
+	Copy16f(outa,r);
 }
 
 void VectorMultiply4f( const FloatRow* matrix, const FloatRow& pa, FloatRow& outa )
 {
+	FloatRow r;
 	const float *m = *matrix;
 	const float *p = pa;
-	float *out = outa;
-	out[0] = p[0] * m[0] + p[1] * m[1] + p[2] * m[2] + p[3] * m[3];
-	out[1] = p[0] * m[4] + p[1] * m[5] + p[2] * m[6] + p[3] * m[7];
-	out[2] = p[0] * m[8] + p[1] * m[9] + p[2] * m[10] + p[3] * m[11];
-	out[3] = p[0] * m[12] + p[1] * m[13] + p[2] * m[14] + p[3] * m[15];
+	
+	r[0] = p[0] * m[0] + p[1] * m[1] + p[2] * m[2] + p[3] * m[3];
+	r[1] = p[0] * m[4] + p[1] * m[5] + p[2] * m[6] + p[3] * m[7];
+	r[2] = p[0] * m[8] + p[1] * m[9] + p[2] * m[10] + p[3] * m[11];
+	r[3] = p[0] * m[12] + p[1] * m[13] + p[2] * m[14] + p[3] * m[15];
+	
+	Copy4f(outa,r);
 }
-
+/*
 void Float2FloatRow(const float* f, FloatRow& r)
 {
 	for (uint8_t i = 0; i < 4; ++i)
@@ -143,12 +156,16 @@ void FloatRow2Float( const FloatRow& r, float* f)
 	for (uint8_t i = 0; i < 4; ++i)
 		f[i] = r[i];
 }
-
+*/
 void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
 {
-	result[0] = r1[1]*r2[2] - r1[2]*r2[1];
-	result[1] = r1[2]*r2[0] - r1[0]*r2[2];
-	result[2] = r1[0]*r2[1] - r1[1]*r2[0];
+	FloatRow r;
+	
+	r[0] = r1[1]*r2[2] - r1[2]*r2[1];
+	r[1] = r1[2]*r2[0] - r1[0]*r2[2];
+	r[2] = r1[0]*r2[1] - r1[1]*r2[0];
+	
+	Copy4f(result,r);
 }
 
 #else
