@@ -100,6 +100,7 @@ private:
 	int32_t GetUniformLocation(const MString& n);
 
 	void SetAttributeInternal(const MString& name, const ShaderAttribute& x);
+	void SetAttributeInternal(int uniformLoc, const ShaderAttribute& x);
 	
 	///Suggested function for loading shaders.
 	/** This function looks for {sShaderName}.vert and {sShaderName}.frag.  It will

@@ -442,7 +442,7 @@ void Shader::ActivateShader()
 	{
 		ShaderAttribute* a = m_globalAttributes.get( ui->name );
 		if( a )
-			SetAttributeInternal(ui->name,*a);
+			SetAttributeInternal(ui->id,*a);
 	}
 }
 
@@ -479,26 +479,30 @@ void Shader::RemoveAttribute(const MString& name)
 void Shader::SetAttributeInternal(const MString& name, const ShaderAttribute& x)
 {
 	int location = GetUniformLocation( name );
+	SetAttributeInternal(location, x);
+}
 
-	if ( location != -1 )
+void Shader::SetAttributeInternal(int uniformLoc, const ShaderAttribute& x)
+{
+	if ( uniformLoc != -1 )
 	{
 		switch( x.type )
 		{
 			case ShaderAttribute::TYPE_INT:
 			case ShaderAttribute::TYPE_SAMPLER:
-				GLCALL( glUniform1iARB( location, x.value.iInt ) );
+				GLCALL( glUniform1iARB( uniformLoc, x.value.iInt ) );
 				break;
 			case ShaderAttribute::TYPE_FLOAT:
-				GLCALL( glUniform1fARB( location, x.value.fFloat ) );
+				GLCALL( glUniform1fARB( uniformLoc, x.value.fFloat ) );
 				break;
 			case ShaderAttribute::TYPE_FLOATV4:
-				GLCALL( glUniform4fvARB( location, 1, &x.value.fFloatV4[0] ) );
+				GLCALL( glUniform4fvARB( uniformLoc, 1, &x.value.fFloatV4[0] ) );
 				break;
 			case ShaderAttribute::TYPE_MATRIX:
-				GLCALL( glUniformMatrix4fvARB(location, 1, 1, x.value.matrix) ); //transpose too
+				GLCALL( glUniformMatrix4fvARB(uniformLoc, 1, 1, x.value.matrix) ); //transpose too
 				break;
 			case ShaderAttribute::TYPE_INT4:
-				GLCALL( glUniform4ivARB( location, 1, x.value.iInts ) );
+				GLCALL( glUniform4ivARB( uniformLoc, 1, x.value.iInts ) );
 				break;
 		};
 		GLERRORCHECK;
