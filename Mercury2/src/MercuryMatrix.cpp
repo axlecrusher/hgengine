@@ -209,7 +209,7 @@ void MercuryMatrix::Rotate(const MQuaternion& q)
 {
 	MercuryMatrix m;
 	q.toMatrix4( m );
-	*this *= m;
+	MatrixMultiply4f( m_matrix, m.m_matrix, m_matrix );
 }
 
 void MercuryMatrix::Transotale( float tX, float tY, float tZ, float rX, float rY, float rZ, float sX, float sY, float sZ )
@@ -261,20 +261,19 @@ void MercuryMatrix::Scale(float x, float y, float z)
 	m[1][1] = y;
 	m[2][2] = z;
 
-	*this *= m;
+	MatrixMultiply4f ( m_matrix, m.m_matrix, m_matrix);
 }
 
 MercuryMatrix MercuryMatrix::operator*(const MercuryMatrix& m) const
 {
-	MercuryMatrix r(*this);
+	MercuryMatrix r;
 	MatrixMultiply4f ( m_matrix, m.m_matrix, r.m_matrix);
 	return r;
 }
 
 MercuryMatrix& MercuryMatrix::operator*=(const MercuryMatrix& m) 
 {
-	MercuryMatrix r(*this);
-	MatrixMultiply4f ( r.m_matrix, m.m_matrix, m_matrix);
+	MatrixMultiply4f ( m_matrix, m.m_matrix, m_matrix);
 	return *this;
 }
 
