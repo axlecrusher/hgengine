@@ -123,8 +123,8 @@ class AutoMutexLock
 		{
 			//loop until we get a lock but use a timeout so we are warned
 			//of a held mutex indicating a possible deadlock
-			bool l = m_mutex->Wait(1000);
-			while (!l) m_mutex->Wait(1000);
+			bool l = m_mutex->Wait(0xFFFFFF);
+			while (!l) m_mutex->Wait(0xFFFFFF);
 		}
 
 		~AutoMutexLock()

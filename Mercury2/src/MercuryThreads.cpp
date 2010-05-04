@@ -9,6 +9,26 @@
 #include <stdint.h>
 #endif
 
+//#define EXTRA_DEBUG_ON_THREAD_FAIL
+
+#ifdef EXTRA_DEBUG_ON_THREAD_FAIL
+#include <MercuryBacktrace.h>
+void ThreadPrintBacktrace()
+{
+	fprintf( stderr, "Printing backtrace...\n" );
+	char buffer[2048];
+	int i = cnget_backtrace( 1, buffer, 2048 );
+	fprintf( stderr, "%s\n", buffer );
+}
+
+#else
+void ThreadPrintBacktrace()
+{
+}
+#endif
+
+
+
 //XXX WARNING in windows mutex of the same name are shared!!!
 //we can not give mutexes a default name
 
@@ -169,13 +189,22 @@ bool MercuryMutex::Wait( long lMilliseconds )
 	switch( r )
 	{
 	case WAIT_TIMEOUT:
+		//
+		ThreadPrintBacktrace();
+		//
 		fprintf(stderr, "Mutex held by thread ID 0x%x timed out (%d locks)\n", m_heldBy, iLockCount );
 		return false;
 	case WAIT_FAILED:
+		//
+		ThreadPrintBacktrace();
+		//
 		fprintf(stderr, "Mutex held by thread ID 0x%x failed (%d locks)\n", m_heldBy, iLockCount );
 		return false;
 	}
 #else
+	//This seems to have some curious behavior in i386 Linux (tested and found problematic in Ubuntu 9.04)
+	//which can cause a crash of the program in an infinite loop.  I do not know what is casuing it, but
+	//My general suggestion is that it be avoided - Charles
 	if ( lMilliseconds < 0xFFFFFF )
 	{
 		timeval t;
@@ -205,6 +234,7 @@ bool MercuryMutex::Wait( long lMilliseconds )
 			fprintf(stderr, "Max Recursive Locks Reached\n");
 			return false;
 		case ETIMEDOUT:
+			ThreadPrintBacktrace();
 			fprintf(stderr, "Mutex held by thread ID 0x%lx timed out (%d locks)\n", m_heldBy, iLockCount );
 			return false;
 	}
