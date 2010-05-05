@@ -125,6 +125,7 @@ void RenderGraph::RenderAlpha()
 		for (i = srs->Assets.begin();i != srs->Assets.end(); ++i)
 			(*i)->PostRender(srs->Node);
 		
+		srs->~StoreRenderState();//explicitly call destructor since free() is used
 		AlphaHolderAllocator.Free( srs );
 	}
 }

@@ -42,6 +42,7 @@ void MercuryMessageManager::PumpMessages(const uint64_t& currTime)
 	{
 		FireOffMessage( *mh );
 		SAFE_DELETE( mh->data );
+		mh->~MessageHolder();//explicitly call destructor since free() is used
 		HolderAllocator.Free(mh);
 	}
 }
