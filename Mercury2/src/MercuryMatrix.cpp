@@ -17,6 +17,7 @@ MercuryMatrixMemory& MercuryMatrixMemory::GetInstance()
 void MercuryMatrixMemory::Init()
 {
 	MSemaphoreLock lock(&m_lock);
+
 	for (unsigned int i = 0; i < rows;i++)
 		m_free.push_back( m_data+i );
 }
@@ -91,10 +92,9 @@ const MercuryMatrix& MercuryMatrix::operator=(const float* m)
 
 void MercuryMatrix::Zero()
 {
-	m_matrix[0] = {0,0,0,0};
-	m_matrix[1] = {0,0,0,0};
-	m_matrix[2] = {0,0,0,0};
-	m_matrix[3] = {0,0,0,0};
+	float *f = (float*)m_matrix;
+	for (uint8_t i = 0; i < 16; ++i)
+		f[i] = 0;
 }
 
 const MercuryMatrix& MercuryMatrix::Identity()

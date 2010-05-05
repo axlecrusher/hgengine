@@ -160,6 +160,7 @@ void FloatRow2Float( const FloatRow& r, float* f)
 void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
 {
 	FloatRow r;
+	Copy4f(r,result); //we needs value4
 	
 	r[0] = r1[1]*r2[2] - r1[2]*r2[1];
 	r[1] = r1[2]*r2[0] - r1[0]*r2[2];
