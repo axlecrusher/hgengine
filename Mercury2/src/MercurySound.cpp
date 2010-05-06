@@ -20,8 +20,10 @@ MercurySoundManager & MercurySoundManager::GetInstance()
 {
 	static MercurySoundManager * tm;
 	if( !tm )
+	{
 		tm = new MercurySoundManager();
-	tm->m_SoundDriver = 0;
+		tm->m_SoundDriver = 0;
+	}
 	return *tm;
 }
 

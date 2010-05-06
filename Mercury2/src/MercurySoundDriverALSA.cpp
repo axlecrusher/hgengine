@@ -18,8 +18,10 @@ public:
 	static void * playback_thread( void * );
 	static int playback_function( int samples );
 	MercuryThread tPlayback;
+	static bool bQuitPlayback;
 };
 
+bool MercurySoundDriverALSA::bQuitPlayback;
 snd_pcm_t * MercurySoundDriverALSA::playback_handle;
 
 MercurySoundDriverALSA::~MercurySoundDriverALSA()
@@ -134,6 +136,8 @@ bool MercurySoundDriverALSA::Init( const MString & sParameters )
 	MercurySoundManager::iChannels = Channels;
 	MercurySoundManager::fSPS = Samplerate;
 
+	bQuitPlayback = false;
+
 	tPlayback.Create( playback_thread, 0 );
 
 	return true;
@@ -141,19 +145,21 @@ bool MercurySoundDriverALSA::Init( const MString & sParameters )
 
 void MercurySoundDriverALSA::Close()
 {
-	tPlayback.Halt( true );
-	printf( "Closing!: %p\n", playback_handle );
+	printf( "Closing ALSA: %p\n", playback_handle );
+	bQuitPlayback = true;
+	tPlayback.Wait();
 	if( playback_handle )
 	{
 		snd_pcm_close (playback_handle);
-		printf( "Playback handle closed.\n" );
+		printf( "ALSA Playback handle closed.\n" );
 	}
+
 }
 
 void * MercurySoundDriverALSA::playback_thread( void * )
 {
 	int err;
-	while (1) {
+	while (!bQuitPlayback) {
 		int frames_to_deliver;		
 
 #ifdef LOW_LATENCY
