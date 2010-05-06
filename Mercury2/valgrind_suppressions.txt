@@ -1,0 +1,18 @@
+{
+   suppress_libasound_overlap
+   Memcheck:Overlap
+   fun:memcpy
+   obj:/usr/lib*/libasound.so.2.0.0
+}
+{
+   suppress_libasound_leak
+   Memcheck:Leak
+   ...
+   obj:/usr/lib*/libasound.so.2.0.0
+}
+{
+   remove_conditional_problems_with_libGL
+   Memcheck:Cond
+   ...
+   obj:/usr/lib/libGLcore.so.*
+}
