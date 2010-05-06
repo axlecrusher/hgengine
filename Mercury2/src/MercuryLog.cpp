@@ -3,6 +3,8 @@
 
 using namespace std;
 
+static bool gIsLogUp = 0;
+
 void* MercuryLog::ThreadLoop(void* d)
 {
 	MercuryLog* log = static_cast<MercuryLog*>(d);
@@ -19,10 +21,12 @@ void* MercuryLog::ThreadLoop(void* d)
 MercuryLog::MercuryLog()
 {
 	m_thread.Create(MercuryLog::ThreadLoop, this, true);
+	gIsLogUp = 1;
 }
 
 MercuryLog::~MercuryLog()
 {
+	gIsLogUp = 0;
 	m_thread.Halt();
 	CopyQueue();
 	WriteQueue();
@@ -40,8 +44,15 @@ void MercuryLog::Close()
 
 void MercuryLog::Write(const MString& message)
 {
-	AutoMutexLock lock(m_mutex);
-	m_queue.push_back( message );
+	if( gIsLogUp )
+	{
+		AutoMutexLock lock(m_mutex);
+		m_queue.push_back( message );
+	}
+	else
+	{
+		printf( "POST-LOG: %s\n", message.c_str() );
+	}
 }
 
 void MercuryLog::CopyQueue()
