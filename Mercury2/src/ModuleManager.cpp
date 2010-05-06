@@ -26,6 +26,15 @@ ModuleManager::ModuleManager()
 {
 }
 
+ModuleManager::~ModuleManager()
+{
+	MVector < MString > vOut;
+	m_hAllHandles.VectorIndices( vOut );
+	for( unsigned i = 0; i < vOut.size(); i++ )
+	{
+		dlclose( m_hAllHandles[vOut[i]] );
+	}
+}
 
 ModuleManager & ModuleManager::GetInstance()
 {

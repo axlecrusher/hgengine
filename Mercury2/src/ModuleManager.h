@@ -18,6 +18,7 @@ class ModuleManager
 {
 public:
 	ModuleManager();
+	~ModuleManager();
 	static ModuleManager & GetInstance();
 	void InitializeAllModules();
 
