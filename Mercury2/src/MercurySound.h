@@ -29,7 +29,7 @@ protected:
 #define REGISTER_SOUND_SOURCE( sname, alias ) \
 	MercurySoundSource * GenNewSoundSource##sname( MAutoPtr< MercurySoundSource > s) \
 	{ return new sname( s ); } \
-	int SoundSourceRegisterID##sname = SOUNDMAN->RegisterSoundSource( alias, &GenNewSoundSource##sname );
+	int SoundSourceRegisterID##sname = SOUNDMAN.RegisterSoundSource( alias, &GenNewSoundSource##sname );
 
 
 class MercurySoundDriver
@@ -54,7 +54,7 @@ public:
 	{ \
 		return (MercurySoundDriver*)new SD; \
 	} \
-	int SoundDriver##SD##No = MercurySoundManager::Instance()->RegisterDriver( MercurySoundDriverConstructionPair( MakeNew##SD, priority ) );
+	int SoundDriver##SD##No = SOUNDMAN.RegisterDriver( MercurySoundDriverConstructionPair( MakeNew##SD, priority ) );
 
 class MercurySoundManager
 {
@@ -62,7 +62,7 @@ public:
 	MercurySoundManager() { }
 	~MercurySoundManager();
 
-	static MercurySoundManager * Instance();
+	static MercurySoundManager & GetInstance();
 
 	void Init(const MString & sParameters);
 	void AttachSound( MAutoPtr< MercurySoundSource > s, bool bSynchronize );
@@ -100,7 +100,9 @@ private:
 	MercuryTimer m_tLastTrip;
 };
 
-#define SOUNDMAN MercurySoundManager::Instance()
+static InstanceCounter<MercurySoundManager> SMcounter("SoundManager");
+
+#define SOUNDMAN MercurySoundManager::GetInstance()
 
 #endif
 

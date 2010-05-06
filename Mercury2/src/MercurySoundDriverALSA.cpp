@@ -9,6 +9,7 @@
 class MercurySoundDriverALSA
 {
 public:
+	~MercurySoundDriverALSA();
 	virtual bool Init( const MString & sParameters );
 	virtual void Close();
 
@@ -20,6 +21,10 @@ public:
 };
 
 snd_pcm_t * MercurySoundDriverALSA::playback_handle;
+
+MercurySoundDriverALSA::~MercurySoundDriverALSA()
+{
+}
 
 bool MercurySoundDriverALSA::Init( const MString & sParameters )
 {
@@ -137,9 +142,11 @@ bool MercurySoundDriverALSA::Init( const MString & sParameters )
 void MercurySoundDriverALSA::Close()
 {
 	tPlayback.Halt( true );
+	printf( "Closing!: %p\n", playback_handle );
 	if( playback_handle )
 	{
 		snd_pcm_close (playback_handle);
+		printf( "Playback handle closed.\n" );
 	}
 }
 
@@ -207,7 +214,7 @@ int MercurySoundDriverALSA::playback_function(int nrframes)
 	short buf[nrframes*2];
 	float ibuf[nrframes*2];
 
-	SOUNDMAN->FillBuffer( ibuf, nrframes );
+	SOUNDMAN.FillBuffer( ibuf, nrframes );
 
 	for( int i = 0; i < nrframes; ++i )
 	{
@@ -221,7 +228,7 @@ int MercurySoundDriverALSA::playback_function(int nrframes)
 		fprintf (stderr, "write failed (%s)\n", snd_strerror (err));
 	}
 
-	SOUNDMAN->PostFill();
+	SOUNDMAN.PostFill();
 
 	return err;
 }

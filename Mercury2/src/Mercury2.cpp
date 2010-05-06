@@ -117,7 +117,7 @@ int main( int argc, char** argv)
 	HandleCommandLineParameters( argc, argv );
 
 	//Sound first.
-	SOUNDMAN->Init( "" );
+	SOUNDMAN.Init( "" );
 	MercuryWindow* w = MercuryWindow::MakeWindow();
 
 #ifdef WIN32

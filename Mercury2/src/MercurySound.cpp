@@ -12,16 +12,17 @@ MercurySoundSource::MercurySoundSource( MercurySoundSource * chain ) :
 
 void MercurySoundSource::SampleHoldCalc()
 {
-	m_iSampleHold = SOUNDMAN->SamplesSinceLastFrame();
+	m_iSampleHold = SOUNDMAN.SamplesSinceLastFrame();
 }
 
 
-MercurySoundManager * MercurySoundManager::Instance()
+MercurySoundManager & MercurySoundManager::GetInstance()
 {
 	static MercurySoundManager * tm;
 	if( !tm )
 		tm = new MercurySoundManager();
-	return tm;
+	tm->m_SoundDriver = 0;
+	return *tm;
 }
 
 MercurySoundManager::~MercurySoundManager()
