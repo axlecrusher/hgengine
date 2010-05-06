@@ -34,7 +34,8 @@ from the beginning of the queue." */
 class MercuryMessageManager
 {
 	public:
-		MercuryMessageManager() : m_messageQueue( MessageHolder::Compare ), m_currTime(0) { }
+		MercuryMessageManager();
+		~MercuryMessageManager();
 
 		///Dispatch message whenever the message manager gets control again; delay after now.
 		void PostMessage(const MString& message, MessageData* data, float delay);
@@ -65,7 +66,7 @@ class MercuryMessageManager
 		};
 
 		MHash< std::list< MessagePair > > m_messageRecipients;
-		MHash< MValue > m_allValues;	//Careful - these cannot be deleted.
+		MHash< MValue > * m_allValues;	//Careful - these cannot be deleted.
 
 //		MercuryMutex m_lock;
 		MSemaphore m_queueLock;

@@ -17,6 +17,18 @@ bool MessageHolder::Compare( void * left, void * right )
 	return (((MessageHolder*)left)->when) < (((MessageHolder*)right)->when);
 }
 
+MercuryMessageManager::MercuryMessageManager() : m_messageQueue( MessageHolder::Compare ), m_currTime(0)
+{
+	m_allValues = new MHash< MValue >;
+}
+
+MercuryMessageManager::~MercuryMessageManager()
+{
+	//So, this is a little complicated, but no, you cannot delete m_allValues on program close.
+	//I'm trying to figure out a better way of handling cleanup, though.
+	//delete m_allValues;
+}
+
 void MercuryMessageManager::PostMessage(const MString& message, MessageData* data, float delay)
 {
 	MessageHolder * m = new(HolderAllocator.Malloc()) MessageHolder();
@@ -150,10 +162,10 @@ MessageHolder* MercuryMessageManager::GetNextMessageFromQueue()
 
 MValue * MercuryMessageManager::GetValue( const MString & sVariableName )
 {
-	MValue * v = m_allValues.get( sVariableName );
+	MValue * v = m_allValues->get( sVariableName );
 	if( !v )
 	{
-		v = &m_allValues[sVariableName];
+		v = &(*m_allValues)[sVariableName];
 		v->SetReferences( 1 );
 	}
 	return v;
