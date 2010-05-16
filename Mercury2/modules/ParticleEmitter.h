@@ -43,6 +43,7 @@ class ParticleBase
 		ParticleEmitter* m_emitter;
 //		MercuryNode* m_particleGraph;
 		float* m_particleVobData; //pointer to position in VBO
+		uint16_t* m_particleIndexData; //pointer to position in index list
 };
 
 class ParticleEmitter : public MercuryNode
@@ -62,7 +63,9 @@ class ParticleEmitter : public MercuryNode
 		virtual void Render(const MercuryMatrix& matrix);
 
 		void SetMaxParticleCount(uint16_t count);
-		inline void SetDirtyVBO() { m_dirtyVBO=true; }
+
+		inline void SetDirtyVertices() { m_dirtyVBO = m_dirtyVBO||0x1; }
+		inline void SetDirtyIndices() { m_dirtyVBO = m_dirtyVBO||0x2; }
 
 		static uint32_t ResetDrawnCount();
 
@@ -87,9 +90,11 @@ class ParticleEmitter : public MercuryNode
 		
 		Callback1R<uint32_t,ParticleBase*>* GenerateParticlesClbk;
 		AlignedBuffer<float> m_vertexData;
+		AlignedBuffer<uint16_t> m_indexData;
 		
-		unsigned int m_bufferID;
-		bool m_dirtyVBO;
+		unsigned int m_bufferID[2];
+//		bool m_dirtyVBO;
+		uint8_t m_dirtyVBO;
 
 		std::list< ParticleBase* > m_active, m_inactive;
 //		MercuryNode* m_masterParticle;

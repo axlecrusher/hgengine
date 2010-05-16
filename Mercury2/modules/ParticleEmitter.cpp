@@ -13,13 +13,14 @@ REGISTER_NODE_TYPE(ParticleEmitter);
 #define BUFFER_OFFSET(i) ((char*)NULL + (i))
 
 ParticleBase::ParticleBase()
-	:m_age(0), m_lifespan(0), m_particleVobData(NULL)
+	:m_age(0), m_lifespan(0), m_particleVobData(NULL), m_particleIndexData(NULL)
 {
 }
 
 ParticleBase::~ParticleBase()
 {
 	m_particleVobData = NULL;
+	m_particleIndexData = NULL;
 }
 
 void ParticleBase::Init()
@@ -37,28 +38,28 @@ void ParticleBase::Update(float dTime)
 
 void ParticleBase::WriteAgeToVBO()
 {
-	m_emitter->SetDirtyVBO();
+	m_emitter->SetDirtyVertices();
 	for (uint8_t i = 0; i < 4; ++i)
 		WriteFloatToVertices(m_age,i,3);
 }
 
 void ParticleBase::WriteLifespanToVBO()
 {
-	m_emitter->SetDirtyVBO();
+	m_emitter->SetDirtyVertices();
 	for (uint8_t i = 0; i < 4; ++i)
 		WriteFloatToVertices(m_lifespan,i,4);
 }
 
 void ParticleBase::WriteRand1ToVBO()
 {
-	m_emitter->SetDirtyVBO();
+	m_emitter->SetDirtyVertices();
 	for (uint8_t i = 0; i < 4; ++i)
 		WriteFloatToVertices(m_rand1,i,5);
 }
 
 void ParticleBase::WriteRand2ToVBO()
 {
-	m_emitter->SetDirtyVBO();
+	m_emitter->SetDirtyVertices();
 	for (uint8_t i = 0; i < 4; ++i)
 		WriteFloatToVertices(m_rand2,i,6);
 }
@@ -84,29 +85,18 @@ void ParticleBase::Activate()
 	m_particleVobData[i++] = 0.5; m_particleVobData[i++] = 0.5; m_particleVobData[i++] = 0;
 	i+=4; m_particleVobData[i++] = 1; m_particleVobData[i++] = 1; //skip color data and set U,V
 
-/*	for (uint8_t i = 0; i < 4; ++i)
-	{
-		WriteFloatToVertices(0,i,0);
-		WriteFloatToVertices(0,i,1);
-		WriteFloatToVertices(0,i,2);
-	}
-*/
-	m_emitter->SetDirtyVBO();
+	for (uint8_t i = 1; i < 4; ++i)
+		m_particleIndexData[i] = m_particleIndexData[0]+i; //reconstruct indices
+
+	m_emitter->SetDirtyVertices();
+	m_emitter->SetDirtyIndices();
 }
 
 void ParticleBase::Deactivate()
 {
-//	m_age = 0; //doing this breaks IsActive()
-//	WriteAgeToVBO();
-	for (uint8_t i = 0; i < 4; ++i)
-	{
-		//zero vertices should enable fast empty set culling but does not work might need FBO
-		WriteFloatToVertices(0,i,0);
-		WriteFloatToVertices(0,i,1);
-		WriteFloatToVertices(0,i,2);
-		WriteFloatToVertices(0,i,3); //fake zero age
-	}
-	m_emitter->SetDirtyVBO();
+	for (uint8_t i = 1; i < 4; ++i)
+		m_particleIndexData[i] = m_particleIndexData[0]; //degenerate triangle renders nothing
+	m_emitter->SetDirtyIndices();
 }
 
 void ParticleBase::WriteFloatToVertices(float v, uint8_t vertexIndex, uint8_t offset)
@@ -126,8 +116,9 @@ ParticleEmitter::ParticleEmitter()
 	:base(), m_maxParticles(50), m_age(0), m_emitDelay(0.1), m_lifespan(0),
 	m_particlesEmitted(0), m_particleMinLife(0.1), m_particleMaxLife(5),
 	m_particles(NULL), GenerateParticlesClbk(NULL),
-	m_bufferID(0), m_dirtyVBO(false)
+	m_dirtyVBO(0)
 {
+	m_bufferID[0] = 0;
 	m_iForcePasses = m_iForcePasses | (1<<15);
 	m_iForcePasses = m_iForcePasses | (1<<7);
 	Init();
@@ -136,7 +127,7 @@ ParticleEmitter::ParticleEmitter()
 
 ParticleEmitter::~ParticleEmitter()
 {
-	if (m_bufferID > 0) { GLCALL( glDeleteBuffersARB(1, &m_bufferID) ); }
+	if (m_bufferID[0] > 0) { GLCALL( glDeleteBuffersARB(2, m_bufferID) ); }
 
 	SAFE_DELETE_ARRAY(m_particles); //do we need to destroy each element????
 	SAFE_DELETE(GenerateParticlesClbk);
@@ -231,6 +222,7 @@ void ParticleEmitter::SetMaxParticleCount(uint16_t count)
 
 	m_maxParticles = count;
 	m_vertexData.Allocate(m_maxParticles*ParticleBase::STRIDE*4);
+	m_indexData.Allocate(m_maxParticles*4);
 
 	SAFE_DELETE_ARRAY(m_particles);
 //	if (GenerateParticlesClbk) m_particles = (*GenerateParticlesClbk)(m_maxParticles);
@@ -246,6 +238,8 @@ void ParticleEmitter::SetMaxParticleCount(uint16_t count)
 		ParticleBase* p = m_particles+i;
 		p->m_emitter = this;
 		p->m_particleVobData = m_vertexData.Buffer()+(ParticleBase::STRIDE*4*i);
+		p->m_particleIndexData = m_indexData.Buffer() + (4*i);
+		p->m_particleIndexData[0]=p->m_particleIndexData[1]=p->m_particleIndexData[2]=p->m_particleIndexData[3]=i*4; //initial degenerate
 		p->Deactivate();
 //		printf("addr1 %p\n", p);
 		m_inactive.push_back( p );
@@ -263,22 +257,26 @@ void ParticleEmitter::Render(const MercuryMatrix& matrix)
 	GLCALL( glPushAttrib(GL_ENABLE_BIT|GL_CURRENT_BIT) );
 	GLCALL( glDisable(GL_CULL_FACE) );
 	
-	if (m_bufferID==0)
+	if (m_bufferID[0]==0)
 	{
-		GLCALL( glGenBuffersARB(1, &m_bufferID) );
+		GLCALL( glGenBuffersARB(2, m_bufferID) );
 	}
 
-	GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferID) );
+	GLCALL( glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_bufferID[0]) );
+	GLCALL( glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_bufferID[1]) );
 //	GLCALL( glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, 0) );
 
 	MercuryVBO::SetLastRendered(this);
 
-	if (m_dirtyVBO)
+	if (m_dirtyVBO&&0x1)
 	{
-		m_dirtyVBO = false;
 		GLCALL( glBufferDataARB(GL_ARRAY_BUFFER_ARB, m_vertexData.LengthInBytes(), m_vertexData.Buffer(), GL_STREAM_DRAW_ARB) );
 	}
-
+	if (m_dirtyVBO&&0x2)
+	{
+		GLCALL( glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_indexData.LengthInBytes(), m_indexData.Buffer(), GL_STREAM_DRAW_ARB) );
+	}
+	m_dirtyVBO = 0;
 	GLCALL( glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT) );
 
 	//do render stuff here
@@ -291,7 +289,9 @@ void ParticleEmitter::Render(const MercuryMatrix& matrix)
 	GLCALL( glVertexPointer(3, GL_FLOAT, ParticleBase::STRIDE*sizeof(float), BUFFER_OFFSET( 0*sizeof(float) ) ) );
 	GLCALL( glColorPointer(4, GL_FLOAT, ParticleBase::STRIDE*sizeof(float), BUFFER_OFFSET( 3*sizeof(float) ) ) );
 
-	GLCALL( glDrawArrays(GL_QUADS, 0, m_maxParticles*4) );
+//	GLCALL( glDrawArrays(GL_QUADS, 0, m_maxParticles*4) );
+//	GLCALL( glDrawRangeElements( GL_QUADS, 0, m_maxParticles*4,m_maxParticles*4,  GL_UNSIGNED_SHORT, NULL) );
+	GLCALL( glDrawElements(GL_QUADS,m_maxParticles*4,GL_UNSIGNED_SHORT,0) );
 
 	GLCALL( glPopClientAttrib() );
 	GLCALL( glPopAttrib() );
