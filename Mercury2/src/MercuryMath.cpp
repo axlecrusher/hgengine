@@ -320,13 +320,15 @@ void FloatRow2Float( const FloatRow& r, float* f)
 	_mm_store_ps( f, r );
 }
 */
+
 void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
 {
 	__m128 a,b,c,d,r;//using more registers is faster
 	__m128 t1,t2;
 	
-	t1 = _mm_load_ps(r1);
-	t2 = _mm_load_ps(r2);
+	//unaligned load, vectors are not aligned
+	t1 = _mm_loadu_ps(r1);
+	t2 = _mm_loadu_ps(r2);
 
 	a = _mm_shuffle_ps(t1, t1, 0xc9);
 	b = _mm_shuffle_ps(t2, t2, 0xd2);
@@ -337,7 +339,7 @@ void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
 	a = _mm_mul_ps( c, d );
 	r = _mm_sub_ps(r,a);
 
-	_mm_store_ps(result, r);
+	_mm_storeu_ps(result, r);
 }
 
 #endif

@@ -1,6 +1,11 @@
 #include "MercuryMatrix.h"
 #include <MercuryLog.h>
 
+MercuryMatrixMemory::MercuryMatrixMemory()
+{
+	m_data.Allocate(rows,16);
+}
+
 MercuryMatrixMemory& MercuryMatrixMemory::GetInstance()
 {
 	static MercuryMatrixMemory* mmm = NULL;
@@ -19,7 +24,7 @@ void MercuryMatrixMemory::Init()
 	MSemaphoreLock lock(&m_lock);
 
 	for (unsigned int i = 0; i < rows;i++)
-		m_free.push_back( m_data+i );
+		m_free.push_back( m_data.Buffer()+i );
 }
 
 FloatRow* MercuryMatrixMemory::GetNewMatrix()

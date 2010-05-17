@@ -18,7 +18,10 @@ class AlignedBuffer
 		
 		void Allocate(unsigned long count, uint8_t alignment = 32)
 		{
-			SAFE_FREE(m_mem);
+			if (m_mem!=0)
+				free(m_mem);
+			m_mem=0;
+
 			void * m_memret;
 			m_data = (T*)mmemalign(alignment, sizeof(T)*count, m_memret);
 			m_mem = (T*)m_memret;
@@ -27,7 +30,8 @@ class AlignedBuffer
 		
 		void Free()
 		{
-			SAFE_FREE(m_mem);
+			if (m_mem!=0)
+				free(m_mem);
 			m_data = NULL;
 			m_length = 0;
 		}

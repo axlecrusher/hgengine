@@ -10,6 +10,8 @@
 #include <list>
 #include <MSemaphore.h>
 
+#include <AlignedBuffer.h>
+
 ///Memory holder for matrices
 class MercuryMatrixMemory
 {
@@ -17,15 +19,16 @@ class MercuryMatrixMemory
 	to try to take advantage of data prefetching. Some matrix data should get a
 	free ride into the CPU cache. */
 	public:
+		MercuryMatrixMemory();
 		void Init();
 		static MercuryMatrixMemory& GetInstance();
 		FloatRow* GetNewMatrix();
 		void FreeMatrix(FloatRow* m);
 	private:
-		typedef FloatRow MatrixArray[4]; //64kb
 		static const unsigned int rows = 1024; //1024 matrices * 64bytes each = 64kb
+		typedef FloatRow MatrixArray[4]; //64kb
+		AlignedBuffer<MatrixArray> m_data;
 		std::list< MatrixArray* > m_free;
-		MatrixArray m_data[rows];
 		MSemaphore m_lock;
 };
 
