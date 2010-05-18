@@ -244,9 +244,9 @@ bool Win32Window::PumpMessages()
 					GetWindowRect(m_hwnd, &rect);
 					GetCursorPos(&pos);
 					ScreenToClient(m_hwnd, &pos );
-					bool left = message.wParam&MK_LBUTTON;
-					bool right = message.wParam&MK_RBUTTON;
-					bool center = message.wParam&MK_MBUTTON;
+					bool left = GetBit(message.wParam,MK_LBUTTON);
+					bool right = GetBit(message.wParam,MK_RBUTTON);
+					bool center = GetBit(message.wParam,MK_MBUTTON);
 					bool su = 0;
 					bool sd = 0;
 					int px = pos.x;// - rect.left - borderx;
@@ -295,16 +295,16 @@ bool Win32Window::PumpMessages()
 			case WM_RBUTTONUP:
 			case WM_MBUTTONDOWN:
 			case WM_MBUTTONUP:
-				MouseInput::ProcessMouseInput( lastx, lasty, message.wParam&MK_LBUTTON, 
-					message.wParam&MK_RBUTTON, message.wParam&MK_MBUTTON, 0, 0, false);
+				MouseInput::ProcessMouseInput( lastx, lasty, GetBit(message.wParam,MK_LBUTTON), 
+					GetBit(message.wParam,MK_RBUTTON), GetBit(message.wParam,MK_MBUTTON), 0, 0, false);
 				break;
 			case 0x020A: //Not-too-well-documented mouse wheel.
 			{
 				short cx = short(message.wParam>>16);
-				MouseInput::ProcessMouseInput( lastx, lasty, message.wParam&MK_LBUTTON, 
-					message.wParam&MK_RBUTTON, message.wParam&MK_MBUTTON, (cx>0), (cx<0), false);
-				MouseInput::ProcessMouseInput( lastx, lasty, message.wParam&MK_LBUTTON, 
-					message.wParam&MK_RBUTTON, message.wParam&MK_MBUTTON, 0, 0, false);
+				MouseInput::ProcessMouseInput( lastx, lasty, GetBit(message.wParam,MK_LBUTTON), 
+					GetBit(message.wParam,MK_RBUTTON), GetBit(message.wParam,MK_MBUTTON), (cx>0), (cx<0), false);
+				MouseInput::ProcessMouseInput( lastx, lasty, GetBit(message.wParam,MK_LBUTTON), 
+					GetBit(message.wParam,MK_RBUTTON), GetBit(message.wParam,MK_MBUTTON), 0, 0, false);
 				break;
 			}
 			}
