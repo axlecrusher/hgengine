@@ -77,7 +77,7 @@ public:
 	inline void Scale(const MercuryVertex& v) { Scale(v[0], v[1], v[2]); }
 	
 	void Transotale( float tX, float tY, float tZ, float rX, float rY, float rZ, float sX, float sY, float sZ );
-	inline void Transpose() { TransposeMatrix( m_matrix ); }
+	void Transpose();
 
 	void Zero();
 	static const MercuryMatrix& Identity();

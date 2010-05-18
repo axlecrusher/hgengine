@@ -2,10 +2,15 @@
 #include "MercuryMath.h"
 
 //the SSE version of this was really slow, this is quicker
-void TransposeMatrix( FloatRow* m )
+
+#ifndef USE_SSE
+
+//Generic Math functions. Compile these if you can not use optimized functions.
+
+void TransposeMatrix( const FloatRow* matrix, FloatRow* out )
 {
 	float tmp;
-	float *_m = (float*)m;
+	float *_m = (float*)out;
 	
 	tmp = _m[1];
 	_m[1] = _m[4];
@@ -29,10 +34,6 @@ void TransposeMatrix( FloatRow* m )
 	_m[11] = _m[14];
 	_m[14] = tmp;
 }
-
-#ifndef USE_SSE
-
-//Generic Math functions. Compile these if you can not use optimized functions.
 
 void ZeroFloatRow(FloatRow& r)
 {
@@ -69,21 +70,6 @@ void Sub4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 	for (uint8_t i = 0; i < 4; ++i)
 		out[i] = first[i] - second[i];
 	Copy4f(out,r);
-}
-
-void Copy4f( void * dest, const void * source )
-{
-	COPY<float,4>((float*)source, (float*)dest);
-}
-
-void Copy8f( void * dest, const void * source )
-{
-	COPY<float,8>((float*)source, (float*)dest);
-}
-
-void Copy16f( void * dest, const void * source )
-{
-	COPY<float,16>((float*)source, (float*)dest);
 }
 
 void MatrixMultiply4f ( const FloatRow* in1a, const FloatRow* in2a, FloatRow* outa)
@@ -214,30 +200,6 @@ void Sub4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 	b = _mm_load_ps(second);
 	o = _mm_sub_ps( a, b );
 	_mm_store_ps(out,o);
-}
-
-void Copy4f( void * dest, const void * source )
-{
-	_mm_stream_ps(((float*)dest),((__m128*)source)[0]);
-}
-
-void Copy8f( void * dest, const void * source )
-{
-	_mm_stream_ps(((float*)dest),((__m128*)source)[0]);
-	_mm_stream_ps(((float*)dest)+4,((__m128*)source)[1]);
-}
-
-void Copy16f( void * dest, const void * source )
-{
-/*	_mm_stream_si128((__m128i*)dest,((__m128i*)source)[0]);
-	_mm_stream_si128(&((__m128i*)dest)[1],((__m128i*)source)[1]);
-	_mm_stream_si128(&((__m128i*)dest)[2],((__m128i*)source)[2]);
-	_mm_stream_si128(&((__m128i*)dest)[3],((__m128i*)source)[3]);
-*/
-	_mm_stream_ps(((float*)dest),((__m128*)source)[0]);
-	_mm_stream_ps(((float*)dest)+4,((__m128*)source)[1]);
-	_mm_stream_ps(((float*)dest)+8,((__m128*)source)[2]);
-	_mm_stream_ps(((float*)dest)+12,((__m128*)source)[3]);
 }
 
 void MatrixMultiply4f( const FloatRow* in1, const FloatRow* in2, FloatRow* out)
@@ -399,7 +361,7 @@ void LoadIdentity(FloatRow* matrix)
 
 	__m128 r[2];
 
-	r[0] = _mm_set_ps(0.0f,0.0f,0.0f,1.0f);
+	r[0] = _mm_set_ss(1.0f);
 	_mm_storer_ps(m+12,r[0]); //reverse r[0]
 
 	r[1] = _mm_shuffle_ps(r[0], r[0], _MM_SHUFFLE(1,1,0,1));
@@ -409,9 +371,42 @@ void LoadIdentity(FloatRow* matrix)
 	_mm_store_ps(m+4, r[1]);
 }
 
+void TransposeMatrix( const FloatRow* matrix, FloatRow* out )
+{
+	//compiler acts better when we send in 2 parameter rather than 1
+	__m128 m[4],r[4];
+
+	m[0] = _mm_load_ps(matrix[0]);
+	m[1] = _mm_load_ps(matrix[1]);
+	m[2] = _mm_load_ps(matrix[2]);
+	m[3] = _mm_load_ps(matrix[3]);
+
+	r[0] = _mm_movelh_ps(m[0],m[1]);
+	r[1] = _mm_movelh_ps(m[2],m[3]);
+	r[2] = _mm_movehl_ps(m[1],m[0]);
+	r[3] = _mm_movehl_ps(m[3],m[2]);
+	//done with m matrix, we can reuse it now
+
+	m[0] = _mm_shuffle_ps(r[0], r[0], _MM_SHUFFLE(3,1,2,0)); //produce beginning of new row 0 and 1
+	m[1] = _mm_shuffle_ps(r[1], r[1], _MM_SHUFFLE(3,1,2,0)); //produce ending of new row 0 and 1
+	m[2] = _mm_shuffle_ps(r[2], r[2], _MM_SHUFFLE(3,1,2,0)); //produce beginning of new row 2 and 3
+	m[3] = _mm_shuffle_ps(r[3], r[3], _MM_SHUFFLE(3,1,2,0)); //produce ending of new row 2 and 3
+
+	r[0] = _mm_movelh_ps(m[0],m[1]); //row 0 is done
+	r[2] = _mm_movelh_ps(m[2],m[3]); //row 2 is done
+	r[1] = _mm_movehl_ps(m[1],m[0]); //row 1 is done
+	r[3] = _mm_movehl_ps(m[3],m[2]); //row 3 is done
+
+	_mm_store_ps(out[0], r[0]);
+	_mm_store_ps(out[1], r[1]);
+	_mm_store_ps(out[2], r[2]);
+	_mm_store_ps(out[3], r[3]);
+}
+
 void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
 {
-	__m128 a,b,c,d,r;//using more registers is faster
+	//using more registers is faster(8 maximum)
+	__m128 a,b,c,d,r;
 	__m128 t1,t2;
 	
 	//unaligned load, vectors are not aligned

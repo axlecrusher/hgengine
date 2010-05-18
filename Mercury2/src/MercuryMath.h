@@ -102,18 +102,22 @@ void Mul4f(const FloatRow& first, const FloatRow& second, FloatRow& out);
 void Div4f(const FloatRow& first, const FloatRow& second, FloatRow& out);
 void Add4f(const FloatRow& first, const FloatRow& second, FloatRow& out);
 void Sub4f(const FloatRow& first, const FloatRow& second, FloatRow& out);
-void Copy4f( void * dest, const void * source );
-void Copy8f( void * dest, const void * source );
-void Copy16f( void * dest, const void * source );
+inline void Copy4f( void * dest, const void * source ) { memcpy(dest,source,16); }
+inline void Copy8f( void * dest, const void * source ) { memcpy(dest,source,32); }
+inline void Copy16f( void * dest, const void * source ) { memcpy(dest,source,64); }
 void MatrixMultiply4f ( const FloatRow* in1, const FloatRow* in2, FloatRow* out );
 void VectorMultiply4f(const FloatRow* matrix, const FloatRow& p, FloatRow& out );
-void TransposeMatrix( FloatRow* m );
+void TransposeMatrix(const FloatRow* matrix, FloatRow* out);
 void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result);
 void LoadIdentity(FloatRow* matrix);
 
 //http://graphics.stanford.edu/~seander/bithacks.html
-#define SetBit(x,mask,t) ((x & ~mask) | (-t & mask)) /*superscalar CPU version*/
-#define GetBit(x,mask) ((x & mask)>0)
+inline unsigned int SetBit(unsigned int x, unsigned int mask, bool t)
+{
+	#pragma warning( disable : 4804 )
+	return ((x & ~mask) | (-t & mask));  /*superscalar CPU version*/
+}
+inline bool GetBit(unsigned int x, unsigned int mask) { return ((x & mask)>0); }
 
 //void Float2FloatRow(const float* f, FloatRow& r);
 //void FloatRow2Float(const FloatRow& fr, float* f);

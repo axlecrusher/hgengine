@@ -25,6 +25,18 @@ void MercuryMatrixMemory::Init()
 
 	for (unsigned int i = 0; i < rows;i++)
 		m_free.push_back( m_data.Buffer()+i );
+/*
+	//test matrix transpose
+	MercuryMatrix test;
+	for (int i = 0; i < 16; ++i)
+		test.Ptr()[i] = i+1;
+
+	LOG.Write("before transpose\n");
+	test.Print();
+	test.Transpose();
+	LOG.Write("after Transpose\n");
+	test.Print();
+	*/
 }
 
 FloatRow* MercuryMatrixMemory::GetNewMatrix()
@@ -45,26 +57,10 @@ void MercuryMatrixMemory::FreeMatrix(FloatRow* m)
 	MSemaphoreLock lock(&m_lock);
 	m_free.push_back((MatrixArray*)m);
 }
-/*
-VC_ALIGN(16) float base_matrix_identity[16] CC_ALIGN(16) = {
-	1.0f, 0.0f, 0.0f, 0.0f,
-	0.0f, 1.0f, 0.0f, 0.0f,
-	0.0f, 0.0f, 1.0f, 0.0f,
-	0.0f, 0.0f, 0.0f, 1.0f };
-*/
+
 MercuryMatrix::MercuryMatrix()
 	:m_matrix(0)
-{/*
-#ifdef USE_SSE
-	m_matrix[0] = _mm_load1_ps( &base_matrix_identity[0] );
-	m_matrix[1] = _mm_load1_ps( &base_matrix_identity[4] );
-	m_matrix[2] = _mm_load1_ps( &base_matrix_identity[8] );
-	m_matrix[3] = _mm_load1_ps( &base_matrix_identity[12] );
-#else
-	Copy16f(m_matrix[0], base_matrix_identity );
-#endif
-*/
-//	*this = Identity();
+{
 	m_matrix = MercuryMatrixMemory::GetInstance().GetNewMatrix();
 	LoadIdentity();
 }
@@ -291,6 +287,14 @@ MercuryVector MercuryMatrix::operator*(const MercuryVector& v) const
 	VectorMultiply4f( m_matrix, v.ToFloatRow(), r.ToFloatRow() );
 	return r;
 }
+
+void MercuryMatrix::Transpose()
+{
+	//we know we will be operating on this data so try to go get it, 3-4x increase in speed.
+	PREFETCH((const char*)m_matrix,_MM_HINT_NTA);
+	TransposeMatrix( m_matrix, m_matrix );
+}
+
 
 MercuryMatrix MercuryMatrix::IdentityMatrix;
 
