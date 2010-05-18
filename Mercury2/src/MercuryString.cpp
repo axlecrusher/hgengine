@@ -348,7 +348,7 @@ MString MString::replace(const MString& old, const MString& n)
 }
 
 unsigned int MString::hash() const
-{
+{/*
 	unsigned int ret = 0;
 	unsigned int i;
 	unsigned int j = size()>>2;
@@ -359,6 +359,15 @@ unsigned int MString::hash() const
 		ret += (unsigned int)(unsigned char)m_sCur[i];
 
 	return ret;
+	*/
+	unsigned long hash = 5381;
+	int c;
+	unsigned char* s = (unsigned char*)m_sCur;
+	
+	while ( (c = *s++) )
+		hash = hash * 33 ^ c;
+
+	return hash;
 }
 
 void MString::resize( unsigned int size )
