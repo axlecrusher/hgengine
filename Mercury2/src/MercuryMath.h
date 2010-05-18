@@ -109,6 +109,7 @@ void MatrixMultiply4f ( const FloatRow* in1, const FloatRow* in2, FloatRow* out 
 void VectorMultiply4f(const FloatRow* matrix, const FloatRow& p, FloatRow& out );
 void TransposeMatrix( FloatRow* m );
 void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result);
+void LoadIdentity(FloatRow* matrix);
 
 //http://graphics.stanford.edu/~seander/bithacks.html
 #define SetBit(x,mask,t) ((x & ~mask) | (-t & mask)) /*superscalar CPU version*/

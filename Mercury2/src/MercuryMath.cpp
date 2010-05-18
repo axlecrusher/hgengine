@@ -242,42 +242,114 @@ void Copy16f( void * dest, const void * source )
 
 void MatrixMultiply4f( const FloatRow* in1, const FloatRow* in2, FloatRow* out)
 {
-	unsigned int y;
-	__m128 xmm[4], a[4], b[4];
+	unsigned int y = 0;
+	__m128 xmm[4], b[4];
 
-//	PREFETCH(in1, _MM_HINT_T0);
-//	PREFETCH(in2, _MM_HINT_T1);
-//	PREFETCH(out, _MM_HINT_T1);
+	b[3] = _mm_load_ps(in1[0]); //use b3 as temporary storage for matrix1 row1
+
+	//start loading matrix2
 	b[0] = _mm_load_ps(in2[0]);
 	b[1] = _mm_load_ps(in2[1]);
 	b[2] = _mm_load_ps(in2[2]);
-	b[3] = _mm_load_ps(in2[3]);
-
-	for (y = 0; y < 4; ++y)
-	{
-		a[y] = _mm_load_ps(in1[y]);
 		
-		//load rows as columns
-		xmm[3] = _mm_shuffle_ps (a[y], a[y], 0xff);
-		xmm[2] = _mm_shuffle_ps (a[y], a[y], 0xaa);
-		xmm[1] = _mm_shuffle_ps (a[y], a[y], 0x55);
-		xmm[0] = _mm_shuffle_ps (a[y], a[y], 0x00);
+	//load row1 of matrix1 into columns
+	xmm[0] = _mm_shuffle_ps (b[3], b[3], 0x00);
+	xmm[1] = _mm_shuffle_ps (b[3], b[3], 0x55);
+	xmm[2] = _mm_shuffle_ps (b[3], b[3], 0xaa);
+	xmm[3] = _mm_shuffle_ps (b[3], b[3], 0xff);
 
+	b[3] = _mm_load_ps(in2[3]); //finish loading matrix2, do not change b after this!
+/*
+	do
+	{
 		xmm[0] = _mm_mul_ps( xmm[0], b[0] );
 		xmm[1] = _mm_mul_ps( xmm[1], b[1] );
+		xmm[0] = _mm_add_ps( xmm[0], xmm[1] ); //done with xmm1
+
+		xmm[1] = _mm_load_ps(in1[y+1]); //load next row, shuffle this last
+
 		xmm[2] = _mm_mul_ps( xmm[2], b[2] );
 		xmm[3] = _mm_mul_ps( xmm[3], b[3] );
+		xmm[2] = _mm_add_ps( xmm[2], xmm[3] ); //done with xmm3
 
-		xmm[0] = _mm_add_ps( xmm[0], xmm[1] );
-		xmm[2] = _mm_add_ps( xmm[2], xmm[3] );
-		a[y] = _mm_add_ps( xmm[0], xmm[2] );
-	}
+		xmm[2] = _mm_add_ps( xmm[0], xmm[2] ); //final result
+		_mm_store_ps(out[y++], xmm[2]);
 
-	//try to use the CPU's write-combining
-	_mm_store_ps(out[0], a[0]);
-	_mm_store_ps(out[1], a[1]);
-	_mm_store_ps(out[2], a[2]);
-	_mm_store_ps(out[3], a[3]);
+		xmm[3] = _mm_shuffle_ps (xmm[1], xmm[1], 0xff);
+		xmm[0] = _mm_shuffle_ps (xmm[1], xmm[1], 0x00);
+		xmm[2] = _mm_shuffle_ps (xmm[1], xmm[1], 0xaa);
+		xmm[1] = _mm_shuffle_ps (xmm[1], xmm[1], 0x55); 
+	}	while (y < 4);
+*/
+	//manually unroll loop, much faster!!
+	//loop 1
+	xmm[0] = _mm_mul_ps( xmm[0], b[0] );
+	xmm[1] = _mm_mul_ps( xmm[1], b[1] );
+	xmm[0] = _mm_add_ps( xmm[0], xmm[1] ); //done with xmm1
+
+	xmm[1] = _mm_load_ps(in1[1]); //load next row, shuffle this last
+
+	xmm[2] = _mm_mul_ps( xmm[2], b[2] );
+	xmm[3] = _mm_mul_ps( xmm[3], b[3] );
+	xmm[2] = _mm_add_ps( xmm[2], xmm[3] ); //done with xmm3
+
+	xmm[2] = _mm_add_ps( xmm[0], xmm[2] ); //final result
+	_mm_store_ps(out[0], xmm[2]);
+
+	xmm[3] = _mm_shuffle_ps (xmm[1], xmm[1], 0xff);
+	xmm[0] = _mm_shuffle_ps (xmm[1], xmm[1], 0x00);
+	xmm[2] = _mm_shuffle_ps (xmm[1], xmm[1], 0xaa);
+	xmm[1] = _mm_shuffle_ps (xmm[1], xmm[1], 0x55);
+
+	//loop2
+	xmm[0] = _mm_mul_ps( xmm[0], b[0] );
+	xmm[1] = _mm_mul_ps( xmm[1], b[1] );
+	xmm[0] = _mm_add_ps( xmm[0], xmm[1] ); //done with xmm1
+
+	xmm[1] = _mm_load_ps(in1[2]); //load next row, shuffle this last
+
+	xmm[2] = _mm_mul_ps( xmm[2], b[2] );
+	xmm[3] = _mm_mul_ps( xmm[3], b[3] );
+	xmm[2] = _mm_add_ps( xmm[2], xmm[3] ); //done with xmm3
+
+	xmm[2] = _mm_add_ps( xmm[0], xmm[2] ); //final result
+	_mm_store_ps(out[1], xmm[2]);
+
+	xmm[3] = _mm_shuffle_ps (xmm[1], xmm[1], 0xff);
+	xmm[0] = _mm_shuffle_ps (xmm[1], xmm[1], 0x00);
+	xmm[2] = _mm_shuffle_ps (xmm[1], xmm[1], 0xaa);
+	xmm[1] = _mm_shuffle_ps (xmm[1], xmm[1], 0x55);
+
+	//loop3
+	xmm[0] = _mm_mul_ps( xmm[0], b[0] );
+	xmm[1] = _mm_mul_ps( xmm[1], b[1] );
+	xmm[0] = _mm_add_ps( xmm[0], xmm[1] ); //done with xmm1
+
+	xmm[1] = _mm_load_ps(in1[3]); //load next row, shuffle this last
+
+	xmm[2] = _mm_mul_ps( xmm[2], b[2] );
+	xmm[3] = _mm_mul_ps( xmm[3], b[3] );
+	xmm[2] = _mm_add_ps( xmm[2], xmm[3] ); //done with xmm3
+
+	xmm[2] = _mm_add_ps( xmm[0], xmm[2] ); //final result
+	_mm_store_ps(out[2], xmm[2]);
+
+	xmm[3] = _mm_shuffle_ps (xmm[1], xmm[1], 0xff);
+	xmm[0] = _mm_shuffle_ps (xmm[1], xmm[1], 0x00);
+	xmm[2] = _mm_shuffle_ps (xmm[1], xmm[1], 0xaa);
+	xmm[1] = _mm_shuffle_ps (xmm[1], xmm[1], 0x55);
+
+	//loop4
+	xmm[0] = _mm_mul_ps( xmm[0], b[0] );
+	xmm[1] = _mm_mul_ps( xmm[1], b[1] );
+	xmm[0] = _mm_add_ps( xmm[0], xmm[1] ); //done with xmm1
+
+	xmm[2] = _mm_mul_ps( xmm[2], b[2] );
+	xmm[3] = _mm_mul_ps( xmm[3], b[3] );
+	xmm[2] = _mm_add_ps( xmm[2], xmm[3] ); //done with xmm3
+
+	xmm[2] = _mm_add_ps( xmm[0], xmm[2] ); //final result
+	_mm_store_ps(out[3], xmm[2]);
 }
 
 //This is an SSE matrix vector multiply, see the standard C++ code
@@ -320,6 +392,22 @@ void FloatRow2Float( const FloatRow& r, float* f)
 	_mm_store_ps( f, r );
 }
 */
+
+void LoadIdentity(FloatRow* matrix)
+{
+	float *m = (float*)matrix;
+
+	__m128 r[2];
+
+	r[0] = _mm_set_ps(0.0f,0.0f,0.0f,1.0f);
+	_mm_storer_ps(m+12,r[0]); //reverse r[0]
+
+	r[1] = _mm_shuffle_ps(r[0], r[0], _MM_SHUFFLE(1,1,0,1));
+	_mm_storer_ps(m+8,r[1]); //reverse r[1]
+
+	_mm_store_ps(m, r[0]);
+	_mm_store_ps(m+4, r[1]);
+}
 
 void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
 {

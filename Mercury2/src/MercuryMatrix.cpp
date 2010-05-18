@@ -126,9 +126,7 @@ const MercuryMatrix& MercuryMatrix::Identity()
 
 void MercuryMatrix::LoadIdentity()
 {
-	for (uint8_t x=0;x<4;++x)
-		for (uint8_t y=0;y<4;++y)
-			m_matrix[x][y] = (x==y)?1.0f:0.0f;
+	::LoadIdentity(m_matrix);
 }
 
 void MercuryMatrix::Translate(float x, float y, float z)
