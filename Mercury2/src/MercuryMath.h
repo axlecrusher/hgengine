@@ -2,6 +2,8 @@
 #define _MERCURYMATH_H
 
 #include <math.h>
+#include <string.h>
+
 #ifdef HGENGINE
 #ifndef WIN32
 #include <configuration.h>
@@ -114,7 +116,9 @@ void LoadIdentity(FloatRow* matrix);
 //http://graphics.stanford.edu/~seander/bithacks.html
 inline unsigned int SetBit(unsigned int x, unsigned int mask, bool t)
 {
+#if defined(WIN32)
 	#pragma warning( disable : 4804 )
+#endif
 	return ((x & ~mask) | (-t & mask));  /*superscalar CPU version*/
 }
 inline bool GetBit(unsigned int x, unsigned int mask) { return ((x & mask)>0); }
