@@ -301,11 +301,11 @@ void msleep(uint32_t msec)
 
 float FLinear( float in, float slice )
 {
-	float fret = (in - 0.5) * slice;
+	float fret = (in - 0.5f) * slice;
 
-	if( fret > 0.5 ) fret = 0.5;
-	else if( fret < -0.5 ) fret = -0.5;
-	return fret + 0.5;
+	if( fret > 0.5f ) fret = 0.5f;
+	else if( fret < -0.5f ) fret = -0.5f;
+	return fret + 0.5f;
 }
 
 float FExponential( float in, float powx )
@@ -315,15 +315,15 @@ float FExponential( float in, float powx )
 
 float FStep( float in, float stepplace )
 {
-	return ( in < stepplace )?0:1;
+	return ( in < stepplace )?0.0f:1.0f;
 }
 
 float FSigmoid( float in, float fspeed )
 {
-	float fi = in - 0.5;
-	float fr = ( exp( fi * fspeed ) - 1 ) / ( exp( fi * fspeed ) + 1 );
-	float smax = ( exp( fspeed * 0.5 ) - 1 ) / ( exp( fspeed * 0.5 ) + 1 );
-	return (fr / smax) / 2. + 0.5;
+	float fi = in - 0.5f;
+	float fr = ( exp( fi * fspeed ) - 1.0f ) / ( exp( fi * fspeed ) + 1.0f );
+	float smax = ( exp( fspeed * 0.5f ) - 1.0f ) / ( exp( fspeed * 0.5f ) + 1.0f );
+	return (fr / smax) / 2.0f + 0.5f;
 }
 
 
