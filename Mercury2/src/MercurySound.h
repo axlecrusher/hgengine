@@ -71,7 +71,7 @@ public:
 
 	//Useful tools
 	inline float GetSecondsSinceLastFrame() { float tr = m_tLastTrip.Age(); return (tr>1.f)?1.f:tr; }
-	inline unsigned int SamplesSinceLastFrame() { float tr = m_tLastTrip.Age(); return (unsigned int)(tr>1.)?fSPS:(tr*fSPS); }
+	inline unsigned int SamplesSinceLastFrame() { float tr = m_tLastTrip.Age(); return (unsigned int)((tr>1.)?fSPS:(tr*fSPS)); }
 
 	//For registering and creation of new sound sources...
 	MAutoPtr< MercurySoundSource > LoadSoundSource( const MString & sSourceType, MAutoPtr< MercurySoundSource > Chain = 0 );

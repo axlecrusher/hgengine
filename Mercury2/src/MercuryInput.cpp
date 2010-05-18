@@ -26,8 +26,8 @@ void MouseInput::ProcessMouseInput(int dx, int dy, bool leftButton, bool rightBu
 	mi->buttons.motion = bMotionEvent;
 	currentButtonMasks = buttons;
 
-	GlobalMouseX_Set.Set( dx );
-	GlobalMouseY_Set.Set( dy );
+	GlobalMouseX_Set.Set( (float)dx );
+	GlobalMouseY_Set.Set( (float)dy );
 	GlobalMouseB_Set.Set( currentButtonMasks.data );
 
 	POST_MESSAGE( INPUTEVENT_MOUSE, mi, 0 );

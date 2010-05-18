@@ -62,8 +62,8 @@ int Cu2Element::MouseMotion( int x, int y, unsigned char iCurrentButtonMask, uns
 	for( unsigned button = 0; button < 3; button++ )
 	{
 		unsigned char Mask = 1<<button;
-		bool bWasDown = iLastButtonMask & Mask;
-		bool bIsDown = iCurrentButtonMask & Mask;
+		bool bWasDown = GetBit(iLastButtonMask,Mask);
+		bool bIsDown = GetBit(iCurrentButtonMask,Mask);
 		if( bWasDown && !bIsDown )
 		{
 			//XXX: When we release outside - we want to propogate that information, and that can be tricky..
@@ -396,8 +396,8 @@ int Cu2Button::MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsi
 {
 	if( m_sAssociatedValueX.length() && m_bDown && x >= 0 && y >= 0 && x < GetW() && y < GetH() )
 	{
-		float fxRangeMin = atof( m_sxRangeMin.c_str() );
-		float fxRangeMax = m_sxRangeMax.length()?atof( m_sxRangeMax.c_str() ):GetW();
+		float fxRangeMin = (float)atof( m_sxRangeMin.c_str() );
+		float fxRangeMax = m_sxRangeMax.length()?(float)atof( m_sxRangeMax.c_str() ):GetW();
 
 		float fX = ( float(x) / float(GetW()-1) ) * (fxRangeMax - fxRangeMin) + fxRangeMin;
 		MESSAGEMAN.GetValue( m_sAssociatedValueX )->SetFloat( fX );
@@ -405,8 +405,8 @@ int Cu2Button::MouseMotion( int x, int y, unsigned char iCurrentButtonMask, unsi
 
 	if( m_sAssociatedValueY.length() && m_bDown && x >= 0 && y >= 0 && x < GetW() && y < GetH() )
 	{
-		float fyRangeMin = atof( m_syRangeMin.c_str() );
-		float fyRangeMax = m_syRangeMax.length()?atof( m_syRangeMax.c_str() ):GetW();
+		float fyRangeMin = (float)atof( m_syRangeMin.c_str() );
+		float fyRangeMax = m_syRangeMax.length()?(float)atof( m_syRangeMax.c_str() ):GetW();
 
 		float fY = ( float(y) / float(GetH()-1) ) * (fyRangeMax - fyRangeMin) + fyRangeMin;
 		MESSAGEMAN.GetValue( m_sAssociatedValueY )->SetFloat( fY );
@@ -446,9 +446,9 @@ void Cu2Button::Render( const MercuryMatrix& m )
 {
 	glDisable( GL_TEXTURE_2D );
 	if( m_bDown )
-		glColor3f( 0.3, 0.3, 0.3 );
+		glColor3f( 0.3f, 0.3f, 0.3f );
 	else
-		glColor3f( 0.5, 0.5, 0.5 );
+		glColor3f( 0.5f, 0.5f, 0.5f );
 
 	glBegin( GL_QUADS );
 	glVertex2f( 1., 1. );
@@ -460,17 +460,17 @@ void Cu2Button::Render( const MercuryMatrix& m )
 	glLineWidth( 2 );
 	glBegin( GL_LINES );
 	if( m_bDown )
-		glColor3f( 0.1, 0.1, 0.1 );
+		glColor3f( 0.1f, 0.1f, 0.1f );
 	else
-		glColor3f( 0.7, 0.7, 0.7 );
+		glColor3f( 0.7f, 0.7f, 0.7f );
 	glVertex2f( 1, 1 );
 	glVertex2f( 1, GetH()-1 );
 	glVertex2f( 1, GetH()-1 );
 	glVertex2f( GetW()-2, GetH()-1 );
 	if( !m_bDown )
-		glColor3f( 0.1, 0.1, 0.1 );
+		glColor3f( 0.1f, 0.1f, 0.1f );
 	else
-		glColor3f( 0.7, 0.7, 0.7 );
+		glColor3f( 0.7f, 0.7f, 0.7f );
 	glVertex2f( GetW()-1, GetH()-2 );
 	glVertex2f( GetW()-1, 1 );
 	glVertex2f( GetW()-1, 1 );
@@ -618,12 +618,12 @@ void Cu2Dialog::Render( const MercuryMatrix& m )
 
 	glLineWidth( 2 );
 	glBegin( GL_LINES );
-	glColor3f( 0.7, 0.7, 0.7 );
+	glColor3f( 0.7f, 0.7f, 0.7f );
 	glVertex2f( 1, 1 );
 	glVertex2f( 1, GetH()-1 );
 	glVertex2f( 1, GetH()-1 );
 	glVertex2f( GetW()-2, GetH()-1 );
-	glColor3f( 0.1, 0.1, 0.1 );
+	glColor3f( 0.1f, 0.1f, 0.1f );
 	glVertex2f( GetW()-1, GetH()-2 );
 	glVertex2f( GetW()-1, 1 );
 	glVertex2f( GetW()-1, 1 );
@@ -633,7 +633,7 @@ void Cu2Dialog::Render( const MercuryMatrix& m )
 	if( HasFocus() )
 		glColor3f( 0., 0., 1. );
 	else
-		glColor3f( .3, .3, .3 );
+		glColor3f( .3f, .3f, .3f );
 
 	glBegin( GL_QUADS );
 	glVertex2f( 2., GetH()-19 );

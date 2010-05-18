@@ -77,7 +77,7 @@ float MTriangle::Area()
 	v[0] = m_verts[1] - m_verts[0];
 	v[1] = m_verts[2] - m_verts[0];
 	MercuryVector r( v[0].CrossProduct( v[1] ) );
-	return r.Length() * 0.5;
+	return r.Length() * 0.5f;
 }
 
 bool MTriangle::operator == (const MTriangle& rhs) const
@@ -92,8 +92,8 @@ BoundingBox MTriangle::MakeBoundingBox()
 {
 	float minX, minY, minZ;
 	float maxX, maxY, maxZ;
-	minX=minY=minZ = 9999999999999;
-	maxX=maxY=maxZ = -9999999999999;
+	minX=minY=minZ = 9999999999999.0f;
+	maxX=maxY=maxZ = -9999999999999.0f;
 	
 	for (uint8_t i = 0; i<3; ++i)
 	{
@@ -109,7 +109,7 @@ BoundingBox MTriangle::MakeBoundingBox()
 	MercuryVertex center( (maxX+minX)/2.0f, (maxY+minY)/2.0f, (maxZ+minZ)/2.0f );
 
 	//extends
-	MercuryVertex extend( (maxX-minX)/2.0, (maxY-minY)/2.0, (maxZ-minZ)/2.0 );
+	MercuryVertex extend( (maxX-minX)/2.0f, (maxY-minY)/2.0f, (maxZ-minZ)/2.0f );
 
 	return BoundingBox(center, extend);
 }

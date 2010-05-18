@@ -134,7 +134,7 @@ void MercurySoundManager::FillBuffer( float * cBufferToFill, int iCount )
 	//XXX: CONSIDER MUTEXING THIS AREA, AND USING THE SAME MUTEX IN SampleHoldCalcand Attac/Detach sound.
 
 	float ftd = m_tLastTrip.Touch();
-	iLastCountDifference = ftd * fSPS;
+	iLastCountDifference = int(ftd * fSPS);
 
 	for( int j = 0; j < iCount * iChannels; ++j )
 		cBufferToFill[j] = 0;

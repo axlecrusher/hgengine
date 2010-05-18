@@ -89,19 +89,19 @@ bool Quad::ChangeKey( const MString & sDescription )
 	
 	//UV oriented so 0,0 is lower left and 1,0 upper right.
 	//this makes it so FBO images render correctly right out of the buffer, no flip needed
-	m_vertexData[i++] = 0; m_vertexData[i++] = (m_bFlipV)?0:1;
-	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
+	m_vertexData[i++] = 0; m_vertexData[i++] = (m_bFlipV)?0:1.0f;
+	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0f;
 	m_vertexData[i++] = lX; m_vertexData[i++] = lY; m_vertexData[i++] = zp;
 	
-	m_vertexData[i++] = 1; m_vertexData[i++] = (m_bFlipV)?0:1;
-	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
+	m_vertexData[i++] = 1; m_vertexData[i++] = (m_bFlipV)?0:1.0f;
+	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0f;
 	m_vertexData[i++] = hX; m_vertexData[i++] = lY; m_vertexData[i++] = zp;
 	
-	m_vertexData[i++] = 1; m_vertexData[i++] = (m_bFlipV)?1:0;
-	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
+	m_vertexData[i++] = 1; m_vertexData[i++] = (m_bFlipV)?1.0f:0;
+	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0f;
 	m_vertexData[i++] = hX; m_vertexData[i++] = hY; m_vertexData[i++] = zp;
 	
-	m_vertexData[i++] = 0; m_vertexData[i++] = (m_bFlipV)?1:0;
+	m_vertexData[i++] = 0; m_vertexData[i++] = (m_bFlipV)?1.0f:0;
 	m_vertexData[i++] = 0; m_vertexData[i++] = 0; m_vertexData[i++] = -1.0;
 	m_vertexData[i++] = lX; m_vertexData[i++] = hY; m_vertexData[i++] = zp;
 	

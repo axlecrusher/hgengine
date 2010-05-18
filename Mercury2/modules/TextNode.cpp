@@ -249,7 +249,7 @@ void TextNode::RenderText()
 					float offset = m_fTextWidth - fEndOfLine;
 					offset/=2;
 					if( m_fTextWidth > BIG_NUMBER )
-						offset = -fEndOfLine/2.;
+						offset = -fEndOfLine/2.0f;
 					for( unsigned j = iLineStart; j < i; j++ )
 						chars[j].xps += offset;
 				} else if( m_alignment == FIT_FULL )

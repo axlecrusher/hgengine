@@ -113,8 +113,8 @@ void ParticleBase::WriteToVBO()
 }
 
 ParticleEmitter::ParticleEmitter()
-	:base(), m_maxParticles(50), m_age(0), m_emitDelay(0.1), m_lifespan(0),
-	m_particlesEmitted(0), m_particleMinLife(0.1), m_particleMaxLife(5),
+	:base(), m_maxParticles(50), m_age(0), m_emitDelay(0.1f), m_lifespan(0),
+	m_particlesEmitted(0), m_particleMinLife(0.1f), m_particleMaxLife(5.0f),
 	m_particles(NULL), GenerateParticlesClbk(NULL),
 	m_dirtyVBO(0)
 {
@@ -184,8 +184,8 @@ void ParticleEmitter::ActivateParticle()
 		
 		p->m_lifespan = m_particleMinLife;
 		p->m_lifespan += (rand()%(int(m_particleMaxLife*1000) - int(m_particleMinLife*1000)))/1000.0f;
-		p->m_rand1 = rand()%100000;
-		p->m_rand2 = rand()%100000;
+		p->m_rand1 = float(rand()%100000);
+		p->m_rand2 = float(rand()%100000);
 //		+((rand()%((m_particleMaxLife*1000)-(m_particleMinLife*1000)))/1000.0f);
 
 
