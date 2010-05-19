@@ -104,9 +104,11 @@ void Texture::Render(const MercuryNode* node)
 {
 	if (GetLoadState() == LOADED)
 	{
-	printf( "Rendering Texture (%s), but state is: %d\n", m_path.c_str(), GetLoadState() );
+		printf( "Rendering Texture (%s), but state is: %d\n", m_path.c_str(), GetLoadState() );
 		LoadFromRaw();
 		SetLoadState(NONE);
+		//force rebind since we were used before
+		if (m_lastBound[m_numActiveTextures] == this) m_lastBound[m_numActiveTextures] = NULL;
 	}
 	BindTexture();
 }
