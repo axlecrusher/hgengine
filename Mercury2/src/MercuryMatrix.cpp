@@ -296,7 +296,7 @@ void MercuryMatrix::Transpose()
 }
 
 
-MercuryMatrix MercuryMatrix::IdentityMatrix;
+const MercuryMatrix MercuryMatrix::IdentityMatrix;
 
 /* 
  * Copyright (c) 2006-2009 Joshua Allen

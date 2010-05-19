@@ -41,7 +41,6 @@ private:
 //	FloatRow m_matrix[4];
 	FloatRow* m_matrix;
 	
-	static MercuryMatrix IdentityMatrix;
 public:
 	MercuryMatrix();
 	MercuryMatrix(const MercuryMatrix& m);
@@ -84,6 +83,8 @@ public:
 	void LoadIdentity();
 	
 	void Print() const;
+
+	const static MercuryMatrix IdentityMatrix;
 };
 
 static InstanceCounter<MercuryMatrixMemory> MMMcounter("MercuryMatrixMemory");
