@@ -71,7 +71,7 @@ class MercuryNode : public MessageHandler
 		MercuryNode * TraversalNextNode( MercuryNode * stopnode, int & iDepthDelta );
 
 		virtual void Update(float dTime) {};
-		virtual void RecursiveUpdate(float dTime);
+		virtual void RecursiveUpdate(float dTime, const MercuryMatrix& globalMatrix);
 		void ThreadedUpdate(float dTime);
 		
 		
@@ -169,10 +169,6 @@ class MercuryNode : public MessageHandler
 //		std::list< MercuryAsset* > m_prerender;
 //		std::list< MercuryAsset* > m_render;
 //		std::list< MercuryAsset* > m_postrender;
-
-		///This will get the world space matrix
-		const MercuryMatrix& FindGlobalMatrix() const;
-		const MercuryMatrix& FindModelViewMatrix() const;
 
 		const MercuryMatrix * m_pGlobalMatrix;
 		const MercuryMatrix * m_pModelViewMatrix;

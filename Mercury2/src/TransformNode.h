@@ -23,11 +23,6 @@ class TransformNode : public MercuryNode
 		inline const MercuryVertex& GetPosition() const { return m_position; }
 		inline const MQuaternion& GetRotation() const { return m_rotation; }
 		
-//		inline const MercuryMatrix& GetGlobalMatrix() const { return m_globalMatrix; }
-		virtual const MercuryMatrix& GetGlobalMatrix() const;
-		inline const MercuryMatrix& GetModelViewMatrix() const { return m_modelView; }
-		const MercuryMatrix& GetParentMatrix() const;
-		
 		void SetTaint(bool taint);
 
 		virtual void ComputeMatrix();
@@ -55,6 +50,7 @@ class TransformNode : public MercuryNode
 		
 //		MercuryMatrix m_localMatrix;
 	protected:
+		//these are the matrices that should be pointed to
 		MercuryMatrix m_modelView;
 		MercuryMatrix m_globalMatrix;
 		

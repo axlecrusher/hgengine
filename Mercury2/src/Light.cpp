@@ -30,8 +30,8 @@ void Light::PreRender(const MercuryMatrix& matrix)
 
 void Light::Render(const MercuryMatrix& matrix)
 {
-	m_worldPosition = FindModelViewMatrix();
-	m_worldPosition2 = FindGlobalMatrix();
+	m_worldPosition = GetModelViewMatrix();
+	m_worldPosition2 = GetGlobalMatrix();
 	CURRENTRENDERGRAPH->AddDifferedLight( this );
 //	m_boundingVolume->Render();
 //	m_parent = node;

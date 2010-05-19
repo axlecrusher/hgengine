@@ -14,6 +14,8 @@ TransformNode::TransformNode()
 void TransformNode::Update(float dTime)
 {
 	if (m_tainted) ComputeMatrix();
+	m_pGlobalMatrix = &m_globalMatrix;
+	m_pModelViewMatrix = &m_modelView;
 }
 
 void TransformNode::RecursivePreRender()
@@ -89,21 +91,7 @@ void TransformNode::ComputeMatrix()
 //     m_scale[0], m_scale[1], m_scale[2] );
 //	local = t * local;
 	
-	m_globalMatrix = GetParentMatrix() * local;
-}
-
-const MercuryMatrix& TransformNode::GetParentMatrix() const
-{
-	const MercuryNode* n = m_parent;
-	const TransformNode* tn;
-	while (n)
-	{
-		tn = TransformNode::Cast( n );
-		if ( tn ) return tn->GetGlobalMatrix();
-		n = n->Parent();
-	}
-	
-	return MercuryMatrix::Identity();
+	m_globalMatrix = *m_pGlobalMatrix * local;
 }
 
 void TransformNode::RippleTaintDown(MercuryNode* node)
@@ -198,11 +186,6 @@ void TransformNode::OnAdded()
 		}
 		n = n->Parent();
 	}	
-}
-
-const MercuryMatrix&  TransformNode::GetGlobalMatrix() const
-{
-	return m_globalMatrix;
 }
 
 void RotatorNode::Update(float dTime)

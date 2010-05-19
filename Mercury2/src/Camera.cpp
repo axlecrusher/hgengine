@@ -45,7 +45,7 @@ void CameraNode::ComputeMatrix()
 {
 	m_tainted = false;
 	
-	MercuryMatrix local, parent(GetParentMatrix());
+	MercuryMatrix local, parent(*m_pGlobalMatrix);
 	
 	MQuaternion r( GetRotation() );
 	

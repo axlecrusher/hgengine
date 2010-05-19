@@ -20,8 +20,8 @@ MercuryNode::MercuryNode()
 	m_nextSibling(NULL), m_flags(SAVECHILDREN & ENABLESAVE),
 	m_iPasses( DEFAULT_PASSES ), m_iForcePasses( 0 )
 {
-	m_pGlobalMatrix = &MercuryMatrix::Identity();
-	m_pModelViewMatrix = &MercuryMatrix::Identity();
+	m_pGlobalMatrix = &MercuryMatrix::IdentityMatrix;
+	m_pModelViewMatrix = &MercuryMatrix::IdentityMatrix;
 }
 
 MercuryNode::~MercuryNode()
@@ -192,12 +192,15 @@ MercuryNode * MercuryNode::TraversalNextNode( MercuryNode * stopnode, int & iDep
 		return 0;
 }
 
-void MercuryNode::RecursiveUpdate(float dTime)
+void MercuryNode::RecursiveUpdate(float dTime, const MercuryMatrix& globalMatrix)
 {
+	m_pGlobalMatrix = &globalMatrix;
+	if (m_parent) m_pModelViewMatrix = m_parent->m_pModelViewMatrix;
+
 	Update(dTime);
-	
+
 	for (MercuryNode* child = FirstChild(); child != NULL; child = NextChild(child))
-		child->RecursiveUpdate(dTime);
+		child->RecursiveUpdate(dTime, *m_pGlobalMatrix);
 }
 
 void MercuryNode::RecursivePreRender()
@@ -421,39 +424,10 @@ void MercuryNode::PostRender(const MercuryMatrix& matrix)
 		(*i)->Asset().PostRender(this);
 }
 
-const MercuryMatrix& MercuryNode::FindGlobalMatrix() const
-{
-	const MercuryNode* n = NULL;
-	const TransformNode* tn;
-	for (n = this; n; n = n->Parent())
-	{
-		tn = TransformNode::Cast(n);
-		if ( tn )
-			return tn->GetGlobalMatrix();
-	}
-
-	return MercuryMatrix::Identity();
-}
-
-const MercuryMatrix& MercuryNode::FindModelViewMatrix() const
-{
-	const MercuryNode* n = NULL;
-	const TransformNode* tn;
-	for (n = this; n; n = n->Parent())
-	{
-		tn = TransformNode::Cast(n);
-		if ( tn )
-			return tn->GetModelViewMatrix();
-	}
-
-	return MercuryMatrix::Identity();
-}
-
 MercuryMatrix MercuryNode::ManipulateMatrix(const MercuryMatrix& matrix)
 {
 	return VIEWMATRIX * matrix;
 }
-
 
 NodeFactory& NodeFactory::GetInstance()
 {

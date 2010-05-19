@@ -35,7 +35,7 @@
 bool SHOWBOUNDINGVOLUME = false;
 bool SHOWAXISES = false;
 bool DOOCCLUSIONCULL = false;
-
+/*
 MSemaphore UpdateLoopGo;
 void* UpdateThread(void* node)
 {
@@ -46,7 +46,7 @@ void* UpdateThread(void* node)
 	}
 	return NULL;
 }
-
+*/
 int SignalHandler( int signal )
 {
 	char buffer[2048];
@@ -144,9 +144,12 @@ int main( int argc, char** argv)
 	do
 	{
 		timer.Touch();
+
+		root->RecursiveUpdate( timer.Age(), MercuryMatrix::IdentityMatrix ); //comment to use threads
+
+		//seems to work better after update. is this the correct place?
 		MESSAGEMAN.PumpMessages( timer.MicrosecondsSinceInit() );
 
-		root->RecursiveUpdate( timer.Age() ); //comment to use threads
 	
 		CURRENTRENDERGRAPH = &renderGraph;
 		if ( MercuryNode::NeedsRebuild() )
