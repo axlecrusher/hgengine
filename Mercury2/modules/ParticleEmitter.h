@@ -12,23 +12,16 @@ class ParticleBase
 		ParticleBase();
 		~ParticleBase();
 		
-		virtual void Init();
 		virtual void Update(float dTime);
 		
-//		virtual void RecursiveRender();
-    
 		void Activate();
 		void Deactivate();
 		void WriteToVBO();
+
+		void Init(float time);
 		
-		inline bool IsActive() const { return m_age < m_lifespan; }
-		
-//		GENRTTI( ParticleBase );
+		inline bool IsActive() const { return m_currentTime < m_lifespan+m_startTime; }
 	private:
-//		CLASS_HELPERS( MercuryNode );
-
-		static const uint8_t STRIDE = 9;
-
 		void WriteAgeToVBO();
 		void WriteLifespanToVBO();
 		void WriteRand1ToVBO();
@@ -36,13 +29,11 @@ class ParticleBase
 		void WriteFloatToVertices(float v, uint8_t vertexIndex, uint8_t offset);
 
 		friend class ParticleEmitter;
-//		ParticleBase *m_prev, *m_next;
-		float m_age;
+		float m_startTime,m_currentTime;
 		float m_lifespan;
 		float m_rand1, m_rand2;
 		ParticleEmitter* m_emitter;
-//		MercuryNode* m_particleGraph;
-		float* m_particleVobData; //pointer to position in VBO
+		float* m_particleDynamicData; //pointer to position in VBO
 		uint16_t* m_particleIndexData; //pointer to position in index list
 };
 
@@ -64,18 +55,16 @@ class ParticleEmitter : public MercuryNode
 
 		void SetMaxParticleCount(uint16_t count);
 
-		inline void SetDirtyVertices() { m_dirtyVBO = m_dirtyVBO||0x1; }
-		inline void SetDirtyIndices() { m_dirtyVBO = m_dirtyVBO||0x2; }
+		void SetDynamicUpdateRange(void* begin, void* end);
+		void SetIndexUpdateRange(void* begin, void* end);
 
 		static uint32_t ResetDrawnCount();
 
 		GENRTTI( ParticleEmitter );
 	private:
-//		void DestroyParticles();
-		void ActivateParticle();
-
-//		void FillUnusedParticleList(ParticleBase* p, uint32_t i);
-//		void InitNewParticles(ParticleBase* p, uint32_t i, uint16_t vobStep, float* vob);
+		void ActivateParticle(float genTime);
+		void InitGeometry(float* g);
+		void UpdateVBO();
 
 		CLASS_HELPERS( MercuryNode );
 		
@@ -89,15 +78,17 @@ class ParticleEmitter : public MercuryNode
 		ParticleBase *m_particles;
 		
 		Callback1R<uint32_t,ParticleBase*>* GenerateParticlesClbk;
-		AlignedBuffer<float> m_vertexData;
+		AlignedBuffer<float> m_geometryData; //xyzuv, stride 5
+		AlignedBuffer<float> m_vertexDynamicData; //1 age, 1 lifespan, 2 random, stide 4
 		AlignedBuffer<uint16_t> m_indexData;
 		
-		unsigned int m_bufferID[2];
-//		bool m_dirtyVBO;
-		uint8_t m_dirtyVBO;
+		unsigned int m_bufferID[3];
+		unsigned int m_fLastD;
+		unsigned int m_fLastI;
+		void *m_dBegin, *m_dEnd; //pointers to area of the m_vertexDynamicData that changed
+		void *m_iBegin, *m_iEnd; //pointers to area of the m_indexData that changed
 
 		std::list< ParticleBase* > m_active, m_inactive;
-//		MercuryNode* m_masterParticle;
 		static uint32_t m_particlesDrawn;
 };
 
