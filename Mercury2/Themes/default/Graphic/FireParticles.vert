@@ -6,6 +6,7 @@ uniform mat4 HG_WorldMatrix;
 uniform mat4 HG_ViewMatrix;
 varying vec3 angleC;
 varying vec4 particleData;
+uniform float EmitterTime;
 
 mat4 glRotate(float angle, vec3 axis)
 {
@@ -50,7 +51,8 @@ mat4 Billboard(vec3 pos)
 
 void main()
 {
- 	particleData = gl_Color; 
+ 	particleData = gl_Color;
+	particleData.x = EmitterTime-particleData.x;
 
 	vec4 pos = vec4(1.0);
 	pos.y = 0.3*(particleData.x*particleData.x) + 1.5*(particleData.x/particleData.y);
