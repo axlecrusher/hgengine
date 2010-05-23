@@ -102,6 +102,8 @@ void Texture::LoadFromRaw()
 
 void Texture::Render(const MercuryNode* node)
 {
+	if ( !m_lastBound ) InitiateBindCache();
+
 	if (GetLoadState() == LOADED)
 	{
 		printf( "Rendering Texture (%s), but state is: %d\n", m_path.c_str(), GetLoadState() );
@@ -109,6 +111,9 @@ void Texture::Render(const MercuryNode* node)
 		SetLoadState(NONE);
 		//force rebind since we were used before
 		if (m_lastBound[m_numActiveTextures] == this) m_lastBound[m_numActiveTextures] = NULL;
+
+//		for (uint8_t i = 0; i <= m_numActiveTextures; i++)
+//			if (m_lastBound[i] == this) m_lastBound[i] = NULL;
 	}
 	BindTexture();
 }
@@ -159,7 +164,7 @@ bool Texture::ChangeKey( const MString & sNewKey )
 
 void Texture::BindTexture()
 {
-	if ( !m_lastBound ) InitiateBindCache();
+//	if ( !m_lastBound ) InitiateBindCache();
 	
 	if (m_numActiveTextures >= m_maxActiveTextures) return;
 	
