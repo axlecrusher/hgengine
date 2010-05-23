@@ -106,17 +106,36 @@ public:
 	{
 		if( bEnable )
 		{
-			GLCALL( glEnable( GL_DEPTH_TEST ) );
+			if (m_lastState != ON)
+			{
+				GLCALL( glEnable( GL_DEPTH_TEST ) );
+				m_lastState = ON;
+			}
 		}
 		else
 		{
-			GLCALL( glDisable( GL_DEPTH_TEST ) );
+			if (m_lastState != OFF)
+			{
+				GLCALL( glDisable( GL_DEPTH_TEST ) );
+				m_lastState = OFF;
+			}
 		}
 	}
 
 	STATECHANGE_RTTI( DepthTest );
-	bool bEnable;
+
+	private:
+		bool bEnable;
+		enum LastDepthState
+		{
+			UNKNOWN,
+			ON,
+			OFF
+		};
+		static LastDepthState m_lastState;
 };
+
+DepthTest::LastDepthState DepthTest::m_lastState = UNKNOWN;
 
 REGISTER_STATECHANGE( DepthTest );
 
@@ -262,12 +281,23 @@ public:
 	
 	void Activate()
 	{
-		GLCALL( glBlendFunc(m_src,m_dest) );
+		if ((m_src != m_lastSrc)||(m_dest!=m_lastDest))
+		{
+			GLCALL( glBlendFunc(m_src,m_dest) );
+			m_lastSrc = m_src;
+			m_lastDest = m_dest;
+		}
 	}
 
 	STATECHANGE_RTTI( BlendFunc );
-	int m_src, m_dest;
+
+	private:
+		int m_src, m_dest;
+		static long m_lastSrc, m_lastDest;
 };
+
+long BlendFunc::m_lastSrc = 0;
+long BlendFunc::m_lastDest = 0;
 
 REGISTER_STATECHANGE( BlendFunc );
 
