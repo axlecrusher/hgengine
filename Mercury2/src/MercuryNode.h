@@ -123,19 +123,19 @@ class MercuryNode : public MessageHandler
 		virtual void Render(const MercuryMatrix& matrix);
 		virtual void PostRender(const MercuryMatrix& matrix);
 		
-		virtual void SetHidden( bool bHide ) { m_flags = SetBit(m_flags,HIDDEN,bHide); } //is there anyway to make this not virtual??
+		virtual void SetHidden( bool bHide ) { m_flags = (uint8_t)SetBit(m_flags,HIDDEN,bHide); } //is there anyway to make this not virtual??
 		inline bool IsHidden() { return GetBit(m_flags,HIDDEN); }
 		
-		inline void SetCulled(bool t) { m_flags = SetBit(m_flags,CULLED,t); }
+		inline void SetCulled(bool t) { m_flags = (uint8_t)SetBit(m_flags,CULLED,t); }
 		inline bool IsCulled() const { return GetBit(m_flags,CULLED); }
 
-		inline void SetSaveChildren(bool t) { m_flags = SetBit(m_flags,SAVECHILDREN,t); }
+		inline void SetSaveChildren(bool t) { m_flags = (uint8_t)SetBit(m_flags,SAVECHILDREN,t); }
 		inline bool GetSaveChildren() const { return GetBit(m_flags,SAVECHILDREN); }
 
-		inline void SetEnableSave(bool t) { m_flags = SetBit(m_flags,ENABLESAVE,t); }
+		inline void SetEnableSave(bool t) { m_flags = (uint8_t)SetBit(m_flags,ENABLESAVE,t); }
 		inline bool GetEnableSave() const { return GetBit(m_flags,ENABLESAVE); }
 
-		inline void SetUseAlphaPass(bool t) { m_flags = SetBit(m_flags,ALPHAPATH,t); }
+		inline void SetUseAlphaPass(bool t) { m_flags = (uint8_t)SetBit(m_flags,ALPHAPATH,t); }
 		inline bool GetUseAlphaPass() const { return GetBit(m_flags,ALPHAPATH); }
 
 		virtual MercuryMatrix ManipulateMatrix(const MercuryMatrix& matrix);

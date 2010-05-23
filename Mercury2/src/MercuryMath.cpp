@@ -143,6 +143,13 @@ void FloatRow2Float( const FloatRow& r, float* f)
 		f[i] = r[i];
 }
 */
+void LoadIdentity(FloatRow* matrix)
+{
+	float *m = (float*)matrix;
+	for (uint8_t i = 0; i < 16; ++i)
+		m[i] = i%5?0.0f:1.0f;
+}
+
 void MMCrossProduct( const FloatRow& r1, const FloatRow& r2, FloatRow& result)
 {
 	FloatRow r;
