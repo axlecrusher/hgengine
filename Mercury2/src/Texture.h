@@ -46,6 +46,8 @@ class Texture : public MercuryAsset
 		static void ApplyActiveTextures(uint16_t stride, uint8_t uvByteOffset);
 		static void DisableUnusedTextures();
 
+		static MString GenKey(const MString& k, const XMLNode* n);
+
 		void SetFilter( TextureFilterMode t ) { m_tFilterMode = t; }
 		GENRTTI( Texture );
 	protected:

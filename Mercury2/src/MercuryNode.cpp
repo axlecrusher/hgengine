@@ -306,7 +306,8 @@ void MercuryNode::LoadFromXML(const XMLNode& node)
 		else if ( child.Name() == "asset" )
 		{
 			MString key = child.Attribute("file");
-			MAutoPtr< MercuryAsset > asset( AssetFactory::GetInstance().Generate( child.Attribute("type"), key ) );
+
+			MAutoPtr< MercuryAsset > asset( AssetFactory::GetInstance().Generate( child.Attribute("type"), key, true, &child ) );
 			if ( asset.IsValid() )
 			{
 				asset->LoadFromXML( child );

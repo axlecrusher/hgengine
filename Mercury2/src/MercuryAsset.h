@@ -78,6 +78,7 @@ class MercuryAsset : public RefBase, public MessageHandler
 
 		virtual MercuryAssetInstance * MakeAssetInstance( MercuryNode * ParentNode );
 
+		static MString GenKey(const MString& k, const XMLNode* n) { return k; }
 
 		GENRTTI( MercuryAsset );
 		const char * slType;	//Tricky - we need to know our type in the destructor. Don't touch this.
@@ -145,9 +146,9 @@ class AssetFactory
 {
 	public:
 		static AssetFactory& GetInstance();
-		bool RegisterFactoryCallback(const MString& type, MAutoPtr< MercuryAsset > (*)( const MString &, bool ) );
+		bool RegisterFactoryCallback(const MString& type, MAutoPtr< MercuryAsset > (*)( const MString &, bool, const XMLNode* ) );
 
-		MAutoPtr<MercuryAsset> Generate(const MString& type, const MString& key, bool bInstanced = true );
+		MAutoPtr<MercuryAsset> Generate(const MString& type, const MString& key, bool bInstanced = true, const XMLNode* n = NULL );
 
 		void AddAssetInstance(const MString& key, MercuryAsset* asset);
 		void RemoveAssetInstance(const MString& key);
@@ -155,7 +156,7 @@ class AssetFactory
 	private:
 		MAutoPtr< MercuryAsset > LocateAsset( const MString& key ) { MAutoPtr< MercuryAsset > * a = m_assetInstances.get( key ); return a?(*a):0; }
 
-		MHash< MAutoPtr< MercuryAsset > (*)( const MString &, bool ) > m_factoryCallbacks;
+		MHash< MAutoPtr< MercuryAsset > (*)( const MString &, bool, const XMLNode* ) > m_factoryCallbacks;
 		
 		//the actual storage point is in MercuryAssetInstance
 		MHash< MAutoPtr< MercuryAsset > > m_assetInstances;
@@ -167,7 +168,7 @@ class AssetFactory
 static InstanceCounter<AssetFactory> AFcounter("AssetFactory");
 
 #define REGISTER_ASSET_TYPE(class)\
-	MAutoPtr<MercuryAsset> FactoryFunct##class( const MString & key, bool bInstanced ) { return new class( key, bInstanced ); } \
+	MAutoPtr<MercuryAsset> FactoryFunct##class( const MString & key, bool bInstanced, const XMLNode* n) { return new class( class::GenKey(key,n), bInstanced ); } \
 	bool GlobalRegisterSuccess##class = AssetFactory::GetInstance().RegisterFactoryCallback(#class, FactoryFunct##class);
 
 #define CLASS_HELPERS(baseClass)\

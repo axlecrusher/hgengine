@@ -152,10 +152,10 @@ bool Texture::ChangeKey( const MString & sNewKey )
 	if( sNewKey == m_path && GetLoadState() != NONE )
 		return true;
 
-	if ( m_dynamic )
-		MakeDynamic( 0, 0, RGBA, sNewKey );
-	else
+	if ( !m_dynamic )
 		LoadImagePath( sNewKey );
+	else
+//		MakeDynamic( 0, 0, RGBA, sNewKey );
 
 	if( sNewKey != m_path )
 		return MercuryAsset::ChangeKey( sNewKey );
@@ -318,6 +318,18 @@ bool Texture::CheckForNewer()
 void Texture::Reload()
 {
 	LoadImagePath(m_path);
+}
+
+MString Texture::GenKey(const MString& k, const XMLNode* n)
+{
+	bool dynamic = false;
+	if (n)
+	{
+		const XMLNode& node = *n;
+		LOAD_FROM_XML( "dynamic", dynamic, StrToBool );
+	}
+	if (dynamic) return "DYNATEXT"+k;
+	return k;
 }
 
 MAutoPtr< Texture > Texture::LoadFromFile(const MString& path)

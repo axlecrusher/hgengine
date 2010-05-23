@@ -154,14 +154,14 @@ AssetFactory& AssetFactory::GetInstance()
 	return *instance;
 }
 
-bool AssetFactory::RegisterFactoryCallback(const MString & type, MAutoPtr< MercuryAsset > (*functor)( const MString &, bool ) )
+bool AssetFactory::RegisterFactoryCallback(const MString & type, MAutoPtr< MercuryAsset > (*functor)( const MString &, bool, const XMLNode* n ) )
 {
 	MString t = ToUpper( type );
 	m_factoryCallbacks[t] = functor;
 	return true;
 }
 
-MAutoPtr<MercuryAsset> AssetFactory::Generate(const MString& type, const MString& key, bool bInstanced )
+MAutoPtr<MercuryAsset> AssetFactory::Generate(const MString& type, const MString& key, bool bInstanced, const XMLNode* n )
 {
 	MString t = ToUpper( type );
 
@@ -172,11 +172,11 @@ MAutoPtr<MercuryAsset> AssetFactory::Generate(const MString& type, const MString
 	}
 	printf( "Asset (%s) not found, generating\n", (t+key).c_str() );
 
-	MAutoPtr< MercuryAsset > (**generator)( const MString &, bool ) = m_factoryCallbacks.get( t );
+	MAutoPtr< MercuryAsset > (**generator)( const MString &, bool, const XMLNode* n ) = m_factoryCallbacks.get( t );
 
 	if( generator )
 	{
-		MAutoPtr< MercuryAsset > g = (**generator)(key, bInstanced);
+		MAutoPtr< MercuryAsset > g = (**generator)(key, bInstanced, n);
 		AddAssetInstance( t+key, g.Ptr() );
 		g->slType = g->GetType();
 		return g;
