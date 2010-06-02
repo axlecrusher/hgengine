@@ -1,7 +1,6 @@
 #ifndef MERCURYLOG_H
 #define MERCURYLOG_H
 
-#include <fstream>
 #include <list>
 #include <MercuryString.h>
 #include <MercuryThreads.h>
@@ -26,10 +25,10 @@ class MercuryLog
 		void CopyQueue();
 		void WriteQueue();
 		
+		FILE * m_file;
 		std::list< MString > m_queue;
 		std::list< MString > m_outQueue;
 		
-		std::ofstream m_file;
 		MercuryMutex m_mutex;
 		
 		MercuryThread m_thread;

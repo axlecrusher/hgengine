@@ -125,8 +125,8 @@ XMLNode XMLNode::FindFallbackNode() const
 		MString path((const char*)d);
 
 		int pos = path.find(".");
-		MString name = pos<=0?path:path.substr(0, pos);
-		MString rpath = pos<=0?"":path.substr(pos+1); //skip the period
+		MString name = (pos<=0)?path:path.substr(0, pos);
+		MString rpath = (pos<=0)?MString():path.substr(pos+1); //skip the period
 		
 		XMLNode parent = FindParentWithName( name );
 		if ( !parent.IsValid() )
@@ -167,8 +167,8 @@ XMLNode XMLNode::RecursiveFindFallbackNode(const MString& path) const
 	if (path.length() > 0)
 	{
 		int pos = path.find(".");
-		MString name = pos<=0?path:path.substr(0, pos);
-		MString rpath = pos<=0?"":path.substr(pos+1); //skip the period
+		MString name = (pos<=0)?path:path.substr(0, pos);
+		MString rpath = (pos<=0)?MString():path.substr(pos+1); //skip the period
 		for (XMLNode n = this->Child(); n.IsValid(); n = n.NextNode())
 			if (n.Attribute("name") == name)
 				return n.RecursiveFindFallbackNode(rpath);

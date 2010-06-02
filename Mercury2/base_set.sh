@@ -8,7 +8,7 @@ if test $OSTYPE = "darwin8.0"; then
 	ISMAC=1; fi
 
 
-OPTIONS="X11 libxml OGL sse gprof glprofile instancewatch alsa ogg wii"
+OPTIONS="X11 libxml OGL sse gprof glprofile instancewatch alsa ogg wii clang"
 OPT_X11=1
 OPT_OGL=1
 OPT_libxml=1
@@ -19,6 +19,7 @@ OPT_instancewatch=1
 OPT_alsa=1
 OPT_ogg=1
 OPT_wii=0
+OPT_clang=0
 
 
 DEFINES="WAS_CONFIGURED USE_MSTRING"
@@ -62,6 +63,10 @@ if test $OPT_wii = 1; then
 else
 	NEED_L="m c z pthread png pthread";
 	CC="cc"
+fi
+
+if test $OPT_clang = 1; then
+	CC="clang"
 fi
 
 if test $OPT_libxml = 1; then

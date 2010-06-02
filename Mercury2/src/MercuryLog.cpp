@@ -7,7 +7,9 @@ static bool gIsLogUp = 0;
 
 void* MercuryLog::ThreadLoop(void* d)
 {
+
 	MercuryLog* log = static_cast<MercuryLog*>(d);
+	log->Open( "log.txt" );
 	
 	while (true)
 	{
@@ -15,6 +17,7 @@ void* MercuryLog::ThreadLoop(void* d)
 		log->WriteQueue();
 		msleep(100); //10x/sec
 	}
+	log->Close();
 	return 0;
 }
 
@@ -34,12 +37,19 @@ MercuryLog::~MercuryLog()
 
 void MercuryLog::Open(const MString& file)
 {
-	m_file.open(file.c_str());
+	if( m_file )
+		Close();
+
+	m_file = fopen( file.c_str(), "w" );
 }
 
 void MercuryLog::Close()
 {
-	m_file.close();
+	if( m_file )
+	{
+		fclose( m_file );
+		m_file = 0;
+	}
 }
 
 void MercuryLog::Write(const MString& message)
@@ -74,11 +84,11 @@ void MercuryLog::WriteQueue()
 	for (i = m_outQueue.begin(); i != m_outQueue.end(); ++i)
 	{
 		const MString& m = *i;
-		cout << m << endl;
-		m_file << m << endl;
+		fprintf( m_file, "%s\n", m.c_str() );
+		printf( "%s\n", m.c_str() );
 	}
 	
-	m_file.flush();
+	fflush( m_file );
 	
 	m_outQueue.clear();
 }
@@ -89,7 +99,6 @@ MercuryProgramLog& MercuryProgramLog::GetInstance()
 	if (!pl)
 	{
 		pl = new MercuryProgramLog;
-		pl->m_log.Open("log.txt");
 	}
 	return *pl;
 }

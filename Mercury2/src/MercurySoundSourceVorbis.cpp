@@ -188,7 +188,7 @@ bool MercurySoundSourceVorbis::PostFill()
 
 	unsigned long BF = BufferFree();
 	unsigned long BFL = BF;
-	short tibuf[BF * 2];
+	short * tibuf = new short[BF * 2];
 
 	do
 	{
@@ -198,7 +198,10 @@ bool MercurySoundSourceVorbis::PostFill()
 		Vorbistotal_bytes_read += Vorbisbytes_read;
 	} while( Vorbisbytes_read > 0 && BFL );
 	if( Vorbisbytes_read < 0 )
+	{
+		delete tibuf;
 		return false;
+	}
 
 	for( unsigned i = 0; i < BF; i++ )
 	{
@@ -208,9 +211,15 @@ bool MercurySoundSourceVorbis::PostFill()
 	}
 
 	if( Vorbisbytes_read == 0 && PlayLeft() == 0 )
+	{
+		delete tibuf;
 		return false;
+	}
 	else
+	{
+		delete tibuf;
 		return true;
+	}
 }
 
 

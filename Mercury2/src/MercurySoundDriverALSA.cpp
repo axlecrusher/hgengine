@@ -34,7 +34,7 @@ bool MercurySoundDriverALSA::Init( const MString & sParameters )
 	snd_pcm_sw_params_t *sw_params;
 	int err;
 
-	MString sDevice = sParameters.length()?sParameters:"default";
+	MString sDevice = sParameters.length()?sParameters:MString("default");
 	unsigned int Samplerate = 44100;
 	int Channels = 2;
 
@@ -217,8 +217,8 @@ void * MercurySoundDriverALSA::playback_thread( void * )
 int MercurySoundDriverALSA::playback_function(int nrframes)
 {
 	int err;
-	short buf[nrframes*2];
-	float ibuf[nrframes*2];
+	short *buf = new short[nrframes*2];
+	float *ibuf = new float[nrframes*2];
 
 	SOUNDMAN.FillBuffer( ibuf, nrframes );
 
@@ -236,6 +236,8 @@ int MercurySoundDriverALSA::playback_function(int nrframes)
 
 	SOUNDMAN.PostFill();
 
+	delete buf;
+	delete ibuf;
 	return err;
 }
 
