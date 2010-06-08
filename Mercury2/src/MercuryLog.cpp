@@ -22,6 +22,7 @@ void* MercuryLog::ThreadLoop(void* d)
 }
 
 MercuryLog::MercuryLog()
+	:m_file(NULL)
 {
 	m_thread.Create(MercuryLog::ThreadLoop, this, true);
 	gIsLogUp = 1;
