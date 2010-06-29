@@ -396,10 +396,10 @@ public:
 	void Activate()
 	{
 		GLCALL( glEnable(GL_LIGHT0 + iLight) );
-		GLCALL( glLightfv(GL_LIGHT0, GL_POSITION, &fParams[0]) );
-		GLCALL( glLightfv(GL_LIGHT0, GL_DIFFUSE, &fParams[4]) );
-		GLCALL( glLightfv(GL_LIGHT0, GL_AMBIENT, &fParams[8]) );
-		GLCALL( glLightfv(GL_LIGHT0, GL_SPECULAR, &fParams[12]) );
+		GLCALL( glLightfv(GL_LIGHT0 + iLight, GL_POSITION, &fParams[0]) );
+		GLCALL( glLightfv(GL_LIGHT0 + iLight, GL_DIFFUSE, &fParams[4]) );
+		GLCALL( glLightfv(GL_LIGHT0 + iLight, GL_AMBIENT, &fParams[8]) );
+		GLCALL( glLightfv(GL_LIGHT0 + iLight, GL_SPECULAR, &fParams[12]) );
  
 	}
 
