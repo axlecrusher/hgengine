@@ -173,7 +173,9 @@ void TerrainAssetInstance::HandleMessage(const MString& message, const MessageDa
 		const VertexDataMessage& v( dynamic_cast<const VertexDataMessage&>(data) );
 		
 		//compute local space position
-		MercuryVertex local = v.Vertex * m_parentNode->GetGlobalMatrix();
+		MercuryMatrix m = m_parentNode->GetGlobalMatrix();
+		m.Transpose();
+		MercuryVertex local = m * v.Vertex;
 		local[3] = 1; //no W
 		
 		Terrain* t = (Terrain*)m_asset.Ptr();
