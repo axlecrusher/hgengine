@@ -187,6 +187,15 @@ const char * cn_get_crash_description( int code )
 	return exceptions[i].name;
 }
 
+void fail_m( const char * message, const char * file, int line )
+{
+	char backtracebuffer[2048];
+	//Probably should message box here somewhere in the event we're running on Windows.
+	fprintf( stderr, "Fatal Error: \"%s\" in %s:%d\n", message, file, line );
+	cnget_backtrace( 1, backtracebuffer, 2047 );
+	puts( backtracebuffer );
+	exit(-1);
+}
 
 /*
  * (c) 2003-2008 Glenn Maynard, Steve Checkoway, Avery Lee, Charles Lohr

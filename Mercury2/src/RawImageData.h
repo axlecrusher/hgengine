@@ -2,6 +2,7 @@
 #define RAWIMAGEDATA_H
 
 #include <MercuryUtil.h>
+#include <MercuryStringUtil.h>
 
 enum ColorByteType
 {

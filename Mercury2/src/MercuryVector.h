@@ -2,6 +2,7 @@
 #define _MERCURY_VECTOR_H
 
 #include <string.h>
+#include <stdlib.h>
 
 ///Stripped down and fast vector class
 template<typename T>

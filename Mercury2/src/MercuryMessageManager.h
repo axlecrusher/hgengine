@@ -13,6 +13,7 @@
 #include <MAutoPtr.h>
 #include <MSemaphore.h>
 #include <MercuryValue.h>
+#include <InstanceCounter.h>
 
 class MessageHolder : public RefBase
 {

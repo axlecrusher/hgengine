@@ -1,6 +1,8 @@
 #include <MercuryTheme.h>
 #include <MercuryPrefs.h>
 #include <XMLParser.h>
+#include <MercuryCrash.h>
+#include <MercuryStringUtil.h>
 
 #define MAX_THEMES 100
 

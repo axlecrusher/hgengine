@@ -2,7 +2,6 @@
 #define MERCURYUTIL_H
 
 #include <stdlib.h>
-#include <MercuryString.h>
 #include <global.h>
 #include <stdio.h>
 
@@ -12,25 +11,9 @@
 
 #define TO_ENDIAN( x )
 
-void fail_m( const char * message, const char * file, int line );
-#define FAIL( message ) fail_m( message, __FILE__, __LINE__ );
-
 //returns an aligned pointer, mem is the actual (unaligned) pointer for freeing
 void* mmemalign(size_t align, size_t size, void*& mem);
 bool isAligned(size_t align, const void* mem);
-
-///Make a string all upper case
-MString ToUpper(const MString & s);
-
-///Make a string all lower case
-MString ToLower(const MString & s);
-
-///Make a string proper case (HELLO -> Hello, hello -> Hello)
-MString ToProper(const MString & s);
-
-float StrToFloat(const MString & s, float d = 0);
-int32_t StrToInt(const MString & s, int32_t d = 0);
-bool StrToBool( const MString & s, bool d = false );
 
 template<typename T>
 const T& MAX(const T& t1, const T& t2)
@@ -51,48 +34,6 @@ const T& Clamp(const T& min, const T& max, const T& value)
 	if (value < min) return min;
 	return value;
 }
-
-//This counter is used with singletons to
-//ensure proper destruction order of the
-//singleton
-template<typename T>
-class InstanceCounter
-{
-	public:
-		InstanceCounter(const MString & name)
-	:m_name(name)
-		{
-			if (m_count == 0)
-			{
-				printf("Creating instance %s\n", m_name.c_str());
-				m_instance = &T::GetInstance();
-			}
-			++m_count;
-		}
-		~InstanceCounter()
-		{
-			--m_count;
-			if (m_count == 0)
-			{
-				printf("Destroying instance %s\n", m_name.c_str());
-				SAFE_DELETE(m_instance);
-			}
-		}
-	private:
-		static unsigned long m_count;
-		MString m_name;
-		T* m_instance;
-};
-
-template<typename T>
-		unsigned long InstanceCounter<T>::m_count = 0;
-
-///Open up filename: sFileName and dump it into a new buffer; you must delete the return value when done.
-///The return value is -1 if there was an issue, otherwise it is valid.
-long FileToString( const MString & sFileName, char * & data );
-
-///Take a string and write it to the hard drive as a file. True indicates everything is okay.
-bool StringToFile( const MString & sFileName, const MString & data );
 
 /*  These two functions are very different */
 /// nextPow2 will go to the NEXT power of 2 even if x is already a power of 2.
@@ -118,15 +59,6 @@ long	BytesUntil( const char* strin, const char * termin, long start, long slen, 
 
 ///Bytes until something other than a terminal
 long	BytesNUntil( const char* strin, const char * termin, long start, long slen, long termlen );
-
-///Split given string into other strings using delimiters from termin
-void	SplitStrings( const MString & in, MVector < MString > & out, const char * termin, const char * whitespace, long termlen, long wslen );
-
-///Convert string containing binary characters to C-style formatted string. 
-MString	ConvertToCFormat( const MString & ncf );
-
-///Convert a C-style formatted string into it's binary string equivalent.
-MString ConvertToUnformatted( const MString & cf );
 
 ///millisecond sleep
 void msleep(uint32_t msec);

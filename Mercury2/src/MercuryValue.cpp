@@ -1,7 +1,7 @@
 #include <MercuryMessageManager.h>
 #include <MercuryValue.h>
 #include <MessageHandler.h>
-
+#include <MercuryStringUtil.h>
 
 DelegateNotifierList::DelegateNotifierList( DeletionNotifier nf, MessageHandler * no ) :
 	NotifyFunction( nf ), NotifyObject( no ), Next( NULL )

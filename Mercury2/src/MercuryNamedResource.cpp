@@ -1,5 +1,5 @@
 #include <MercuryNamedResource.h>
-#include <MercuryUtil.h>
+#include <MercuryStringUtil.h>
 #include <stdio.h>
 
 MString MercuryNamedResource::GetValueS( const MString & sDataPointer )

@@ -359,6 +359,10 @@ void AngleMatrix (const MercuryVector & angles, MercuryMatrix & matrix )
 	matrix[3][3] = 1;
 }
 
+MercuryVertex RotateVector(const MercuryVertex& v, const MQuaternion& q)
+{
+	return (q * MQuaternion(0, v) * q.reciprocal()).ToVector();
+}
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen, Charles Lohr, Adam Lowman          *

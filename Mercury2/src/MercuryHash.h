@@ -4,6 +4,7 @@
 #include "global.h"
 #include <MercuryVector.h>
 #include <assert.h>
+#include <MercuryString.h>
 
 ///Mercury Hash Table for Strings
 template<typename T>

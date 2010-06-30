@@ -1,5 +1,5 @@
 #include "MercuryMatrix.h"
-#include <MercuryLog.h>
+//#include <MercuryLog.h>
 
 MercuryMatrixMemory::MercuryMatrixMemory()
 {
@@ -271,7 +271,7 @@ MercuryMatrix MercuryMatrix::operator*(const MercuryMatrix& m) const
 	MatrixMultiply4f ( m_matrix, m.m_matrix, r.m_matrix);
 	return r;
 }
-
+/*
 void MercuryMatrix::Print() const
 {
 	for (int i = 0; i < 4; ++i)
@@ -280,7 +280,7 @@ void MercuryMatrix::Print() const
 	}
 	LOG.Write("\n");
 }
-
+*/
 MercuryVector MercuryMatrix::operator*(const MercuryVector& v) const
 {
 	MercuryVector r;

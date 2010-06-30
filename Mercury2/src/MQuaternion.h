@@ -91,6 +91,8 @@ void AngleMatrix (const MercuryVector & angles, MercuryMatrix & mat );
 ///Spherically interpolate between two quaternions t = 0..1
 MQuaternion SLERP( const MQuaternion &a, const MQuaternion &b,float t);
 
+MercuryVertex RotateVector(const MercuryVertex& v, const MQuaternion& q);
+
 #endif
 
 /****************************************************************************

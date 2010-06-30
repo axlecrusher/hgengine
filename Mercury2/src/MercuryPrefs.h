@@ -3,6 +3,7 @@
 
 #include <MercuryNamedResource.h>
 #include <MercuryUtil.h>
+#include <InstanceCounter.h>
 
 class XMLNode;
 class XMLDocument;

@@ -1,6 +1,7 @@
 #include <XMLParser.h>
 #include <MercuryFile.h>
 #include <MercuryVector.h>
+#include <MercuryStringUtil.h>
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>

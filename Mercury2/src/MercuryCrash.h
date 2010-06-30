@@ -11,9 +11,13 @@ typedef int (*FNType)( int signal );
 int cnset_execute_on_crash( FNType fn );
 const char * cn_get_crash_description( int code );
 
+void fail_m( const char * message, const char * file, int line );
+
 #ifdef __cplusplus
 };
 #endif
+
+#define FAIL( message ) fail_m( message, __FILE__, __LINE__ );
 
 #endif
 

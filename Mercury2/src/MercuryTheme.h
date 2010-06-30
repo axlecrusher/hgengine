@@ -2,9 +2,9 @@
 #define _MERCURY_THEME_H
 
 #include <MercuryNamedResource.h>
-#include <MercuryUtil.h> //huh?
 #include <MercuryHash.h>
 #include <MercuryVector.h>
+#include <InstanceCounter.h>
 
 class XMLNode;
 class XMLDocument;

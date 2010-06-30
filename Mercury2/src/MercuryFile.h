@@ -3,6 +3,7 @@
 
 #include <MAutoPtr.h>
 #include <MercuryUtil.h>
+#include <InstanceCounter.h>
 
 //Forward decleration, as there's no real need to have this included unless we _need_ it.
 template< typename t >
@@ -93,6 +94,12 @@ private:
 	MVector< MAutoPtr< MercuryFileDriver> > * m_Drivers;
 };
 
+///Open up filename: sFileName and dump it into a new buffer; you must delete the return value when done.
+///The return value is -1 if there was an issue, otherwise it is valid.
+long FileToString( const MString & sFileName, char * & data );
+
+///Take a string and write it to the hard drive as a file. True indicates everything is okay.
+bool StringToFile( const MString & sFileName, const MString & data );
 
 static InstanceCounter<MercuryFileManager> MFMcounter("MercuryFileManager");
 

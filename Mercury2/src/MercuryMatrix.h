@@ -6,7 +6,7 @@
 #include "MercuryUtil.h"
 #include <MercuryVertex.h>
 #include <MQuaternion.h>
-
+#include <InstanceCounter.h>
 #include <list>
 #include <MSemaphore.h>
 

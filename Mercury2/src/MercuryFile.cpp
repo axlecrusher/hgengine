@@ -6,7 +6,7 @@
 #include "MercuryFileDriverZipped.h"
 #include "MercuryFileDriverPacked.h"
 #include "MercuryTheme.h"
-
+#include <MercuryStringUtil.h>
 
 /********************FILE MANAGER**************************/
 
@@ -134,6 +134,46 @@ bool MercuryFileManager::FileMatch( const MString & file, const MString & regex 
 	return true;
 }
 
+long FileToString( const MString & sFileName, char * & data )
+{
+	data = 0;
+
+	MercuryFile * f = FILEMAN.Open( sFileName );
+	if( !f ) return -1;
+
+	int length = f->Length();
+
+	data = (char*)malloc( length + 1 );
+
+	if( !data )
+	{
+		data = 0;
+		delete f;
+		return -1;
+	}
+
+	int r = f->Read( data, length );
+
+	delete f;
+
+	if( r != length )
+	{
+		free( data );
+		data = 0;
+		return -1;
+	}
+
+	return length;
+}
+
+bool StringToFile( const MString & sFileName, const MString & data )
+{
+	MercuryFile * f = FILEMAN.Open( sFileName, MFP_WRITE_ONLY );
+	if( !f ) return false;
+	f->Write( data.c_str(), data.length() );
+	delete f;
+	return true;
+}
 
 MercuryFileManager& MercuryFileManager::GetInstance()
 {

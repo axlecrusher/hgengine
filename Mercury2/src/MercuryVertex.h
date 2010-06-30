@@ -10,8 +10,6 @@
 #define __inline__ inline
 #endif
 
-class MQuaternion;
-class MercuryMatrix;
 
 class MercuryVertex
 {
@@ -62,9 +60,6 @@ class MercuryVertex
 		const MercuryVertex& operator /= (const MercuryVertex& p);
 		inline MercuryVertex operator * (const MercuryVertex& p) const { MercuryVertex r(*this); r*=p; return r; }
 		inline MercuryVertex operator / (const MercuryVertex& p) const { MercuryVertex r(*this); r/=p; return r; }
-
-		MercuryVertex operator*(const MercuryMatrix& m) const;
-
 		
 		inline MercuryVertex& operator += ( const MercuryVertex& other )		{ m_xyzw[0]+=other[0]; m_xyzw[1]+=other[1]; m_xyzw[2]+=other[2]; return *this; }
 		inline MercuryVertex& operator -= ( const MercuryVertex& other )		{ m_xyzw[0]-=other[0]; m_xyzw[1]-=other[1]; m_xyzw[2]-=other[2]; return *this; }
@@ -89,9 +84,7 @@ class MercuryVertex
 		MercuryVertex DotProduct3(const MercuryVertex& rhs1, const MercuryVertex& rhs2, const MercuryVertex& rhs3) const;
 
 		MString Stringify(const MString& s = "Vertex") const;
-		
-		MercuryVertex Rotate(const MQuaternion& q) const;
-		
+
 		float AddComponents() const;
 		
 		static MercuryVertex CreateFromString(const MString& s);

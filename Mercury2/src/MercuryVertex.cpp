@@ -1,9 +1,6 @@
 #include <MercuryVertex.h>
 #include <MercuryUtil.h>
 #include <MercuryMath.h>
-#include <MQuaternion.h>
-
-#include <MercuryMatrix.h>
 
 MercuryVertex::MercuryVertex()
 {
@@ -127,22 +124,6 @@ MercuryVertex MercuryVertex::DotProduct3(const MercuryVertex& rhs1, const Mercur
 	return dp;
 }
 
-MercuryVertex MercuryVertex::operator*(const MercuryMatrix& m) const
-{
-	MercuryVertex r;
-	MercuryVertex v1(m[0][0], m[1][0], m[2][0], m[3][0]);
-	MercuryVertex v2(m[0][1], m[1][1], m[2][1], m[3][1]);
-	MercuryVertex v3(m[0][2], m[1][2], m[2][2], m[3][2]);
-	MercuryVertex v4(m[0][3], m[1][3], m[2][3], m[3][3]);
-	
-	r[0] = ((*this)*v1).AddComponents();
-	r[1] = ((*this)*v2).AddComponents();
-	r[2] = ((*this)*v3).AddComponents();
-	r[3] = ((*this)*v4).AddComponents();
-	
-	return r;
-}
-
 float MercuryVertex::AddComponents() const
 {
 	return GetX() + GetY() + GetZ() + GetW();
@@ -151,11 +132,6 @@ float MercuryVertex::AddComponents() const
 MString MercuryVertex::Stringify(const MString& s) const
 {
 	return ssprintf("%s: %f %f %f %f", s.c_str(), m_xyzw[0], m_xyzw[1], m_xyzw[2], m_xyzw[3]);
-}
-
-MercuryVertex MercuryVertex::Rotate(const MQuaternion& q) const
-{
-	return (q * MQuaternion(0, *this) * q.reciprocal()).ToVector();
 }
 
 MercuryVertex MercuryVertex::CreateFromString(const MString& s)

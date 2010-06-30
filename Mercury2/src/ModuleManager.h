@@ -4,6 +4,7 @@
 #include <MercuryUtil.h>
 #include <MercuryHash.h>
 #include <MercuryThreads.h>
+#include <InstanceCounter.h>
 
 #ifdef INSTANCE_WATCH
 #include <set>

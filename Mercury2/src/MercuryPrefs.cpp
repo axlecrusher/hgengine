@@ -1,5 +1,6 @@
 #include <MercuryPrefs.h>
 #include <XMLParser.h>
+#include <MercuryCrash.h>
 
 MercuryPreferences & MercuryPreferences::GetInstance()
 {

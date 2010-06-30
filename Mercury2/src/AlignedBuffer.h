@@ -1,6 +1,7 @@
 #ifndef ALIGNEDBUFFER_H
 #define ALIGNEDBUFFER_H
 
+#include <MercuryUtil.h> 
 #include <Mint.h>
 
 template <typename T>

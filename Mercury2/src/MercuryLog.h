@@ -4,8 +4,8 @@
 #include <list>
 #include <MercuryString.h>
 #include <MercuryThreads.h>
-
 #include <MercuryUtil.h>
+#include <InstanceCounter.h>
 
 class MercuryLog
 {

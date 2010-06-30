@@ -6,6 +6,7 @@
 #include <MAutoPtr.h>
 #include <MercuryHash.h>
 #include <MercuryVector.h>
+#include <InstanceCounter.h>
 
 class MercurySoundSource : public RefBase
 {
