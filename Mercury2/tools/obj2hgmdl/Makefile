@@ -1,2 +1,2 @@
 all:
-	g++ obj2hgmdl.cpp ../../src/MQuaternion.cpp ../../src/MercuryVertex.cpp ../../src/MercuryString.cpp -I../../src -I../.. -DHGENGINE -g -o obj2hgmdl
+	g++ obj2hgmdl.cpp ../../src/MercuryString.cpp ../../src/MercuryMath.cpp ../../src/MercuryVertex.cpp ../../src/MercuryUtil.cpp -I../../src -I../.. -DHGENGINE -g -lpthread -o obj2hgmdl
