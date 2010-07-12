@@ -16,7 +16,7 @@ SOURCES="src/Mercury2.cpp src/MercuryAsset.cpp src/MercuryNode.cpp \
 	src/MercuryTheme.cpp src/Orthographic.cpp src/Light.cpp src/RenderDeferredLights.cpp \
 	src/MercuryLog.cpp src/MercuryCTA.cpp src/DataTypes/MTriangle.cpp src/StateChanger.cpp \
 	src/MercurySound.cpp src/MercurySoundSourceRAM.cpp src/MercuryValue.cpp \
-	src/MercuryStringUtil.cpp"
+	src/MercuryStringUtil.cpp src/MercuryTransform.cpp"
 
 SOURCES="$SOURCES src/MercuryFileDriverDirect.cpp src/MercuryFileDriverMem.cpp \
 	src/MercuryFileDriverPacked.cpp src/MercuryFileDriverZipped.cpp"
