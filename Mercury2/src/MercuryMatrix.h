@@ -10,27 +10,7 @@
 #include <list>
 #include <MSemaphore.h>
 
-#include <AlignedBuffer.h>
-
-///Memory holder for matrices
-class MercuryMatrixMemory
-{
-	/* Allocates all matrix space as one contigous block
-	to try to take advantage of data prefetching. Some matrix data should get a
-	free ride into the CPU cache. */
-	public:
-		MercuryMatrixMemory();
-		void Init();
-		static MercuryMatrixMemory& GetInstance();
-		FloatRow* GetNewMatrix();
-		void FreeMatrix(FloatRow* m);
-	private:
-		static const unsigned int rows = 1024; //1024 matrices * 64bytes each = 64kb
-		typedef FloatRow MatrixArray[4]; //64kb
-		AlignedBuffer<MatrixArray> m_data;
-		std::list< MatrixArray* > m_free;
-		MSemaphore m_lock;
-};
+#include <MercuryMemory.h>
 
 ///General Purpose 4x4 row-major matrix
 class MercuryMatrix
@@ -85,9 +65,11 @@ public:
 	void Print() const;
 
 	const static MercuryMatrix IdentityMatrix;
-};
 
-static InstanceCounter<MercuryMatrixMemory> MMMcounter("MercuryMatrixMemory");
+	typedef FloatRow MatrixArray[4]; //64bytes
+	static FloatRow* GetNewMatrix();
+	static MercuryMemory<MatrixArray>* m_matrixMemory;
+};
 
 #endif
 

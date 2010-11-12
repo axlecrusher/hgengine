@@ -1,81 +1,33 @@
 #include "MercuryMatrix.h"
 //#include <MercuryLog.h>
 
-MercuryMatrixMemory::MercuryMatrixMemory()
+FloatRow* MercuryMatrix::GetNewMatrix()
 {
-	m_data.Allocate(rows,16);
-}
-
-MercuryMatrixMemory& MercuryMatrixMemory::GetInstance()
-{
-	static MercuryMatrixMemory* mmm = NULL;
-	
-	if (mmm==NULL)
+	if (m_matrixMemory == NULL)
 	{
-		mmm = new MercuryMatrixMemory();
-		mmm->Init();
+		m_matrixMemory = new MercuryMemory< MatrixArray >(1024);//1024 matrices * 64bytes each = 64kb
 	}
-	
-	return *mmm;
-}
-
-void MercuryMatrixMemory::Init()
-{
-	MSemaphoreLock lock(&m_lock);
-
-	for (unsigned int i = 0; i < rows;i++)
-		m_free.push_back( m_data.Buffer()+i );
-/*
-	//test matrix transpose
-	MercuryMatrix test;
-	for (int i = 0; i < 16; ++i)
-		test.Ptr()[i] = i+1;
-
-	LOG.Write("before transpose\n");
-	test.Print();
-	test.Transpose();
-	LOG.Write("after Transpose\n");
-	test.Print();
-	*/
-}
-
-FloatRow* MercuryMatrixMemory::GetNewMatrix()
-{
-	MatrixArray* m = (MatrixArray*)0x0;
-	MSemaphoreLock lock(&m_lock);
-	if ( m_free.begin() != m_free.end() )
-	{
-		m = m_free.front();
-		m_free.pop_front();
-	}
-	if (m==0x0) ***m=0;
-	return (FloatRow*)m;
-}
-
-void MercuryMatrixMemory::FreeMatrix(FloatRow* m)
-{
-	MSemaphoreLock lock(&m_lock);
-	m_free.push_back((MatrixArray*)m);
+	return (FloatRow*)(m_matrixMemory->Allocate());
 }
 
 MercuryMatrix::MercuryMatrix()
 	:m_matrix(0)
 {
-	m_matrix = MercuryMatrixMemory::GetInstance().GetNewMatrix();
+	m_matrix = GetNewMatrix();
 	LoadIdentity();
 }
 
 MercuryMatrix::MercuryMatrix(const MercuryMatrix& m)
 	:m_matrix(0)
 {
-	m_matrix = MercuryMatrixMemory::GetInstance().GetNewMatrix();
+	m_matrix = GetNewMatrix();
 	Copy16f(m_matrix, m.m_matrix);
 }
 
 MercuryMatrix::~MercuryMatrix()
 {
 	if (m_matrix)
-		MercuryMatrixMemory::GetInstance().FreeMatrix( m_matrix );
+		m_matrixMemory->Free((MatrixArray*)m_matrix);
 	m_matrix = NULL;
 }
 
@@ -297,6 +249,7 @@ void MercuryMatrix::Transpose()
 
 
 const MercuryMatrix MercuryMatrix::IdentityMatrix;
+MercuryMemory<MercuryMatrix::MatrixArray>* MercuryMatrix::m_matrixMemory = NULL;
 
 /* 
  * Copyright (c) 2006-2009 Joshua Allen
