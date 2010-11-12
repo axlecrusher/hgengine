@@ -42,10 +42,11 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="modules;.;src;src/include;src/include/png;src/include/zlib;src/DataStructures;src/DataTypes"
-				PreprocessorDefinitions="HGENGINE;WIN32;_CRT_SECURE_NO_WARNINGS;_HAVE_LIB_GL"
+				PreprocessorDefinitions="USE_SSE;HGENGINE;WIN32;_CRT_SECURE_NO_WARNINGS;_HAVE_LIB_GL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
+				StructMemberAlignment="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
 				DebugInformationFormat="4"
@@ -114,10 +115,17 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".;src;src/include;src/include/png;src/include/zlib"
-				PreprocessorDefinitions="HGENGINE;WIN32;_CRT_SECURE_NO_WARNINGS;_HAVE_LIB_GL"
+				Optimization="4"
+				InlineFunctionExpansion="0"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				EnableFiberSafeOptimizations="true"
+				AdditionalIncludeDirectories="modules;.;src;src/include;src/include/png;src/include/zlib;src/DataStructures;src/DataTypes"
+				PreprocessorDefinitions="USE_SSE;HGENGINE;WIN32;_CRT_SECURE_NO_WARNINGS;_HAVE_LIB_GL"
 				RuntimeLibrary="0"
+				EnableEnhancedInstructionSet="0"
 				UsePrecompiledHeader="0"
+				AssemblerOutput="4"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -378,6 +386,15 @@
 			<File
 				RelativePath=".\src\MercuryMath.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						EnableEnhancedInstructionSet="2"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\MercuryMath.h"
@@ -389,6 +406,10 @@
 			</File>
 			<File
 				RelativePath=".\src\MercuryMatrix.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryMemory.h"
 				>
 			</File>
 			<File
@@ -445,6 +466,14 @@
 			</File>
 			<File
 				RelativePath=".\src\MercuryString.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryStringUtil.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\MercuryStringUtil.h"
 				>
 			</File>
 			<File
