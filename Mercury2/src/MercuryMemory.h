@@ -14,40 +14,70 @@ class MercuryMemory
 	free ride into the CPU cache. */
 	public:
 		MercuryMemory(const uint32_t rows)
+			:m_free(NULL),m_rows(rows)
 		{
 			MSemaphoreLock lock(&m_lock);
-			m_data.Allocate(rows,16);
-
-			for (unsigned int i = 0; i < rows;i++)
-				m_free.push_back( m_data.Buffer()+i );
+			AllocateMoreSpace(m_rows);
 		}
 
-//		void Init();
-//		static MercuryMatrixMemory& GetInstance();
 		T* Allocate()
 		{
-			T* m = (T*)0x0;
-			MSemaphoreLock lock(&m_lock);
-			if ( m_free.begin() != m_free.end() )
+			T* m = NULL;
+			MemoryUnit* mu = NULL;
 			{
-				m = m_free.front();
-				m_free.pop_front();
+				//keep really short lock
+				MSemaphoreLock lock(&m_lock);
+				if ( m_free == NULL ) AllocateMoreSpace(m_rows);
+				mu = m_free;
+				m_free=m_free->prev;
+				if (m_free!=mu->prev) { char* a = NULL; *a=0; } //wtf happened here!?!?! FREE CHANGED DURING OUR LOCK
 			}
-//			if (m==0x0) *m=*m; //crash if could not allocate
+			m = mu->mem;
+			delete mu;
+			if (m==NULL) { char* a = NULL; *a=0; } //no memory allocated??
 			return m;
 		}
 
 		void Free(T* m)
 		{
 			MSemaphoreLock lock(&m_lock);
-			m_free.push_back(m);
+			for (MemoryUnit* mu=m_free;mu!=NULL;mu=mu->prev)
+			{
+				//probably could some some sorting here to get contigious free and used memory
+				//if free memory is alwasy given out in order, then used memory will also be in order
+				if (m==mu->mem) { char* a=NULL;*a=0;} //WTF DOUBLE FREE
+			}
+			m_free = new MemoryUnit(m_free,m);
 		}
 
 	private:
-//		static const unsigned int rows = 1024; //1024 matrices * 64bytes each = 64kb
-		AlignedBuffer<T> m_data;
-		std::list< T* > m_free;
+		struct MemoryUnit
+		{
+			MemoryUnit(MemoryUnit* p, T* m)
+				:mem(m),prev(p)
+			{
+//				if (p!=NULL) p->next = this;
+			}
+			T* mem;
+			MemoryUnit* prev;
+		};
+
+		void AllocateMoreSpace(const uint32_t rows)
+		{
+			AlignedBuffer<T>* d = new AlignedBuffer<T>();
+			d->Allocate(rows,16);
+
+			for (unsigned int i = 0; i < rows;i++)
+				m_free = new MemoryUnit(m_free,(d->Buffer())+i);
+
+			m_data.push_back(d);
+		}
+
+		std::list< AlignedBuffer<T>* > m_data;
+		MemoryUnit* m_free;
+
 		MSemaphore m_lock;
+		unsigned long m_rows;
 };
 
 #endif

@@ -2,13 +2,27 @@
 #include <MercuryUtil.h>
 #include <MercuryMath.h>
 
-MercuryVertex::MercuryVertex()
+float* MercuryVertex::GetFloatMem()
 {
+	if (m_memory==NULL)
+	{
+		m_memory = new MercuryMemory< FloatRow >(1024);
+	}
+//	return new FloatRow;
+	return (float*)m_memory->Allocate();
+}
+
+MercuryVertex::MercuryVertex()
+	:m_xyzw(NULL)
+{
+	m_xyzw = GetFloatMem();
 	m_xyzw[0] = m_xyzw[1] = m_xyzw[2] = m_xyzw[3] = 0;
 }
 
 MercuryVertex::MercuryVertex( float ix, float iy, float iz, float iw )
+	:m_xyzw(NULL)
 {
+	m_xyzw = GetFloatMem();
 	m_xyzw[0] = ix;
 	m_xyzw[1] = iy;
 	m_xyzw[2] = iz;
@@ -16,29 +30,44 @@ MercuryVertex::MercuryVertex( float ix, float iy, float iz, float iw )
 }
 
 MercuryVertex::MercuryVertex( const float* in3f, float f )
+	:m_xyzw(NULL)
 {
+	m_xyzw = GetFloatMem();
 	for (unsigned int i = 0; i < 3; ++i)
 		(*this)[i] = in3f[i];
 	m_xyzw[3] = f;
 }
 
 MercuryVertex::MercuryVertex( const float* in4f )
+	:m_xyzw(NULL)
 {
+	m_xyzw = GetFloatMem();
 	for (unsigned int i = 0; i < 4; ++i)
 		(*this)[i] = in4f[i];
 }
 
 MercuryVertex::MercuryVertex( const MercuryVertex& v)
+	:m_xyzw(NULL)
 {
+	m_xyzw = GetFloatMem();
 	for (unsigned int i = 0; i < 4; ++i)
 		(*this)[i] = v[i];
 }
 
 MercuryVertex::MercuryVertex( const MercuryVertex& v, float w)
+	:m_xyzw(NULL)
 {
+	m_xyzw = GetFloatMem();
 	for (unsigned int i = 0; i < 3; ++i)
 		(*this)[i] = v[i];
 	m_xyzw[3] = w;
+}
+
+MercuryVertex::~MercuryVertex()
+{
+	if (m_xyzw!=NULL)
+		m_memory->Free((FloatRow*)m_xyzw);
+	m_xyzw = NULL;
 }
 
 void MercuryVertex::NormalizeSelf()
@@ -104,7 +133,7 @@ MercuryVertex MercuryVertex::CrossProduct(const MercuryVertex& p) const
 {
 	//XXX should this use all 4 components?
 	MercuryVertex r;
-	MMCrossProduct( m_xyzw, p.m_xyzw, r.m_xyzw );
+	MMCrossProduct( ToFloatRow(), p.ToFloatRow(), r.ToFloatRow() );
 	return r;
 }
 
@@ -141,6 +170,7 @@ MercuryVertex MercuryVertex::CreateFromString(const MString& s)
 	return MercuryVertex(x,y,z);
 }
 
+MercuryMemory< FloatRow >* MercuryVertex::m_memory = NULL;
 
 /****************************************************************************
  *   Copyright (C) 2009 by Joshua Allen                                     *

@@ -10,6 +10,7 @@
 #define __inline__ inline
 #endif
 
+#include <MercuryMemory.h>
 
 class MercuryVertex
 {
@@ -20,14 +21,17 @@ class MercuryVertex
 		MercuryVertex( const float* in4f );
 		MercuryVertex( const MercuryVertex& v);
 		MercuryVertex( const MercuryVertex& v, float w);
+		virtual ~MercuryVertex();
 
 		///Direct conversion to float*
 		__inline__ operator float* () { return m_xyzw; }
 		///Direct conversion to const float*
 		__inline__ operator const float* () const { return m_xyzw; }
+//		__inline__ float& operator[](unsigned int i) { return m_xyzw[i]; }
+//		__inline__ const float& operator[](unsigned int i) const { return m_xyzw[i]; }
 
-		inline FloatRow& ToFloatRow() { return m_xyzw; }
-		inline const FloatRow& ToFloatRow() const { return m_xyzw; }
+		inline FloatRow& ToFloatRow() { return (FloatRow&)*m_xyzw; }
+		inline const FloatRow& ToFloatRow() const { return (const FloatRow&)*m_xyzw; }
 
 		inline float GetX() const { return m_xyzw[0]; }
 		inline float GetY() const { return m_xyzw[1]; }
@@ -77,6 +81,8 @@ class MercuryVertex
 		bool operator==(const float f) const;
 		inline bool operator!=(const float f) const { return !(*this == f); }
 
+		inline const MercuryVertex& operator=(const MercuryVertex& p) { Copy4f(m_xyzw,p.m_xyzw);return *this; }
+
 		///Obtain the cross product (*this) x p
 		MercuryVertex CrossProduct(const MercuryVertex& p) const;
 		
@@ -90,7 +96,11 @@ class MercuryVertex
 		static MercuryVertex CreateFromString(const MString& s);
 
 //		float m_xyzw[3];
-		FloatRow m_xyzw;
+//		FloatRow m_xyzw;
+	private:
+		float* m_xyzw;
+		static MercuryMemory< FloatRow >* m_memory;
+		static float* GetFloatMem();
 };
 
 typedef MercuryVertex MercuryVector;

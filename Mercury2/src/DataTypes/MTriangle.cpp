@@ -3,10 +3,11 @@
 #include <stdio.h>
 
 MTriangle::MTriangle()
-{
-	m_verts[0] = 0;
-	m_verts[1] = 0;
-	m_verts[2] = 0;
+{/*
+	m_verts[0] = MercuryVertex(0,0,0,0);
+	m_verts[1] = MercuryVertex(0,0,0,0);
+	m_verts[2] = MercuryVertex(0,0,0,0);
+	*/
 }
 
 MTriangle::MTriangle(const MTriangle& t)
