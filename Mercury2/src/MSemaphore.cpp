@@ -7,10 +7,6 @@ MSemaphore::MSemaphore()
 }
 #ifndef WIN32
 
-#define SYNC_OR_AND_FETCH(d,v) __sync_or_and_fetch(d,v)
-#define COMPARE_AND_SWAP(d,o,n) __sync_val_compare_and_swap(d,o,n)
-#define SYNC_AND_AND_FETCH(d,v) __sync_and_and_fetch(d,v)
-
 unsigned long MSemaphore::ReadAndClear()
 {
 	return __sync_fetch_and_and(&m_semaphore, 0);
@@ -82,10 +78,6 @@ __sync_and_and_fetch (
 
     return Old & Value;
 }
-
-#define SYNC_OR_AND_FETCH(d,v) ((uint32_t)OrAndFetch(d,v))
-#define COMPARE_AND_SWAP(d,o,n) ((uint32_t)InterlockedCompareExchange(d, n, o))
-#define SYNC_AND_AND_FETCH(d,v) ((uint32_t)__sync_and_and_fetch(d,v))
 
 unsigned long MSemaphore::ReadAndClear()
 {
