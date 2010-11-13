@@ -45,6 +45,7 @@ VC_ALIGN(16) class FloatRow
 */
 
 typedef VC_ALIGN(16) float FloatRow[4] CC_ALIGN(16);
+//typedef float FloatRow[4];
 
 #ifdef WIN32
 #include <limits>

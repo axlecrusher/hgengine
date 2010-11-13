@@ -176,37 +176,37 @@ __m128 Hadd4(__m128 x)
 void Mul4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
 	__m128 a,b,o;
-	a = _mm_load_ps(first);
-	b = _mm_load_ps(second);
+	a = _mm_loadu_ps(first);
+	b = _mm_loadu_ps(second);
 	o = _mm_mul_ps( a, b );
-	_mm_store_ps(out,o);
+	_mm_storeu_ps(out,o);
 }
 
 void Div4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
 	__m128 a,b,o;
-	a = _mm_load_ps(first);
-	b = _mm_load_ps(second);
+	a = _mm_loadu_ps(first);
+	b = _mm_loadu_ps(second);
 	o = _mm_div_ps( a, b );
-	_mm_store_ps(out,o);
+	_mm_storeu_ps(out,o);
 }
 
 void Add4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
 	__m128 a,b,o;
-	a = _mm_load_ps(first);
-	b = _mm_load_ps(second);
+	a = _mm_loadu_ps(first);
+	b = _mm_loadu_ps(second);
 	o = _mm_add_ps( a, b );
-	_mm_store_ps(out,o);
+	_mm_storeu_ps(out,o);
 }
 
 void Sub4f(const FloatRow& first, const FloatRow& second, FloatRow& out)
 {
 	__m128 a,b,o;
-	a = _mm_load_ps(first);
-	b = _mm_load_ps(second);
+	a = _mm_loadu_ps(first);
+	b = _mm_loadu_ps(second);
 	o = _mm_sub_ps( a, b );
-	_mm_store_ps(out,o);
+	_mm_storeu_ps(out,o);
 }
 
 void MatrixMultiply4f( const FloatRow* in1, const FloatRow* in2, FloatRow* out)
@@ -327,7 +327,13 @@ void VectorMultiply4f( const FloatRow* matrix, const FloatRow& p, FloatRow& out 
 {
 	__m128 tmp,tmp2, XY, pp;
 	
-	pp=_mm_load_ps(p);
+	//load and loadu seem to run at nearly the same speed
+	//see benchmark file
+	pp=_mm_loadu_ps(p);
+//	pp=_mm_load_ps(p);
+
+	//this function can run long so try to move the output clocer to the CPU while function is running
+	PREFETCH((const char*)out,_MM_HINT_T1);
 	
 	//compute term X and term Y and store them in the low order of XY
 	XY = Hadd4( _mm_mul_ps( _mm_load_ps(matrix[0]), pp ) ); //compute X
@@ -343,7 +349,7 @@ void VectorMultiply4f( const FloatRow* matrix, const FloatRow& p, FloatRow& out 
 	//and shuffle the low order of out into the high order of out
 	tmp = _mm_movelh_ps(XY, pp);
 	
-	_mm_store_ps(out, tmp);
+	_mm_storeu_ps(out, tmp);
 }
 /*
 void ZeroFloatRow(FloatRow& r)
