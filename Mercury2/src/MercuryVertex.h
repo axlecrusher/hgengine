@@ -21,7 +21,7 @@ class MercuryVertex
 		MercuryVertex( const float* in4f );
 		MercuryVertex( const MercuryVertex& v);
 		MercuryVertex( const MercuryVertex& v, float w);
-		virtual ~MercuryVertex();
+//		virtual ~MercuryVertex();
 
 		///Direct conversion to float*
 		__inline__ operator float* () { return m_xyzw; }
@@ -96,11 +96,11 @@ class MercuryVertex
 		static MercuryVertex CreateFromString(const MString& s);
 
 //		float m_xyzw[3];
-//		FloatRow m_xyzw;
 	private:
-		float* m_xyzw;
-		static MercuryMemory< FloatRow >* m_memory;
-		static float* GetFloatMem();
+		FloatRow m_xyzw;
+//		float* m_xyzw;
+//		static MercuryMemory< FloatRow >* m_memory;
+//		static float* GetFloatMem();
 };
 
 typedef MercuryVertex MercuryVector;
