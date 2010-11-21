@@ -49,6 +49,7 @@ class Texture : public MercuryAsset
 		
 		static void ApplyActiveTextures(uint16_t stride, uint8_t uvByteOffset);
 		static void DisableUnusedTextures();
+		static void ActiveTexture(uint32_t i);
 
 		static MString GenKey(const MString& k, const XMLNode* n);
 
@@ -77,6 +78,7 @@ class Texture : public MercuryAsset
 		static uint8_t m_numActiveTextures;
 		static uint32_t m_textureBinds;
 		static ArrayStack< Texture* > m_activeTextures;
+		static MString* m_shaderBindPoints;
 
 		static uint8_t m_maxActiveTextures;
 		static Texture** m_lastBound;

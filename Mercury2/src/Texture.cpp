@@ -19,6 +19,9 @@ Texture::Texture( const MString & key, bool bInstanced )
 	{
 		m_initTextureSuccess = true;
 		m_numActiveTextures = 0;
+		m_shaderBindPoints = new MString[Texture::TextureStackDepth];
+		for (unsigned short i = 0; i < Texture::TextureStackDepth; ++i)
+			m_shaderBindPoints[i] = ssprintf("HG_Texture%d", m_numActiveTextures);
 	}
 	
 	SetIgnoreCull( true );
@@ -189,7 +192,7 @@ void Texture::BindTexture()
 	ShaderAttribute sa;
 	sa.type = ShaderAttribute::TYPE_SAMPLER;
 	sa.value.iSampler = m_numActiveTextures;
-	Shader::SetAttribute( ssprintf("HG_Texture%d", m_numActiveTextures), sa);
+	Shader::SetAttribute( m_shaderBindPoints[m_numActiveTextures], sa);
 
 	m_activeTextures.Push(this);
 
@@ -201,15 +204,25 @@ void Texture::UnbindTexture()
 //Everything needs to be done in reverse of BindTexture()
 	--m_numActiveTextures;
 	
-	Shader::RemoveAttribute( ssprintf("HG_Texture%d", m_numActiveTextures) );
+	Shader::RemoveAttribute( m_shaderBindPoints[m_numActiveTextures] );
 	m_activeTextures.Pop();
 
 //	Deactivate(GL_TEXTURE0 + m_numActiveTextures);
 }
 
+void Texture::ActiveTexture(uint32_t i)
+{
+	static uint32_t active = 0;
+	if (active!=i)
+	{
+		GLCALL( glActiveTexture( i ) );
+	}
+	active = i;
+}
+
 void Texture::Activate(uint32_t textureResource)
 {
-	GLCALL( glActiveTexture( textureResource ) );
+	ActiveTexture(textureResource);
 //	GLCALL( glClientActiveTextureARB(textureResource) );	//XXX: Note to self, this seems to be causing a crash, look into it.
 	GLCALL( glEnableClientState(GL_TEXTURE_COORD_ARRAY) );
 	GLCALL( glEnable( GL_TEXTURE_2D ) );
@@ -217,7 +230,7 @@ void Texture::Activate(uint32_t textureResource)
 
 void Texture::Deactivate(uint32_t textureResource)
 {
-	GLCALL( glActiveTexture( textureResource ) );
+	ActiveTexture(textureResource);
 //	GLCALL( glClientActiveTextureARB(textureResource) );
 	GLCALL( glDisableClientState(GL_TEXTURE_COORD_ARRAY) );
 	GLCALL( glDisable( GL_TEXTURE_2D ) );
@@ -228,7 +241,7 @@ void Texture::ApplyActiveTextures(uint16_t stride, uint8_t uvByteOffset)
 {
 	for (uint8_t i = 0; i < m_numActiveTextures; ++i)
 	{
-		GLCALL( glActiveTexture( GL_TEXTURE0+i ) );
+		ActiveTexture(GL_TEXTURE0+i);
 //		GLCALL( glClientActiveTextureARB(GL_TEXTURE0+i) );	//XXX: Note to self, this seems to be causing a crash, look into it.
 		GLCALL( glTexCoordPointer(2, GL_FLOAT, stride, BUFFER_OFFSET(uvByteOffset)) );
 	}
@@ -354,6 +367,8 @@ uint32_t Texture::m_textureBinds = 0;
 ArrayStack< Texture* > Texture::m_activeTextures(Texture::TextureStackDepth);
 Texture** Texture::m_lastBound = NULL;
 uint8_t Texture::m_maxActiveTextures = 0;
+
+MString* Texture::m_shaderBindPoints = NULL;
 
 /***************************************************************************
  *   Copyright (C) 2008 by Joshua Allen   *
