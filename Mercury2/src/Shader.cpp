@@ -462,6 +462,19 @@ int32_t Shader::GetUniformLocation(const MString& n)
 	return -1;
 }
 
+ShaderAttribute* Shader::GetAttribute(const MString& name)
+{
+	ShaderAttribute* a = m_globalAttributes.get(name);
+	if (a == NULL)
+	{
+		ShaderAttribute blank;
+		m_globalAttributes[name] = blank;
+		a = m_globalAttributes.get(name);
+	}
+
+	return a;
+}
+
 void Shader::SetAttribute(const MString& name, const ShaderAttribute& x)
 {
 	m_globalAttributes[name] = x;

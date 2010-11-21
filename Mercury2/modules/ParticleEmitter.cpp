@@ -95,7 +95,8 @@ ParticleEmitter::ParticleEmitter()
 	m_particles(NULL), GenerateParticlesClbk(NULL),
 	m_fLastD(0),m_fLastI(0),
 	m_dBegin(0), m_dEnd(0),
-	m_iBegin(0), m_iEnd(0)
+	m_iBegin(0), m_iEnd(0),
+	m_shdrAttrEmitterTime(NULL)
 {
 	m_bufferID[0] = 0;
 	m_iForcePasses = m_iForcePasses | (1<<15);
@@ -280,10 +281,11 @@ void ParticleEmitter::UpdateVBO()
 
 void ParticleEmitter::Render(const MercuryMatrix& matrix)
 {
-	ShaderAttribute sa;
-	sa.type = ShaderAttribute::TYPE_FLOAT;
-	sa.value.fFloat = m_age;
-	Shader::SetAttribute("EmitterTime", sa);
+	if (m_shdrAttrEmitterTime==NULL)
+		m_shdrAttrEmitterTime = Shader::GetAttribute("EmitterTime");
+
+	m_shdrAttrEmitterTime->type = ShaderAttribute::TYPE_FLOAT;
+	m_shdrAttrEmitterTime->value.fFloat = m_age;
 
 	GLCALL( glPushAttrib(GL_ENABLE_BIT|GL_CURRENT_BIT) );
 	GLCALL( glDisable(GL_CULL_FACE) );

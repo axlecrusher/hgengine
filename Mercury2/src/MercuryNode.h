@@ -17,6 +17,7 @@
 	Each node exists as a single entity in the scene graph.
 **/
 
+#include <Shader.h>
 
 #define STANDARD_PASS	7
 ///Which passes, by default, should be run on all nodes.
@@ -173,6 +174,7 @@ class MercuryNode : public MessageHandler
 		const MercuryMatrix * m_pGlobalMatrix;
 		const MercuryMatrix * m_pModelViewMatrix;
 
+		ShaderAttribute* m_shaderAttrModelMatrix;
 		friend class RenderGraph;
 };
 

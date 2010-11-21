@@ -82,6 +82,7 @@ public:
 
 	virtual void LoadFromXML(const XMLNode& node);
 	
+	static ShaderAttribute* GetAttribute(const MString& name);
 	static void SetAttribute(const MString& name, const ShaderAttribute& x);
 	static void RemoveAttribute(const MString& name);
 

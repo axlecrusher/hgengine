@@ -88,6 +88,9 @@ class ParticleEmitter : public MercuryNode
 		void *m_dBegin, *m_dEnd; //pointers to area of the m_vertexDynamicData that changed
 		void *m_iBegin, *m_iEnd; //pointers to area of the m_indexData that changed
 
+		ShaderAttribute* m_shdrAttrEmitterTime;
+
+
 		std::list< ParticleBase* > m_active, m_inactive;
 		static uint32_t m_particlesDrawn;
 };

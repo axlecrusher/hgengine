@@ -18,7 +18,8 @@ REGISTER_NODE_TYPE(MercuryNode);
 MercuryNode::MercuryNode()
 	:m_parent(NULL), m_prevSibling(NULL),
 	m_nextSibling(NULL), m_flags(SAVECHILDREN & ENABLESAVE),
-	m_iPasses( DEFAULT_PASSES ), m_iForcePasses( 0 )
+	m_iPasses( DEFAULT_PASSES ), m_iForcePasses( 0 ),
+	m_shaderAttrModelMatrix(NULL)
 {
 	m_pGlobalMatrix = &MercuryMatrix::IdentityMatrix;
 	m_pModelViewMatrix = &MercuryMatrix::IdentityMatrix;
@@ -238,7 +239,7 @@ void MercuryNode::RecursiveRender( )
 
 	const MercuryMatrix& matrix = GetGlobalMatrix();
 	const MercuryMatrix& modelView = GetModelViewMatrix(); //get the one computed in the last transform
-	ShaderAttribute sa;
+//	ShaderAttribute sa;
 
 	//A lot of this stuff could be moved into the transform node, BUT
 	//the alpha render path requires that all things things happen, so
@@ -246,9 +247,12 @@ void MercuryNode::RecursiveRender( )
 	//RenderGraph::RenderAlpha
 
 	GLCALL( glLoadMatrix( modelView ) );
-	sa.type = ShaderAttribute::TYPE_MATRIX;
-	sa.value.matrix = matrix.Ptr();
-	Shader::SetAttribute("HG_ModelMatrix", sa);
+
+	if (m_shaderAttrModelMatrix == NULL)
+		m_shaderAttrModelMatrix = Shader::GetAttribute("HG_ModelMatrix");
+
+	m_shaderAttrModelMatrix->type = ShaderAttribute::TYPE_MATRIX;
+	m_shaderAttrModelMatrix->value.matrix = matrix.Ptr();
 
 	Render( modelView ); //calls on children assets
 	
@@ -262,7 +266,7 @@ void MercuryNode::RecursiveRender( )
 	}
 
 	GLCALL( glLoadMatrix( modelView ) );
-	Shader::SetAttribute("HG_ModelMatrix", sa);
+	m_shaderAttrModelMatrix->value.matrix = matrix.Ptr();
 
 	PostRender( modelView );  //calls on children assets
 
