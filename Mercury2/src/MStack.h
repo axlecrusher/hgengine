@@ -1,59 +1,89 @@
-#ifndef MERCURYMEMORY_H
-#define MERCURYMEMORY_H
+#ifndef MSTACK_H
+#define MSTACK_H
 
-#include <AlignedBuffer.h>
-#include <list>
 #include <MSemaphore.h>
 
-#include <MStack.h>
-
-///Memory holder for matrices
 template <typename T>
-class MercuryMemory
+class MStack
 {
-	/* Allocates float memory space as one contigous block
-	to try to take advantage of data prefetching. Some matrix data should get a
-	free ride into the CPU cache. */
-	public:
-		MercuryMemory(const uint32_t rows)
-			:m_rows(rows)
-		{
-			AllocateMoreSpace(m_rows);
-		}
-
-		T* Allocate()
-		{
-			T* m = NULL;
-			while ( !m_freeData.pop_get(m) ) AllocateMoreSpace(m_rows);
-			return m;
-		}
-
-		inline void Free(T* m) { m_freeData.push(m); }
-
 	private:
-
-		void AllocateMoreSpace(const uint32_t rows)
+		struct Container
 		{
-			AlignedBuffer<T>* d = new AlignedBuffer<T>();
-			d->Allocate(rows,16);
+				Container()
+					:m_next(NULL)
+				{ }
+				T m_data;
+				volatile Container* m_next;
+		};
 
-			m_lock.Wait(); //required
-			m_data.push_back(d);
-			m_lock.UnLock(); //required
+		volatile Container* m_head;
+		volatile Container* m_freeContainers;
 
-			for (unsigned int i = 0; i < rows;i++)
-				m_freeData.push(d->Buffer()+i);
+		// use instead of calling new Container()
+		Container* GetContainer()
+		{
+			Container* a = (Container*)m_freeContainers;
+			if (a==NULL) return new Container(); //make new container, don't care if a has changed since read
+			if ( CAS_PTR((volatile void**)&m_freeContainers,(void*)a->m_next,a)==a ) //true if swap made
+				return a;
+			return new Container();
 		}
 
-		std::list< AlignedBuffer<T>* > m_data;
-		MStack< T* > m_freeData;
+		//use instead of calling delete Container
+		void SaveContainerForFuture(Container* c)
+		{
+			do
+			{
+				c->m_next = m_freeContainers;
+			}
+			while( CAS_PTR((volatile void**)&m_freeContainers,c,(void*)c->m_next)!=c->m_next );
+		}
 
-		MSemaphore m_lock;
-		unsigned long m_rows;
+	public:
+		MStack()
+			:m_head(NULL), m_freeContainers(NULL)
+		{
+		}
+
+		void push(const T& data)
+		{
+			Container* a = GetContainer();
+			a->m_data = data;
+			do
+			{
+				a->m_next = m_head;
+			} while ( CAS_PTR((volatile void**)&m_head,a,(void*)a->m_next)!=a->m_next );
+		}
+
+		bool pop()
+		{
+			if (m_head==NULL) return false;
+			Container* a = NULL;
+			do
+			{
+				a = m_head;
+			} while ( CAS_PTR((volatile void**)&m_head,(void*)a->m_next,a)!=a );
+			SaveContainerForFuture(a);
+			return true;
+		}
+
+		bool pop_get(T& d)
+		{
+			if (m_head==NULL) return false;
+			Container* a = NULL;
+			do
+			{
+				a = (Container*)m_head;
+			} while ( CAS_PTR((volatile void**)&m_head,(void*)a->m_next,a)!=a );
+			d = a->m_data;
+			SaveContainerForFuture(a);
+			return true;
+		}
+
+		inline bool empty() const { return m_head==NULL; }
 };
 
 #endif
-
 /****************************************************************************
  *   Copyright (C) 2010 by Joshua Allen                                     *
  *                                                                          *

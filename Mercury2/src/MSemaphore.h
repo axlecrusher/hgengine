@@ -19,6 +19,12 @@
 #define COMPARE_AND_SWAP(d,o,n) ((uint32_t)InterlockedCompareExchange(d, n, o))
 #define SYNC_AND_AND_FETCH(d,v) ((uint32_t)__sync_and_and_fetch(d,v))
 
+inline void* CAS_PTR(volatile void** d, void* e, void* c)
+{
+	//these variables must be 32 bit aligned on x86 and 64 bit aligned on x64
+	return InterlockedCompareExchangePointer((volatile PVOID*)d,e,c);
+}
+
 #endif
 
 class MSemaphore
