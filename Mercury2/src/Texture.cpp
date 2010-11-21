@@ -191,8 +191,8 @@ void Texture::BindTexture()
 	sa.value.iSampler = m_numActiveTextures;
 	Shader::SetAttribute( ssprintf("HG_Texture%d", m_numActiveTextures), sa);
 
-	m_activeTextures.push_back(this);
-	
+	m_activeTextures.Push(this);
+
 	++m_numActiveTextures;
 }
 
@@ -202,7 +202,7 @@ void Texture::UnbindTexture()
 	--m_numActiveTextures;
 	
 	Shader::RemoveAttribute( ssprintf("HG_Texture%d", m_numActiveTextures) );
-	m_activeTextures.pop_back();
+	m_activeTextures.Pop();
 
 //	Deactivate(GL_TEXTURE0 + m_numActiveTextures);
 }
@@ -351,7 +351,7 @@ MAutoPtr< Texture > Texture::LoadDynamicTexture(const MString& name)
 bool Texture::m_initTextureSuccess = false;
 uint8_t Texture::m_numActiveTextures = 0;
 uint32_t Texture::m_textureBinds = 0;
-std::list< Texture* > Texture::m_activeTextures;
+ArrayStack< Texture* > Texture::m_activeTextures(Texture::TextureStackDepth);
 Texture** Texture::m_lastBound = NULL;
 uint8_t Texture::m_maxActiveTextures = 0;
 

@@ -4,6 +4,8 @@
 #include <MercuryAsset.h>
 #include <RawImageData.h>
 
+#include <ArrayStack.h>
+
 enum TextureFilterMode
 {
 	TF_NONE,
@@ -13,6 +15,8 @@ enum TextureFilterMode
 
 class Texture : public MercuryAsset
 {
+	private:
+		static const unsigned int TextureStackDepth = 16;
 	public:
 		Texture( const MString & key, bool bInstanced );
 		virtual ~Texture();
@@ -39,7 +43,7 @@ class Texture : public MercuryAsset
 
 		static MAutoPtr< Texture > LoadFromFile(const MString& path);
 		static MAutoPtr< Texture > LoadDynamicTexture(const MString& name);
-		static const std::list< Texture* >& GetActiveTextures() { return m_activeTextures; }
+		static const ArrayStack< Texture* >& GetActiveTextures() { return m_activeTextures; }
 		
 		void SetRawData(RawImageData* raw);
 		
@@ -72,7 +76,7 @@ class Texture : public MercuryAsset
 		static bool m_initTextureSuccess;
 		static uint8_t m_numActiveTextures;
 		static uint32_t m_textureBinds;
-		static std::list< Texture* > m_activeTextures;
+		static ArrayStack< Texture* > m_activeTextures;
 
 		static uint8_t m_maxActiveTextures;
 		static Texture** m_lastBound;

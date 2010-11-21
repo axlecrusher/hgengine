@@ -154,10 +154,9 @@ bool StoreRenderState::Compare( void * Left, void * Right )
 void StoreRenderState::Save()
 {
 	//get assets for current textures
-	const std::list< Texture* >& textures = Texture::GetActiveTextures();
-	std::list< Texture* >::const_iterator i = textures.begin();
-	for (;i != textures.end(); ++i)
-		Assets.push_back( *i );
+	const ArrayStack< Texture* >& textures = Texture::GetActiveTextures();
+	for (unsigned short i = 0; i<textures.Depth(); ++i)
+		Assets.push_back( textures[i] );
 
 	//save the active shader
 	Shader* s = Shader::GetCurrentShader();
