@@ -13,6 +13,12 @@
 #define COMPARE_AND_SWAP(d,o,n) __sync_val_compare_and_swap(d,o,n)
 #define SYNC_AND_AND_FETCH(d,v) __sync_and_and_fetch(d,v)
 
+inline void* CAS_PTR(volatile void** d, void* e, void* c)
+{
+	//these variables must be 32 bit aligned on x86 and 64 bit aligned on x64
+	return __sync_val_compare_and_swap((void**)d,c,e);
+}
+
 #else
 
 #define SYNC_OR_AND_FETCH(d,v) ((uint32_t)OrAndFetch(d,v))
