@@ -24,12 +24,16 @@
 
 #include <MercuryLog.h>
 
+#if DO_GLERRORCHECK
 #define GLERRORCHECK { \
 uint32_t e = GLCALL( glGetError() ); \
 if ( e != GL_NO_ERROR ) { \
 LOG.Write(ssprintf("GL Error:%s", GlError2String(e).c_str())); \
 printf("GL Error:%s", GlError2String(e).c_str()); \
 assert(0); } }
+#else
+#define GLERRORCHECK ;
+#endif
 
 #define CHECKFBO { \
 uint32_t e = GLCALL( glCheckFramebufferStatusEXT(GL_FRAMEBUFFER) ); \

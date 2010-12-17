@@ -43,10 +43,15 @@ MString GlError2String(uint32_t e)
 
 void glLoadMatrix(const MercuryMatrix& m)
 {
+	static const MercuryMatrix* lp = NULL;
 	static MercuryMatrix l;
 	l = m;
 	l.Transpose();
-	glLoadMatrixf( l.Ptr() );
+	if ( lp != &m )
+	{
+		GLCALL( glLoadMatrixf( l.Ptr() ) );
+	}
+	lp = &m;
 }
 
 MercuryMatrix glGetMatrix(unsigned int m)
