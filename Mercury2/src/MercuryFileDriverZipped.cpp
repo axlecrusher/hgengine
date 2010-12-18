@@ -12,7 +12,7 @@
 #  endif
 #endif
 
-const MString PackagePrefix = "Packages/";
+const char PackagePrefix[] = "Packages/";
 
 
 /********************FILE DRIVER ZIPPED*******************/
@@ -172,7 +172,7 @@ void MercuryFileDriverZipped::Init()
 
 	MercuryFileDriver::Init();
 
-	FILEMAN.ListDirectory( PackagePrefix+"*.zip", out, false );
+	FILEMAN.ListDirectory( MString(PackagePrefix)+"*.zip", out, false );
 	for ( i = 0; i < out.size(); i++ )
 		out[i] = PackagePrefix + out[i];
 

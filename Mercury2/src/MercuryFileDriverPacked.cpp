@@ -2,7 +2,7 @@
 #include <MercuryVector.h>
 #include <string.h>
 
-const MString PackagePrefix = "Packages/";
+const char PackagePrefix[] = "Packages/";
 
 MercuryFileObjectPacked::~MercuryFileObjectPacked()
 {
@@ -103,7 +103,7 @@ void MercuryFileDriverPacked::Init()
 	MVector< MString > out;
 	MercuryFileDriver::Init();
 
-	FILEMAN.ListDirectory( PackagePrefix+"*.*", out, false );
+	FILEMAN.ListDirectory( MString(PackagePrefix)+"*.*", out, false );
 
 	for ( unsigned i = 0; i < out.size(); i++ )
 	{

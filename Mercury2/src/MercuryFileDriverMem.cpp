@@ -1,6 +1,6 @@
 #include <MercuryFileDriverMem.h>
 
-const MString MemoryFileName = "memory.zip";
+const char MemoryFileName[] = "memory.zip";
 
 /********************FILE DRIVER MEMORY********************/
 
