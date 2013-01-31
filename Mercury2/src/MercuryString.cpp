@@ -431,8 +431,8 @@ MString ssprintf( const char *fmt, ...)
 
 		va_end( va );
 
-		if (len > CurMal)
-			while (CurMal < len)
+		if (len >= CurMal)
+			while (CurMal <= len)
 				CurMal*=2;
 		else
 			if ( len > 0 )
